@@ -7,7 +7,7 @@
       { "u_location_variable": { "u_val": "br1_return_point" } },
       {
         "u_travel_to_dimension": "backrooms_level_1",
-        "npc_travel_radius": 5,
+        "npc_travel_radius": 20,
         "npc_travel_filter": "follower",
         "fail_message": "Nothing happens.",
         "success_message": "The floor gives way, and you land on cold concrete."
@@ -28,7 +28,7 @@
     "effect": [
       {
         "u_travel_to_dimension": "default",
-        "npc_travel_radius": 5,
+        "npc_travel_radius": 20,
         "npc_travel_filter": "follower",
         "fail_message": "Nothing happens.",
         "success_message": "You blink, and the yellow walls are back."

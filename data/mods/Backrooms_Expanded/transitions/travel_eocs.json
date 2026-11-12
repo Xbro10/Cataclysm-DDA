@@ -8,7 +8,7 @@
       { "u_location_variable": { "global_val": "br_l0_return_point" } },
       {
         "u_travel_to_dimension": "backrooms_level_1",
-        "npc_travel_radius": 5,
+        "npc_travel_radius": 20,
         "npc_travel_filter": "follower",
         "fail_message": "You press against the wall.  It's just a wall.",
         "success_message": "You fall through the wall and land hard on cold, damp concrete."
@@ -39,7 +39,7 @@
     "effect": [
       {
         "u_travel_to_dimension": "default",
-        "npc_travel_radius": 5,
+        "npc_travel_radius": 20,
         "npc_travel_filter": "follower",
         "fail_message": "You press against the concrete.  It's just concrete.",
         "success_message": "You stumble out onto damp yellow carpet.  The hum of the lights is almost welcome."

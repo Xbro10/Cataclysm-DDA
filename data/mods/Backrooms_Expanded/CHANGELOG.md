@@ -18,5 +18,6 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Fixed
 - Removed vehicle spawn points from the arrival alcove's southern approach so cars cannot block the entrance.
+- Expanded dimension travel's follower pickup radius from 5 to 20 tiles so followers who lag behind are carried across.
 
 ### Removed
