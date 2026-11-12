@@ -1,6 +1,7 @@
 #include "regional_settings.h"
 
 #include <algorithm>
+#include <cmath>
 #include <map>
 #include <memory>
 #include <optional>
@@ -16,6 +17,7 @@
 #include "mapdata.h"
 #include "map_extras.h"
 #include "omdata.h"
+#include "options.h"
 #include "rng.h"
 #include "string_formatter.h"
 
@@ -806,7 +808,18 @@ void region_settings_city::finalize()
     if( city_spacing > 8 || city_spacing < 0 ) {
         debugmsg( "region_settings_city(%s) city_spacing(%d) is outside the bounds of 0 to 8", id.c_str(),
                   city_spacing );
-        city_size = std::clamp( city_spacing, 0, 8 );
+        city_spacing = std::clamp( city_spacing, 0, 8 );
+    }
+    // Xbro10 fork: world options scale each region's city size and spacing (100% = unchanged).
+    // Data is reloaded on every world load, so this applies once to fresh JSON values.
+    const int size_pct = get_option<int>( "CITY_SIZE_SCALING" );
+    const int spacing_pct = get_option<int>( "CITY_SPACING_SCALING" );
+    if( size_pct != 100 ) {
+        city_size = std::clamp( static_cast<int>( std::lround( city_size * size_pct / 100.0 ) ), 0, 16 );
+    }
+    if( spacing_pct != 100 ) {
+        city_spacing = std::clamp( static_cast<int>( std::lround( city_spacing * spacing_pct / 100.0 ) ),
+                                   0, 8 );
     }
     houses.finalize();
     shops.finalize();

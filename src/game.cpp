@@ -10462,7 +10462,9 @@ void game::perhaps_add_random_npc( bool ignore_spawn_timers_and_rates )
     }
     // Create a new NPC?
 
-    const double spawn_time = overmap_buffer.get_settings( u.pos_abs_omt() ).npc_spawn_time;
+    // Xbro10 fork: world option scales the region's spawn time (100% = unchanged, 0 = no random NPCs).
+    const double spawn_time = overmap_buffer.get_settings( u.pos_abs_omt() ).npc_spawn_time *
+                              ::get_option<int>( "NPC_SPAWNTIME_SCALING" ) / 100.0;
     if( !ignore_spawn_timers_and_rates && spawn_time == 0.0 ) {
         return;
     }

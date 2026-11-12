@@ -40,9 +40,23 @@ playbook PDF at
 - Sync with upstream (playbook T.3): update `master` from `upstream/master`, then merge `master` into `dev`.
 - Release tags are per mod: `survivor-minds-vX.Y.Z`, `backrooms-expanded-vX.Y.Z`.
 
+## Fork changes to the game itself (watch these during upstream merges)
+
+Search for `Xbro10 fork` in `src/` to find every C++ change.
+
+| What | Files | Why |
+|---|---|---|
+| Legacy sandbox world options restored (branch `sandbox-options`) | `src/options.cpp` (world option groups), `data/core/external_options.json` (7 entries set to `"stub": true`) | Upstream hid them or made them JSON-only (#79310, #80640). |
+| City size / spacing / NPC spawn time as % world options | `src/regional_settings.cpp` (`region_settings_city::finalize`), `src/game.cpp` (`perhaps_add_random_npc`), `src/newcharacter.cpp` (`cities_enabled`) | Upstream moved them into region settings; ours scale the region's value. New ids `CITY_SIZE_SCALING`, `CITY_SPACING_SCALING`, `NPC_SPAWNTIME_SCALING`. |
+
+Not restored on purpose: wandering hordes, character point pools, default region, initial
+visibility distance, 3D FOV range.
+
 ## Build and run (Windows)
 
 - Visual Studio 2022 + vcpkg at `D:\dev\vcpkg`. Solution: `msvc-full-features\Cataclysm-vcpkg-static.sln`, Release x64.
+  Command-line build (game only; use target `Cataclysm-test-vcpkg-static` for tests):
+  `& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" Cataclysm-vcpkg-static.sln /t:Cataclysm-vcpkg-static /p:Configuration=Release /p:Platform=x64 /m /v:minimal`
 - Outputs in the repo root: `cataclysm-tiles.exe` (game), `Cataclysm-test-vcpkg-static-Release-x64.exe` (tests).
 - This build's saves and config live in `save\` and `config\` (git-ignored).
 - The official build (for pre-release checks) is installed by the launcher at

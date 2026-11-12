@@ -138,7 +138,8 @@ static void draw_colored_text_wrap( const std::string &original_text, nc_color c
 static bool cities_enabled()
 {
     options_manager::options_container &wopts = world_generator->active_world->WORLD_OPTIONS;
-    return wopts["CITY_SIZE"].getValue() != "0";
+    // Xbro10 fork: CITY_SIZE was removed upstream, so this always read as "cities on".
+    return wopts["CITY_SIZE_SCALING"].getValue() != "0";
 }
 
 static void draw_spacer()

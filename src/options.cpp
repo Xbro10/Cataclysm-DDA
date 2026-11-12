@@ -2944,6 +2944,23 @@ void options_manager::add_options_world_default()
              0.0, 100, 1.0, 0.01
            );
 
+        // Xbro10 fork: city size/spacing and NPC spawn time now live in region settings upstream.
+        // These scale each region's own value, so regions without cities or NPCs (e.g. the
+        // Backrooms, other dimensions) stay that way. New ids: the old ones are dropped on load.
+        add( "CITY_SIZE_SCALING", page_id, to_translation( "Size of cities" ),
+             to_translation( "Scales how large cities are, as a percentage of each region's normal city size.  A higher number means larger cities.  0 disables cities, roads and any scenario requiring a city start.  Only affects newly generated areas." ),
+             0, 400, 100, COPT_NO_HIDE, "%i%%"
+           );
+
+        add( "CITY_SPACING_SCALING", page_id, to_translation( "City spacing" ),
+             to_translation( "Scales how far apart cities are, as a percentage of each region's normal city spacing.  A higher number means cities are further apart.  Warning, small numbers lead to very slow mapgen.  Only affects newly generated areas." ),
+             0, 400, 100, COPT_NO_HIDE, "%i%%"
+           );
+
+        add( "NPC_SPAWNTIME_SCALING", page_id, to_translation( "Random NPC spawn time" ),
+             to_translation( "Scales the average number of days between random NPC spawns, as a percentage of each region's normal spawn time.  A higher number means fewer NPCs.  Set to 0 to disable random NPCs." ),
+             0, 1000, 100, COPT_NO_HIDE, "%i%%"
+           );
     } );
 
     add_empty_line();
