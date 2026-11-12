@@ -7,13 +7,57 @@
       "|": [ "t_br1_floor_line" ],
       "P": [ "t_column" ],
       "L": [ [ "t_strconc_floor_olight", 35 ], [ "t_thconc_floor", 65 ] ],
+      "!": [ "t_strconc_floor_olight" ],
       "~": [ "t_br1_puddle" ],
-      "#": [ "t_br1_pipe_wall" ]
-    }
+      "#": [ "t_br1_pipe_wall" ],
+      "D": [ [ "t_door_metal_c", 70 ], [ "t_door_metal_o", 30 ] ],
+      "l": [ "t_thconc_floor" ],
+      "r": [ "t_thconc_floor" ],
+      "W": [ "t_thconc_floor" ],
+      "E": [ "t_thconc_floor" ],
+      "c": [ "t_thconc_floor" ],
+      "b": [ "t_thconc_floor" ],
+      "X": [ "t_thconc_floor" ],
+      "S": [ "t_thconc_floor" ],
+      "*": [ "t_thconc_floor" ]
+    },
+    "furniture": {
+      "l": "f_locker",
+      "r": "f_rack",
+      "W": "f_workbench",
+      "E": "f_machinery_electronic",
+      "c": "f_counter",
+      "b": "f_chair",
+      "X": "f_wreckage",
+      "S": "f_sign"
+    },
+    "items": {
+      "l": { "item": "br1_garage_loot", "chance": 40 },
+      "r": { "item": "br1_garage_loot", "chance": 50, "repeat": [ 1, 2 ] },
+      "W": { "item": "br1_garage_loot", "chance": 40 },
+      "X": { "item": "br1_garage_loot", "chance": 25 },
+      "*": { "item": "br1_garage_loot", "chance": 70, "repeat": [ 1, 3 ] }
+    },
+    "signs": { "S": { "snippet": "br1_signs" } }
+  },
+  {
+    "type": "snippet",
+    "category": "br1_signs",
+    "text": [
+      "LEVEL P2 ↓",
+      "EXIT →",
+      "EXIT ←",
+      "STAIRS CLOSED FOR MAINTENANCE",
+      "PAY AT MACHINE BEFORE RETURNING TO YOUR VEHICLE",
+      "LEVEL P1",
+      "LEVEL P∞",
+      "DO NOT LEAVE VALUABLES IN YOUR VEHICLE",
+      "LEVEL P2 ↑"
+    ]
   },
   {
     "type": "mapgen",
-    "//": "Base layout: two bands of parking bays and two driving lanes. Pillars every 6 tiles line up across neighbouring squares. 'L' is a ceiling light that may be dead.",
+    "//": "Base layout: two bands of parking bays and two driving lanes. Pillars every 6 tiles line up across neighbouring squares. 'L' is a ceiling light that may be dead. Then features, rooms and the odd wrecked car are layered on top.",
     "om_terrain": "br1_garage",
     "object": {
       "fill_ter": "t_thconc_floor",
@@ -43,7 +87,40 @@
         "........................",
         "........................"
       ],
-      "palettes": [ "br1_garage_palette" ]
+      "palettes": [ "br1_garage_palette" ],
+      "place_vehicles": [
+        { "vehicle": "parking_garage_short", "x": 6, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 12, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 18, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 6, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 12, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 18, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 }
+      ],
+      "place_nested": [
+        {
+          "chunks": [
+            [ "null", 200 ],
+            [ "br1_feature_puddles", 60 ],
+            [ "br1_feature_pipe_leak", 40 ],
+            [ "br1_feature_junk", 40 ],
+            [ "br1_feature_working_light", 30 ]
+          ],
+          "x": [ 0, 18 ],
+          "y": [ 0, 18 ],
+          "repeat": [ 0, 2 ]
+        },
+        {
+          "chunks": [
+            [ "null", 300 ],
+            [ "br1_room_maintenance", 40 ],
+            [ "br1_room_electrical", 25 ],
+            [ "br1_room_booth", 20 ],
+            [ "br1_room_stairwell", 15 ]
+          ],
+          "x": [ 0, 16 ],
+          "y": [ 0, 16 ]
+        }
+      ]
     }
   }
 ]

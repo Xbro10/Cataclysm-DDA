@@ -1,0 +1,43 @@
+[
+  {
+    "type": "item_group",
+    "id": "br1_garage_loot",
+    "//": "General Level 1 loot: tools and scrap are common, food and drink are rare. Water scarcity is deliberate (see playbook 1.5).",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "tools_mechanic", "prob": 20 },
+      { "group": "car_misc", "prob": 20 },
+      { "group": "trash_junkyard", "prob": 20 },
+      { "group": "hardware", "prob": 15 },
+      { "group": "batteries", "prob": 10 },
+      { "group": "tools_lighting", "prob": 10 },
+      { "group": "cannedfood", "prob": 3 },
+      { "group": "vending_drink", "prob": 2 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_booth_loot",
+    "//": "The attendant booth: the one place on Level 1 where snacks and drinks are likely.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "vending_food", "prob": 40 },
+      { "group": "vending_drink", "prob": 30 },
+      { "group": "batteries", "prob": 15 },
+      { "group": "tools_lighting", "prob": 15 }
+    ]
+  },
+  {
+    "type": "monstergroup",
+    "id": "GROUP_BR1_GARAGE",
+    "//": "Quieter than Level 0: mostly vermin, a few zombies. Cockroaches follow vanilla timing and only appear after day 45.",
+    "monsters": [
+      { "monster": "mon_sewer_rat", "weight": 40, "pack_size": [ 2, 6 ] },
+      { "group": "GROUP_ZOMBIE", "weight": 25, "pack_size": [ 1, 2 ] },
+      { "monster": "mon_zombie_crawler", "weight": 15 },
+      { "monster": "mon_large_cockroach", "weight": 15, "starts": "45 days", "pack_size": [ 1, 3 ] },
+      { "monster": "mon_zombie_technician", "weight": 5 },
+      { "monster": "mon_blob_sewer", "weight": 5 }
+    ]
+  }
+]
