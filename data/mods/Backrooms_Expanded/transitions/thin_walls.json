@@ -1,0 +1,38 @@
+[
+  {
+    "type": "furniture",
+    "id": "f_br_thin_wall",
+    "name": "rippling wall",
+    "description": "This stretch of wallpaper moves.  Not much, just a slow ripple, like a curtain in a draft, though the air here is perfectly still.  When you look straight at it, it stops.  Examine it to step through.",
+    "symbol": "&",
+    "color": "yellow",
+    "looks_like": "f_curtain",
+    "move_cost_mod": -1,
+    "required_str": -1,
+    "coverage": 100,
+    "flags": [ "NOITEM", "BLOCKSDOOR" ],
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR_NOCLIP_TO_L1" ] }
+  },
+  {
+    "type": "furniture",
+    "id": "f_br1_thin_wall",
+    "name": "rippling concrete",
+    "description": "A patch of concrete wall that sways like a hanging sheet.  Through it, faintly, you can hear fluorescent lights humming.  Examine it to step through.",
+    "symbol": "&",
+    "color": "light_gray",
+    "looks_like": "f_curtain",
+    "move_cost_mod": -1,
+    "required_str": -1,
+    "coverage": 100,
+    "flags": [ "NOITEM", "BLOCKSDOOR" ],
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR_NOCLIP_TO_L0" ] }
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_landing",
+    "copy-from": "t_strconc_floor_olight",
+    "name": "lit concrete floor",
+    "description": "Concrete under a single working light.  There's a faint outline on the floor here, roughly the shape of a person, where the dust hasn't settled.",
+    "looks_like": "t_strconc_floor_olight"
+  }
+]

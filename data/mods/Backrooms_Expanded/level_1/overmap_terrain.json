@@ -11,6 +11,7 @@
     "sym": ".",
     "color": "dark_gray",
     "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BR1_GARAGE", "population": [ 1, 6 ], "chance": 25 },
     "flags": [ "NO_ROTATE" ]
   }
 ]

@@ -4,7 +4,7 @@ An add-on for **The Backrooms** mod for Cataclysm: Dark Days Ahead: new
 levels, structures and survival resources (water sources, vending machines,
 almond water).
 
-**Status:** skeleton, no content yet. See `CHANGELOG.md`.
+**Status:** in development. Level 1 (the Parking Deck) is playable, reached through rare rippling walls on Level 0. See `CHANGELOG.md`.
 
 ## Install
 

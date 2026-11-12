@@ -59,3 +59,17 @@ Run from the repo root. Exit code 0 means it loaded clean:
 ```
 
 This loads the base game plus the listed mods and reports JSON errors, then exits.
+The details (including mapgen overlap errors) are in `config/debug.log`; grep it for `ERROR` after a run.
+`WARN_ON_MODIFIED` is set to false in this build's `config/options.json`, so editing mod files
+doesn't trigger "stale game data" errors.
+
+## Gotchas learned so far
+
+- `predecessor_mapgen` needs the full overmap terrain id, including the rotation suffix for
+  rotatable terrain (`backfloorchamber_north`, not `backfloorchamber`).
+- Sibling `place_nested` chunks that may overlap need `ERASE_FURNITURE_BEFORE_PLACING_TERRAIN`
+  (or `ERASE_ALL_BEFORE_PLACING_TERRAIN`) or the loader reports an error.
+- In nested mapgen, a space in `rows` means "leave what's underneath", as long as the palette doesn't define `" "`.
+- Furniture `looks_like` should point at furniture, terrain at terrain. Check UltiCa coverage with
+  `grep '"<id>"' "D:\Games\CDDA MY FORK\Game\gfx\UltimateCataclysm\tile_config.json"`.
+- UltiCa (`gfx/UltimateCataclysm`) is **not** in this source checkout; it only ships with release builds.

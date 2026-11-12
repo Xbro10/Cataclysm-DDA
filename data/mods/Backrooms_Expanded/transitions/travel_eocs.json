@@ -1,0 +1,67 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_NOCLIP_TO_L1",
+    "//": "Level 0 -> Level 1. Remembers where you left so the way back returns you there. Followers within 5 tiles come along and land with you.",
+    "condition": { "u_query": "The wall ripples like cloth in a draft.  Step through it?", "default": false },
+    "effect": [
+      { "u_location_variable": { "global_val": "br_l0_return_point" } },
+      {
+        "u_travel_to_dimension": "backrooms_level_1",
+        "npc_travel_radius": 5,
+        "npc_travel_filter": "follower",
+        "fail_message": "You press against the wall.  It's just a wall.",
+        "success_message": "You fall through the wall and land hard on cold, damp concrete."
+      },
+      {
+        "u_location_variable": { "global_val": "br1_arrival_point" },
+        "target_params": { "om_terrain": "br1_arrival", "z": 0 },
+        "terrain": "t_br1_landing",
+        "target_max_radius": 12
+      },
+      { "u_teleport": { "global_val": "br1_arrival_point" }, "force": true },
+      { "u_run_npc_eocs": [ "EOC_BR_FOLLOWER_TO_L1_ARRIVAL" ], "local": true }
+    ],
+    "false_effect": [ { "u_message": "You step back.  The wall goes still." } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_FOLLOWER_TO_L1_ARRIVAL",
+    "//": "Run on each NPC in the reality bubble: followers join the player at the arrival point.",
+    "condition": "u_following",
+    "effect": [ { "u_teleport": { "global_val": "br1_arrival_point" }, "force": true } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_NOCLIP_TO_L0",
+    "//": "Level 1 -> Level 0. Returns you to where you left Level 0; if that's unknown, to the nearest Level 0 floor.",
+    "condition": { "u_query": "The concrete sways like a hanging sheet.  Step through it?", "default": false },
+    "effect": [
+      {
+        "u_travel_to_dimension": "default",
+        "npc_travel_radius": 5,
+        "npc_travel_filter": "follower",
+        "fail_message": "You press against the concrete.  It's just concrete.",
+        "success_message": "You stumble out onto damp yellow carpet.  The hum of the lights is almost welcome."
+      },
+      {
+        "if": { "not": { "math": [ "has_var(br_l0_return_point)" ] } },
+        "then": {
+          "u_location_variable": { "global_val": "br_l0_return_point" },
+          "target_params": { "om_terrain": "backfloorchamber", "z": 0 },
+          "terrain": "t_carpet_backrooms",
+          "target_max_radius": 12
+        }
+      },
+      { "u_teleport": { "global_val": "br_l0_return_point" }, "force": true },
+      { "u_run_npc_eocs": [ "EOC_BR_FOLLOWER_TO_L0_RETURN" ], "local": true }
+    ],
+    "false_effect": [ { "u_message": "You step back.  The concrete goes still." } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_FOLLOWER_TO_L0_RETURN",
+    "condition": "u_following",
+    "effect": [ { "u_teleport": { "global_val": "br_l0_return_point" }, "force": true } ]
+  }
+]

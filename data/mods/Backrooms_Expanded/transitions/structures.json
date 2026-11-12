@@ -1,0 +1,87 @@
+[
+  {
+    "type": "overmap_terrain",
+    "id": "br0_thin_room",
+    "//": "Deliberately looks like an ordinary Level 0 chamber on the map.",
+    "name": "backroom chamber",
+    "sym": ".",
+    "color": "white",
+    "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BACKROOMS", "population": [ 2, 15 ], "chance": 40 },
+    "extras": "backrooms",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_thin_room",
+    "//": "Level 0 exit to Level 1. Rare: a few per overmap, ground floor only.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_thin_room" } ],
+    "locations": [ "backrooms" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 3, 6 ],
+    "flags": [ "BACKROOMS" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_thin_room",
+    "object": {
+      "predecessor_mapgen": "backfloorchamber_north",
+      "place_nested": [ { "chunks": [ "br0_thin_room_core" ], "x": 8, "y": 8 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_thin_room_core",
+    "//": "An empty office with two doors and a rippling stretch of back wall.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ "---D----", "-      -", "-  .   -", "D      -", "-      -", "-  ..  -", "-      -", "---TT---" ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "T": "t_carpet_backrooms" },
+      "furniture": { "T": "f_br_thin_wall" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_arrival",
+    "name": "parking deck",
+    "sym": ".",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br1_arrival",
+    "//": "Where travellers from Level 0 land, and the way back. Common, so one is always close.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_arrival" } ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 30, 50 ],
+    "flags": [ "BACKROOMS_L1" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_arrival",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "place_nested": [ { "chunks": [ "br1_arrival_core" ], "x": 8, "y": 8 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_arrival_core",
+    "//": "A pipe-walled alcove with one working light, the landing spot, and the rippling way back.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ "###ZZ###", "#......#", "#..!...#", "#..@...#", "#......#", "#......#", "#......#", "###..###" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "Z": "t_thconc_floor", "@": "t_br1_landing" },
+      "furniture": { "Z": "f_br1_thin_wall" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]
