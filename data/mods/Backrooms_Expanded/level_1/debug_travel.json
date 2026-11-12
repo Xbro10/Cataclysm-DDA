@@ -1,0 +1,39 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_DEBUG_GO",
+    "//": "Developer shortcut: Debug menu > Activate EOC. Sends you (and followers within 5 tiles) to Level 1. Remove before release.",
+    "effect": [
+      { "u_location_variable": { "u_val": "br1_return_point" } },
+      {
+        "u_travel_to_dimension": "backrooms_level_1",
+        "npc_travel_radius": 5,
+        "npc_travel_filter": "follower",
+        "fail_message": "Nothing happens.",
+        "success_message": "The floor gives way, and you land on cold concrete."
+      },
+      {
+        "u_location_variable": { "context_val": "br1_landing" },
+        "target_params": { "om_terrain": "br1_garage", "z": 0 },
+        "terrain": "t_thconc_floor",
+        "target_max_radius": 12
+      },
+      { "u_teleport": { "context_val": "br1_landing" }, "force": true }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_DEBUG_BACK",
+    "//": "Developer shortcut: returns you to where EOC_BR1_DEBUG_GO picked you up. Remove before release.",
+    "effect": [
+      {
+        "u_travel_to_dimension": "default",
+        "npc_travel_radius": 5,
+        "npc_travel_filter": "follower",
+        "fail_message": "Nothing happens.",
+        "success_message": "You blink, and the yellow walls are back."
+      },
+      { "u_teleport": { "u_val": "br1_return_point" }, "force": true }
+    ]
+  }
+]

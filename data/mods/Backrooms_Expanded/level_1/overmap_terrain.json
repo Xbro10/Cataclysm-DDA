@@ -1,0 +1,16 @@
+[
+  {
+    "type": "overmap_location",
+    "id": "br1_garage",
+    "terrains": [ "br1_garage" ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_garage",
+    "name": "parking deck",
+    "sym": ".",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  }
+]

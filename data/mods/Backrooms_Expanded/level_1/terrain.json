@@ -1,0 +1,29 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br1_floor_line",
+    "copy-from": "t_thconc_floor",
+    "name": "painted concrete floor",
+    "description": "Cold concrete with a faded yellow parking line.  The lines go on in every direction, marking bays for cars that were never here.",
+    "color": "yellow",
+    "looks_like": "t_pavement_y"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_puddle",
+    "copy-from": "t_puddle",
+    "name": "puddle",
+    "description": "A shallow pool of cold water that has collected in a dip in the concrete.  It smells of rust and oil.",
+    "roof": "t_concrete_roof",
+    "looks_like": "t_puddle",
+    "extend": { "flags": [ "INDOORS" ] }
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_pipe_wall",
+    "copy-from": "t_concrete_wall",
+    "name": "pipe-lined wall",
+    "description": "A concrete wall crowded with rusted pipes.  Some of them drip.  Some of them are warm.  None of them seem to go anywhere.",
+    "looks_like": "t_concrete_wall"
+  }
+]
