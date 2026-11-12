@@ -2923,38 +2923,75 @@ void options_manager::add_options_world_default()
 
     add_empty_line();
 
-    // These optiosn are purposefully and permanently hidden. It can only be modified through the sliders when creating a new world.
-    // As such there is no name or description to show, those are blanked.
-    add( "SPAWN_DENSITY", "world_default", translation(), translation(), 0.0, 50.0, 1.0, 0.1,
-         COPT_ALWAYS_HIDE
-       );
+    // Xbro10 fork: legacy sandbox world options restored (hidden upstream in #79310).
+    // The Difficulty slider still sets the first five; editing them by hand shows the slider as "Custom".
+    add_option_group( "world_default", Group( "game_world_opts", to_translation( "Game world options" ),
+                      to_translation( "Options regarding game world." ) ),
+    [&]( const std::string & page_id ) {
+        add( "SPAWN_DENSITY", page_id, to_translation( "Spawn rate scaling factor" ),
+             to_translation( "A scaling factor that determines density of monster spawns.  A higher number means more monsters." ),
+             0.0, 50.0, 1.0, 0.1
+           );
 
-    add( "ITEM_SPAWNRATE", "world_default", translation(), translation(), 0.01, 10.0, 1.0, 0.01,
-         COPT_ALWAYS_HIDE
-       );
+        add( "ITEM_SPAWNRATE", page_id, to_translation( "Item spawn scaling factor" ),
+             to_translation( "A scaling factor that determines density of item spawns.  A higher number means more items." ),
+             0.01, 10.0, 1.0, 0.01
+           );
 
-    add( "MONSTER_SPEED", "world_default", translation(), translation(), 1, 1000, 100, COPT_ALWAYS_HIDE,
-         "%i%%"
-       );
+        add( "EVOLUTION_INVERSE_MULTIPLIER", page_id,
+             to_translation( "Monster evolution slowdown" ),
+             to_translation( "A multiplier for the time between monster upgrades.  For example a value of 2.00 would cause evolution to occur at half speed.  Set to 0.00 to turn off monster upgrades." ),
+             0.0, 100, 1.0, 0.01
+           );
+    } );
 
-    add( "MONSTER_RESILIENCE", "world_default", translation(), translation(), 1, 1000, 100,
-         COPT_ALWAYS_HIDE, "%i%%"
-       );
+    add_empty_line();
 
-    add( "EVOLUTION_INVERSE_MULTIPLIER", "world_default", translation(), translation(),
-         0.0, 100, 1.0, 0.01, COPT_ALWAYS_HIDE
-       );
+    add_option_group( "world_default", Group( "monster_props_opts",
+                      to_translation( "Monster properties options" ),
+                      to_translation( "Options regarding monster properties." ) ),
+    [&]( const std::string & page_id ) {
+        add( "MONSTER_SPEED", page_id, to_translation( "Monster speed" ),
+             to_translation( "Determines the movement rate of monsters.  A higher value increases monster speed and a lower reduces it.  Requires world reset." ),
+             1, 1000, 100, COPT_NO_HIDE, "%i%%"
+           );
 
-    add( "SEASON_LENGTH", "world_default", translation(), translation(), 14, 127, 91,
-         COPT_ALWAYS_HIDE );
+        add( "MONSTER_RESILIENCE", page_id, to_translation( "Monster resilience" ),
+             to_translation( "Determines how much damage monsters can take.  A higher value makes monsters more resilient and a lower makes them more flimsy.  Requires world reset." ),
+             1, 1000, 100, COPT_NO_HIDE, "%i%%"
+           );
+    } );
 
-    add( "CONSTRUCTION_SCALING", "world_default", translation(), translation(), 0, 1000, 100,
-         COPT_ALWAYS_HIDE );
+    add_empty_line();
 
-    add( "ETERNAL_SEASON", "world_default", translation(), translation(), false, COPT_ALWAYS_HIDE );
+    add_option_group( "world_default", Group( "spawn_time_opts", to_translation( "World time options" ),
+                      to_translation( "Options regarding the passage of time in the world." ) ),
+    [&]( const std::string & page_id ) {
+        add( "SEASON_LENGTH", page_id, to_translation( "Season length" ),
+             to_translation( "Season length, in days.  Warning: Very little other than the duration of seasons scales with this value, so adjusting it may cause nonsensical results." ),
+             14, 127, 91
+           );
 
-    add( "ETERNAL_TIME_OF_DAY", "world_default", translation(), translation(), "normal", 8,
-         COPT_ALWAYS_HIDE );
+        add( "CONSTRUCTION_SCALING", page_id, to_translation( "Construction scaling" ),
+             to_translation( "Sets the time of construction in percents.  '50' is two times faster than default, '200' is two times longer.  '0' automatically scales construction time to match the world's season length." ),
+             0, 1000, 100
+           );
+
+        add( "ETERNAL_SEASON", page_id, to_translation( "Eternal season" ),
+             to_translation( "If true, keep the initial season for ever." ),
+             false
+           );
+
+        add( "ETERNAL_TIME_OF_DAY", page_id, to_translation( "Day/night cycle" ),
+        to_translation( "Day/night cycle settings.  'Normal' sets a normal cycle.  'Eternal Day' sets eternal day.  'Eternal Night' sets eternal night." ), {
+            { "normal", to_translation( "Normal" ) },
+            { "day", to_translation( "Eternal Day" ) },
+            { "night", to_translation( "Eternal Night" ) },
+        }, "normal"
+           );
+    } );
+
+    add_empty_line();
 
     add_option_group( "world_default", Group( "misc_worlddef_opts", to_translation( "Misc options" ),
                       to_translation( "Miscellaneous options." ) ),
