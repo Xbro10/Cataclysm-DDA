@@ -2943,6 +2943,7 @@ void options_manager::add_options_world_default()
              to_translation( "A multiplier for the time between monster upgrades.  For example a value of 2.00 would cause evolution to occur at half speed.  Set to 0.00 to turn off monster upgrades." ),
              0.0, 100, 1.0, 0.01
            );
+
     } );
 
     add_empty_line();
@@ -2988,6 +2989,51 @@ void options_manager::add_options_world_default()
             { "day", to_translation( "Eternal Day" ) },
             { "night", to_translation( "Eternal Night" ) },
         }, "normal"
+           );
+    } );
+
+    add_empty_line();
+
+    // Xbro10 fork: options moved to JSON-only externals upstream (#79310, #80640), restored as
+    // per-world options. Their core EXTERNAL_OPTION entries are stubs so they don't overwrite
+    // the world's choice; a mod that sets them still wins.
+    add_option_group( "world_default", Group( "character_worlddef_opts",
+                      to_translation( "Character options" ),
+                      to_translation( "Options regarding characters in this world." ) ),
+    [&]( const std::string & page_id ) {
+        add( "RAD_MUTATION", page_id, to_translation( "Mutations by radiation" ),
+             to_translation( "If true, radiation causes the player to mutate." ),
+             false
+           );
+
+        add( "INITIAL_STAT_POINTS", page_id, to_translation( "Initial stat points" ),
+             to_translation( "Initial points available to spend on stats on character generation." ),
+             0, 1000, 6
+           );
+
+        add( "INITIAL_TRAIT_POINTS", page_id, to_translation( "Initial trait points" ),
+             to_translation( "Initial points available to spend on traits on character generation." ),
+             0, 1000, 0
+           );
+
+        add( "INITIAL_SKILL_POINTS", page_id, to_translation( "Initial skill points" ),
+             to_translation( "Initial points available to spend on skills on character generation." ),
+             0, 1000, 2
+           );
+
+        add( "MAX_TRAIT_POINTS", page_id, to_translation( "Maximum trait points" ),
+             to_translation( "Maximum trait points available for character generation." ),
+             0, 1000, 12
+           );
+
+        add( "SKILL_TRAINING_SPEED", page_id, to_translation( "Skill training speed" ),
+             to_translation( "Scales experience gained from practicing skills and reading books.  0.5 is half as fast as default, 2.0 is twice as fast, 0.0 disables skill training except for NPC training." ),
+             0.0, 100.0, 1.0, 0.1
+           );
+
+        add( "PROFICIENCY_TRAINING_SPEED", page_id, to_translation( "Proficiency training speed" ),
+             to_translation( "Scales experience gained from practicing proficiencies.  0.5 is half as fast as default, 2.0 is twice as fast, 0.0 disables proficiency training except for NPC training." ),
+             0.0, 100.0, 1.0, 0.1
            );
     } );
 

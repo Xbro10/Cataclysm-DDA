@@ -422,6 +422,7 @@
   {
     "type": "EXTERNAL_OPTION",
     "name": "RAD_MUTATION",
+    "stub": true,
     "//": "If true, radiation causes the player to mutate.",
     "stype": "bool",
     "value": false
@@ -429,6 +430,7 @@
   {
     "type": "EXTERNAL_OPTION",
     "name": "INITIAL_STAT_POINTS",
+    "stub": true,
     "//": "Initial points available to spend on stats on character generation.",
     "stype": "int",
     "value": 6
@@ -436,6 +438,7 @@
   {
     "type": "EXTERNAL_OPTION",
     "name": "INITIAL_TRAIT_POINTS",
+    "stub": true,
     "//": "Initial points available to spend on traits on character generation.",
     "stype": "int",
     "value": 0
@@ -443,6 +446,7 @@
   {
     "type": "EXTERNAL_OPTION",
     "name": "INITIAL_SKILL_POINTS",
+    "stub": true,
     "//": "Initial points available to spend on skills on character generation.",
     "stype": "int",
     "value": 2
@@ -450,6 +454,7 @@
   {
     "type": "EXTERNAL_OPTION",
     "name": "MAX_TRAIT_POINTS",
+    "stub": true,
     "//": "Maximum trait points available for character generation.",
     "stype": "int",
     "value": 12
@@ -457,6 +462,7 @@
   {
     "type": "EXTERNAL_OPTION",
     "name": "SKILL_TRAINING_SPEED",
+    "stub": true,
     "//": "Scales experience gained from practicing skills and reading books.  0.5 is half as fast as default, 2.0 is twice as fast, 0.0 disables skill training except for NPC training.",
     "stype": "float",
     "value": 1.0
@@ -464,6 +470,7 @@
   {
     "type": "EXTERNAL_OPTION",
     "name": "PROFICIENCY_TRAINING_SPEED",
+    "stub": true,
     "//": "Scales experience gained from practicing proficiencies.  0.5 is half as fast as default, 2.0 is twice as fast, 0.0 disables proficiency training except for NPC training.",
     "stype": "float",
     "value": 1.0
