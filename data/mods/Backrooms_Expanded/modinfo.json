@@ -1,0 +1,13 @@
+[
+  {
+    "type": "MOD_INFO",
+    "id": "backrooms_expanded",
+    "name": "Backrooms Expanded",
+    "authors": [ "Xbro10" ],
+    "maintainers": [ "Xbro10" ],
+    "description": "An add-on for The Backrooms: new levels, structures and survival resources.  Requires The Backrooms mod.  Built on TGWeaver's original Backrooms mod.",
+    "category": "buildings",
+    "dependencies": [ "dda", "backrooms" ],
+    "version": "0.0.1"
+  }
+]
