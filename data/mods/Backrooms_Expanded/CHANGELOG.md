@@ -17,5 +17,6 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ### Changed
 
 ### Fixed
+- Removed vehicle spawn points from the arrival alcove's southern approach so cars cannot block the entrance.
 
 ### Removed
