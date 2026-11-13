@@ -293,3 +293,12 @@ data/mods/Backrooms_Expanded/
 - `sprite_width` / `sprite_height` must match the art. UltiCa's terrain and most items are
   32x32 (`normal.png`), small items are 20x20 (`small.png`).
 - A custom sprite wins over `looks_like`, so keep the fallbacks; they still cover other tilesets.
+- **Done for Level 1's map squares** (`gfx/br1_overmap.png` + `gfx/br1_overmap_tileset.json`):
+  three weighted `br1_garage` variants, `br1_arrival`, `br1_breakroom`, `br1_squatter_camp`.
+  Overmap squares use the same tile ids as their overmap terrain id. They only show when the
+  **overmap** tileset option (`OVERMAP_TILES`) is UltiCa; the game's default is Larwick Overmap
+  (16x16), which would need its own sheet and a second `mod_tileset` with
+  `"compatibility": [ "Larwick Overmap" ]`.
+- The first-pass art is drawn by `tools/backrooms_expanded/draw_br1_overmap.ps1` (PowerShell + System.Drawing; run it with `-Out <png> [-Preview <png>]`).
+  Repaint in Aseprite, LibreSprite or Piskel and keep the tile order; the JSON doesn't change.
+- `--check-mods` doesn't load graphics, so a broken sprite sheet only shows in-game.

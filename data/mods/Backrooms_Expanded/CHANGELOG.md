@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Level 1 map art for UltiCa: the parking deck (three variants, some with parked cars or dead lights), arrival alcoves (a cyan rippling wall), the Breakroom (walled, with a green door) and squatter camps (a sandbag ring around a brazier) now each have their own overmap sprite. Other tilesets keep the old look.
 - Three scenarios that start on Level 1. **Wrong Exit**: you start in an arrival alcove with your out-of-gas car in the lane outside, plus a flashlight and some road-trip food. **Breakroom Hire** (1 point): you start inside the Breakroom next to the Foreman, the Breakroom likes and trusts you, and the nearest squatter camp is marked on your map. **One of the Lost** (-1 point): you start inside a squatter camp with its survivors, the Lost like you, and the Breakroom is cooler towards you. Upstream's two Backrooms scenarios are still available.
 - Almond water on Level 1: rare in attendant booths, camp stores and about 1 in 10 drinks machines, and Dot gives newcomers their first bottle. Drinking it now also calms you (a gentle mood boost for about 4 hours). This extends the Backrooms mod's own almond water rather than replacing it.
 - Water on Level 1: drip pools under leaking pipes and inside every squatter camp (never run dry; boil before drinking), and two rigged taps of clean water in the Breakroom. NPCs within 6 tiles drink from them on their own.

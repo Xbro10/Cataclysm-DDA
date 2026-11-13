@@ -1,0 +1,26 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Level 1 overmap sprites, drawn for this mod (CC-BY-SA 3.0). Only used with UltiCa; other tilesets fall back to each terrain's looks_like. Sprite numbers count from 0 within br1_overmap.png (six 32x32 tiles in a row).",
+    "compatibility": [ "UltimateCataclysm" ],
+    "tiles-new": [
+      {
+        "file": "br1_overmap.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          {
+            "id": "br1_garage",
+            "fg": [ { "weight": 6, "sprite": 0 }, { "weight": 3, "sprite": 1 }, { "weight": 2, "sprite": 2 } ],
+            "rotates": false
+          },
+          { "id": "br1_arrival", "fg": 3, "rotates": false },
+          { "id": "br1_breakroom", "fg": 4, "rotates": false },
+          { "id": "br1_squatter_camp", "fg": 5, "rotates": false }
+        ]
+      }
+    ]
+  }
+]
