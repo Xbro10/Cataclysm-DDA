@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Elevator lobbies on Level 1 (3 to 6 per map): a walled, brightly lit lobby with benches and a bank of working elevators. Ride one and you come out at another lobby 5 to 30 squares away, which is then marked on your map; followers within 6 tiles ride with you. About one ride in ten opens somewhere dark instead. Nothing spawns inside a lobby and Smilers won't enter the light, so they make good places to camp. Lobbies have their own map sprite in UltiCa, and a couple of new notes mention them.
 - Level 1 useful places. **Security office**: a locked room with dead CCTV, the guard's lockers (flashlight, baton, batteries) and their logbook. **Generator rooms**: pour in two litres of gasoline and every dead ceiling light within 12 tiles comes back on for a week; sometimes a can of gas was left behind. **Storage cages**: padlocked chain-link lockups with the best tool loot on the level.
 - Level 1 story structures. **Dead zones**: 2x2 patches of garage where every light has died; more Smilers and Hounds, more abandoned cars, and sometimes an old camp's stash worth the risk. **Overrun camps**: a squatter camp that didn't make it, with blood, a body, their gear and a last note, and sometimes a Wretch still there. **The exit ramp that isn't**: EXIT signs and a ramp up into a fresh brick wall with days tallied on it. **Graffiti**: spray-painted arrows and warnings from earlier travellers, some helpful, some not. Dead zones and overrun camps have their own map sprites in UltiCa.
 - Notes on Level 1. Most arrival alcoves have a torn note left by someone who came before: one or two hints, never the whole picture, and not all of them true. Crumpled notes with bits of other people's stories turn up in lockers, junk and camp stores.
@@ -30,6 +31,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
 
 ### Fixed
+- Level 1 structures no longer count towards the main world's limit on required overmap specials. The elevator lobbies would have pushed the main world over that limit.
 - Cars can no longer block an arrival alcove: any car touching the alcove or the 3 tiles in front of its opening is removed (the parking bays elsewhere keep all six car spots).
 - Followers now arrive with you through rippling walls (they were left stranded where you first landed). Followers within 20 tiles come along and land on free tiles next to you.
 

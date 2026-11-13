@@ -1,9 +1,9 @@
 param([string]$Out, [string]$Preview)
-# Draws the Level 1 overmap sprite sheet: eight 32x32 tiles in a row.
-# 0-2 garage variants, 3 arrival alcove, 4 Breakroom, 5 squatter camp, 6 dead zone, 7 overrun camp.
+# Draws the Level 1 overmap sprite sheet: nine 32x32 tiles in a row.
+# 0-2 garage variants, 3 arrival alcove, 4 Breakroom, 5 squatter camp, 6 dead zone, 7 overrun camp, 8 elevator lobby.
 Add-Type -AssemblyName System.Drawing
 $T = 32
-$bmp = New-Object System.Drawing.Bitmap (8 * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$bmp = New-Object System.Drawing.Bitmap (9 * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $rng = New-Object System.Random 1337
 
 function Hex([string]$hex) { [System.Drawing.ColorTranslator]::FromHtml($hex) }
@@ -96,17 +96,30 @@ DrawPx 7 12 8 $sand; DrawPx 7 6 14 $sand; DrawPx 7 25 16 $sand
 DrawRect 7 15 14 2 3 $ash
 DrawRect 7 10 12 2 3 $blood; DrawPx 7 12 13 $blood; DrawRect 7 19 16 3 2 $blood; DrawPx 7 13 18 $blood
 DrawRect 7 9 17 2 2 $bed; DrawRect 7 21 11 2 3 $bed
+
+# 8: elevator lobby: a walled, brightly lit room, steel elevator doors along the top wall, glass front at the bottom
+Floor 8; Bays 8
+$lwall = Hex '#2c2f33'; $lfloor = Hex '#8f9296'; $lfloor2 = Hex '#9a9da1'; $steel = Hex '#c9ced4'; $steelDk = Hex '#7d848c'
+$glass = Hex '#7fb8d0'; $callBtn = Hex '#ff9a3a'; $bench = Hex '#5a4430'; $plant = Hex '#4f8a4a'
+DrawRect 8 5 6 22 18 $lwall; DrawRect 8 6 7 20 16 $lfloor
+for ($k = 0; $k -lt 25; $k++) { DrawPx 8 ($rng.Next(6, 26)) ($rng.Next(9, 23)) $lfloor2 }
+foreach ($x in 8, 14, 20) { DrawRect 8 $x 6 3 2 $steel; DrawPx 8 ($x + 1) 6 $steelDk; DrawPx 8 ($x + 1) 7 $steelDk; DrawPx 8 ($x + 3) 7 $callBtn }
+DrawRect 8 6 23 20 1 $glass; DrawRect 8 14 23 4 1 $lfloor
+DrawRect 8 5 13 1 3 $glass
+DrawRect 8 8 12 3 1 $bench; DrawRect 8 21 12 3 1 $bench; DrawRect 8 8 18 3 1 $bench; DrawRect 8 21 18 3 1 $bench
+DrawPx 8 7 15 $plant; DrawPx 8 24 15 $plant
+Light 8 11 10 $true; Light 8 21 10 $true; Light 8 16 15 $true; Light 8 11 20 $true; Light 8 21 20 $true
 $bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
 
 if ($Preview) {
   # 8x nearest-neighbour preview with a 1px gap between tiles, for checking by eye.
   $s = 8
-  $pv = New-Object System.Drawing.Bitmap ($bmp.Width * $s + 7 * $s), ($T * $s)
+  $pv = New-Object System.Drawing.Bitmap ($bmp.Width * $s + 8 * $s), ($T * $s)
   $g = [System.Drawing.Graphics]::FromImage($pv)
   $g.Clear((Hex '#1e1e1e'))
   $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::NearestNeighbor
   $g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::Half
-  for ($n = 0; $n -lt 8; $n++) {
+  for ($n = 0; $n -lt 9; $n++) {
     $src = New-Object System.Drawing.Rectangle ($n * $T), 0, $T, $T
     $dst = New-Object System.Drawing.Rectangle ($n * ($T * $s + $s)), 0, ($T * $s), ($T * $s)
     $g.DrawImage($bmp, $dst, $src, [System.Drawing.GraphicsUnit]::Pixel)

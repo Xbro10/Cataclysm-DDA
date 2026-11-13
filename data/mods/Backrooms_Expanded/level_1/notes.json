@@ -65,7 +65,9 @@
       { "id": "br1_note_lost_8", "text": "Saw someone I knew from before.  Walked right up to them.  It wasn't them." },
       { "id": "br1_note_lost_9", "text": "Don't go where the lights are all out.  Or go, but bring three flashlights and leave before they die." },
       { "id": "br1_note_lost_10", "text": "The water tastes of pennies.  The almond water tastes of nothing at all.  I've started dreaming about it." },
-      { "id": "br1_note_lost_11", "text": "If you find this, the cage key is NOT under the mat.  I checked.  Sorry." }
+      { "id": "br1_note_lost_11", "text": "If you find this, the cage key is NOT under the mat.  I checked.  Sorry." },
+      { "id": "br1_note_lost_12", "text": "The lobby lifts run.  Press the button once.  Don't watch the walls on the way.  When the doors open somewhere dark, walk.  Don't wait for them to open again.  They won't." },
+      { "id": "br1_note_lost_13", "text": "Dot says the lobbies are the only rooms the grinning things leave alone.  Not the moths, though.  We're setting up in the one past the blue van.  Bring tea." }
     ]
   },
   {
@@ -106,7 +108,8 @@
       "FOLLOW THE ORANGE ARROWS",
       "WE WERE HERE.  DAY 40.",
       "DON'T TRUST THE SMILE",
-      "MARCUS LIES ABOUT THE MAP"
+      "MARCUS LIES ABOUT THE MAP",
+      "LIFTS → (MOSTLY)"
     ]
   },
   {
