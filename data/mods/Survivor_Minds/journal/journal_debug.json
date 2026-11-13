@@ -13,5 +13,30 @@
     "id": "EOC_SM_DEBUG_JOURNAL_FOLLOWER",
     "condition": "u_following",
     "effect": [ { "run_eocs": "EOC_SM_JOURNAL_WRITE_ENTRY" } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_JOURNAL_EVENTS",
+    "//": "Developer shortcut: every follower in the loaded area writes one fight, killing, ate-after-starving and rescued line right now, skipping the usual checks and time limits. Deaths are tested by killing a follower (Debug menu). Remove before release.",
+    "effect": [
+      { "set_string_var": "<u_name>", "target_var": { "global_val": "sm_rescuer" }, "parse_tags": true },
+      { "u_run_npc_eocs": [ "EOC_SM_DEBUG_JOURNAL_EVENTS_FOLLOWER" ], "local": true },
+      { "u_message": "Survivor Minds debug: followers wrote one line per event." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_JOURNAL_EVENTS_FOLLOWER",
+    "condition": "u_following",
+    "effect": [
+      { "set_string_var": "<sm_j_ev_fight>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+      { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" },
+      { "set_string_var": "<sm_j_ev_killed_person>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+      { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" },
+      { "set_string_var": "<sm_j_ev_ate>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+      { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" },
+      { "set_string_var": "<global_val:sm_rescuer> <sm_j_ev_rescued>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+      { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" }
+    ]
   }
 ]

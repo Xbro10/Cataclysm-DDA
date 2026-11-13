@@ -1,0 +1,43 @@
+[
+  {
+    "type": "snippet",
+    "category": "<sm_j_ev_fight>",
+    "text": [
+      "Put down a few of them before it was over.",
+      "Fought today.  Hands still shaking.",
+      "Another one came at us.  It's dead now.  I'm not.",
+      "Close call.  Too close."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_j_ev_killed_person>",
+    "text": [
+      "Had to kill a man today.  Can't stop seeing his face.",
+      "Killed someone.  It was them or us.  I keep telling myself that.",
+      "A living person, not one of the dead.  I did it anyway.",
+      "Someone tried to kill us.  They didn't get up again."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_j_ev_ate>",
+    "text": [ "Finally ate.  I almost cried.", "Real food, at last.", "Ate something today.  Thought I'd forgotten how.", "Found food.  The world looks less grey." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_j_ev_rescued>",
+    "text": [ "pulled me out of it.  I owe them.", "got there just in time.", "came back for me.  Nobody else would have.", "saved my life today." ]
+  },
+  { "type": "snippet", "category": "<sm_j_ev_death_a>", "text": [ "Lost", "We lost", "Couldn't save", "Said goodbye to" ] },
+  {
+    "type": "snippet",
+    "category": "<sm_j_ev_death_b>",
+    "text": [
+      "I keep thinking it should have been me.",
+      "We buried what we could.",
+      "Their stuff is still in my pack.  I can't throw it out.",
+      "Nobody said anything for hours."
+    ]
+  }
+]

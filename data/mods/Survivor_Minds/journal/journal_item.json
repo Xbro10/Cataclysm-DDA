@@ -6,7 +6,8 @@
     "subtypes": [ "TOOL" ],
     "name": { "str": "survivor's journal" },
     "description": "A battered notebook with a cracked spine.  Someone has been writing in it every morning: the date, how they slept, whether they ate.  Activate it to read.",
-    "looks_like": "leather_journal",
+    "//": "UltiCa has no sprite for leather_journal (or the book it falls back to), so point straight at a softcover book that UltiCa does draw.",
+    "looks_like": "book_fict_soft_tpl",
     "use_action": {
       "type": "effect_on_conditions",
       "menu_text": "Read",
