@@ -1,0 +1,25 @@
+[
+  {
+    "id": "sm_journal",
+    "copy-from": "leather_journal",
+    "type": "ITEM",
+    "subtypes": [ "TOOL" ],
+    "name": { "str": "survivor's journal" },
+    "description": "A battered notebook with a cracked spine.  Someone has been writing in it every morning: the date, how they slept, whether they ate.  Activate it to read.",
+    "looks_like": "leather_journal",
+    "use_action": {
+      "type": "effect_on_conditions",
+      "menu_text": "Read",
+      "description": "Read the journal",
+      "effect_on_conditions": [ "EOC_SM_READ_JOURNAL" ]
+    }
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_READ_JOURNAL",
+    "//": "Item use: u is the reader, npc is the journal item. The text is a copy the owner refreshes every morning.",
+    "condition": { "math": [ "has_var(n_sm_journal_text)" ] },
+    "effect": [ { "u_message": "<npc_val:sm_journal_owner>'s journal\n\n<npc_val:sm_journal_text>", "popup": true } ],
+    "false_effect": [ { "u_message": "The pages are blank.", "popup": true } ]
+  }
+]

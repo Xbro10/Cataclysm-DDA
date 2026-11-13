@@ -1,0 +1,14 @@
+[
+  { "type": "snippet", "category": "<sm_j_sleep_good>", "text": [ "Slept well.", "Got a full night, for once.", "Slept like the dead.  Bad choice of words." ] },
+  { "type": "snippet", "category": "<sm_j_sleep_poor>", "text": [ "Slept badly.", "Kept waking up.", "Couldn't get comfortable." ] },
+  { "type": "snippet", "category": "<sm_j_sleep_bad>", "text": [ "Barely slept.", "No sleep worth the name.", "Eyes won't stay open." ] },
+  { "type": "snippet", "category": "<sm_j_food_good>", "text": [ "Ate enough.", "Belly's full.", "Food's fine for now." ] },
+  { "type": "snippet", "category": "<sm_j_food_low>", "text": [ "Running low on food.", "Hungry.", "Could use a real meal." ] },
+  { "type": "snippet", "category": "<sm_j_food_bad>", "text": [ "Starving.", "Haven't eaten properly in days.", "All I can think about is food." ] },
+  { "type": "snippet", "category": "<sm_j_water_good>", "text": [ "Water's fine.", "Plenty to drink.", "Not thirsty." ] },
+  { "type": "snippet", "category": "<sm_j_water_low>", "text": [ "Thirsty.", "Need to find water soon.", "Rationing what I drink." ] },
+  { "type": "snippet", "category": "<sm_j_water_bad>", "text": [ "Parched.", "Mouth like sandpaper.", "If I don't find water today, that's it." ] },
+  { "type": "snippet", "category": "<sm_j_mood_good>", "text": [ "Feeling good about things.", "Good day ahead, I think.", "Almost hopeful." ] },
+  { "type": "snippet", "category": "<sm_j_mood_ok>", "text": [ "Holding together.", "Getting by.", "Another day.  Fine." ] },
+  { "type": "snippet", "category": "<sm_j_mood_bad>", "text": [ "Can't keep going like this.", "Everything's falling apart.", "Don't know why I bother writing this." ] }
+]

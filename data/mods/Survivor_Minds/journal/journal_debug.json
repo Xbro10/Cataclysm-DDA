@@ -1,0 +1,17 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_JOURNAL_NOW",
+    "//": "Developer shortcut: Debug menu > Activate EOC. Every follower in the loaded area writes a journal line right now, ignoring the time of day (repeat it to add more lines). Remove before release.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_SM_DEBUG_JOURNAL_FOLLOWER" ], "local": true },
+      { "u_message": "Survivor Minds debug: followers wrote a journal line." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_JOURNAL_FOLLOWER",
+    "condition": "u_following",
+    "effect": [ { "run_eocs": "EOC_SM_JOURNAL_WRITE_ENTRY" } ]
+  }
+]

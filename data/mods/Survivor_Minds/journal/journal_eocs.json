@@ -1,0 +1,127 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_JOURNAL_MORNING",
+    "//": [
+      "How the timer works: this is ONE global recurring EOC. The game wakes it every in-game hour ('recurrence').",
+      "Because global + run_for_npcs are true, each wake-up runs it once for the avatar and once for every NPC in the loaded area (u = that character).",
+      "The condition skips the avatar, skips hours outside 06:00-09:59, and skips anyone whose u_sm_journal_day is already today, so each NPC writes exactly once per morning even across save/load or missed hours.",
+      "NPCs outside the loaded area are not run; the next entry they write notes the missing days."
+    ],
+    "global": true,
+    "run_for_npcs": true,
+    "recurrence": "1 hours",
+    "condition": {
+      "and": [
+        "u_is_npc",
+        { "math": [ "time_since('midnight', 'unit':'hours') >= 6" ] },
+        { "math": [ "time_since('midnight', 'unit':'hours') < 10" ] },
+        { "math": [ "u_sm_journal_day != floor(time_since('cataclysm', 'unit':'days')) + 1" ] }
+      ]
+    },
+    "effect": [ { "run_eocs": "EOC_SM_JOURNAL_WRITE_ENTRY" } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_JOURNAL_WRITE_ENTRY",
+    "//": "Writes today's line for u (an NPC). Called by the morning timer and by the debug shortcut.",
+    "effect": [
+      { "math": [ "u_sm_today = floor(time_since('cataclysm', 'unit':'days')) + 1" ] },
+      {
+        "if": { "and": [ { "math": [ "u_sm_journal_day > 0" ] }, { "math": [ "u_sm_today - u_sm_journal_day > 1" ] } ] },
+        "then": [
+          { "math": [ "u_sm_gap_from = u_sm_journal_day + 1" ] },
+          { "math": [ "u_sm_gap_to = u_sm_today - 1" ] },
+          {
+            "if": { "math": [ "u_sm_gap_from == u_sm_gap_to" ] },
+            "then": { "set_string_var": "(Day <u_val:sm_gap_from>: the page is blank.)\n", "target_var": { "u_val": "sm_gap" }, "parse_tags": true },
+            "else": {
+              "set_string_var": "(Days <u_val:sm_gap_from>-<u_val:sm_gap_to>: the pages are blank.)\n",
+              "target_var": { "u_val": "sm_gap" },
+              "parse_tags": true
+            }
+          }
+        ],
+        "else": { "set_string_var": "", "target_var": { "u_val": "sm_gap" } }
+      },
+      {
+        "if": { "math": [ "u_val('sleepiness') < 100" ] },
+        "then": { "set_string_var": "<sm_j_sleep_good>", "target_var": { "u_val": "sm_p_sleep" }, "parse_tags": true },
+        "else": {
+          "if": { "math": [ "u_val('sleepiness') < 300" ] },
+          "then": { "set_string_var": "<sm_j_sleep_poor>", "target_var": { "u_val": "sm_p_sleep" }, "parse_tags": true },
+          "else": { "set_string_var": "<sm_j_sleep_bad>", "target_var": { "u_val": "sm_p_sleep" }, "parse_tags": true }
+        }
+      },
+      {
+        "if": { "math": [ "u_hunger() < 40" ] },
+        "then": { "set_string_var": "<sm_j_food_good>", "target_var": { "u_val": "sm_p_food" }, "parse_tags": true },
+        "else": {
+          "if": { "math": [ "u_hunger() < 150" ] },
+          "then": { "set_string_var": "<sm_j_food_low>", "target_var": { "u_val": "sm_p_food" }, "parse_tags": true },
+          "else": { "set_string_var": "<sm_j_food_bad>", "target_var": { "u_val": "sm_p_food" }, "parse_tags": true }
+        }
+      },
+      {
+        "if": { "math": [ "u_val('thirst') < 40" ] },
+        "then": { "set_string_var": "<sm_j_water_good>", "target_var": { "u_val": "sm_p_water" }, "parse_tags": true },
+        "else": {
+          "if": { "math": [ "u_val('thirst') < 240" ] },
+          "then": { "set_string_var": "<sm_j_water_low>", "target_var": { "u_val": "sm_p_water" }, "parse_tags": true },
+          "else": { "set_string_var": "<sm_j_water_bad>", "target_var": { "u_val": "sm_p_water" }, "parse_tags": true }
+        }
+      },
+      {
+        "if": { "math": [ "u_morale() > 20" ] },
+        "then": { "set_string_var": "<sm_j_mood_good>", "target_var": { "u_val": "sm_p_mood" }, "parse_tags": true },
+        "else": {
+          "if": { "math": [ "u_morale() > -10" ] },
+          "then": { "set_string_var": "<sm_j_mood_ok>", "target_var": { "u_val": "sm_p_mood" }, "parse_tags": true },
+          "else": { "set_string_var": "<sm_j_mood_bad>", "target_var": { "u_val": "sm_p_mood" }, "parse_tags": true }
+        }
+      },
+      {
+        "set_string_var": "<u_val:sm_gap>Day <u_val:sm_today>: <u_val:sm_p_sleep> <u_val:sm_p_food> <u_val:sm_p_water> <u_val:sm_p_mood>",
+        "target_var": { "u_val": "sm_entry" },
+        "parse_tags": true
+      },
+      {
+        "if": { "math": [ "has_var(u_sm_journal_text)" ] },
+        "then": { "set_string_var": "<u_val:sm_journal_text>\n<u_val:sm_entry>", "target_var": { "u_val": "sm_journal_text" }, "parse_tags": true },
+        "else": { "set_string_var": "<u_val:sm_entry>", "target_var": { "u_val": "sm_journal_text" }, "parse_tags": true }
+      },
+      { "math": [ "u_sm_journal_day = u_sm_today" ] },
+      { "run_eocs": "EOC_SM_JOURNAL_SYNC_ITEM" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_JOURNAL_SYNC_ITEM",
+    "//": "Copy the NPC's journal into the journal item they carry. If they have none (new NPC, or they lost or sold it), give them a fresh one first.",
+    "effect": [
+      {
+        "u_run_inv_eocs": "all",
+        "search_data": [ { "id": "sm_journal" } ],
+        "true_eocs": [ "EOC_SM_JOURNAL_WRITE_ITEM" ],
+        "false_eocs": [
+          {
+            "id": "EOC_SM_JOURNAL_NEW_ITEM",
+            "effect": [
+              { "u_spawn_item": "sm_journal" },
+              { "u_run_inv_eocs": "all", "search_data": [ { "id": "sm_journal" } ], "true_eocs": [ "EOC_SM_JOURNAL_WRITE_ITEM" ] }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_JOURNAL_WRITE_ITEM",
+    "//": "Run on the journal item: u is the owner NPC, npc is the item.",
+    "effect": [
+      { "set_string_var": "<u_name>", "target_var": { "npc_val": "sm_journal_owner" }, "parse_tags": true },
+      { "set_string_var": "<u_val:sm_journal_text>", "target_var": { "npc_val": "sm_journal_text" }, "parse_tags": true }
+    ]
+  }
+]

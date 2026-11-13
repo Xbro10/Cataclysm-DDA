@@ -1,0 +1,21 @@
+[
+  {
+    "type": "talk_topic",
+    "id": "TALK_FRIEND",
+    "//": "Adds one option to the vanilla follower menu (topics with the same id merge).",
+    "responses": [ { "text": "Can I read your journal?", "topic": "TALK_SM_JOURNAL" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_JOURNAL",
+    "dynamic_line": {
+      "math": [ "has_var(n_sm_journal_text)" ],
+      "yes": "Fine.  Don't laugh.\n\n<npc_val:sm_journal_text>",
+      "no": "Nothing in it yet.  I write in the mornings; ask me tomorrow."
+    },
+    "responses": [
+      { "text": "Thanks.  Let's talk about something else.", "topic": "TALK_FRIEND" },
+      { "text": "Thanks.", "topic": "TALK_DONE" }
+    ]
+  }
+]

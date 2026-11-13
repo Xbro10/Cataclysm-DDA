@@ -74,6 +74,8 @@ Run from the repo root. Exit code 0 means it loaded clean:
 ```
 
 This loads the base game plus the listed mods and reports JSON errors, then exits.
+**The exit code can be 0 even when loading failed** ("Error loading data: …" is printed to stdout),
+so always read the command's output as well as the exit code.
 The details (including mapgen overlap errors) are in `config/debug.log`; grep it for `ERROR` after a run.
 `WARN_ON_MODIFIED` is set to false in this build's `config/options.json`, so editing mod files
 doesn't trigger "stale game data" errors.
