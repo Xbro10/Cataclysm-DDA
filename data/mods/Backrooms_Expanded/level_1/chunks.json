@@ -65,6 +65,7 @@
       "mapgensize": [ 6, 6 ],
       "rows": [ "      ", "      ", "  !!  ", "  !!  ", "      ", "      " ],
       "palettes": [ "br1_garage_palette" ],
+      "place_monster": [ { "monster": "mon_br_deathmoth", "x": [ 1, 4 ], "y": [ 1, 4 ], "chance": 15, "pack_size": [ 1, 2 ] } ],
       "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
     }
   },

@@ -31,14 +31,18 @@
   {
     "type": "monstergroup",
     "id": "GROUP_BR1_GARAGE",
-    "//": "Quieter than Level 0: mostly vermin, a few zombies. Cockroaches follow vanilla timing and only appear after day 45.",
+    "//": "Quieter than Level 0: mostly vermin, some zombies, and Level 1's own entities (entities.json). Nothing here grabs; entity packs are 3 at most. Cockroaches follow vanilla timing (day 45+); Wretches appear after day 30.",
     "monsters": [
-      { "monster": "mon_sewer_rat", "weight": 40, "pack_size": [ 2, 6 ] },
-      { "group": "GROUP_ZOMBIE", "weight": 25, "pack_size": [ 1, 2 ] },
-      { "monster": "mon_zombie_crawler", "weight": 15 },
-      { "monster": "mon_large_cockroach", "weight": 15, "starts": "45 days", "pack_size": [ 1, 3 ] },
-      { "monster": "mon_zombie_technician", "weight": 5 },
-      { "monster": "mon_blob_sewer", "weight": 5 }
+      { "monster": "mon_sewer_rat", "weight": 35, "pack_size": [ 2, 5 ] },
+      { "group": "GROUP_ZOMBIE", "weight": 18, "pack_size": [ 1, 2 ] },
+      { "monster": "mon_zombie_crawler", "weight": 10 },
+      { "monster": "mon_large_cockroach", "weight": 10, "starts": "45 days", "pack_size": [ 1, 3 ] },
+      { "monster": "mon_br_hound", "weight": 10, "pack_size": [ 2, 3 ] },
+      { "monster": "mon_br_smiler", "weight": 8 },
+      { "monster": "mon_br_deathmoth", "weight": 6, "pack_size": [ 2, 3 ] },
+      { "monster": "mon_br_wretch", "weight": 5, "starts": "30 days" },
+      { "monster": "mon_zombie_technician", "weight": 3 },
+      { "monster": "mon_blob_sewer", "weight": 3 }
     ]
   }
 ]
