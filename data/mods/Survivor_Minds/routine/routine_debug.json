@@ -1,0 +1,26 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_ROUTINE",
+    "//": "Developer shortcut: Debug menu > Activate EOC. Every follower in the loaded area says one idle line and does the morning food check right now, ignoring the clock and the once-a-day limit. Bedtime is tested by setting a follower's sleepiness to 100-190 (Debug menu) and waiting for 10 PM. Remove before release.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_SM_DEBUG_ROUTINE_FOLLOWER" ], "local": true },
+      { "u_message": "Survivor Minds debug: followers ran their routine lines." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_ROUTINE_FOLLOWER",
+    "condition": "u_following",
+    "effect": [
+      { "run_eocs": "EOC_SM_IDLE_PICK_LINE" },
+      { "math": [ "u_sm_food_check_day = 0" ] },
+      {
+        "u_run_inv_eocs": "random",
+        "search_data": [ { "category": "food" } ],
+        "true_eocs": [ "EOC_SM_MORNING_HAS_FOOD" ],
+        "false_eocs": [ "EOC_SM_MORNING_NO_FOOD" ]
+      }
+    ]
+  }
+]

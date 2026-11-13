@@ -24,7 +24,7 @@
                 "if": { "u_is_on_furniture": "f_sm_mark_looted" },
                 "then": [
                   { "math": [ "u_sm_mark_result = 1" ] },
-                  { "u_message": "<u_name> chalks a big X on the floor: LOOTED.", "type": "info" }
+                  { "message": "<u_name> chalks a big X on the floor: LOOTED.", "type": "info" }
                 ],
                 "else": { "math": [ "u_sm_mark_result = 0" ] }
               }

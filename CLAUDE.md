@@ -91,4 +91,8 @@ doesn't trigger "stale game data" errors.
 - Furniture `looks_like` should point at furniture, terrain at terrain. Check UltiCa coverage with
   `grep '"<id>"' "D:\Games\CDDA MY FORK\Game\gfx\UltimateCataclysm\tile_config.json"`.
 - UltiCa (`gfx/UltimateCataclysm`) is **not** in this source checkout; it only ships with release builds.
+- In an EOC run "as" an NPC (`run_for_npcs`, `u_run_npc_eocs`, event EOCs for NPCs), `u_message` is silently dropped.
+  Use the effect `"message"` instead (it always shows to the player; `<u_name>` still means the NPC).
+  A `"global": true` field on `u_message` does nothing.
+- Math has no `&&` / `||`: use `{ "and": [ … ] }` / `{ "or": [ … ] }` conditions.
 - A `mod_tileset`'s `"file"` is relative to the mod's root folder, not the JSON's folder (`gfx/br1_overmap.png`).

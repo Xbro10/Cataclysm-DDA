@@ -1,0 +1,57 @@
+[
+  {
+    "type": "snippet",
+    "category": "<sm_r_bedtime>",
+    "text": [ "Getting late.  I'm turning in.", "Can barely keep my eyes open.  Wake me if anything comes.", "That's me done for the day.", "Bed.  Or floor.  Whatever's flat." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_r_breakfast_have>",
+    "text": [ "Still got some food in the pack.  Good.", "We've got enough to eat today, at least.", "I'll save what I've got until I really need it." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_r_breakfast_none>",
+    "text": [ "Nothing to eat this morning.", "Pack's empty.  We need to find food today.", "No breakfast again." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_r_idle_good>",
+    "text": [
+      "You know, I think we might actually make it.",
+      "Not a bad day, all things considered.",
+      "Glad I ran into you.",
+      "Feels good to have someone watching my back."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_r_idle_ok>",
+    "text": [ "Quiet today.  I'll take it.", "Keep your eyes open.", "One foot in front of the other.", "Could be worse.  Has been worse." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_r_idle_bad>",
+    "text": [
+      "How much longer can we keep this up?",
+      "I keep thinking about how it was before.",
+      "I don't know if I can do this much longer.",
+      "Everything hurts."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_r_idle_night>",
+    "text": [ "Too dark.  I hate the dark now.", "Did you hear that?  …Never mind.", "Stars are still the same, at least." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_r_idle_backrooms>",
+    "text": [
+      "Do you hear the lights?  They never stop.",
+      "I swear we passed this spot already.",
+      "Every room looks the same.  Every single one.",
+      "Don't touch the walls.  Some of them move."
+    ]
+  }
+]

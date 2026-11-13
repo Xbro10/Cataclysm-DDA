@@ -1,0 +1,157 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_BEDTIME",
+    "//": [
+      "Bedtime nudge (followers only). The C++ brain sends an NPC to bed at sleepiness 191 (Tired) whatever the hour.",
+      "Between 10 PM and 4 AM, a follower who is already somewhat sleepy (100+) but not yet Tired is nudged up to Tired, so the brain puts them to bed at a sensible hour.",
+      "Respects the follower rule 'allow sleep'. Says one line per night."
+    ],
+    "global": true,
+    "run_for_npcs": true,
+    "recurrence": "30 minutes",
+    "condition": {
+      "and": [
+        "u_is_npc",
+        "u_following",
+        { "u_rule": "allow_sleep" },
+        { "not": { "u_has_effect": "sleep" } },
+        {
+          "or": [
+            { "math": [ "time_since('midnight', 'unit':'hours') >= 22" ] },
+            { "math": [ "time_since('midnight', 'unit':'hours') < 4" ] }
+          ]
+        },
+        { "math": [ "u_val('sleepiness') >= 100" ] },
+        { "math": [ "u_val('sleepiness') < 191" ] }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_val('sleepiness') = 191" ] },
+      {
+        "//": "Night number: shifted 4 hours so 10 PM-4 AM counts as one night across midnight.",
+        "math": [ "u_sm_night = floor((time_since('cataclysm', 'unit':'hours') + 4) / 24)" ]
+      },
+      {
+        "if": { "math": [ "u_sm_bedtime_said != u_sm_night + 1" ] },
+        "then": [
+          { "math": [ "u_sm_bedtime_said = u_sm_night + 1" ] },
+          { "message": "<u_name>: \"<sm_r_bedtime>\"", "type": "neutral" }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_MORNING_FOOD_CHECK",
+    "//": [
+      "Morning food check-in (followers only), once a day between 6 AM and 10 AM.",
+      "Scripts cannot make an NPC eat: the C++ brain only eats when stored calories run short, and no EOC effect consumes food for an NPC. So this only reports, and remembers, whether they have food. Real breakfast is Phase 3."
+    ],
+    "global": true,
+    "run_for_npcs": true,
+    "recurrence": "1 hours",
+    "condition": {
+      "and": [
+        "u_is_npc",
+        "u_following",
+        { "not": { "u_has_effect": "sleep" } },
+        { "math": [ "time_since('midnight', 'unit':'hours') >= 6" ] },
+        { "math": [ "time_since('midnight', 'unit':'hours') < 10" ] },
+        { "math": [ "u_sm_food_check_day != floor(time_since('cataclysm', 'unit':'days')) + 1" ] }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_sm_food_check_day = floor(time_since('cataclysm', 'unit':'days')) + 1" ] },
+      {
+        "u_run_inv_eocs": "random",
+        "search_data": [ { "category": "food" } ],
+        "true_eocs": [
+          {
+            "id": "EOC_SM_MORNING_HAS_FOOD",
+            "effect": [
+              { "math": [ "u_sm_has_food = 1" ] },
+              { "message": "<u_name>: \"<sm_r_breakfast_have>\"", "type": "neutral" }
+            ]
+          }
+        ],
+        "false_eocs": [
+          {
+            "id": "EOC_SM_MORNING_NO_FOOD",
+            "effect": [
+              { "math": [ "u_sm_has_food = 0" ] },
+              { "message": "<u_name>: \"<sm_r_breakfast_none>\"", "type": "neutral" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_IDLE_LINE",
+    "//": [
+      "Idle mood line (followers only), checked every 30-90 minutes; a 1 in 3 chance each time, so roughly one line every hour or two per follower.",
+      "Only when awake and with no monsters within 15 tiles. Picks a line by mood; at night and in the Backrooms (any level) it sometimes uses a special line instead. Backrooms lines never show if those mods aren't loaded."
+    ],
+    "global": true,
+    "run_for_npcs": true,
+    "recurrence": [ "30 minutes", "90 minutes" ],
+    "condition": {
+      "and": [
+        "u_is_npc",
+        "u_following",
+        { "not": { "u_has_effect": "sleep" } },
+        { "not": { "u_has_effect": "lying_down" } },
+        { "math": [ "u_monsters_nearby('radius': 15) == 0" ] },
+        { "x_in_y_chance": { "x": 1, "y": 3 } }
+      ]
+    },
+    "effect": [ { "run_eocs": "EOC_SM_IDLE_PICK_LINE" } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_IDLE_PICK_LINE",
+    "//": "u is the follower. In the Backrooms (Level 0 when that mod is loaded, or Level 1) half the lines are Backrooms lines; at night a third are night lines; otherwise the line follows their mood.",
+    "effect": [
+      {
+        "if": {
+          "and": [
+            {
+              "or": [
+                { "current_dimension": "backrooms_level_1" },
+                { "and": [ { "mod_is_loaded": "backrooms" }, { "current_dimension": "default" } ] }
+              ]
+            },
+            { "x_in_y_chance": { "x": 1, "y": 2 } }
+          ]
+        },
+        "then": { "set_string_var": "<sm_r_idle_backrooms>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+        "else": {
+          "if": {
+            "and": [
+              {
+                "or": [
+                  { "math": [ "time_since('midnight', 'unit':'hours') >= 21" ] },
+                  { "math": [ "time_since('midnight', 'unit':'hours') < 5" ] }
+                ]
+              },
+              { "x_in_y_chance": { "x": 1, "y": 3 } }
+            ]
+          },
+          "then": { "set_string_var": "<sm_r_idle_night>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+          "else": {
+            "if": { "math": [ "u_morale() > 20" ] },
+            "then": { "set_string_var": "<sm_r_idle_good>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+            "else": {
+              "if": { "math": [ "u_morale() > -10" ] },
+              "then": { "set_string_var": "<sm_r_idle_ok>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+              "else": { "set_string_var": "<sm_r_idle_bad>", "target_var": { "u_val": "sm_line" }, "parse_tags": true }
+            }
+          }
+        }
+      },
+      { "message": "<u_name>: \"<u_val:sm_line>\"", "type": "neutral" }
+    ]
+  }
+]

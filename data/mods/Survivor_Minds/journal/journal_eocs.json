@@ -5,7 +5,7 @@
     "//": [
       "How the timer works: this is ONE global recurring EOC. The game wakes it every in-game hour ('recurrence').",
       "Because global + run_for_npcs are true, each wake-up runs it once for the avatar and once for every NPC in the loaded area (u = that character).",
-      "The condition skips the avatar, skips hours outside 06:00-09:59, and skips anyone whose u_sm_journal_day is already today, so each NPC writes exactly once per morning even across save/load or missed hours.",
+      "The condition skips the avatar, skips hours outside 6 AM-10 AM, and skips anyone whose u_sm_journal_day is already today, so each NPC writes exactly once per morning even across save/load or missed hours.",
       "NPCs outside the loaded area are not run; the next entry they write notes the missing days."
     ],
     "global": true,
