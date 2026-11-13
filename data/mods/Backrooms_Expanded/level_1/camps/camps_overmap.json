@@ -5,6 +5,7 @@
     "//": "The hub camp. Never placed by overmap generation: EOC_BR1_PLACE_BREAKROOM turns one garage square near your first arrival into it, once per world.",
     "name": "the Breakroom",
     "sym": "B",
+    "looks_like": "shelter",
     "color": "light_green",
     "see_cost": "full_high",
     "flags": [ "NO_ROTATE", "SOURCE_PEOPLE", "SOURCE_FOOD" ]
@@ -14,6 +15,7 @@
     "id": "br1_squatter_camp",
     "name": "parking deck",
     "sym": ".",
+    "looks_like": "s_garage",
     "color": "dark_gray",
     "see_cost": "full_high",
     "flags": [ "NO_ROTATE", "SOURCE_PEOPLE" ]

@@ -7,6 +7,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Added
 - Three scenarios that start on Level 1. **Wrong Exit**: you start in an arrival alcove with your out-of-gas car in the lane outside, plus a flashlight and some road-trip food. **Breakroom Hire** (1 point): you start inside the Breakroom next to the Foreman, the Breakroom likes and trusts you, and the nearest squatter camp is marked on your map. **One of the Lost** (-1 point): you start inside a squatter camp with its survivors, the Lost like you, and the Breakroom is cooler towards you. Upstream's two Backrooms scenarios are still available.
+- Almond water on Level 1: rare in attendant booths, camp stores and about 1 in 10 drinks machines, and Dot gives newcomers their first bottle. Drinking it now also calms you (a gentle mood boost for about 4 hours). This extends the Backrooms mod's own almond water rather than replacing it.
 - Water on Level 1: drip pools under leaking pipes and inside every squatter camp (never run dry; boil before drinking), and two rigged taps of clean water in the Breakroom. NPCs within 6 tiles drink from them on their own.
 - Vending alcoves: one or two stocked vending machines (snacks and drinks) under a working light. Pay with a cash card or break in.
 - The Breakroom: a walled survivor hub on Level 1 with Dot Kowalczyk ("the Foreman"), who explains Level 1, and Marcus "Mile Marker" Reyes, who keeps the maps, can mark the nearest camp for you, and has rumours of what lies beyond. It forms once per world, 4 to 10 squares from your first arrival, and is marked on your map.
@@ -21,6 +22,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- UltiCa fallback sprites for almond water and its bottle, and overmap sprites for Level 1 squares (garage), the Breakroom (shelter) and the Level 0 rippling-wall room (an ordinary Level 0 chamber).
 - You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
 - The debug shortcuts now take the same route as the real rippling walls.
 

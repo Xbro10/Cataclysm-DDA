@@ -25,7 +25,8 @@
       { "item": "aspirin", "prob": 6 },
       { "item": "duct_tape", "prob": 6 },
       { "item": "light_battery_cell", "prob": 6 },
-      { "item": "lighter", "prob": 4 }
+      { "item": "lighter", "prob": 4 },
+      { "group": "almond_water_sealed", "prob": 3 }
     ]
   },
   {

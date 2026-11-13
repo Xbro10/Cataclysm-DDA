@@ -1,0 +1,39 @@
+[
+  {
+    "type": "ITEM",
+    "id": "almond_water",
+    "copy-from": "almond_water",
+    "//": "Override of the upstream Backrooms item (data/mods/Backrooms/items.json): adds the calming effect and an UltiCa fallback sprite. Nutrition is unchanged.",
+    "subtypes": [ "COMESTIBLE" ],
+    "looks_like": "water_clean",
+    "description": "A bottle of what looks like slightly-cloudy water.  It smells faintly of almonds and tastes sweet.  People who have been in the Backrooms a long time swear it settles the nerves better than anything else.",
+    "consumption_effect_on_conditions": [ "EOC_BR_ALMOND_WATER_CALM" ]
+  },
+  {
+    "type": "ITEM",
+    "id": "bottle_almond_water",
+    "copy-from": "bottle_almond_water",
+    "//": "Override of the upstream Backrooms container: UltiCa fallback sprite only.",
+    "looks_like": "bottle_glass"
+  },
+  {
+    "type": "morale_type",
+    "id": "morale_br_almond_calm",
+    "text": "Calm (almond water)"
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_ALMOND_WATER_CALM",
+    "//": "u drank almond water. A lasting, gentle mood lift. Phase 4.5 (sanity) will also restore sanity here.",
+    "effect": [
+      {
+        "u_add_morale": "morale_br_almond_calm",
+        "bonus": 15,
+        "max_bonus": 15,
+        "duration": "4 hours",
+        "decay_start": "2 hours"
+      },
+      { "u_message": "A sweet, nutty taste.  For a moment the hum of the lights fades and your shoulders come down.", "type": "good" }
+    ]
+  }
+]

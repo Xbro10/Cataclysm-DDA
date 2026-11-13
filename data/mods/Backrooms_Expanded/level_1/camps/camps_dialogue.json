@@ -14,8 +14,24 @@
       { "text": "Where do I find food and water?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_FOOD" },
       { "text": "What's with the stairwells?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_STAIRS" },
       { "text": "Who else is down here?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_PEOPLE" },
+      {
+        "text": "Anything that'd help a newcomer?",
+        "condition": { "not": { "math": [ "u_br1_got_almond_gift == 1" ] } },
+        "effect": [
+          { "math": [ "u_br1_met_foreman = 1" ] },
+          { "math": [ "u_br1_got_almond_gift = 1" ] },
+          { "u_spawn_item": "almond_water", "container": "bottle_almond_water" }
+        ],
+        "topic": "TALK_BR1_FOREMAN_GIFT"
+      },
       { "text": "I'll be going.", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_DONE" }
     ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_GIFT",
+    "dynamic_line": "Here.  Almond water.  Don't ask me why it's down here or who bottles it; nobody knows.  It feeds you, it waters you, and it quiets your head when this place gets too loud.  First one's free.  Don't waste it on a scratch.",
+    "responses": [ { "text": "Something else.", "topic": "TALK_BR1_FOREMAN" }, { "text": "Thanks.  I'll be going.", "topic": "TALK_DONE" } ]
   },
   {
     "id": [

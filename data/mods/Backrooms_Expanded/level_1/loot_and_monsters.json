@@ -24,7 +24,8 @@
       { "group": "vending_food", "prob": 40 },
       { "group": "vending_drink", "prob": 30 },
       { "group": "batteries", "prob": 15 },
-      { "group": "tools_lighting", "prob": 15 }
+      { "group": "tools_lighting", "prob": 15 },
+      { "group": "almond_water_sealed", "prob": 5 }
     ]
   },
   {

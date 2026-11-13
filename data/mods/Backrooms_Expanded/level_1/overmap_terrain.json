@@ -9,6 +9,7 @@
     "id": "br1_garage",
     "name": "parking deck",
     "sym": ".",
+    "looks_like": "s_garage",
     "color": "dark_gray",
     "see_cost": "full_high",
     "spawns": { "group": "GROUP_BR1_GARAGE", "population": [ 1, 6 ], "chance": 25 },

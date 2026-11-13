@@ -79,7 +79,10 @@
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "v": "t_thconc_floor", "u": "t_thconc_floor" },
       "furniture": { "v": "f_vending_c", "u": "f_vending_c" },
-      "items": { "v": { "item": "vending_food", "chance": 100 }, "u": { "item": "default_vending_machine", "chance": 100 } },
+      "items": {
+        "v": { "item": "vending_food", "chance": 100 },
+        "u": [ { "item": "default_vending_machine", "chance": 100 }, { "item": "almond_water_sealed", "chance": 10 } ]
+      },
       "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
     }
   },
@@ -94,7 +97,7 @@
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "u": "t_thconc_floor" },
       "furniture": { "u": "f_vending_c" },
-      "items": { "u": { "item": "default_vending_machine", "chance": 100 } },
+      "items": { "u": [ { "item": "default_vending_machine", "chance": 100 }, { "item": "almond_water_sealed", "chance": 10 } ] },
       "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
     }
   },

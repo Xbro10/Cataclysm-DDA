@@ -239,3 +239,57 @@ Next steps in the playbook:
 | Map extras (Red Rooms, autodoc rooms, nests …) | `map_extras.json`, `rooms/rooms_backrooms_map_extra_overrides.json`, `rooms/rooms_special.json` |
 | Red Room teleport network | `teleport.json` |
 | Scenarios and start location | `scenarios.json` |
+
+## 5. Sprites (UltiCa): fallbacks now, custom art later
+
+**Rule:** every new terrain, furniture, item, monster and map-square ID gets a `looks_like`
+pointing at something UltiCa actually draws. Check with:
+
+```
+grep -c '"<id>"' "D:\Games\CDDA MY FORK\Game\gfx\UltimateCataclysm\tile_config.json"
+```
+
+A `looks_like` chain is followed until something has a sprite, so `t_br0_landing` →
+`t_carpet_backrooms_light` → `t_carpet_backrooms` → `t_carpet_yellow` works. A chain that
+never reaches a sprite shows UltiCa's placeholder (this is what the survivor's journal and
+upstream's almond water did before the 1.6 audit). Map squares use the overmap tileset
+(Larwick Overmap), so their `looks_like` must name an overmap terrain that tileset draws
+(`s_garage`, `shelter`, `backfloorchamber`).
+
+**Custom sprites later: a mod tileset, not an UltiCa edit.** A mod can ship its own sprite
+sheet that only switches on while UltiCa is the active tileset. Nothing in UltiCa's folder
+changes, so UltiCa updates never overwrite our art:
+
+```
+data/mods/Backrooms_Expanded/
+  gfx/
+    br_tiles.json        <- the mod_tileset object below
+    br_tiles.png         <- a sheet of 32x32 sprites, left to right, top to bottom
+```
+
+```json
+[
+  {
+    "type": "mod_tileset",
+    "compatibility": [ "UltimateCataclysm" ],
+    "tiles-new": [
+      {
+        "file": "br_tiles.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "tiles": [
+          { "id": "t_br1_drip_pool", "fg": 0 },
+          { "id": "t_br1_tap", "fg": 1 },
+          { "id": "almond_water", "fg": 2 }
+        ]
+      }
+    ]
+  }
+]
+```
+
+- `compatibility` is the tileset's internal name (the `NAME` line in UltiCa's `tileset.txt`).
+- `fg` is the sprite's index in the sheet, counting from 0.
+- `sprite_width` / `sprite_height` must match the art. UltiCa's terrain and most items are
+  32x32 (`normal.png`), small items are 20x20 (`small.png`).
+- A custom sprite wins over `looks_like`, so keep the fallbacks; they still cover other tilesets.
