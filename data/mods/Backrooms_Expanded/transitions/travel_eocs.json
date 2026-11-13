@@ -28,7 +28,7 @@
       { "u_teleport": { "global_val": "br_ground_point" }, "force_safe": true },
       { "u_location_variable": { "global_val": "br1_arrival_point" } },
       {
-        "//": "Find the nearest rippling concrete (old or new alcoves alike) and land on the tile just inside it (south of it). Only build a new alcove if none is within 30 tiles.",
+        "//": "Find the nearest sealed concrete (old or new alcoves alike) and land on the tile just inside it (south of it). Only build a new alcove if none is within 30 tiles.",
         "u_location_variable": { "global_val": "br1_arrival_point" },
         "furniture": "f_br1_thin_wall",
         "target_max_radius": 30,
@@ -90,10 +90,8 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR_NOCLIP_TO_L0",
-    "//": "Examining rippling concrete on Level 1.",
-    "condition": { "u_query": "The concrete sways like a hanging sheet.  Step through it?", "default": false },
-    "effect": [ { "run_eocs": "EOC_BR_GO_L0" } ],
-    "false_effect": [ { "u_message": "You step back.  The concrete goes still." } ]
+    "//": "Examining the sealed concrete on Level 1. The wall you fell through is one way: the only road back to Level 0 is a rare elevator ride (EOC_BR1_ELEVATOR_WAY_OUT). EOC_BR_GO_L0 is kept for that.",
+    "effect": [ { "u_message": "You push against the new concrete, then hit it.  It's solid.  Whatever let you through has closed behind you.", "type": "bad" } ]
   },
   {
     "type": "effect_on_condition",

@@ -53,7 +53,7 @@
   {
     "type": "talk_topic",
     "id": "TALK_BR1_FOREMAN_BACK",
-    "dynamic_line": "Find a wall that moves.  There's rippling concrete in some of the little lit alcoves, it sways like a sheet on a line.  Step through and you'll fall out onto that yellow carpet again.  You won't come out where you went in, though.  You come out under wherever you're standing.  Bring your people close when you do it; whoever's near you goes with you."
+    "dynamic_line": "You don't, mostly.  The wall you fell through goes solid behind you.  Everyone checks.  Everyone hits it.  What's left is the lifts.  There are lobbies out there with elevators that still run, and once in a long while, people say, the doors open on yellow carpet.  Ride enough and maybe they open for you.  Keep your people close when you ride; whoever's near you goes with you."
   },
   {
     "type": "talk_topic",
@@ -114,7 +114,7 @@
   {
     "type": "talk_topic",
     "id": "TALK_BR1_CARTOGRAPHER_JOB",
-    "dynamic_line": "I walk, I count pillars, I write it down.  Every six bays there's a pillar line, every twenty-four steps the pattern repeats, and every so often it doesn't, and that's where the interesting things are.  The alcoves with the moving walls, the booths, the camps.  Places hold still.  People don't.  So I keep the maps and they keep me fed."
+    "dynamic_line": "I walk, I count pillars, I write it down.  Every six bays there's a pillar line, every twenty-four steps the pattern repeats, and every so often it doesn't, and that's where the interesting things are.  The alcoves where people land, the booths, the camps, the lobbies.  Places hold still.  People don't.  So I keep the maps and they keep me fed."
   },
   {
     "type": "talk_topic",
