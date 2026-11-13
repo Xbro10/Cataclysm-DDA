@@ -1,0 +1,62 @@
+[
+  {
+    "type": "ter_furn_transform",
+    "id": "sm_place_mark_looted",
+    "//": "Puts a LOOTED mark on the tile, but only if it has no furniture already.",
+    "furniture": [ { "result": "f_sm_mark_looted", "valid_furniture": [ "f_null" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_NPC_MARK_LOOTED",
+    "//": "u is a follower. Chalks LOOTED on their own tile unless one is already within 10 tiles.",
+    "effect": [
+      {
+        "u_location_variable": { "u_val": "sm_nearby_looted_mark" },
+        "furniture": "f_sm_mark_looted",
+        "target_max_radius": 10,
+        "true_eocs": [ { "id": "EOC_SM_NPC_MARK_LOOTED_ALREADY", "effect": [ { "math": [ "u_sm_mark_result = 2" ] } ] } ],
+        "false_eocs": [
+          {
+            "id": "EOC_SM_NPC_MARK_LOOTED_PLACE",
+            "effect": [
+              { "u_transform_radius": 0, "ter_furn_transform": "sm_place_mark_looted" },
+              {
+                "if": { "u_is_on_furniture": "f_sm_mark_looted" },
+                "then": [
+                  { "math": [ "u_sm_mark_result = 1" ] },
+                  { "u_message": "<u_name> chalks a big X on the floor: LOOTED.", "type": "info" }
+                ],
+                "else": { "math": [ "u_sm_mark_result = 0" ] }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_TRACK_OMT",
+    "//": "Auto LOOTED marks. Each time you cross into a new map square, if you spent 15+ minutes in the one you left, your nearest indoor follower marks it LOOTED where they stand (usually near the way out). Then start timing the new square.",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "effect": [
+      {
+        "if": { "and": [ { "math": [ "has_var(sm_omt_entered_at)" ] }, { "math": [ "time_since(sm_omt_entered_at) >= time('15 m')" ] } ] },
+        "then": { "u_run_npc_eocs": [ "EOC_SM_AUTO_MARK_LOOTED" ], "local": true, "npc_range": 6 }
+      },
+      { "math": [ "sm_omt_entered_at = time('now')" ] },
+      { "math": [ "sm_auto_marked_this_crossing = 0" ] }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_AUTO_MARK_LOOTED",
+    "//": "u is an NPC within 6 tiles of the player. Only one follower marks per crossing, and only indoors (not fields or roads).",
+    "condition": { "and": [ "u_following", { "not": "u_is_outside" }, { "math": [ "sm_auto_marked_this_crossing != 1" ] } ] },
+    "effect": [
+      { "run_eocs": "EOC_SM_NPC_MARK_LOOTED" },
+      { "if": { "math": [ "u_sm_mark_result == 1" ] }, "then": { "math": [ "sm_auto_marked_this_crossing = 1" ] } }
+    ]
+  }
+]

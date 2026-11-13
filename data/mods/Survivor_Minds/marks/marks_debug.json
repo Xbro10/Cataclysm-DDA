@@ -1,0 +1,17 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_MARK_LOOTED",
+    "//": "Developer shortcut: Debug menu > Activate EOC. Every follower in the loaded area tries to chalk LOOTED where they stand right now (still skips if a mark is within 10 tiles). Remove before release.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_SM_DEBUG_MARK_LOOTED_FOLLOWER" ], "local": true },
+      { "u_message": "Survivor Minds debug: followers tried to mark LOOTED." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_MARK_LOOTED_FOLLOWER",
+    "condition": "u_following",
+    "effect": [ { "run_eocs": "EOC_SM_NPC_MARK_LOOTED" } ]
+  }
+]

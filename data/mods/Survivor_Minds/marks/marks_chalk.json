@@ -1,0 +1,31 @@
+[
+  {
+    "id": "sm_chalk",
+    "type": "ITEM",
+    "subtypes": [ "TOOL" ],
+    "category": "tools",
+    "name": { "str": "stick of chalk", "str_pl": "sticks of chalk" },
+    "description": "A stub of white chalk.  Good for leaving marks on floors for whoever comes next: LOOTED, CAMP, DANGER, or an arrow toward water.  Use the construction menu to draw one.",
+    "looks_like": "survival_marker",
+    "symbol": ",",
+    "color": "white",
+    "weight": "10 g",
+    "volume": "10 ml",
+    "longest_side": "8 cm",
+    "material": [ "stone" ],
+    "price": "10 cent",
+    "price_postapoc": "50 cent"
+  },
+  {
+    "type": "recipe",
+    "activity_level": "LIGHT_EXERCISE",
+    "result": "sm_chalk",
+    "category": "CC_OTHER",
+    "subcategory": "CSC_OTHER_TOOLS",
+    "skill_used": "fabrication",
+    "difficulty": 0,
+    "time": "2 m",
+    "autolearn": true,
+    "components": [ [ [ "material_limestone", 1 ], [ "material_quicklime", 1 ] ] ]
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "type": "talk_topic",
+    "id": "TALK_FRIEND",
+    "//": "Adds one option to the vanilla follower menu (topics with the same id merge).",
+    "responses": [
+      {
+        "text": "Mark this place as looted.",
+        "effect": { "run_eocs": "EOC_SM_NPC_MARK_LOOTED", "alpha_talker": "npc" },
+        "topic": "TALK_SM_MARK_LOOTED_DONE"
+      }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_MARK_LOOTED_DONE",
+    "dynamic_line": {
+      "math": [ "n_sm_mark_result == 1" ],
+      "yes": "Done.  Big X, nobody'll miss it.",
+      "no": {
+        "math": [ "n_sm_mark_result == 2" ],
+        "yes": "Somebody already marked it, just over there.",
+        "no": "Not here, there's something in the way.  Let me move to a clear spot first."
+      }
+    },
+    "responses": [ { "text": "Good.  Something else.", "topic": "TALK_FRIEND" }, { "text": "Good.", "topic": "TALK_DONE" } ]
+  }
+]

@@ -1,0 +1,71 @@
+[
+  {
+    "type": "furniture",
+    "id": "f_sm_mark_looted",
+    "//": "Survivor marks: flat floor markings. Walk-over, transparent, items can lie on them. Deconstruct to scrub off. Furniture (not vanilla graffiti) so EOCs and later NPC wayfinding can find them by id.",
+    "name": "chalk mark: LOOTED",
+    "description": "A big X scrawled on the floor, and under it the word LOOTED.  Someone has already been through here and taken what was worth taking.",
+    "symbol": "X",
+    "color": "light_gray",
+    "looks_like": "graffiti",
+    "move_cost_mod": 0,
+    "coverage": 0,
+    "required_str": -1,
+    "flags": [ "TRANSPARENT", "NOCOLLIDE", "EASY_DECONSTRUCT" ],
+    "deconstruct": { "items": [  ] }
+  },
+  {
+    "type": "furniture",
+    "id": "f_sm_mark_camp",
+    "copy-from": "f_sm_mark_looted",
+    "name": "chalk mark: CAMP",
+    "description": "A triangle like a tent, scrawled on the floor: CAMP.  People live near here, or did.",
+    "symbol": "A",
+    "color": "light_green"
+  },
+  {
+    "type": "furniture",
+    "id": "f_sm_mark_danger",
+    "copy-from": "f_sm_mark_looted",
+    "name": "chalk mark: DANGER",
+    "description": "A jagged exclamation mark and the word DANGER, gone over twice so it would not be missed.  Whoever wrote this did not want you going any further.",
+    "symbol": "!",
+    "color": "light_red"
+  },
+  {
+    "type": "furniture",
+    "id": "f_sm_mark_water_n",
+    "copy-from": "f_sm_mark_looted",
+    "name": "chalk mark: WATER, north",
+    "description": "An arrow and the word WATER, pointing north.",
+    "symbol": "^",
+    "color": "light_blue"
+  },
+  {
+    "type": "furniture",
+    "id": "f_sm_mark_water_e",
+    "copy-from": "f_sm_mark_looted",
+    "name": "chalk mark: WATER, east",
+    "description": "An arrow and the word WATER, pointing east.",
+    "symbol": ">",
+    "color": "light_blue"
+  },
+  {
+    "type": "furniture",
+    "id": "f_sm_mark_water_s",
+    "copy-from": "f_sm_mark_looted",
+    "name": "chalk mark: WATER, south",
+    "description": "An arrow and the word WATER, pointing south.",
+    "symbol": "v",
+    "color": "light_blue"
+  },
+  {
+    "type": "furniture",
+    "id": "f_sm_mark_water_w",
+    "copy-from": "f_sm_mark_looted",
+    "name": "chalk mark: WATER, west",
+    "description": "An arrow and the word WATER, pointing west.",
+    "symbol": "<",
+    "color": "light_blue"
+  }
+]

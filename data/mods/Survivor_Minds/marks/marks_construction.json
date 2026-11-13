@@ -1,0 +1,134 @@
+[
+  {
+    "type": "construction_group",
+    "id": "sm_draw_mark_looted",
+    "name": "Draw Survivor Mark: LOOTED"
+  },
+  {
+    "type": "construction",
+    "id": "constr_sm_mark_looted",
+    "group": "sm_draw_mark_looted",
+    "category": "OTHER",
+    "//": "Survivor Minds wall mark. Any one tool: chalk, marker or survival marker (not used up), or one spray of paint.",
+    "required_skills": [  ],
+    "time": "1 m",
+    "tools": [ [ [ "sm_chalk", -1 ], [ "permanent_marker", -1 ], [ "survival_marker", -1 ], [ "spray_can", 1 ] ] ],
+    "pre_note": "Draws a mark on the floor for whoever comes next.  Scrub it off with Deconstruct Simple Furniture (no tools).",
+    "pre_special": "check_empty",
+    "post_terrain": "f_sm_mark_looted"
+  }
+  ,
+  {
+    "type": "construction_group",
+    "id": "sm_draw_mark_camp",
+    "name": "Draw Survivor Mark: CAMP"
+  },
+  {
+    "type": "construction",
+    "id": "constr_sm_mark_camp",
+    "group": "sm_draw_mark_camp",
+    "category": "OTHER",
+    "//": "Survivor Minds wall mark. Any one tool: chalk, marker or survival marker (not used up), or one spray of paint.",
+    "required_skills": [  ],
+    "time": "1 m",
+    "tools": [ [ [ "sm_chalk", -1 ], [ "permanent_marker", -1 ], [ "survival_marker", -1 ], [ "spray_can", 1 ] ] ],
+    "pre_note": "Draws a mark on the floor for whoever comes next.  Scrub it off with Deconstruct Simple Furniture (no tools).",
+    "pre_special": "check_empty",
+    "post_terrain": "f_sm_mark_camp"
+  }
+  ,
+  {
+    "type": "construction_group",
+    "id": "sm_draw_mark_danger",
+    "name": "Draw Survivor Mark: DANGER"
+  },
+  {
+    "type": "construction",
+    "id": "constr_sm_mark_danger",
+    "group": "sm_draw_mark_danger",
+    "category": "OTHER",
+    "//": "Survivor Minds wall mark. Any one tool: chalk, marker or survival marker (not used up), or one spray of paint.",
+    "required_skills": [  ],
+    "time": "1 m",
+    "tools": [ [ [ "sm_chalk", -1 ], [ "permanent_marker", -1 ], [ "survival_marker", -1 ], [ "spray_can", 1 ] ] ],
+    "pre_note": "Draws a mark on the floor for whoever comes next.  Scrub it off with Deconstruct Simple Furniture (no tools).",
+    "pre_special": "check_empty",
+    "post_terrain": "f_sm_mark_danger"
+  }
+  ,
+  {
+    "type": "construction_group",
+    "id": "sm_draw_mark_water_n",
+    "name": "Draw Survivor Mark: WATER, pointing north"
+  },
+  {
+    "type": "construction",
+    "id": "constr_sm_mark_water_n",
+    "group": "sm_draw_mark_water_n",
+    "category": "OTHER",
+    "//": "Survivor Minds wall mark. Any one tool: chalk, marker or survival marker (not used up), or one spray of paint.",
+    "required_skills": [  ],
+    "time": "1 m",
+    "tools": [ [ [ "sm_chalk", -1 ], [ "permanent_marker", -1 ], [ "survival_marker", -1 ], [ "spray_can", 1 ] ] ],
+    "pre_note": "Draws a mark on the floor for whoever comes next.  Scrub it off with Deconstruct Simple Furniture (no tools).",
+    "pre_special": "check_empty",
+    "post_terrain": "f_sm_mark_water_n"
+  }
+  ,
+  {
+    "type": "construction_group",
+    "id": "sm_draw_mark_water_e",
+    "name": "Draw Survivor Mark: WATER, pointing east"
+  },
+  {
+    "type": "construction",
+    "id": "constr_sm_mark_water_e",
+    "group": "sm_draw_mark_water_e",
+    "category": "OTHER",
+    "//": "Survivor Minds wall mark. Any one tool: chalk, marker or survival marker (not used up), or one spray of paint.",
+    "required_skills": [  ],
+    "time": "1 m",
+    "tools": [ [ [ "sm_chalk", -1 ], [ "permanent_marker", -1 ], [ "survival_marker", -1 ], [ "spray_can", 1 ] ] ],
+    "pre_note": "Draws a mark on the floor for whoever comes next.  Scrub it off with Deconstruct Simple Furniture (no tools).",
+    "pre_special": "check_empty",
+    "post_terrain": "f_sm_mark_water_e"
+  }
+  ,
+  {
+    "type": "construction_group",
+    "id": "sm_draw_mark_water_s",
+    "name": "Draw Survivor Mark: WATER, pointing south"
+  },
+  {
+    "type": "construction",
+    "id": "constr_sm_mark_water_s",
+    "group": "sm_draw_mark_water_s",
+    "category": "OTHER",
+    "//": "Survivor Minds wall mark. Any one tool: chalk, marker or survival marker (not used up), or one spray of paint.",
+    "required_skills": [  ],
+    "time": "1 m",
+    "tools": [ [ [ "sm_chalk", -1 ], [ "permanent_marker", -1 ], [ "survival_marker", -1 ], [ "spray_can", 1 ] ] ],
+    "pre_note": "Draws a mark on the floor for whoever comes next.  Scrub it off with Deconstruct Simple Furniture (no tools).",
+    "pre_special": "check_empty",
+    "post_terrain": "f_sm_mark_water_s"
+  }
+  ,
+  {
+    "type": "construction_group",
+    "id": "sm_draw_mark_water_w",
+    "name": "Draw Survivor Mark: WATER, pointing west"
+  },
+  {
+    "type": "construction",
+    "id": "constr_sm_mark_water_w",
+    "group": "sm_draw_mark_water_w",
+    "category": "OTHER",
+    "//": "Survivor Minds wall mark. Any one tool: chalk, marker or survival marker (not used up), or one spray of paint.",
+    "required_skills": [  ],
+    "time": "1 m",
+    "tools": [ [ [ "sm_chalk", -1 ], [ "permanent_marker", -1 ], [ "survival_marker", -1 ], [ "spray_can", 1 ] ] ],
+    "pre_note": "Draws a mark on the floor for whoever comes next.  Scrub it off with Deconstruct Simple Furniture (no tools).",
+    "pre_special": "check_empty",
+    "post_terrain": "f_sm_mark_water_w"
+  }
+]
