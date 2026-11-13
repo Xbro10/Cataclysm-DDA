@@ -1,0 +1,117 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br1_note_arrival",
+    "copy-from": "survnote",
+    "name": { "str": "torn note" },
+    "description": "A scrap of paper wedged into a crack in the wall, right where someone landing here would see it.",
+    "snippet_category": "br1_note_arrival"
+  },
+  {
+    "type": "ITEM",
+    "id": "br1_note_lost",
+    "copy-from": "survnote",
+    "name": { "str": "crumpled note" },
+    "description": "A crumpled scrap of paper.  Whoever wrote it was in a hurry, or in the dark.",
+    "snippet_category": "br1_note_lost"
+  },
+  {
+    "type": "ITEM",
+    "id": "br1_note_last",
+    "copy-from": "survnote",
+    "name": { "str": "bloodstained note" },
+    "description": "A note folded small and held tight.  The edges are stained brown.",
+    "snippet_category": "br1_note_last"
+  },
+  {
+    "type": "ITEM",
+    "id": "br1_security_log",
+    "copy-from": "survnote",
+    "name": { "str": "security logbook page" },
+    "description": "A page torn from a parking security logbook.  Neat handwriting at the top, less neat at the bottom.",
+    "snippet_category": "br1_security_log"
+  },
+  {
+    "type": "snippet",
+    "category": "br1_note_arrival",
+    "//": "Left in arrival alcoves. Each hints at one or two things, never everything. Some are wrong or cut off on purpose.",
+    "text": [
+      { "id": "br1_note_arrival_1", "text": "Lights are worth more than food.  Don't let yours die." },
+      { "id": "br1_note_arrival_2", "text": "Boil it.  All of it.  Even if it looks clean." },
+      { "id": "br1_note_arrival_3", "text": "Follow the marker arrows.  Not the signs." },
+      { "id": "br1_note_arrival_4", "text": "If something is grinning at you, you're already standing in the dark." },
+      { "id": "br1_note_arrival_5", "text": "The stairwells go up.  Keep trying." },
+      { "id": "br1_note_arrival_6", "text": "Day 3.  Found people.  They have a room with a door and a kettle.  Look for the word BREAKROOM." },
+      { "id": "br1_note_arrival_7", "text": "Don't sleep where the lights are out.  Don't sleep where the lights are on either, if you're alone." },
+      { "id": "br1_note_arrival_8", "text": "The wall you came through still works.  It just won't take you home." },
+      { "id": "br1_note_arrival_9", "text": "Count the pillars.  Write it down.  It won't help, but write it down." },
+      { "id": "br1_note_arrival_10", "text": "if you hear running on all fours, stand still and make yourself big.  they don't like a fight.  they" },
+      { "id": "br1_note_arrival_11", "text": "The moths aren't after you.  They're after your torch.  Same thing, in the end." },
+      { "id": "br1_note_arrival_12", "text": "WELCOME TO LEVEL 1.  Somebody crossed out WELCOME." }
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "br1_note_lost",
+    "//": "Scattered through Level 1: lockers, wrecks, camp stores. Bits of other people's stories.",
+    "text": [
+      { "id": "br1_note_lost_1", "text": "Car's out of gas on what the sign called P4.  I've walked down eleven ramps since then.  There is no P5.  There is no P4 either." },
+      { "id": "br1_note_lost_2", "text": "Traded my good boots for two bottles at the sandbag camp.  Worth it.  Don't tell Dot." },
+      { "id": "br1_note_lost_3", "text": "Marcus says the map is wrong because the place moves.  I think the map is wrong because Marcus can't draw." },
+      { "id": "br1_note_lost_4", "text": "Third night without the light in bay C.  Whatever lives in the dark there has learned my name.  It doesn't say it right." },
+      { "id": "br1_note_lost_5", "text": "Note to self: the vending machines take the grey cards.  Find more grey cards." },
+      { "id": "br1_note_lost_6", "text": "Jenna went to check the noise by the elevators.  The elevators don't open.  Jenna didn't come back." },
+      { "id": "br1_note_lost_7", "text": "There's a generator in a side room off the east lane.  Two cans of gas and the lights come on for a week.  A WEEK." },
+      { "id": "br1_note_lost_8", "text": "Saw someone I knew from before.  Walked right up to them.  It wasn't them." },
+      { "id": "br1_note_lost_9", "text": "Don't go where the lights are all out.  Or go, but bring three flashlights and leave before they die." },
+      { "id": "br1_note_lost_10", "text": "The water tastes of pennies.  The almond water tastes of nothing at all.  I've started dreaming about it." },
+      { "id": "br1_note_lost_11", "text": "If you find this, the cage key is NOT under the mat.  I checked.  Sorry." }
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "br1_note_last",
+    "//": "Found on the dead at overrun camps.",
+    "text": [
+      { "id": "br1_note_last_1", "text": "They came when the brazier went out.  We had fuel.  Nobody wanted to be the one to get up." },
+      { "id": "br1_note_last_2", "text": "Tell the Breakroom we tried.  Tell them the sandbags were never the problem." },
+      { "id": "br1_note_last_3", "text": "Lost two to the dark and one to the water.  Going to try the walls again tomorrow.  If there is a tomorrow, this note is useless." },
+      { "id": "br1_note_last_4", "text": "I'm writing this so someone knows we were here.  We were here.  Five of us.  We were here." }
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "br1_security_log",
+    "//": "In the security office.",
+    "text": [
+      { "id": "br1_security_log_1", "text": "0200 rounds complete.  Camera 4 showing a smile.  Not a face.  Just the smile.  Reported to nobody, because there is nobody." },
+      { "id": "br1_security_log_2", "text": "No date.  Monitors are static except camera 4.  Camera 4 shows the room I'm in.  I'm not in the picture." },
+      { "id": "br1_security_log_3", "text": "Shift log: lights failing in sectors C through F.  Generator in maintenance B still good.  Fuel low.  Moths bad near the good lights." },
+      { "id": "br1_security_log_4", "text": "Incident: unknown person in grey coat tried the door.  Asked for water.  Didn't have a face under the hood.  Did not open the door." }
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "br1_graffiti",
+    "//": "Spray paint on the concrete by earlier travellers. Some help, some don't.",
+    "text": [
+      "BREAKROOM →",
+      "← BREAKROOM",
+      "NOT THIS WAY",
+      "WATER ↓↓ (BOIL IT)",
+      "THEY ONLY COME IN THE DARK",
+      "KEEP THE LIGHTS ON",
+      "EXIT ↑",
+      "THERE IS NO EXIT",
+      "FOLLOW THE ORANGE ARROWS",
+      "WE WERE HERE.  DAY 40.",
+      "DON'T TRUST THE SMILE",
+      "MARCUS LIES ABOUT THE MAP"
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "br1_tally",
+    "text": [ "|||| |||| |||| |||| ||", "|||| |||| |||| |||| |||| |||| |||| |||| |||| |||| |||", "||||" ]
+  }
+]

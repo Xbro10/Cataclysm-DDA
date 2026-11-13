@@ -41,7 +41,8 @@
       { "item": "canteen", "prob": 10 },
       { "item": "permanent_marker", "prob": 15 },
       { "item": "cig", "prob": 10 },
-      { "item": "survivormap", "prob": 10 }
+      { "item": "survivormap", "prob": 10 },
+      { "item": "br1_note_lost", "prob": 8 }
     ]
   }
 ]

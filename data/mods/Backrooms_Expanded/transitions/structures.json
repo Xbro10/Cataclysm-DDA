@@ -84,6 +84,7 @@
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "Z": "t_thconc_floor", "@": "t_br1_landing" },
       "furniture": { "Z": "f_br1_thin_wall" },
+      "place_item": [ { "item": "br1_note_arrival", "x": [ 1, 6 ], "y": 1, "chance": 60 } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },

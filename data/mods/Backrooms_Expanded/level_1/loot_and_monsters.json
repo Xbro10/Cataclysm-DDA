@@ -12,6 +12,7 @@
       { "group": "batteries", "prob": 10 },
       { "group": "tools_lighting", "prob": 10 },
       { "group": "cannedfood", "prob": 3 },
+      { "item": "br1_note_lost", "prob": 2 },
       { "group": "vending_drink", "prob": 2 }
     ]
   },
