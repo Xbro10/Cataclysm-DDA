@@ -59,6 +59,7 @@
 #include "monster.h"
 #include "mtype.h"
 #include "mutation.h"
+#include "npc_autonomy.h"
 #include "npc_class.h"
 #include "npctalk.h"
 #include "npctrade.h"
@@ -3123,6 +3124,12 @@ int npc::print_info( const catacurses::window &w, int line, int vLines, int colu
                             sees( here, player_character ) ? c_yellow : c_green,
                             senses_str );
 
+    // Xbro10 fork: NPC autonomy needs (option only).
+    if( npc_autonomy::enabled() && line < last_line ) {
+        line += fold_and_print( w, point( column, line ), iWidth, c_light_gray,
+                                npc_autonomy::needs_text( *this ) );
+    }
+
     // Print what item the NPC is holding if any on the fourth line.
     if( is_armed() ) {
         line += fold_and_print( w, point( column, line ), iWidth, c_red,
@@ -3560,6 +3567,8 @@ void npc::npc_update_body()
         update_bodytemp_and_wetness();
         reconcile_schedule();
     }
+    // Xbro10 fork: NPC autonomy needs (once a game minute, option only).
+    npc_autonomy::on_npc_turn( *this );
 }
 
 void npc::on_load( map *here )

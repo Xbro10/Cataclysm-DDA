@@ -593,9 +593,22 @@ float character_oracle_t::return_to_camp_urgency( std::string_view ) const
     return 0.5f;
 }
 
+// Xbro10 fork: NPC autonomy gate and needs as 0-1 scores (0 when the option is off).
 status_t character_oracle_t::autonomy_on( std::string_view ) const
 {
     return npc_autonomy::enabled() ? status_t::running : status_t::failure;
+}
+
+float character_oracle_t::safety_urgency( std::string_view ) const
+{
+    const npc *n = dynamic_cast<const npc *>( subject );
+    return n && npc_autonomy::enabled() ? npc_autonomy::safety_need( *n ) : 0.0f;
+}
+
+float character_oracle_t::social_urgency( std::string_view ) const
+{
+    const npc *n = dynamic_cast<const npc *>( subject );
+    return n && npc_autonomy::enabled() ? npc_autonomy::social_need( *n ) : 0.0f;
 }
 
 float character_oracle_t::free_time_urgency( std::string_view ) const

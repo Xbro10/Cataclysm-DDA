@@ -1833,7 +1833,7 @@ void options_manager::add_options_general()
                                         to_translation( "Options for how NPCs think and act." ) ),
     [&]( const std::string & page_id ) {
         add( "NPC_AUTONOMY", page_id, to_translation( "NPC autonomy (experimental)" ),
-             to_translation( "If true, NPCs use the experimental autonomy features from this build: for now, a follower who leaves you cancels the quests they gave you.  More behaviors will be added over time.  If false, NPCs behave like the standard game." ),
+             to_translation( "If true, NPCs use the experimental autonomy features from this build: NPCs track needs (food, water, sleep, warmth, safety and social; shown when you look at them), and a follower who leaves you cancels the quests they gave you.  More behaviors will be added over time.  If false, NPCs behave like the standard game." ),
              false
            );
     } );

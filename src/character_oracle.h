@@ -65,6 +65,9 @@ class character_oracle_t : public oracle_t
         float camp_work_urgency( std::string_view ) const;
         float return_to_camp_urgency( std::string_view ) const;
         float free_time_urgency( std::string_view ) const;
+        // Xbro10 fork: NPC autonomy needs (0 when the option is off).
+        float safety_urgency( std::string_view ) const;
+        float social_urgency( std::string_view ) const;
     private:
         const Character *subject;
 };

@@ -85,7 +85,10 @@ score_predicate_map = {{
         { "npc_goto_order_urgency", make_score_function( &character_oracle_t::npc_goto_order_urgency ) },
         { "npc_camp_work_urgency", make_score_function( &character_oracle_t::camp_work_urgency ) },
         { "npc_return_to_camp_urgency", make_score_function( &character_oracle_t::return_to_camp_urgency ) },
-        { "npc_free_time_urgency", make_score_function( &character_oracle_t::free_time_urgency ) }
+        { "npc_free_time_urgency", make_score_function( &character_oracle_t::free_time_urgency ) },
+        // Xbro10 fork: NPC autonomy needs.
+        { "npc_safety_urgency", make_score_function( &character_oracle_t::safety_urgency ) },
+        { "npc_social_urgency", make_score_function( &character_oracle_t::social_urgency ) }
     }
 };
 
