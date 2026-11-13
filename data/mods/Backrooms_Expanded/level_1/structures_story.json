@@ -88,15 +88,13 @@
       ],
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "L": "t_br1_dead_light" },
-      "place_vehicles": [
-        { "vehicle": "parking_garage_short", "x": 6, "y": 4, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 12, "y": 4, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 18, "y": 4, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 6, "y": 16, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 12, "y": 16, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 18, "y": 16, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 }
-      ],
       "place_nested": [
+        { "chunks": [ [ "null", 70 ], [ "br1_parked_car", 22 ], [ "br1_parked_car_fuel", 8 ] ], "x": 3, "y": 1 },
+        { "chunks": [ [ "null", 70 ], [ "br1_parked_car", 22 ], [ "br1_parked_car_fuel", 8 ] ], "x": 9, "y": 1 },
+        { "chunks": [ [ "null", 70 ], [ "br1_parked_car", 22 ], [ "br1_parked_car_fuel", 8 ] ], "x": 15, "y": 1 },
+        { "chunks": [ [ "null", 70 ], [ "br1_parked_car", 22 ], [ "br1_parked_car_fuel", 8 ] ], "x": 3, "y": 13 },
+        { "chunks": [ [ "null", 70 ], [ "br1_parked_car", 22 ], [ "br1_parked_car_fuel", 8 ] ], "x": 9, "y": 13 },
+        { "chunks": [ [ "null", 70 ], [ "br1_parked_car", 22 ], [ "br1_parked_car_fuel", 8 ] ], "x": 15, "y": 13 },
         {
           "chunks": [ [ "null", 100 ], [ "br1_feature_puddles", 60 ], [ "br1_feature_pipe_leak", 40 ], [ "br1_feature_junk", 60 ] ],
           "x": [ 0, 18 ],

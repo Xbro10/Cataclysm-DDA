@@ -88,15 +88,13 @@
         "........................"
       ],
       "palettes": [ "br1_garage_palette" ],
-      "place_vehicles": [
-        { "vehicle": "parking_garage_short", "x": 6, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 12, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 18, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 6, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 12, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 18, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 }
-      ],
       "place_nested": [
+        { "chunks": [ [ "null", 88 ], [ "br1_parked_car", 9 ], [ "br1_parked_car_fuel", 3 ] ], "x": 3, "y": 1 },
+        { "chunks": [ [ "null", 88 ], [ "br1_parked_car", 9 ], [ "br1_parked_car_fuel", 3 ] ], "x": 9, "y": 1 },
+        { "chunks": [ [ "null", 88 ], [ "br1_parked_car", 9 ], [ "br1_parked_car_fuel", 3 ] ], "x": 15, "y": 1 },
+        { "chunks": [ [ "null", 88 ], [ "br1_parked_car", 9 ], [ "br1_parked_car_fuel", 3 ] ], "x": 3, "y": 13 },
+        { "chunks": [ [ "null", 88 ], [ "br1_parked_car", 9 ], [ "br1_parked_car_fuel", 3 ] ], "x": 9, "y": 13 },
+        { "chunks": [ [ "null", 88 ], [ "br1_parked_car", 9 ], [ "br1_parked_car_fuel", 3 ] ], "x": 15, "y": 13 },
         {
           "chunks": [
             [ "null", 200 ],

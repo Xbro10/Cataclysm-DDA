@@ -121,6 +121,24 @@
   },
   {
     "type": "mapgen",
+    "nested_mapgen_id": "br1_parked_car",
+    "//": "A parked car with a dry tank. Used for each parking spot in the garage and dead zones.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "place_vehicles": [ { "vehicle": "parking_garage_short", "x": 3, "y": 3, "rotation": 90, "chance": 100, "status": 1, "fuel": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_parked_car_fuel",
+    "//": "About 1 parked car in 4 still has a little fuel: 5% of its tank, a few litres of gasoline (or diesel, or a little charge) to siphon. Enough for a generator or two.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "place_vehicles": [ { "vehicle": "parking_garage_short", "x": 3, "y": 3, "rotation": 90, "chance": 100, "status": 1, "fuel": 5 } ]
+    }
+  },
+  {
+    "type": "mapgen",
     "nested_mapgen_id": "br1_room_generator",
     "//": "A generator room. Its light is always dead until the generator runs. Sometimes a can of gas was left behind.",
     "object": {
