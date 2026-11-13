@@ -29,6 +29,6 @@
     "city_distance": [ 0, -1 ],
     "city_sizes": [ 0, -1 ],
     "occurrences": [ 4, 8 ],
-    "flags": [ "BACKROOMS_L1" ]
+    "flags": [ "BACKROOMS_L1", "EXTRADIMENSIONAL" ]
   }
 ]
