@@ -274,7 +274,7 @@ data/mods/Backrooms_Expanded/
     "compatibility": [ "UltimateCataclysm" ],
     "tiles-new": [
       {
-        "file": "br_tiles.png",
+        "file": "gfx/br_tiles.png",
         "sprite_width": 32,
         "sprite_height": 32,
         "tiles": [
@@ -289,6 +289,7 @@ data/mods/Backrooms_Expanded/
 ```
 
 - `compatibility` is the tileset's internal name (the `NAME` line in UltiCa's `tileset.txt`).
+- `file` is relative to the **mod's root folder**, not the JSON file's folder (CDDA's docs say otherwise): `gfx/br1_overmap.png`, not `br1_overmap.png`. A wrong path shows "Could not load image" when the game starts.
 - `fg` is the sprite's index in the sheet, counting from 0.
 - `sprite_width` / `sprite_height` must match the art. UltiCa's terrain and most items are
   32x32 (`normal.png`), small items are 20x20 (`small.png`).

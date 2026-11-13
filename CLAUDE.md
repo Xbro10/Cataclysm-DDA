@@ -90,3 +90,4 @@ doesn't trigger "stale game data" errors.
 - Furniture `looks_like` should point at furniture, terrain at terrain. Check UltiCa coverage with
   `grep '"<id>"' "D:\Games\CDDA MY FORK\Game\gfx\UltimateCataclysm\tile_config.json"`.
 - UltiCa (`gfx/UltimateCataclysm`) is **not** in this source checkout; it only ships with release builds.
+- A `mod_tileset`'s `"file"` is relative to the mod's root folder, not the JSON's folder (`gfx/br1_overmap.png`).
