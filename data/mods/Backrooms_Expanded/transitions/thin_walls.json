@@ -16,8 +16,8 @@
   {
     "type": "furniture",
     "id": "f_br1_thin_wall",
-    "name": "rippling concrete",
-    "description": "A patch of concrete wall that sways like a hanging sheet.  Through it, faintly, you can hear fluorescent lights humming.  Examine it to step through.",
+    "name": "sealed concrete",
+    "description": "A patch of wall where the concrete looks newer and smoother than the rest, as if it was poured over something only moments ago.  Press a palm to it and you can feel, faintly, fluorescent lights humming on the other side.  It doesn't give.",
     "symbol": "&",
     "color": "light_gray",
     "looks_like": "f_curtain",

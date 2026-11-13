@@ -77,7 +77,7 @@
   {
     "type": "mapgen",
     "nested_mapgen_id": "br1_arrival_core",
-    "//": "A pipe-walled alcove with one working light, the landing spot, and the rippling way back.",
+    "//": "A pipe-walled alcove with one working light, the landing spot, and the sealed patch of wall they fell through.",
     "object": {
       "mapgensize": [ 8, 8 ],
       "rows": [ "###ZZ###", "#......#", "#..!...#", "#..@...#", "#......#", "#......#", "#......#", "###..###" ],

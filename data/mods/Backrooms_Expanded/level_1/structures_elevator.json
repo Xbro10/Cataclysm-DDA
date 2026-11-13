@@ -4,7 +4,7 @@
     "id": "t_br1_elevator_door",
     "copy-from": "t_concrete_wall",
     "name": "elevator doors",
-    "description": "Brushed steel doors set into the wall, with a round call button beside them that glows a soft orange.  There is no floor indicator above them.  There is no floor indicator anywhere.",
+    "description": "Brushed steel doors set into the wall, with a small panel of unmarked buttons beside them.  There is no floor indicator above them.  There is no floor indicator anywhere.",
     "symbol": "+",
     "color": "light_gray",
     "looks_like": "t_door_metal_locked",
@@ -20,6 +20,81 @@
     "looks_like": "t_strconc_floor_olight"
   },
   {
+    "type": "furniture",
+    "id": "f_br1_lost_found",
+    "copy-from": "f_locker",
+    "name": "lost and found bin",
+    "description": "A steel bin with LOST & FOUND stencilled on the lid.  Things turn up in it.  Nobody admits to putting them there.",
+    "looks_like": "f_locker",
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR1_LOST_FOUND" ] }
+  },
+  {
+    "type": "furniture",
+    "id": "f_br1_lost_found_empty",
+    "copy-from": "f_locker",
+    "name": "lost and found bin",
+    "description": "A steel bin with LOST & FOUND stencilled on the lid.  Empty, for now.",
+    "looks_like": "f_locker",
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR1_LOST_FOUND_EMPTY" ] }
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_lost_found_take",
+    "furniture": [ { "result": "f_br1_lost_found_empty", "valid_furniture": [ "f_br1_lost_found" ] } ]
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_lost_found_refill",
+    "furniture": [ { "result": "f_br1_lost_found", "valid_furniture": [ "f_br1_lost_found_empty" ] } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_lost_and_found",
+    "//": "Odds and ends other travellers dropped. One or two useful things, never a haul.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "tools_lighting", "prob": 15 },
+      { "group": "batteries", "prob": 15 },
+      { "group": "cannedfood", "prob": 12 },
+      { "item": "water_clean", "container-item": "bottle_plastic", "prob": 10 },
+      { "group": "almond_water_sealed", "prob": 3 },
+      { "item": "cash_card", "charges": [ 200, 1500 ], "prob": 8 },
+      { "item": "umbrella", "prob": 5 },
+      { "item": "gloves_light", "prob": 6 },
+      { "item": "hat_ball", "prob": 6 },
+      { "item": "wristwatch", "prob": 5 },
+      { "item": "cell_phone", "prob": 5 },
+      { "item": "br1_note_lost", "prob": 10 }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_LOST_FOUND",
+    "//": "Tip out the bin at your feet; it refills about a week later.",
+    "effect": [
+      { "u_location_variable": { "u_val": "br1_lost_found_point" } },
+      { "map_spawn_item": "br1_lost_and_found", "use_item_group": true, "count": 2, "loc": { "u_val": "br1_lost_found_point" } },
+      { "u_transform_radius": 1, "ter_furn_transform": "br1_lost_found_take" },
+      {
+        "u_transform_radius": 1,
+        "ter_furn_transform": "br1_lost_found_refill",
+        "target_var": { "u_val": "br1_lost_found_point" },
+        "time_in_future": "7 days"
+      },
+      { "u_message": "You tip out the bin.  A couple of things clatter onto the floor at your feet.", "type": "good" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_LOST_FOUND_EMPTY",
+    "effect": [ { "u_message": "The bin is empty.  Give it time.", "type": "info" } ]
+  },
+  {
+    "type": "morale_type",
+    "id": "morale_br1_elevator_stuck",
+    "text": "Trapped in the elevator"
+  },
+  {
     "type": "overmap_terrain",
     "id": "br1_elevator_lobby",
     "//": "No monster spawns: the lit, walled lobby is the safest place on Level 1 to camp. Things can still wander in through the doors.",
@@ -33,7 +108,7 @@
   {
     "type": "overmap_special",
     "id": "br1_elevator_lobby",
-    "//": "A walled, lit lobby with a bank of working elevators. Riding one takes you to another lobby 5-30 squares away.",
+    "//": "A walled, lit lobby with a bank of working elevators.",
     "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_elevator_lobby" } ],
     "locations": [ "br1_garage" ],
     "city_distance": [ 0, -1 ],
@@ -44,7 +119,7 @@
   {
     "type": "mapgen",
     "om_terrain": "br1_elevator_lobby",
-    "//": "Garage outside, lobby inside. The landing tile for arrivals is (12,6), in front of the middle elevator; the EOCs depend on it, so keep it floor.",
+    "//": "Garage outside, lobby inside. The landing tile for arrivals is (12,6), in front of the middle elevator; the EOCs depend on it, so keep it floor. Sometimes a traveller is waiting for the lift.",
     "object": {
       "fill_ter": "t_thconc_floor",
       "rows": [
@@ -60,7 +135,7 @@
         "....w......!.!......w...",
         "....g.B..B.....B..B.w...",
         "....w...............w...",
-        "....wt......d......tw...",
+        "....wf......d......tw...",
         "....w...!.......!...w...",
         "....wp.............pw...",
         "....w...............w...",
@@ -83,37 +158,214 @@
         "B": "t_thconc_floor",
         "p": "t_thconc_floor",
         "t": "t_thconc_floor",
+        "f": "t_thconc_floor",
         "d": "t_thconc_floor"
+      },
+      "furniture": { "B": "f_bench", "p": "f_indoor_plant", "t": "f_trashcan", "f": "f_br1_lost_found", "d": "f_sign" },
+      "signs": { "d": { "signage": "DIRECTORY: LEVEL 1 · LEVEL 1 · LEVEL 1 · LEVEL 1 · LEVEL 1" } },
+      "place_item": [ { "item": "br1_note_lost", "x": [ 6, 18 ], "y": [ 7, 10 ], "chance": 25 } ],
+      "place_nested": [ { "chunks": [ [ "null", 85 ], [ "br1_squatter_npc", 15 ] ], "x": [ 7, 17 ], "y": [ 8, 11 ] } ]
+    }
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_elevator_lobby_dead",
+    "//": "Never placed by overmap generation: the 'bad lobby' elevator outcome turns an unseen garage square into one.",
+    "name": "elevator lobby",
+    "sym": "E",
+    "looks_like": "br1_elevator_lobby",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_elevator_lobby_dead",
+    "//": "A lobby that lost its power: dead lights, blood, a body, and whatever moved in. Its elevators still work. Landing tile (12,6).",
+    "object": {
+      "fill_ter": "t_thconc_floor",
+      "rows": [
+        "|..|..|..|..|..|..|..|..",
+        "|..P..|..P..|..P..|..P..",
+        "........................",
+        "....wwwwewwwewwwewwww...",
+        "....w.....%.........w...",
+        "....w...!...!...!...w...",
+        "....w.......%%......w...",
+        "....w.B..B....%B..B.w...",
+        "....wp......C......pw...",
+        "....w......!.!......w...",
+        "....g.B..B.....B....w...",
+        "....w.......%.......w...",
+        "....wt......d.......w...",
+        "....w...!.......!...w...",
+        "....w...........%...w...",
+        "....w...............w...",
+        "....wGGGGGGg.gGGGGGGw...",
+        "........................",
+        "...L.....L.....L.....L..",
+        "........................",
+        "|..|..|..|..|..|..|..|..",
+        "|..P..|..P..|..P..|..P..",
+        "|..|..|..|..|..|..|..|..",
+        "|..|..|..|..|..|..|..|.."
+      ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": {
+        "w": "t_concrete_wall",
+        "e": "t_br1_elevator_door",
+        "!": "t_br1_dead_light",
+        "G": "t_wall_glass",
+        "g": "t_door_glass_c",
+        "B": "t_thconc_floor",
+        "p": "t_thconc_floor",
+        "t": "t_thconc_floor",
+        "d": "t_thconc_floor",
+        "%": "t_thconc_floor",
+        "C": "t_thconc_floor"
       },
       "furniture": { "B": "f_bench", "p": "f_indoor_plant", "t": "f_trashcan", "d": "f_sign" },
       "signs": { "d": { "signage": "DIRECTORY: LEVEL 1 · LEVEL 1 · LEVEL 1 · LEVEL 1 · LEVEL 1" } },
-      "place_item": [ { "item": "br1_note_lost", "x": [ 6, 18 ], "y": [ 7, 10 ], "chance": 25 } ]
+      "fields": {
+        "%": { "field": "fd_blood", "intensity": 2, "age": 10 },
+        "C": { "field": "fd_blood", "intensity": 3, "age": 10 }
+      },
+      "items": { "C": [ { "item": "corpse_bloody", "chance": 100 }, { "item": "br1_camp_lockers", "chance": 60 } ] },
+      "place_item": [ { "item": "br1_note_last", "x": 12, "y": 8, "chance": 50 } ],
+      "place_monster": [
+        { "monster": "mon_br_smiler", "x": [ 6, 18 ], "y": [ 9, 14 ], "chance": 100, "pack_size": [ 1, 2 ] },
+        { "monster": "mon_br_wretch", "x": [ 6, 18 ], "y": [ 9, 14 ], "chance": 40 }
+      ]
     }
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_sealed_store",
+    "//": "Never placed by overmap generation: the 'lucky floor' elevator outcome turns an unseen garage square into one.",
+    "name": "parking deck",
+    "sym": ".",
+    "looks_like": "s_garage",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_sealed_store",
+    "//": "A sealed storeroom nobody has touched: racks of tools, crates of stores, a stocked vending machine. One door out. Landing tile (12,10).",
+    "object": {
+      "fill_ter": "t_thconc_floor",
+      "rows": [
+        "|..|..|..|..|..|..|..|..",
+        "|..P..|..P..|..P..|..P..",
+        "........................",
+        "........................",
+        ".....wwwwwwwwwwwwww.....",
+        ".....wkkk..xx..kkkw.....",
+        ".....w............w.....",
+        ".....wx....!....Vxw.....",
+        ".....w............w.....",
+        ".....wkk........kkw.....",
+        ".....w............w.....",
+        ".....wx....!.....xw.....",
+        ".....wkkk......kkkw.....",
+        ".....wwwwwwDwwwwwww.....",
+        "........................",
+        "...L.....L.....L.....L..",
+        "........................",
+        "|..|..|..|..|..|..|..|..",
+        "|..P..|..P..|..P..|..P..",
+        "|..|..|..|..|..|..|..|..",
+        "........................",
+        "........................",
+        "...L.....L.....L.....L..",
+        "........................"
+      ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": {
+        "w": "t_concrete_wall",
+        "D": "t_door_metal_c",
+        "k": "t_thconc_floor",
+        "x": "t_thconc_floor",
+        "V": "t_thconc_floor"
+      },
+      "furniture": { "k": "f_rack", "x": "f_crate_c", "V": "f_vending_c" },
+      "items": {
+        "k": { "item": "br1_cage_loot", "chance": 70, "repeat": [ 1, 2 ] },
+        "x": { "item": "br1_camp_stores", "chance": 90, "repeat": [ 1, 3 ] },
+        "V": { "item": "default_vending_machine", "chance": 100 }
+      }
+    }
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_ELEVATOR_PANEL",
+    "//": "The call panel. 'Back' and 'Home' only show once you have somewhere to go back to.",
+    "dynamic_line": "A brushed steel panel beside the doors.  Three round buttons and no numbers: one worn smooth by a lot of thumbs, one with an arrow scratched into it, and one that someone could mark with a dab of paint.",
+    "responses": [
+      {
+        "text": "Press the worn button.  (Any floor)",
+        "effect": { "run_eocs": "EOC_BR1_ELEVATOR_PICK_ANY" },
+        "topic": "TALK_DONE"
+      },
+      {
+        "text": "Press the arrow.  (Back where you came from)",
+        "condition": { "math": [ "u_br1_elevator_has_last == 1" ] },
+        "effect": { "run_eocs": "EOC_BR1_ELEVATOR_PICK_BACK" },
+        "topic": "TALK_DONE"
+      },
+      {
+        "text": "Press the painted button.  (Home)",
+        "condition": { "math": [ "u_br1_elevator_has_home == 1" ] },
+        "effect": { "run_eocs": "EOC_BR1_ELEVATOR_PICK_HOME" },
+        "topic": "TALK_DONE"
+      },
+      {
+        "text": "Daub paint on the third button.  (Make this lobby home)",
+        "effect": { "run_eocs": "EOC_BR1_ELEVATOR_SET_HOME" },
+        "topic": "TALK_DONE"
+      },
+      { "text": "Step away.", "topic": "TALK_DONE" }
+    ]
   },
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_ELEVATOR_EXAMINE",
-    "//": "About one ride in ten goes to the wrong floor.",
-    "condition": {
-      "u_query": "The call button glows a soft orange.  Press it, and step in when the doors open?",
-      "default": false
-    },
+    "//": "Remember which lobby you're in (its landing tile), then open the panel.",
     "effect": [
       {
-        "if": { "math": [ "rand(9) == 0" ] },
-        "then": [ { "run_eocs": "EOC_BR1_ELEVATOR_WRONG_FLOOR" } ],
-        "else": [ { "run_eocs": "EOC_BR1_ELEVATOR_RIDE" } ]
-      }
-    ],
-    "false_effect": [ { "u_message": "You leave the button alone.", "type": "info" } ]
+        "u_location_variable": { "u_val": "br1_elevator_here" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "om_terrain_match_type": "PREFIX", "z": 0 },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "open_dialogue": { "topic": "TALK_BR1_ELEVATOR_PANEL" } }
+    ]
   },
   {
     "type": "effect_on_condition",
-    "id": "EOC_BR1_ELEVATOR_RIDE",
-    "//": "Pick a random lobby 5-30 squares away (or turn a garage square into one if none exists), mark it on the map, move followers within 6 tiles there, then the player. Followers go first: the player's teleport reloads the map, and NPCs are reloaded from wherever they now stand.",
+    "id": "EOC_BR1_ELEVATOR_SET_HOME",
     "effect": [
       {
-        "u_location_variable": { "global_val": "br1_elevator_dest" },
+        "u_location_variable": { "u_val": "br1_elevator_home" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "om_terrain_match_type": "PREFIX", "z": 0 },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "math": [ "u_br1_elevator_has_home = 1" ] },
+      {
+        "u_message": "You smear a thumb of paint onto the third button.  Whichever lobby you're in, it should bring you back here.",
+        "type": "good"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_PICK_ANY",
+    "//": "A random lobby 5-30 squares away (a garage square becomes one if none exists), marked on the map.",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "br1_elevator_target" },
         "target_params": {
           "om_terrain": "br1_elevator_lobby",
           "om_terrain_replace": "br1_garage",
@@ -126,19 +378,115 @@
         "x_adjust": 12,
         "y_adjust": 6
       },
+      { "run_eocs": "EOC_BR1_ELEVATOR_ROLL" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_PICK_BACK",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "br1_elevator_target" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "var": { "u_val": "br1_elevator_last" }, "z": 0 },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "run_eocs": "EOC_BR1_ELEVATOR_ROLL" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_PICK_HOME",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "br1_elevator_target" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "var": { "u_val": "br1_elevator_home" }, "z": 0 },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "run_eocs": "EOC_BR1_ELEVATOR_ROLL" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_ROLL",
+    "//": "Every ride is a small gamble. Out of 100: 74 normal, 8 wrong floor, 5 stuck, 4 company, 4 lucky floor, 3 bad lobby, 2 way out. The lobby you leave becomes 'Back'.",
+    "effect": [
+      {
+        "u_location_variable": { "u_val": "br1_elevator_last" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "var": { "u_val": "br1_elevator_here" }, "z": 0 },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "math": [ "u_br1_elevator_has_last = 1" ] },
+      { "math": [ "br1_elevator_roll = rand(99)" ] },
+      {
+        "if": { "math": [ "br1_elevator_roll < 74" ] },
+        "then": { "run_eocs": "EOC_BR1_ELEVATOR_NORMAL" },
+        "else": {
+          "if": { "math": [ "br1_elevator_roll < 82" ] },
+          "then": { "run_eocs": "EOC_BR1_ELEVATOR_WRONG_FLOOR" },
+          "else": {
+            "if": { "math": [ "br1_elevator_roll < 87" ] },
+            "then": { "run_eocs": "EOC_BR1_ELEVATOR_STUCK" },
+            "else": {
+              "if": { "math": [ "br1_elevator_roll < 91" ] },
+              "then": { "run_eocs": "EOC_BR1_ELEVATOR_COMPANY" },
+              "else": {
+                "if": { "math": [ "br1_elevator_roll < 95" ] },
+                "then": { "run_eocs": "EOC_BR1_ELEVATOR_LUCKY" },
+                "else": {
+                  "if": { "math": [ "br1_elevator_roll < 98" ] },
+                  "then": { "run_eocs": "EOC_BR1_ELEVATOR_BAD_LOBBY" },
+                  "else": { "run_eocs": "EOC_BR1_ELEVATOR_WAY_OUT" }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_MOVE",
+    "//": "Followers within 6 tiles go first, then the player (the player's teleport reloads the map, and NPCs are reloaded from wherever they now stand). Every arrival chimes, loud enough for nearby things to hear.",
+    "effect": [
       { "u_run_npc_eocs": [ "EOC_BR1_ELEVATOR_FOLLOWER" ], "local": true, "npc_range": 6 },
       { "u_teleport": { "global_val": "br1_elevator_dest" }, "force_safe": true },
+      { "u_make_sound": "a soft elevator chime", "volume": 15, "type": "alarm" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_FOLLOWER",
+    "//": "Run on each NPC near the player: followers ride along.",
+    "condition": "u_following",
+    "effect": [ { "u_teleport": { "global_val": "br1_elevator_dest" }, "force_safe": true } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_NORMAL",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "br1_elevator_dest" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "var": { "global_val": "br1_elevator_target" }, "z": 0 },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
       { "turn_cost": "1 m" },
       {
-        "u_message": "The doors close.  No music, no floor numbers, just a long, smooth glide that could be up, down or sideways.  The doors open on a lobby you've never seen.",
-        "type": "neutral"
+        "u_message": "Ding.\n\nThe doors close.  No music, no floor numbers, just a long, smooth glide that could be up, down or sideways.  The doors open on a lobby.",
+        "type": "neutral",
+        "popup": true
       }
     ]
   },
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_ELEVATOR_WRONG_FLOOR",
-    "//": "The doors open somewhere dark instead: a random dead zone 5-30 squares away (or a garage square turned into one). Not revealed on the map; there's no elevator behind you.",
+    "//": "The doors open on a dead zone instead (or a garage square turned into one). Not revealed on the map; there's no elevator behind you.",
     "effect": [
       {
         "u_location_variable": { "global_val": "br1_elevator_dest" },
@@ -153,19 +501,135 @@
         "x_adjust": 12,
         "y_adjust": 8
       },
-      { "u_run_npc_eocs": [ "EOC_BR1_ELEVATOR_FOLLOWER" ], "local": true, "npc_range": 6 },
-      { "u_teleport": { "global_val": "br1_elevator_dest" }, "force_safe": true },
+      { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
       {
-        "u_message": "The car drops, hard, and stops.  The doors open on darkness and the smell of oil.  This isn't a lobby.  You step out, and when you turn around there is only bare concrete where the doors were.",
-        "type": "bad"
+        "u_message": "Wrong floor.\n\nThe car drops, hard, and stops.  The doors open on darkness and the smell of oil.  This isn't a lobby.  You step out, and when you turn around there is only bare concrete where the doors were.",
+        "type": "bad",
+        "popup": true
       }
     ]
   },
   {
     "type": "effect_on_condition",
-    "id": "EOC_BR1_ELEVATOR_FOLLOWER",
-    "//": "Run on each NPC near the player: followers ride along.",
-    "condition": "u_following",
-    "effect": [ { "u_teleport": { "global_val": "br1_elevator_dest" }, "force_safe": true } ]
+    "id": "EOC_BR1_ELEVATOR_STUCK",
+    "//": "You still reach the lobby you picked, but you lose an hour, get thirsty and tired, and it shakes you.",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "br1_elevator_dest" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "var": { "global_val": "br1_elevator_target" }, "z": 0 },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
+      { "math": [ "u_val('thirst') += 40" ] },
+      { "math": [ "u_val('sleepiness') += 60" ] },
+      { "u_add_morale": "morale_br1_elevator_stuck", "bonus": -15, "max_bonus": -15, "duration": "6 h", "decay_start": "2 h" },
+      { "turn_cost": "1 h" },
+      {
+        "u_message": "Stuck.\n\nThe car lurches and stops between floors.  The light goes out.  You wait in the dark, listening to something walk slowly across the roof of the car, and then walk away.  Hours later the light flickers back, the car moves, and the doors open on a lobby.",
+        "type": "bad",
+        "popup": true
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_COMPANY",
+    "//": "Something arrives with you: a Smiler in the car, or a Hound pack drawn by the chime.",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "br1_elevator_dest" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "var": { "global_val": "br1_elevator_target" }, "z": 0 },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
+      {
+        "if": { "math": [ "rand(1) == 0" ] },
+        "then": [
+          { "u_spawn_monster": "mon_br_smiler", "real_count": 1, "min_radius": 1, "max_radius": 2 },
+          {
+            "u_message": "Company.\n\nThe light in the car was out the whole ride.  You thought you were alone.  When the doors open, you see the grin in the corner, and it follows you out.",
+            "type": "bad",
+            "popup": true
+          }
+        ],
+        "else": [
+          { "u_spawn_monster": "mon_br_hound", "real_count": 3, "min_radius": 8, "max_radius": 14 },
+          {
+            "u_message": "Company.\n\nThe chime echoes much too far.  Something out past the glass answers it: claws on concrete, coming fast, more than one.",
+            "type": "bad",
+            "popup": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_LUCKY",
+    "//": "The doors open inside a sealed storeroom nobody has looted, made from an unseen garage square. Not on your map; there's no elevator back.",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "br1_elevator_dest" },
+        "target_params": {
+          "om_terrain": "br1_sealed_store",
+          "om_terrain_replace": "br1_garage",
+          "random": true,
+          "search_range": 30,
+          "min_distance": 5,
+          "cant_see": true,
+          "z": 0
+        },
+        "x_adjust": 12,
+        "y_adjust": 10
+      },
+      { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
+      {
+        "u_message": "Lucky floor.\n\nThe doors open on a storeroom: racks, crates, a vending machine still humming.  Dust on everything, and no footprints in it.  Nobody has been here.  Behind you the doors close, and there is only wall.",
+        "type": "good",
+        "popup": true
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_BAD_LOBBY",
+    "//": "A lobby that lost its power, made from an unseen garage square. Its elevators still work, if you can reach them.",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "br1_elevator_dest" },
+        "target_params": {
+          "om_terrain": "br1_elevator_lobby_dead",
+          "om_terrain_replace": "br1_garage",
+          "random": true,
+          "search_range": 30,
+          "min_distance": 5,
+          "cant_see": true,
+          "z": 0
+        },
+        "x_adjust": 12,
+        "y_adjust": 6
+      },
+      { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
+      {
+        "u_message": "Dark lobby.\n\nThe doors open on a lobby with every light dead.  It smells of copper.  Someone tried to camp here.  Something is still here.",
+        "type": "bad",
+        "popup": true
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_ELEVATOR_WAY_OUT",
+    "//": "The only way back to Level 0: you come out under where you were, with followers within 20 tiles.",
+    "effect": [
+      { "run_eocs": "EOC_BR_GO_L0" },
+      {
+        "u_message": "Way out.\n\nThe ride goes on and on.  The hum changes pitch.  When the doors finally open, the smell hits you first: damp carpet.  Yellow wallpaper.  Buzzing lights.  You're back on Level 0, and when you turn, the elevator is gone.",
+        "type": "good",
+        "popup": true
+      }
+    ]
   }
 ]
