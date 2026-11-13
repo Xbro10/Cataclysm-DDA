@@ -103,7 +103,8 @@
             [ "br1_feature_puddles", 60 ],
             [ "br1_feature_pipe_leak", 40 ],
             [ "br1_feature_junk", 40 ],
-            [ "br1_feature_working_light", 30 ]
+            [ "br1_feature_working_light", 30 ],
+            [ "br1_feature_vending", 15 ]
           ],
           "x": [ 0, 18 ],
           "y": [ 0, 18 ],

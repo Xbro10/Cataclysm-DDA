@@ -47,7 +47,7 @@
   {
     "type": "talk_topic",
     "id": "TALK_BR1_FOREMAN_FOOD",
-    "dynamic_line": "There isn't much.  The attendant booths are your best bet: snacks, drinks, sometimes something real.  Vending machines, if you've got a pry bar and patience.  Cars have glove boxes; most were emptied by the time we got here, but not all.  Water drips from the pipes in places.  Boil it.  Don't drink the puddles, I don't care how thirsty you are."
+    "dynamic_line": "There isn't much.  The attendant booths are your best bet: snacks, drinks, sometimes something real.  Vending machines, if you've got a pry bar and patience.  Cars have glove boxes; most were emptied by the time we got here, but not all.  Water you can get here; we rigged the taps through a filter, so drink up.  Out there, look for pipes that leak into a pool: it never runs dry, but boil it.  Don't drink the puddles, I don't care how thirsty you are."
   },
   {
     "type": "talk_topic",

@@ -25,5 +25,40 @@
     "name": "pipe-lined wall",
     "description": "A concrete wall crowded with rusted pipes.  Some of them drip.  Some of them are warm.  None of them seem to go anywhere.",
     "looks_like": "t_concrete_wall"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_drip_pool",
+    "copy-from": "t_water_sh_underground",
+    "//": "Renewable but unsafe water (plain 'water', needs boiling). Unlimited terrain water is what NPC thirst code looks for, so NPCs within 6 tiles drink here on their own.",
+    "name": "drip pool",
+    "description": "A leaking pipe overhead drips steadily into a pool that never quite overflows and never quite runs dry.  The water is cold and tastes of rust.  Boil it first.",
+    "looks_like": "t_water_sh",
+    "move_cost": 3,
+    "roof": "t_concrete_roof",
+    "liquid_source": { "id": "water" },
+    "examine_action": "water_source",
+    "delete": { "flags": [ "FISHABLE", "SWIMMABLE" ] }
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_tap",
+    "copy-from": "t_water_pump",
+    "//": "Renewable clean water for the Breakroom. NPCs within 6 tiles drink here on their own.",
+    "name": "rigged tap",
+    "description": "A valve someone has cut into the pipes and run through a bucket of sand, charcoal and cloth.  The water that trickles out is clear and cold.  A strip of tape on it reads, in marker: CLEAN.  DON'T WASTE IT.",
+    "looks_like": "t_water_pump",
+    "roof": "t_concrete_roof",
+    "liquid_source": { "id": "water_clean" },
+    "examine_action": "water_source",
+    "deconstruct": { "ter_set": "t_thconc_floor", "items": [ { "item": "pipe", "count": [ 1, 2 ] }, { "item": "pipe_fittings", "count": 1 } ] },
+    "bash": {
+      "str_min": 15,
+      "str_max": 80,
+      "sound": "whack!",
+      "sound_fail": "thunk.",
+      "ter_set": "t_thconc_floor",
+      "items": [ { "item": "scrap", "count": [ 1, 3 ] }, { "item": "pipe", "count": [ 0, 1 ] } ]
+    }
   }
 ]

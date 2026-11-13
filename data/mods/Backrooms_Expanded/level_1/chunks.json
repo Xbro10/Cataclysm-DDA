@@ -25,12 +25,13 @@
   {
     "type": "mapgen",
     "nested_mapgen_id": "br1_feature_pipe_leak",
-    "//": "A free-standing run of pipes dripping into puddles below.",
+    "//": "A free-standing run of pipes dripping into puddles below. 'w' is a drip pool: unlimited water (needs boiling) that NPCs will drink from.",
     "object": {
       "mapgensize": [ 6, 6 ],
       "rotation": [ 0, 3 ],
-      "rows": [ "      ", " #### ", " ~~ ~ ", "  ~~  ", "      ", "      " ],
+      "rows": [ "      ", " #### ", " ~w ~ ", "  ~~  ", "      ", "      " ],
       "palettes": [ "br1_garage_palette" ],
+      "terrain": { "w": "t_br1_drip_pool" },
       "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
     }
   },
@@ -64,6 +65,36 @@
       "mapgensize": [ 6, 6 ],
       "rows": [ "      ", "      ", "  !!  ", "  !!  ", "      ", "      " ],
       "palettes": [ "br1_garage_palette" ],
+      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_feature_vending",
+    "//": "Two stocked vending machines under a working light: 'v' snacks, 'u' drinks. Cash card, crowbar or brute force.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "      ", " vu   ", " !!   ", "      ", "      ", "      " ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "v": "t_thconc_floor", "u": "t_thconc_floor" },
+      "furniture": { "v": "f_vending_c", "u": "f_vending_c" },
+      "items": { "v": { "item": "vending_food", "chance": 100 }, "u": { "item": "default_vending_machine", "chance": 100 } },
+      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_feature_vending",
+    "//": "Variant: a single drinks machine.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "      ", " u    ", " !    ", "      ", "      ", "      " ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "u": "t_thconc_floor" },
+      "furniture": { "u": "f_vending_c" },
+      "items": { "u": { "item": "default_vending_machine", "chance": 100 } },
       "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
     }
   },

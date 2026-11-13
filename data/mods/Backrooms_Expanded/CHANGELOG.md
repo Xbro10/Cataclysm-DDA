@@ -6,6 +6,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Water on Level 1: drip pools under leaking pipes and inside every squatter camp (never run dry; boil before drinking), and two rigged taps of clean water in the Breakroom. NPCs within 6 tiles drink from them on their own.
+- Vending alcoves: one or two stocked vending machines (snacks and drinks) under a working light. Pay with a cash card or break in.
 - The Breakroom: a walled survivor hub on Level 1 with Dot Kowalczyk ("the Foreman"), who explains Level 1, and Marcus "Mile Marker" Reyes, who keeps the maps, can mark the nearest camp for you, and has rumours of what lies beyond. It forms once per world, 4 to 10 squares from your first arrival, and is marked on your map.
 - Squatter camps: 4 to 8 sandbagged camps per map with 2 to 4 random lost survivors who can be talked to, traded with and recruited, each with their own story of falling through.
 - Two factions: The Breakroom and The Lost. Each owns its camp's stores, so taking from them counts as stealing.
