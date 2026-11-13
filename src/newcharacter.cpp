@@ -58,6 +58,7 @@
 #include "overmap_ui.h"
 #include "overmapbuffer.h"
 #include "path_info.h"
+#include "past_achievements_info.h"
 #include "pimpl.h"
 #include "player_difficulty.h"
 #include "profession.h"
@@ -2912,6 +2913,11 @@ bool character_creator_ui::display()
     // load scenarios so that the past_games_info::ensure_loaded
     // redraw isn't called during uilist setup
     cc_uistate.recalc_scenario_list( get_avatar() );
+    // Xbro10 fork: recalc_scenario_list doesn't touch achievements, so the first
+    // scenario::can_pick() could load past games mid-ImGui-frame. Its "please wait"
+    // popup redraws the UI there and leaves no current ImGui window, which crashed
+    // on the next ImGui::GetCursorScreenPos(). Load them here, before any frame.
+    get_past_achievements();
 
     // TODO: move to interface
 
