@@ -121,8 +121,7 @@
             [ "br1_room_exit_ramp", 8 ],
             [ "br1_room_security", 12 ],
             [ "br1_room_cages", 15 ],
-            [ "br1_room_generator", 10 ],
-            [ "br1_room_paystation", 12 ]
+            [ "br1_room_generator", 10 ]
           ],
           "x": [ 0, 16 ],
           "y": [ 0, 16 ]

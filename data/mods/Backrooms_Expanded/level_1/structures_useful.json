@@ -38,45 +38,6 @@
     }
   },
   {
-    "type": "furniture",
-    "id": "f_br1_pay_station",
-    "name": "parking pay station",
-    "description": "PAY HERE BEFORE RETURNING TO YOUR VEHICLE.  The screen is dead, but you can hear coins shift inside when you lean on it.  It wouldn't take much to break it open.",
-    "symbol": "&",
-    "color": "yellow",
-    "looks_like": "f_atm_off",
-    "move_cost_mod": -1,
-    "coverage": 50,
-    "required_str": -1,
-    "flags": [ "TRANSPARENT", "NOITEM", "PERMEABLE" ],
-    "bash": {
-      "str_min": 15,
-      "str_max": 60,
-      "sound": "crunch!",
-      "sound_fail": "clang!",
-      "items": [
-        { "item": "cash_card", "charges": [ 500, 3000 ], "prob": 60 },
-        { "item": "coin_quarter", "count": [ 2, 20 ], "prob": 80 },
-        { "item": "scrap", "count": [ 2, 6 ] }
-      ]
-    }
-  },
-  {
-    "type": "mapgen",
-    "nested_mapgen_id": "br1_room_paystation",
-    "//": "A pay station plaza in the lane: two machines between railings. Break them for cash cards (the vending machines take them) and coins.",
-    "object": {
-      "mapgensize": [ 8, 8 ],
-      "rotation": [ 0, 3 ],
-      "rows": [ "        ", " rrr rr ", " .P..P. ", " ...... ", " .E.... ", " rr rrr ", "        ", "        " ],
-      "palettes": [ "br1_garage_palette" ],
-      "terrain": { "r": "t_railing", "P": "t_thconc_floor", "E": "t_thconc_floor" },
-      "furniture": { "P": "f_br1_pay_station", "E": "f_sign" },
-      "signs": { "E": { "signage": "PAY AT MACHINE BEFORE RETURNING TO YOUR VEHICLE" } },
-      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
-    }
-  },
-  {
     "type": "terrain",
     "id": "t_br1_light_powered",
     "copy-from": "t_strconc_floor_olight",
