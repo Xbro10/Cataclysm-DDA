@@ -1,0 +1,31 @@
+[
+  {
+    "type": "snippet",
+    "category": "<sm_g_quiet>",
+    "text": [ "Quiet, as far as I can tell.", "Nothing moving out there right now.", "Haven't seen a thing.  I don't trust it.", "All clear, for now." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_v_easy>",
+    "//": "Verdict: their threat is under half of ours.",
+    "text": [ "We can take them.", "Nothing we can't handle.", "Easy enough, if we're careful.", "We've got this." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_v_even>",
+    "//": "Verdict: their threat is about the same as ours.",
+    "text": [ "Doable if we stick together.", "It'll be a fair fight.  Stay close.", "We can do it, but it won't be pretty.", "Even odds.  Your call." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_v_risky>",
+    "//": "Verdict: their threat is up to twice ours.",
+    "text": [ "That's risky.", "I don't like those odds.", "We could lose someone here.", "Only if we have to." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_v_run>",
+    "//": "Verdict: their threat is more than twice ours.",
+    "text": [ "Too many.  We should go.", "We can't take that.  Let's move.", "Run.  I mean it.", "No way.  We need to leave, now." ]
+  }
+]

@@ -6,6 +6,10 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Danger warnings: followers watch for hostile monsters they can see within 30 tiles and speak up on their own when something new shows up or the odds get worse. They name the most dangerous one, say how many there are and where, and weigh the game's own monster threat ratings against your side (you and nearby followers, by melee and gun skill and how hurt you are): "We can take them", "Doable if we stick together", "That's risky" or "Too many. We should go." You hear it in the log when within 12 tiles, or as `[Radio]` when you both carry a two-way radio. Followers you left waiting or guarding a spot report in too. Only one follower reports the same sighting.
+- Developer shortcut `EOC_SM_DEBUG_DANGER` prints each follower's raw numbers (hostiles seen, threat, our side, verdict, distance from you, who has a radio) and clears past warnings.
+- Gossip (lite): "Seen anything around here?" in the follower menu. Followers report what is really around right now, with a compass direction: the hostiles they can see (named, with a verdict), the nearest drinkable water (Breakroom tap, drip pool, pump, stream or shallow water) and any LOOTED mark nearby. Once a day they also mark a place on your map: a nearby shop or service building, or in the Backrooms a squatter camp (Level 1) or a rippling-wall room (Level 0).
+- Developer shortcut `EOC_SM_DEBUG_GOSSIP_RESET` lets followers give their daily map tip again.
 - Moral reactions: followers who see you kill someone who wasn't fighting back, or eat human flesh, react to it (kind ones are shocked and trust you less, ruthless ones may approve, followers with the Cannibal trait don't mind), and they write it in their journal. Disapproval builds up and fades by 1 a day; at 7 a follower warns you, at 10 they leave you. Each follower has a kindness and ruthlessness score of their own.
 - "Here, have some of my food." in the follower menu: pick a food and it is put at their feet. Sharing makes them like and trust you more (counts once every 6 hours).
 - "How do you feel about me?" in the follower menu.

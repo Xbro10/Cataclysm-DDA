@@ -1,0 +1,208 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_SCAN",
+    "//": [
+      "u is the follower looking around. Fills these globals:",
+      "sm_seen (hostiles they can see within 30 tiles), sm_threat (sum of the game's monster difficulty for those),",
+      "sm_worst_name / sm_target (the most dangerous one and where it is), sm_power (our side), sm_level (0 none, 1 easy, 2 even, 3 risky, 4 run),",
+      "and sm_danger_text (what they would say)."
+    ],
+    "effect": [
+      { "u_location_variable": { "global_val": "sm_scan_from" } },
+      { "math": [ "sm_seen = 0" ] },
+      { "math": [ "sm_threat = 0" ] },
+      { "math": [ "sm_worst = -1" ] },
+      { "u_run_monster_eocs": [ "EOC_SM_DANGER_SCAN_MON" ], "monster_range": 30 },
+      { "math": [ "sm_power = 0" ] },
+      { "u_run_npc_eocs": [ "EOC_SM_DANGER_POWER_ONE" ], "local": true, "npc_range": 15 },
+      { "run_eocs": "EOC_SM_DANGER_POWER_AVATAR", "alpha_talker": "avatar" },
+      {
+        "if": { "math": [ "sm_seen == 0" ] },
+        "then": { "math": [ "sm_level = 0" ] },
+        "else": [
+          { "math": [ "sm_ratio = sm_threat / max(1, sm_power)" ] },
+          {
+            "if": { "math": [ "sm_ratio < 0.5" ] },
+            "then": { "math": [ "sm_level = 1" ] },
+            "else": {
+              "if": { "math": [ "sm_ratio <= 1" ] },
+              "then": { "math": [ "sm_level = 2" ] },
+              "else": {
+                "if": { "math": [ "sm_ratio <= 2" ] },
+                "then": { "math": [ "sm_level = 3" ] },
+                "else": { "math": [ "sm_level = 4" ] }
+              }
+            }
+          },
+          { "run_eocs": "EOC_SM_COMPASS" },
+          {
+            "if": { "math": [ "sm_seen == 1" ] },
+            "then": {
+              "set_string_var": "Just the one: the <global_val:sm_worst_name>, about <global_val:sm_steps> steps <global_val:sm_dir>.",
+              "target_var": { "global_val": "sm_danger_text" },
+              "parse_tags": true
+            },
+            "else": {
+              "set_string_var": "I count <global_val:sm_seen> hostiles.  Nastiest is the <global_val:sm_worst_name>, about <global_val:sm_steps> steps <global_val:sm_dir>.",
+              "target_var": { "global_val": "sm_danger_text" },
+              "parse_tags": true
+            }
+          },
+          {
+            "switch": { "math": [ "sm_level" ] },
+            "cases": [
+              { "case": 1, "effect": { "set_string_var": "<global_val:sm_danger_text>  <sm_v_easy>", "target_var": { "global_val": "sm_danger_text" }, "parse_tags": true } },
+              { "case": 2, "effect": { "set_string_var": "<global_val:sm_danger_text>  <sm_v_even>", "target_var": { "global_val": "sm_danger_text" }, "parse_tags": true } },
+              { "case": 3, "effect": { "set_string_var": "<global_val:sm_danger_text>  <sm_v_risky>", "target_var": { "global_val": "sm_danger_text" }, "parse_tags": true } },
+              { "case": 4, "effect": { "set_string_var": "<global_val:sm_danger_text>  <sm_v_run>", "target_var": { "global_val": "sm_danger_text" }, "parse_tags": true } }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_SCAN_MON",
+    "//": "u is a monster within 30 tiles of the follower. Hands control back to the follower (alpha) with the monster as beta, so the follower's own line of sight is what counts.",
+    "effect": [
+      { "u_location_variable": { "global_val": "sm_mon_loc" } },
+      { "run_eocs": "EOC_SM_DANGER_SEEN", "alpha_loc": { "global_val": "sm_scan_from" }, "beta_loc": { "global_val": "sm_mon_loc" } }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_SEEN",
+    "//": "u is the follower, npc is the monster. Hostile means not tame and angry enough to attack (anger 10+, the game's own attack threshold).",
+    "condition": {
+      "and": [ { "u_can_see_location": { "global_val": "sm_mon_loc" } }, { "math": [ "n_val('friendly') == 0" ] }, { "math": [ "n_val('anger') >= 10" ] } ]
+    },
+    "effect": [
+      { "math": [ "sm_seen += 1" ] },
+      { "math": [ "sm_threat += max(1, n_val('difficulty'))" ] },
+      {
+        "if": { "math": [ "n_val('difficulty') > sm_worst" ] },
+        "then": [
+          { "math": [ "sm_worst = n_val('difficulty')" ] },
+          { "set_string_var": "<npc_name>", "target_var": { "global_val": "sm_worst_name" }, "parse_tags": true },
+          { "npc_location_variable": { "global_val": "sm_target" } }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_POWER_ONE",
+    "//": "u is an NPC within 15 tiles of the follower doing the scan (the scanner included). Allies (following, waiting or guarding) add to our side.",
+    "condition": "u_friend",
+    "effect": [ { "run_eocs": "EOC_SM_DANGER_POWER_ADD" } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_POWER_AVATAR",
+    "//": "u is the player. Counts only if within 15 tiles of the follower doing the scan.",
+    "condition": { "math": [ "distance('u', sm_scan_from) <= 15" ] },
+    "effect": [ { "run_eocs": "EOC_SM_DANGER_POWER_ADD" } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_POWER_ADD",
+    "//": "One fighter's worth: 10 plus twice their melee and gun skill, scaled down when hurt (torso hp, never below a quarter). An average survivor is about 18, roughly four ordinary zombies.",
+    "effect": [
+      {
+        "math": [
+          "sm_power += (10 + 2 * u_skill('melee') + 2 * u_skill('gun')) * max(0.25, u_hp('torso') / max(1, u_hp_max('torso')))"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_WATCH",
+    "//": [
+      "Every 30 seconds each loaded follower looks around and speaks up when it matters:",
+      "a new sighting, or the verdict getting worse. If another follower already reported the same or worse in the last 2 minutes, they keep quiet.",
+      "Delivered in the log when the player is within 12 tiles, or by two-way radio when both carry one."
+    ],
+    "eoc_type": "RECURRING",
+    "recurrence": "30 seconds",
+    "global": true,
+    "run_for_npcs": true,
+    "//2": "u_friend, not u_following: a follower told to stay put or guard a spot is no longer 'following', but should still radio in.",
+    "condition": { "and": [ "u_friend", { "not": { "u_has_effect": "sleep" } } ] },
+    "effect": [
+      { "run_eocs": "EOC_SM_DANGER_SCAN" },
+      { "math": [ "sm_since = time('now') - u_sm_alert_time" ] },
+      {
+        "if": {
+          "and": [
+            { "math": [ "sm_level > 0" ] },
+            { "or": [ { "math": [ "sm_level > u_sm_alert_level" ] }, { "and": [ { "math": [ "sm_seen > u_sm_alert_seen" ] }, { "math": [ "sm_since >= time('10 m')" ] } ] } ] }
+          ]
+        },
+        "then": {
+          "if": { "and": [ { "math": [ "sm_level <= sm_alert_g_level" ] }, { "math": [ "time('now') - sm_alert_g_time < time('2 m')" ] } ] },
+          "then": [ { "math": [ "u_sm_alert_level = sm_level" ] }, { "math": [ "u_sm_alert_seen = sm_seen" ] }, { "math": [ "u_sm_alert_time = time('now')" ] } ],
+          "else": { "run_eocs": "EOC_SM_DANGER_ANNOUNCE" }
+        },
+        "else": {
+          "if": { "and": [ { "math": [ "sm_level < u_sm_alert_level" ] }, { "math": [ "sm_since >= time('2 m')" ] } ] },
+          "then": [ { "math": [ "u_sm_alert_level = sm_level" ] }, { "math": [ "u_sm_alert_seen = sm_seen" ] } ]
+        }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_ANNOUNCE",
+    "//": "u is the follower. Uses the globals from EOC_SM_DANGER_SCAN. Only marks the warning as given if the player actually got it.",
+    "effect": [
+      { "math": [ "sm_avatar_radio = 0" ] },
+      { "run_eocs": "EOC_SM_DANGER_AVATAR_INFO", "alpha_talker": "avatar" },
+      { "math": [ "sm_dist = distance('u', sm_avatar_loc)" ] },
+      { "math": [ "sm_told = 0" ] },
+      {
+        "if": { "math": [ "sm_dist <= 12" ] },
+        "then": [
+          {
+            "if": { "math": [ "sm_level >= 4" ] },
+            "then": { "message": "<u_name>: \"Heads up!  <global_val:sm_danger_text>\"", "type": "bad" },
+            "else": { "message": "<u_name>: \"Heads up!  <global_val:sm_danger_text>\"", "type": "warning" }
+          },
+          { "math": [ "sm_told = 1" ] }
+        ],
+        "else": {
+          "if": { "and": [ { "u_has_item_with_flag": "TWO_WAY_RADIO" }, { "math": [ "sm_avatar_radio == 1" ] } ] },
+          "then": [
+            {
+              "if": { "math": [ "sm_level >= 4" ] },
+              "then": { "message": "[Radio] <u_name>: \"Heads up!  <global_val:sm_danger_text>\"", "type": "bad" },
+              "else": { "message": "[Radio] <u_name>: \"Heads up!  <global_val:sm_danger_text>\"", "type": "info" }
+            },
+            { "math": [ "sm_told = 1" ] }
+          ]
+        }
+      },
+      {
+        "if": { "math": [ "sm_told == 1" ] },
+        "then": [
+          { "math": [ "u_sm_alert_level = sm_level" ] },
+          { "math": [ "u_sm_alert_seen = sm_seen" ] },
+          { "math": [ "u_sm_alert_time = time('now')" ] },
+          { "math": [ "sm_alert_g_level = sm_level" ] },
+          { "math": [ "sm_alert_g_time = time('now')" ] }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DANGER_AVATAR_INFO",
+    "//": "u is the player: where they are, and whether they carry a two-way radio.",
+    "effect": [
+      { "u_location_variable": { "global_val": "sm_avatar_loc" } },
+      { "if": { "u_has_item_with_flag": "TWO_WAY_RADIO" }, "then": { "math": [ "sm_avatar_radio = 1" ] } }
+    ]
+  }
+]

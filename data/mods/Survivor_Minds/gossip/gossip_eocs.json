@@ -1,0 +1,215 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_COMPASS",
+    "//": [
+      "u is the speaker; the global location variable sm_target is the thing they are pointing at.",
+      "Sets global sm_dir (north, northeast...) and sm_steps (distance in tiles).",
+      "There is no direction function in EOC math, so: place four anchors 1000 tiles N/E/S/W of the speaker and compare distances. ns > 0 means north, ew > 0 means east (each is about twice the real offset)."
+    ],
+    "effect": [
+      { "u_location_variable": { "u_val": "sm_here" } },
+      { "u_location_variable": { "u_val": "sm_anchor_n" }, "y_adjust": -1000 },
+      { "u_location_variable": { "u_val": "sm_anchor_s" }, "y_adjust": 1000 },
+      { "u_location_variable": { "u_val": "sm_anchor_e" }, "x_adjust": 1000 },
+      { "u_location_variable": { "u_val": "sm_anchor_w" }, "x_adjust": -1000 },
+      { "math": [ "sm_ns = distance(u_sm_anchor_s, sm_target) - distance(u_sm_anchor_n, sm_target)" ] },
+      { "math": [ "sm_ew = distance(u_sm_anchor_w, sm_target) - distance(u_sm_anchor_e, sm_target)" ] },
+      { "math": [ "sm_steps = distance(u_sm_here, sm_target)" ] },
+      {
+        "if": { "math": [ "abs(sm_ew) * 2 <= abs(sm_ns)" ] },
+        "then": {
+          "if": { "math": [ "sm_ns > 0" ] },
+          "then": { "set_string_var": "north", "target_var": { "global_val": "sm_dir" } },
+          "else": { "set_string_var": "south", "target_var": { "global_val": "sm_dir" } }
+        },
+        "else": {
+          "if": { "math": [ "abs(sm_ns) * 2 <= abs(sm_ew)" ] },
+          "then": {
+            "if": { "math": [ "sm_ew > 0" ] },
+            "then": { "set_string_var": "east", "target_var": { "global_val": "sm_dir" } },
+            "else": { "set_string_var": "west", "target_var": { "global_val": "sm_dir" } }
+          },
+          "else": {
+            "if": { "math": [ "sm_ns > 0" ] },
+            "then": {
+              "if": { "math": [ "sm_ew > 0" ] },
+              "then": { "set_string_var": "northeast", "target_var": { "global_val": "sm_dir" } },
+              "else": { "set_string_var": "northwest", "target_var": { "global_val": "sm_dir" } }
+            },
+            "else": {
+              "if": { "math": [ "sm_ew > 0" ] },
+              "then": { "set_string_var": "southeast", "target_var": { "global_val": "sm_dir" } },
+              "else": { "set_string_var": "southwest", "target_var": { "global_val": "sm_dir" } }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_GOSSIP",
+    "//": "u is the follower answering 'Seen anything around here?'. Builds global sm_gossip from what is really around right now: danger, water, a LOOTED mark, and once a day a place marked on the player's map.",
+    "effect": [
+      { "set_string_var": "", "target_var": { "global_val": "sm_gossip" } },
+      { "run_eocs": "EOC_SM_GOSSIP_DANGER" },
+      { "run_eocs": "EOC_SM_GOSSIP_WATER" },
+      { "run_eocs": "EOC_SM_GOSSIP_LOOTED" },
+      { "run_eocs": "EOC_SM_GOSSIP_MAP_TIP" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_GOSSIP_DANGER",
+    "//": "Same look-around as the unprompted warnings (EOC_SM_DANGER_SCAN in danger_eocs.json): only hostiles they can see, named, with a verdict.",
+    "effect": [
+      { "run_eocs": "EOC_SM_DANGER_SCAN" },
+      {
+        "if": { "math": [ "sm_seen == 0" ] },
+        "then": { "set_string_var": "<sm_g_quiet>", "target_var": { "global_val": "sm_gossip" }, "parse_tags": true },
+        "else": { "set_string_var": "<global_val:sm_danger_text>", "target_var": { "global_val": "sm_gossip" }, "parse_tags": true }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_GOSSIP_WATER",
+    "//": "Looks for drinkable water within 40 tiles, best first. Each search only runs if nothing was found yet.",
+    "effect": [
+      { "math": [ "sm_water_found = 0" ] },
+      {
+        "u_location_variable": { "global_val": "sm_target" },
+        "terrain": "t_br1_tap",
+        "target_max_radius": 40,
+        "true_eocs": [ { "id": "EOC_SM_WATER_TAP", "effect": [ { "math": [ "sm_water_found = 1" ] }, { "set_string_var": "the Breakroom tap", "target_var": { "global_val": "sm_water_kind" } } ] } ]
+      },
+      {
+        "if": { "math": [ "sm_water_found == 0" ] },
+        "then": {
+          "u_location_variable": { "global_val": "sm_target" },
+          "terrain": "t_br1_drip_pool",
+          "target_max_radius": 40,
+          "true_eocs": [ { "id": "EOC_SM_WATER_DRIP", "effect": [ { "math": [ "sm_water_found = 1" ] }, { "set_string_var": "a drip pool, boil it", "target_var": { "global_val": "sm_water_kind" } } ] } ]
+        }
+      },
+      {
+        "if": { "math": [ "sm_water_found == 0" ] },
+        "then": {
+          "u_location_variable": { "global_val": "sm_target" },
+          "terrain": "t_water_pump",
+          "target_max_radius": 40,
+          "true_eocs": [ { "id": "EOC_SM_WATER_PUMP", "effect": [ { "math": [ "sm_water_found = 1" ] }, { "set_string_var": "a working pump", "target_var": { "global_val": "sm_water_kind" } } ] } ]
+        }
+      },
+      {
+        "if": { "math": [ "sm_water_found == 0" ] },
+        "then": {
+          "u_location_variable": { "global_val": "sm_target" },
+          "terrain": "t_water_moving_sh",
+          "target_max_radius": 40,
+          "true_eocs": [ { "id": "EOC_SM_WATER_STREAM", "effect": [ { "math": [ "sm_water_found = 1" ] }, { "set_string_var": "running water, a stream", "target_var": { "global_val": "sm_water_kind" } } ] } ]
+        }
+      },
+      {
+        "if": { "math": [ "sm_water_found == 0" ] },
+        "then": {
+          "u_location_variable": { "global_val": "sm_target" },
+          "terrain": "t_water_sh",
+          "target_max_radius": 40,
+          "true_eocs": [ { "id": "EOC_SM_WATER_SHALLOW", "effect": [ { "math": [ "sm_water_found = 1" ] }, { "set_string_var": "some shallow water, boil it", "target_var": { "global_val": "sm_water_kind" } } ] } ]
+        }
+      },
+      {
+        "if": { "math": [ "sm_water_found == 1" ] },
+        "then": [
+          { "run_eocs": "EOC_SM_COMPASS" },
+          {
+            "set_string_var": "<global_val:sm_gossip>  Water about <global_val:sm_steps> steps <global_val:sm_dir>: <global_val:sm_water_kind>.",
+            "target_var": { "global_val": "sm_gossip" },
+            "parse_tags": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_GOSSIP_LOOTED",
+    "effect": [
+      {
+        "u_location_variable": { "global_val": "sm_target" },
+        "furniture": "f_sm_mark_looted",
+        "target_max_radius": 40,
+        "true_eocs": [
+          {
+            "id": "EOC_SM_GOSSIP_LOOTED_FOUND",
+            "effect": [
+              { "run_eocs": "EOC_SM_COMPASS" },
+              {
+                "set_string_var": "<global_val:sm_gossip>  Somebody's already been through to the <global_val:sm_dir>; there's a LOOTED mark.",
+                "target_var": { "global_val": "sm_gossip" },
+                "parse_tags": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_GOSSIP_MAP_TIP",
+    "//": "Once a day per follower: mark one place on the player's map. Backrooms Level 1: the nearest squatter camp. Level 0 (with Backrooms Expanded): a rippling-wall room. Elsewhere: a random shop or service building within 15 map squares.",
+    "condition": { "math": [ "u_sm_tip_day != floor(time_since('cataclysm', 'unit':'days')) + 1" ] },
+    "effect": [
+      { "math": [ "u_sm_tip_day = floor(time_since('cataclysm', 'unit':'days')) + 1" ] },
+      { "math": [ "sm_tip_found = 0" ] },
+      {
+        "if": { "current_dimension": "backrooms_level_1" },
+        "then": [
+          {
+            "u_location_variable": { "global_val": "sm_target" },
+            "target_params": { "om_terrain": "br1_squatter_camp", "reveal_radius": 1, "z": 0 }
+          },
+          { "set_string_var": "a squatter camp", "target_var": { "global_val": "sm_tip_kind" } },
+          { "math": [ "sm_tip_found = 1" ] }
+        ],
+        "else": {
+          "if": { "and": [ { "mod_is_loaded": "backrooms_expanded" }, { "current_dimension": "default" } ] },
+          "then": [
+            {
+              "u_location_variable": { "global_val": "sm_target" },
+              "target_params": { "om_terrain": "br0_thin_room", "reveal_radius": 1, "z": 0 }
+            },
+            { "set_string_var": "a room where the wall ripples", "target_var": { "global_val": "sm_tip_kind" } },
+            { "math": [ "sm_tip_found = 1" ] }
+          ],
+          "else": {
+            "if": { "not": { "mod_is_loaded": "backrooms" } },
+            "then": [
+              {
+                "u_location_variable": { "global_val": "sm_target" },
+                "target_params": { "om_terrain": "s_", "om_terrain_match_type": "PREFIX", "random": true, "search_range": 15, "reveal_radius": 1, "z": 0 }
+              },
+              { "set_string_var": "a shop that looked untouched", "target_var": { "global_val": "sm_tip_kind" } },
+              { "math": [ "sm_tip_found = 1" ] }
+            ]
+          }
+        }
+      },
+      {
+        "if": { "math": [ "sm_tip_found == 1" ] },
+        "then": [
+          { "run_eocs": "EOC_SM_COMPASS" },
+          { "math": [ "sm_squares = max(1, round(sm_steps / 24))" ] },
+          {
+            "set_string_var": "<global_val:sm_gossip>  Oh, and I spotted <global_val:sm_tip_kind> earlier, about <global_val:sm_squares> squares <global_val:sm_dir>.  I'll mark it on your map.",
+            "target_var": { "global_val": "sm_gossip" },
+            "parse_tags": true
+          }
+        ]
+      }
+    ]
+  }
+]

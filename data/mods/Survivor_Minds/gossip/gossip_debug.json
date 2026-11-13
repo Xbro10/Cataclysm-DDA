@@ -1,0 +1,44 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_GOSSIP_RESET",
+    "//": "Developer shortcut: Debug menu > Activate EOC. Lets every follower give their once-a-day map tip again. Remove before release.",
+    "effect": [ { "u_run_npc_eocs": [ "EOC_SM_DEBUG_GOSSIP_RESET_ONE" ], "local": true }, { "u_message": "Survivor Minds debug: followers can give a map tip again." } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_GOSSIP_RESET_ONE",
+    "condition": "u_following",
+    "effect": [ { "math": [ "u_sm_tip_day = 0" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_DANGER",
+    "//": "Developer shortcut: every follower in the loaded area looks around and prints the raw numbers behind their verdict, then forgets past warnings so the next sighting is reported again. Remove before release.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_SM_DEBUG_DANGER_ONE" ], "local": true },
+      { "math": [ "sm_alert_g_level = 0" ] },
+      { "math": [ "sm_alert_g_time = 0" ] }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_DANGER_ONE",
+    "condition": "u_friend",
+    "effect": [
+      { "run_eocs": "EOC_SM_DANGER_SCAN" },
+      { "math": [ "sm_avatar_radio = 0" ] },
+      { "run_eocs": "EOC_SM_DANGER_AVATAR_INFO", "alpha_talker": "avatar" },
+      { "math": [ "sm_dist = distance('u', sm_avatar_loc)" ] },
+      { "math": [ "sm_npc_radio = 0" ] },
+      { "if": { "u_has_item_with_flag": "TWO_WAY_RADIO" }, "then": { "math": [ "sm_npc_radio = 1" ] } },
+      {
+        "message": "<u_name>: sees <global_val:sm_seen> hostiles, threat <global_val:sm_threat> vs our side <global_val:sm_power> (verdict level <global_val:sm_level> of 4; worst: <global_val:sm_worst_name>).  <global_val:sm_dist> tiles from you; radio: you <global_val:sm_avatar_radio>, them <global_val:sm_npc_radio> (1 = has one).",
+        "type": "info"
+      },
+      { "math": [ "u_sm_alert_level = 0" ] },
+      { "math": [ "u_sm_alert_seen = 0" ] },
+      { "math": [ "u_sm_alert_time = 0" ] }
+    ]
+  }
+]
