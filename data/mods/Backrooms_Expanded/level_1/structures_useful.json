@@ -1,0 +1,206 @@
+[
+  {
+    "type": "furniture",
+    "id": "f_br1_cctv",
+    "copy-from": "f_console_broken",
+    "name": "bank of CCTV monitors",
+    "description": "A row of security monitors.  Every screen shows static, except now and then one of them doesn't.",
+    "looks_like": "f_console_broken"
+  },
+  {
+    "type": "item_group",
+    "id": "br1_security_locker",
+    "//": "The guard's locker: light and a little defence, nothing that makes a fight easy.",
+    "subtype": "collection",
+    "items": [
+      { "item": "flashlight", "prob": 50 },
+      { "item": "baton", "prob": 35 },
+      { "group": "batteries", "prob": 50 },
+      { "item": "radio", "prob": 15 },
+      { "item": "cash_card", "charges": [ 500, 3000 ], "prob": 20 },
+      { "item": "br1_note_lost", "prob": 10 }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_security",
+    "//": "A locked security office: dead CCTV, the guard's lockers, and the logbook. Pick or pry the door.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "########", "#MMMM.l#", "#.h....#", "#.dd..l#", "#......#", "#....L.#", "#......#", "###D####" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "M": "t_thconc_floor", "h": "t_thconc_floor", "d": "t_thconc_floor", "D": "t_door_metal_locked" },
+      "furniture": { "M": "f_br1_cctv", "h": "f_chair", "d": "f_desk" },
+      "items": { "l": { "item": "br1_security_locker", "chance": 70 } },
+      "place_item": [ { "item": "br1_security_log", "x": [ 2, 3 ], "y": 3, "chance": 100 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "furniture",
+    "id": "f_br1_pay_station",
+    "name": "parking pay station",
+    "description": "PAY HERE BEFORE RETURNING TO YOUR VEHICLE.  The screen is dead, but you can hear coins shift inside when you lean on it.  It wouldn't take much to break it open.",
+    "symbol": "&",
+    "color": "yellow",
+    "looks_like": "f_atm_off",
+    "move_cost_mod": -1,
+    "coverage": 50,
+    "required_str": -1,
+    "flags": [ "TRANSPARENT", "NOITEM", "PERMEABLE" ],
+    "bash": {
+      "str_min": 15,
+      "str_max": 60,
+      "sound": "crunch!",
+      "sound_fail": "clang!",
+      "items": [
+        { "item": "cash_card", "charges": [ 500, 3000 ], "prob": 60 },
+        { "item": "coin_quarter", "count": [ 2, 20 ], "prob": 80 },
+        { "item": "scrap", "count": [ 2, 6 ] }
+      ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_paystation",
+    "//": "A pay station plaza in the lane: two machines between railings. Break them for cash cards (the vending machines take them) and coins.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "        ", " rrr rr ", " .P..P. ", " ...... ", " .E.... ", " rr rrr ", "        ", "        " ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "r": "t_railing", "P": "t_thconc_floor", "E": "t_thconc_floor" },
+      "furniture": { "P": "f_br1_pay_station", "E": "f_sign" },
+      "signs": { "E": { "signage": "PAY AT MACHINE BEFORE RETURNING TO YOUR VEHICLE" } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_light_powered",
+    "copy-from": "t_strconc_floor_olight",
+    "name": "concrete floor, generator light",
+    "description": "Cold concrete under a ceiling light that hums louder than the others.  A generator somewhere nearby is keeping it alive.",
+    "looks_like": "t_strconc_floor_olight"
+  },
+  {
+    "type": "furniture",
+    "id": "f_br1_generator",
+    "copy-from": "f_generator_broken",
+    "name": "fuel generator",
+    "description": "A squat gasoline generator, its tank bone dry.  Thick cables climb from it into the ceiling and run off toward the lane lights.",
+    "looks_like": "f_generator_broken",
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR1_GENERATOR_EXAMINE" ] }
+  },
+  {
+    "type": "furniture",
+    "id": "f_br1_generator_on",
+    "copy-from": "f_generator_broken",
+    "name": "running generator",
+    "description": "A gasoline generator roaring away, shaking on its mounts.  It smells of exhaust and hot metal.",
+    "looks_like": "f_active_backup_generator",
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR1_GENERATOR_RUNNING" ] }
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_generator_start",
+    "terrain": [ { "result": "t_br1_light_powered", "valid_terrain": [ "t_br1_dead_light" ] } ],
+    "furniture": [ { "result": "f_br1_generator_on", "valid_furniture": [ "f_br1_generator" ] } ]
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_generator_stop",
+    "terrain": [ { "result": "t_br1_dead_light", "valid_terrain": [ "t_br1_light_powered" ] } ],
+    "furniture": [ { "result": "f_br1_generator", "valid_furniture": [ "f_br1_generator_on" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_GENERATOR_EXAMINE",
+    "//": "Two litres of gasoline relights every dead ceiling light within 12 tiles for a week. Light draws Deathmoths and keeps Smilers back.",
+    "condition": { "u_has_items": { "item": "gasoline", "charges": 2000 } },
+    "effect": [ { "run_eocs": "EOC_BR1_GENERATOR_FUEL" } ],
+    "false_effect": [
+      {
+        "u_message": "The tank is bone dry.  It would take a couple of litres of gasoline to get it going.",
+        "type": "info"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_GENERATOR_FUEL",
+    "condition": { "u_query": "Pour two litres of gasoline into the generator?", "default": true },
+    "effect": [
+      { "u_consume_item": "gasoline", "charges": 2000 },
+      { "u_location_variable": { "global_val": "br1_generator_point" } },
+      { "u_transform_radius": 12, "ter_furn_transform": "br1_generator_start" },
+      {
+        "u_transform_radius": 12,
+        "ter_furn_transform": "br1_generator_stop",
+        "target_var": { "global_val": "br1_generator_point" },
+        "time_in_future": "7 days"
+      },
+      {
+        "u_message": "The generator coughs, catches, and settles into a steady roar.  Overhead, dead lights flicker and come on, one after another.",
+        "type": "good"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_GENERATOR_RUNNING",
+    "effect": [ { "u_message": "The generator roars on.  The fuel you gave it should keep the lights on for about a week.", "type": "info" } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_generator_fuel",
+    "subtype": "collection",
+    "items": [ { "item": "gasoline", "container-item": "jerrycan", "charges": [ 500, 2500 ] } ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_generator",
+    "//": "A generator room. Its light is always dead until the generator runs. Sometimes a can of gas was left behind.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "########", "#r....r#", "#..G...#", "#......#", "#.....r#", "#..L...#", "#......#", "###D####" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "G": "t_thconc_floor", "L": "t_br1_dead_light" },
+      "furniture": { "G": "f_br1_generator" },
+      "place_items": [ { "item": "br1_generator_fuel", "x": [ 1, 6 ], "y": [ 1, 4 ], "chance": 35 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "item_group",
+    "id": "br1_cage_loot",
+    "//": "Storage cages: the best tool loot on Level 1, behind a padlocked gate.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "tools_mechanic", "prob": 25 },
+      { "group": "tools_carpentry", "prob": 20 },
+      { "group": "hardware", "prob": 20 },
+      { "group": "car_misc", "prob": 15 },
+      { "group": "tools_lighting", "prob": 10 },
+      { "group": "cannedfood", "prob": 5 },
+      { "item": "br1_note_lost", "prob": 3 }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_cages",
+    "//": "Two chain-link storage cages with padlocked gates. Pry, pick or cut your way in.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "ffffffff", "fX.ffX.f", "f..ff..f", "f.Xff..f", "fgffffgf", "........", "...L....", "........" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "f": "t_chainfence", "g": "t_chaingate_l" },
+      "furniture": { "X": "f_crate_c" },
+      "items": { "X": { "item": "br1_cage_loot", "chance": 80, "repeat": [ 1, 2 ] } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]
