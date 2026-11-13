@@ -1,0 +1,68 @@
+[
+  {
+    "type": "dimension_region_layout",
+    "id": "backrooms_level_2",
+    "generation_mode": "UNIFORM",
+    "uniform_region": "backrooms_level_2"
+  },
+  {
+    "type": "dimension",
+    "id": "backrooms_level_2",
+    "region_layout": "backrooms_level_2"
+  },
+  {
+    "type": "region_settings",
+    "id": "backrooms_level_2",
+    "//": "Level 2, Pipe Dreams: one floor (z 0) of maintenance tunnels for now, solid rock above and below. Deeper floors come later.",
+    "rivers": null,
+    "lakes": null,
+    "ocean": null,
+    "ravines": null,
+    "forests": null,
+    "forest_trails": null,
+    "highways": null,
+    "cities": "no_cities",
+    "forest_composition": "no_forests",
+    "map_extras": "no_map_extras",
+    "terrain_furniture": "default",
+    "weather": "default_backrooms",
+    "npc_spawntime": 0,
+    "place_roads": false,
+    "place_specials": true,
+    "neighbor_connections": false,
+    "default_oter": [
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "br2_tunnels",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock",
+      "deep_rock"
+    ],
+    "default_groundcover": [ [ "t_metal_floor", 1 ] ],
+    "feature_flag_settings": { "blacklist": [  ], "whitelist": [ "BACKROOMS_L2" ] },
+    "//2": "connections are required by the loader but unused (no roads, cities or sewers here)",
+    "connections": {
+      "intra_city_road_connection": "local_road",
+      "inter_city_road_connection": "local_road",
+      "trail_connection": "forest_trail",
+      "sewer_connection": "sewer_tunnel",
+      "subway_connection": "subway_tunnel",
+      "rail_connection": "local_railroad"
+    }
+  }
+]

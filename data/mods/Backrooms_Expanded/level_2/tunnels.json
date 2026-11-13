@@ -1,0 +1,116 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br2_pipe_wall",
+    "copy-from": "t_wall_metal",
+    "name": "pipe-choked wall",
+    "description": "A wall you can barely see for the pipes bolted across it: copper, iron, lagged in crumbling insulation, some cold, some too hot to touch.  They rattle now and then, as if something is moving through them.",
+    "looks_like": "t_wall_metal"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br2_light",
+    "copy-from": "t_strconc_floor_olight",
+    "name": "metal floor, caged bulb",
+    "description": "Metal decking under a single bulb in a wire cage.  It gives a dim, orange light and buzzes when the pipes knock.",
+    "color": "yellow",
+    "light_emitted": 60,
+    "looks_like": "t_metal_floor"
+  },
+  {
+    "type": "overmap_location",
+    "id": "br2_tunnels",
+    "terrains": [ "br2_tunnels" ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br2_tunnels",
+    "name": "maintenance tunnels",
+    "sym": "#",
+    "looks_like": "sewer",
+    "color": "brown",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_tunnels",
+    "//": "A grid maze of 3-wide corridors between pipe walls. The centre cross (rows and columns 11-13) is always open, so neighbouring squares always connect; the other corridor lines (3-5 and 19-21) open in random 8-tile pieces, which leaves loops and dead ends that carry across square edges.",
+    "object": {
+      "fill_ter": "t_metal_floor",
+      "rows": [
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "........................",
+        "........................",
+        "........................",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########",
+        "###########...##########"
+      ],
+      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor" },
+      "place_nested": [
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_h", 55 ] ], "x": 0, "y": 3 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_h", 55 ] ], "x": 8, "y": 3 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_h", 55 ] ], "x": 16, "y": 3 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_h", 55 ] ], "x": 0, "y": 19 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_h", 55 ] ], "x": 8, "y": 19 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_h", 55 ] ], "x": 16, "y": 19 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 3, "y": 0 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 3, "y": 8 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 3, "y": 16 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 0 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 8 },
+        { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 16 },
+        { "chunks": [ [ "null", 60 ], [ "br2_feature_light", 40 ] ], "x": 12, "y": 12 },
+        { "chunks": [ [ "null", 85 ], [ "br2_feature_light", 15 ] ], "x": 4, "y": 12 },
+        { "chunks": [ [ "null", 85 ], [ "br2_feature_light", 15 ] ], "x": 20, "y": 12 },
+        { "chunks": [ [ "null", 85 ], [ "br2_feature_light", 15 ] ], "x": 12, "y": 4 },
+        { "chunks": [ [ "null", 85 ], [ "br2_feature_light", 15 ] ], "x": 12, "y": 20 }
+      ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_seg_h",
+    "//": "An 8-tile piece of 3-wide east-west corridor.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ "........", "........", "........", "        ", "        ", "        ", "        ", "        " ],
+      "terrain": { ".": "t_metal_floor" },
+      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_seg_v",
+    "//": "An 8-tile piece of 3-wide north-south corridor.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ "...     ", "...     ", "...     ", "...     ", "...     ", "...     ", "...     ", "...     " ],
+      "terrain": { ".": "t_metal_floor" },
+      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_feature_light",
+    "object": { "mapgensize": [ 1, 1 ], "place_terrain": [ { "ter": "t_br2_light", "x": 0, "y": 0 } ] }
+  }
+]
