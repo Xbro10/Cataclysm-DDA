@@ -1,0 +1,33 @@
+[
+  {
+    "id": "GROUP_CIVILIANS_STANDARD",
+    "type": "monstergroup",
+    "override": true,
+    "//": "Survivor Minds: same as vanilla (data/json/monsters/civilians.json) except panicked people are a quarter as likely and come in smaller crowds. Re-check against vanilla after upstream merges.",
+    "monsters": [
+      { "monster": "mon_civilian_stationary", "weight": 30, "cost_multiplier": 0, "ends": "12 days" },
+      { "monster": "mon_civilian_zombiefighter", "weight": 16, "cost_multiplier": 0, "ends": "12 days" },
+      { "monster": "mon_civilian_zombiegunner", "weight": 12, "cost_multiplier": 0, "ends": "12 days" },
+      { "monster": "mon_civilian_police_rifle", "weight": 4, "cost_multiplier": 3, "ends": "12 days" },
+      { "monster": "mon_civilian_police", "weight": 4, "cost_multiplier": 3, "ends": "12 days" },
+      {
+        "monster": "mon_civilian_parent",
+        "weight": 20,
+        "cost_multiplier": 0,
+        "ends": "8 days",
+        "pack_size": [ 1, 2 ]
+      },
+      { "monster": "mon_civilian_parent", "weight": 20, "cost_multiplier": 0, "starts": "8 days", "ends": "16 days" },
+      { "monster": "mon_civilian_panic", "weight": 10, "cost_multiplier": 0, "ends": "8 days", "pack_size": [ 1, 3 ] },
+      {
+        "monster": "mon_civilian_panic",
+        "weight": 15,
+        "cost_multiplier": 0,
+        "starts": "8 days",
+        "ends": "16 days",
+        "pack_size": [ 1, 2 ]
+      },
+      { "monster": "mon_civilian_panic", "weight": 15, "cost_multiplier": 0, "starts": "16 days", "ends": "24 days" }
+    ]
+  }
+]
