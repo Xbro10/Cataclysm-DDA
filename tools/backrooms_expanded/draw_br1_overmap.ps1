@@ -1,9 +1,9 @@
 param([string]$Out, [string]$Preview)
-# Draws the Level 1 overmap sprite sheet: six 32x32 tiles in a row.
-# 0-2 garage variants, 3 arrival alcove, 4 Breakroom, 5 squatter camp.
+# Draws the Level 1 overmap sprite sheet: eight 32x32 tiles in a row.
+# 0-2 garage variants, 3 arrival alcove, 4 Breakroom, 5 squatter camp, 6 dead zone, 7 overrun camp.
 Add-Type -AssemblyName System.Drawing
 $T = 32
-$bmp = New-Object System.Drawing.Bitmap (6 * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$bmp = New-Object System.Drawing.Bitmap (8 * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $rng = New-Object System.Random 1337
 
 function Hex([string]$hex) { [System.Drawing.ColorTranslator]::FromHtml($hex) }
@@ -76,17 +76,37 @@ DrawRect 5 9 12 2 4 $bed; DrawRect 5 21 12 2 4 $bed; DrawRect 5 9 17 3 2 $bed
 DrawRect 5 20 17 2 2 (Hex '#6e5a3a')                            # stash crate
 DrawRect 5 11 19 2 1 $puddle                                   # drip pool
 
+
+# 6: dead zone: the garage with every light out, darker concrete, more parked cars
+$dark = Hex '#3f4144'; $darkSpeck = Hex '#36383b'; $darkLine = Hex '#7a6620'
+DrawRect 6 0 0 $T $T $dark
+for ($k = 0; $k -lt 70; $k++) { DrawPx 6 ($rng.Next(0, $T)) ($rng.Next(0, $T)) $darkSpeck }
+foreach ($x in 0, 4, 8, 12, 16, 20, 24, 28) { DrawRect 6 $x 1 1 7 $darkLine; DrawRect 6 $x 17 1 7 $darkLine }
+foreach ($x in 4, 12, 20, 28) { DrawRect 6 ($x - 1) 3 3 3 $pillar; DrawRect 6 ($x - 1) 19 3 3 $pillar }
+Light 6 8 11 $false; Light 6 24 11 $false; Light 6 16 28 $false
+Car 6 1 1 (Hex '#4a2c29') (Hex '#5e3a36'); Car 6 13 17 (Hex '#2a3546') (Hex '#3a4a60'); Car 6 25 1 (Hex '#46463c') (Hex '#57574a')
+
+# 7: overrun camp: the sandbag ring broken open, blood, a cold brazier
+Floor 7; Bays 7
+$blood = Hex '#6e1f1a'; $ash = Hex '#4a4440'
+DrawRect 7 7 9 18 12 $concrete
+Box 7 7 9 18 12 $sand
+DrawRect 7 13 9 6 1 $concrete; DrawRect 7 7 13 1 4 $concrete; DrawRect 7 24 15 1 3 $concrete; DrawRect 7 18 20 4 1 $concrete
+DrawPx 7 12 8 $sand; DrawPx 7 6 14 $sand; DrawPx 7 25 16 $sand
+DrawRect 7 15 14 2 3 $ash
+DrawRect 7 10 12 2 3 $blood; DrawPx 7 12 13 $blood; DrawRect 7 19 16 3 2 $blood; DrawPx 7 13 18 $blood
+DrawRect 7 9 17 2 2 $bed; DrawRect 7 21 11 2 3 $bed
 $bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
 
 if ($Preview) {
   # 8x nearest-neighbour preview with a 1px gap between tiles, for checking by eye.
   $s = 8
-  $pv = New-Object System.Drawing.Bitmap ($bmp.Width * $s + 5 * $s), ($T * $s)
+  $pv = New-Object System.Drawing.Bitmap ($bmp.Width * $s + 7 * $s), ($T * $s)
   $g = [System.Drawing.Graphics]::FromImage($pv)
   $g.Clear((Hex '#1e1e1e'))
   $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::NearestNeighbor
   $g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::Half
-  for ($n = 0; $n -lt 6; $n++) {
+  for ($n = 0; $n -lt 8; $n++) {
     $src = New-Object System.Drawing.Rectangle ($n * $T), 0, $T, $T
     $dst = New-Object System.Drawing.Rectangle ($n * ($T * $s + $s)), 0, ($T * $s), ($T * $s)
     $g.DrawImage($bmp, $dst, $src, [System.Drawing.GraphicsUnit]::Pixel)

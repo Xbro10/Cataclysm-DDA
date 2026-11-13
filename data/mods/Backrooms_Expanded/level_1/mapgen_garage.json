@@ -6,7 +6,7 @@
       ".": [ "t_thconc_floor" ],
       "|": [ "t_br1_floor_line" ],
       "P": [ "t_column" ],
-      "L": [ [ "t_strconc_floor_olight", 35 ], [ "t_thconc_floor", 65 ] ],
+      "L": [ [ "t_strconc_floor_olight", 35 ], [ "t_br1_dead_light", 65 ] ],
       "!": [ "t_strconc_floor_olight" ],
       "~": [ "t_br1_puddle" ],
       "#": [ "t_br1_pipe_wall" ],
@@ -104,7 +104,8 @@
             [ "br1_feature_pipe_leak", 40 ],
             [ "br1_feature_junk", 40 ],
             [ "br1_feature_working_light", 30 ],
-            [ "br1_feature_vending", 15 ]
+            [ "br1_feature_vending", 15 ],
+            [ "br1_feature_graffiti", 40 ]
           ],
           "x": [ 0, 18 ],
           "y": [ 0, 18 ],
@@ -116,7 +117,8 @@
             [ "br1_room_maintenance", 40 ],
             [ "br1_room_electrical", 25 ],
             [ "br1_room_booth", 20 ],
-            [ "br1_room_stairwell", 15 ]
+            [ "br1_room_stairwell", 15 ],
+            [ "br1_room_exit_ramp", 8 ]
           ],
           "x": [ 0, 16 ],
           "y": [ 0, 16 ]

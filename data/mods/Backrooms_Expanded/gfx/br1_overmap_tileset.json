@@ -1,7 +1,7 @@
 [
   {
     "type": "mod_tileset",
-    "//": "Level 1 overmap sprites, drawn for this mod (CC-BY-SA 3.0). Only used with UltiCa; other tilesets fall back to each terrain's looks_like. Sprite numbers count from 0 within br1_overmap.png (six 32x32 tiles in a row).",
+    "//": "Level 1 overmap sprites, drawn for this mod (CC-BY-SA 3.0). Only used with UltiCa; other tilesets fall back to each terrain's looks_like. Sprite numbers count from 0 within br1_overmap.png (eight 32x32 tiles in a row).",
     "compatibility": [ "UltimateCataclysm" ],
     "tiles-new": [
       {
@@ -18,7 +18,9 @@
           },
           { "id": "br1_arrival", "fg": 3, "rotates": false },
           { "id": "br1_breakroom", "fg": 4, "rotates": false },
-          { "id": "br1_squatter_camp", "fg": 5, "rotates": false }
+          { "id": "br1_squatter_camp", "fg": 5, "rotates": false },
+          { "id": "br1_dead_zone", "fg": 6, "rotates": false },
+          { "id": "br1_overrun_camp", "fg": 7, "rotates": false }
         ]
       }
     ]

@@ -1,0 +1,209 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br1_dead_light",
+    "copy-from": "t_thconc_floor",
+    "name": "concrete floor, dead light",
+    "description": "Cold concrete under a ceiling light that has gone dark.  The tube is still there.  Something might bring it back.",
+    "looks_like": "t_thconc_floor"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_dead_ramp",
+    "copy-from": "t_thconc_floor",
+    "name": "exit ramp",
+    "description": "A concrete ramp climbing toward the level above, painted with fresh arrows.  It ends in a wall of new red brick, laid neatly, mortar still pale.",
+    "looks_like": "t_concrete_ramp_up_high"
+  },
+  {
+    "type": "monstergroup",
+    "id": "GROUP_BR1_DARK",
+    "//": "Dead zones: where the lights are all out, the things that like the dark gather. Still no grabs; entity packs stay at 3 at most.",
+    "monsters": [
+      { "monster": "mon_br_smiler", "weight": 30 },
+      { "monster": "mon_sewer_rat", "weight": 30, "pack_size": [ 2, 4 ] },
+      { "monster": "mon_br_hound", "weight": 15, "pack_size": [ 2, 3 ] },
+      { "group": "GROUP_ZOMBIE", "weight": 15 },
+      { "monster": "mon_br_wretch", "weight": 10, "starts": "30 days" }
+    ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_dead_zone",
+    "name": "parking deck",
+    "sym": ".",
+    "looks_like": "s_garage",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BR1_DARK", "population": [ 1, 3 ], "chance": 60 },
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br1_dead_zone",
+    "//": "A 2x2 patch of garage where every light has died.",
+    "overmaps": [
+      { "point": [ 0, 0, 0 ], "overmap": "br1_dead_zone" },
+      { "point": [ 1, 0, 0 ], "overmap": "br1_dead_zone" },
+      { "point": [ 0, 1, 0 ], "overmap": "br1_dead_zone" },
+      { "point": [ 1, 1, 0 ], "overmap": "br1_dead_zone" }
+    ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 3 ],
+    "flags": [ "BACKROOMS_L1" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_dead_zone",
+    "//": "Same bays and pillars as the garage, but every ceiling light is dead and more cars were left behind. Sometimes an old camp's stash, abandoned when the lights went.",
+    "object": {
+      "fill_ter": "t_thconc_floor",
+      "rows": [
+        "|..|..|..|..|..|..|..|..",
+        "|..|..|..|..|..|..|..|..",
+        "|..P..|..P..|..P..|..P..",
+        "|..|..|..|..|..|..|..|..",
+        "|..|..|..|..|..|..|..|..",
+        "|..|..|..|..|..|..|..|..",
+        "........................",
+        "........................",
+        "L.....L.....L.....L.....",
+        "........................",
+        "........................",
+        "........................",
+        "|..|..|..|..|..|..|..|..",
+        "|..|..|..|..|..|..|..|..",
+        "|..P..|..P..|..P..|..P..",
+        "|..|..|..|..|..|..|..|..",
+        "|..|..|..|..|..|..|..|..",
+        "|..|..|..|..|..|..|..|..",
+        "........................",
+        "........................",
+        "...L.....L.....L.....L..",
+        "........................",
+        "........................",
+        "........................"
+      ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "L": "t_br1_dead_light" },
+      "place_vehicles": [
+        { "vehicle": "parking_garage_short", "x": 6, "y": 4, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 12, "y": 4, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 18, "y": 4, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 6, "y": 16, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 12, "y": 16, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 18, "y": 16, "rotation": 90, "chance": 30, "status": 1, "fuel": 0 }
+      ],
+      "place_nested": [
+        {
+          "chunks": [ [ "null", 100 ], [ "br1_feature_puddles", 60 ], [ "br1_feature_pipe_leak", 40 ], [ "br1_feature_junk", 60 ] ],
+          "x": [ 0, 18 ],
+          "y": [ 0, 18 ],
+          "repeat": [ 1, 2 ]
+        },
+        { "chunks": [ [ "null", 60 ], [ "br1_dark_stash", 40 ] ], "x": [ 1, 16 ], "y": [ 7, 9 ] }
+      ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_dark_stash",
+    "//": "An old camp abandoned when the lights went: a cold brazier, a bedroll, crates nobody came back for. Good loot for those who risk the dark.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rows": [ "      ", " XX B ", " .F.. ", " X..B ", " .... ", "      " ],
+      "palettes": [ "br1_camp_palette" ],
+      "items": { "X": { "item": "br1_camp_stores", "chance": 90, "repeat": [ 1, 3 ] } },
+      "place_item": [ { "item": "br1_note_lost", "x": 3, "y": 4, "chance": 50 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_overrun_camp",
+    "name": "parking deck",
+    "sym": ".",
+    "looks_like": "s_garage",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br1_overrun_camp",
+    "//": "A squatter camp that didn't make it.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_overrun_camp" } ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 3 ],
+    "flags": [ "BACKROOMS_L1" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_overrun_camp",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 6, 17 ] } ],
+      "place_nested": [ { "chunks": [ "br1_overrun_camp_core" ], "x": 6, "y": 8 } ],
+      "place_monster": [ { "monster": "mon_br_wretch", "x": [ 8, 15 ], "y": [ 9, 13 ], "chance": 35 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_overrun_camp_core",
+    "//": "The squatter camp layout, broken: sandbags knocked aside, blood, a cold brazier, one body with their gear and a last note, stores mostly picked over.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "==.....=.===",
+        "=B.%....X.x=",
+        "...%%......=",
+        "=B..C.F..t..",
+        "=.w...%..h.=",
+        ".%.B....x..=",
+        "===..=.=====",
+        "            ",
+        "            ",
+        "            ",
+        "            ",
+        "            "
+      ],
+      "palettes": [ "br1_camp_palette" ],
+      "terrain": { "%": "t_thconc_floor", "C": "t_thconc_floor", "x": "t_thconc_floor" },
+      "furniture": { "x": "f_crate_o" },
+      "fields": { "%": { "field": "fd_blood", "intensity": 2, "age": 10 } },
+      "items": {
+        "X": { "item": "br1_camp_stores", "chance": 25 },
+        "x": { "item": "br1_camp_stores", "chance": 10 },
+        "C": [ { "item": "corpse_bloody", "chance": 100 }, { "item": "br1_camp_lockers", "chance": 70 } ]
+      },
+      "place_item": [ { "item": "br1_note_last", "x": 4, "y": 3, "chance": 100 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_exit_ramp",
+    "//": "The exit that isn't: a ramp up, EXIT signs, and a fresh brick wall where the next level should be. Someone has been counting days on it.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "##bbbb##", "#.^^^^.#", "#.^^^^.#", "#.^^^^.#", "#E....E#", "#......#", "#..L...#", "##....##" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "b": "t_brick_wall", "^": "t_br1_dead_ramp", "E": "t_thconc_floor" },
+      "furniture": { "E": "f_sign" },
+      "signs": { "E": { "signage": "EXIT ↑" } },
+      "place_graffiti": [ { "x": 3, "y": 0, "snippet": "br1_tally" } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_feature_graffiti",
+    "//": "Spray paint on the concrete, left by earlier travellers. Some of it helps.",
+    "object": { "mapgensize": [ 1, 1 ], "place_graffiti": [ { "x": 0, "y": 0, "snippet": "br1_graffiti" } ] }
+  }
+]
