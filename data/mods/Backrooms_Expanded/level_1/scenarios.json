@@ -1,0 +1,160 @@
+[
+  {
+    "type": "SCENARIO_BLACKLIST",
+    "subtype": "whitelist",
+    "//": "Replaces the upstream Backrooms whitelist (a second whitelist resets the first), so it lists upstream's two scenarios as well as ours.",
+    "scenarios": [ "backroom_dweller", "backroom_dweller_starternpc", "br1_wrong_exit", "br1_breakroom_hire", "br1_one_of_the_lost" ]
+  },
+  {
+    "type": "scenario",
+    "id": "br1_wrong_exit",
+    "name": "Wrong Exit",
+    "points": 0,
+    "description": "You drove down the ramp looking for a space.  Then down another.  And another.  The engine coughed, the fuel light came on, and the ramps stopped going anywhere.  Your car is out of gas somewhere on Level 1, an endless parking garage, and there's no way back up.  Someone has been keeping order down here.  Find them.",
+    "allowed_locs": [ "sloc_backrooms" ],
+    "start_name": "Level 1: the Parking Deck",
+    "eoc": [ "EOC_BR1_START_WRONG_EXIT" ],
+    "flags": [ "LONE_START" ]
+  },
+  {
+    "type": "scenario",
+    "id": "br1_breakroom_hire",
+    "name": "Breakroom Hire",
+    "points": 1,
+    "description": "You've been on Level 1 for weeks.  The Foreman found you half-starved behind a pillar and gave you a bunk, a locker and a job.  You start inside the Breakroom, the closest thing to safety down here, among people who already trust you.",
+    "allowed_locs": [ "sloc_backrooms" ],
+    "start_name": "Level 1: the Breakroom",
+    "eoc": [ "EOC_BR1_START_HIRE" ],
+    "flags": [ "LONE_START" ]
+  },
+  {
+    "type": "scenario",
+    "id": "br1_one_of_the_lost",
+    "name": "One of the Lost",
+    "points": -1,
+    "description": "You fell through a wall and never found your way back.  Now you hold a sandbagged corner of Level 1 with a few others who did the same.  The stash is thin, the drip pool never stops, and the Breakroom folk look at your lot like you might steal from them.  Sometimes you do.",
+    "allowed_locs": [ "sloc_backrooms" ],
+    "start_name": "Level 1: a squatter camp",
+    "eoc": [ "EOC_BR1_START_LOST" ],
+    "flags": [ "LONE_START" ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_START_WRONG_EXIT",
+    "//": "Scenario start: take the normal trip to Level 1 (arrival alcove, Breakroom placed and marked), then leave the player's stalled car in the driving lane outside the alcove.",
+    "effect": [
+      { "run_eocs": "EOC_BR_GO_L1" },
+      { "u_location_variable": { "global_val": "br1_wrong_exit_point" } },
+      { "mapgen_update": "br1_wrong_exit_car", "target_var": { "global_val": "br1_wrong_exit_point" } },
+      { "u_spawn_item": "flashlight", "suppress_message": true },
+      { "u_spawn_item": "granola", "count": 2, "suppress_message": true },
+      { "u_spawn_item": "chips", "suppress_message": true },
+      { "u_spawn_item": "cola", "container": "bottle_plastic", "suppress_message": true },
+      {
+        "u_message": "Your car died somewhere below the lanes you remember.  You left it in the lane outside, out of gas, and walked until you found this alcove.",
+        "type": "info"
+      }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "update_mapgen_id": "br1_wrong_exit_car",
+    "//": "The Wrong Exit car: lower driving lane, lower-left corner of the arrival square, clear of the alcove (x 8-15, y 8-15) and the 3 tiles in front of its opening.",
+    "object": {
+      "remove_vehicles": [ { "x": [ 0, 7 ], "y": [ 19, 23 ] } ],
+      "place_nested": [ { "chunks": [ "br1_wrong_exit_lane" ], "x": 0, "y": 16 } ],
+      "place_vehicles": [ { "vehicle": "car", "x": 4, "y": 21, "rotation": 0, "chance": 100, "status": -1, "fuel": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_wrong_exit_lane",
+    "//": "Clears whatever room or junk stood in that bit of lane so the car has somewhere to sit.",
+    "object": {
+      "//2": "Placed at y 16 so the 8x8 chunk ends at the square's edge; the top three rows are spaces and leave what is there.",
+      "mapgensize": [ 8, 8 ],
+      "rows": [ "        ", "        ", "        ", "........", "........", "........", "........", "........" ],
+      "palettes": [ "br1_garage_palette" ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_START_HIRE",
+    "//": "Scenario start: cross to Level 1, build the Breakroom 4-10 squares away (it generates fresh with the Foreman and Mile Marker), and put the player inside it, next to the Foreman.",
+    "effect": [
+      { "math": [ "br1_breakroom_placed = 1" ] },
+      { "run_eocs": "EOC_BR_GO_L1" },
+      {
+        "u_location_variable": { "global_val": "br1_breakroom_point" },
+        "target_params": {
+          "om_terrain": "br1_breakroom",
+          "om_terrain_replace": "br1_garage",
+          "random": true,
+          "search_range": 10,
+          "min_distance": 4,
+          "reveal_radius": 1,
+          "z": 0
+        }
+      },
+      {
+        "//": "The Breakroom core sits at the square's corner; tile (5,8) is the floor beside the Foreman's spot.",
+        "u_location_variable": { "global_val": "br1_hire_point" },
+        "target_params": { "om_terrain": "br1_breakroom", "z": 0 },
+        "x_adjust": 5,
+        "y_adjust": 8
+      },
+      { "u_teleport": { "global_val": "br1_hire_point" }, "force_safe": true },
+      { "math": [ "u_br1_met_foreman = 1" ] },
+      { "math": [ "faction_like('br_breakroom') = 40" ] },
+      { "math": [ "faction_respect('br_breakroom') = 20" ] },
+      { "math": [ "faction_trust('br_breakroom') = 20" ] },
+      {
+        "//": "Mile Marker already marked the nearest camp for you.",
+        "u_location_variable": { "global_val": "br1_hire_camp_point" },
+        "target_params": { "om_terrain": "br1_squatter_camp", "reveal_radius": 1, "z": 0 }
+      },
+      { "u_spawn_item": "flashlight", "suppress_message": true },
+      { "u_spawn_item": "sandwich_t", "suppress_message": true },
+      { "u_spawn_item": "bandages", "count": 2, "suppress_message": true },
+      {
+        "u_message": "Another shift in the Breakroom.  The lights hum, the Foreman is checking the stores, and Mile Marker has pencilled the nearest squatter camp onto your map.  Somebody has to go check on them.",
+        "type": "good"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_START_LOST",
+    "//": "Scenario start: cross to Level 1, turn a garage square 4-8 squares away into a squatter camp (it generates fresh with its survivors), and put the player inside its sandbag ring. The Lost like you; the Breakroom is still placed and marked as usual.",
+    "effect": [
+      { "run_eocs": "EOC_BR_GO_L1" },
+      {
+        "//": "The camp core sits at (6,8) in its square; (8,10) is the floor inside the sandbags.",
+        "u_location_variable": { "global_val": "br1_lost_point" },
+        "target_params": {
+          "om_terrain": "br1_squatter_camp",
+          "om_terrain_replace": "br1_garage",
+          "random": true,
+          "search_range": 8,
+          "min_distance": 4,
+          "reveal_radius": 1,
+          "z": 0
+        },
+        "x_adjust": 8,
+        "y_adjust": 10
+      },
+      { "u_teleport": { "global_val": "br1_lost_point" }, "force_safe": true },
+      { "math": [ "faction_like('br_lost') = 40" ] },
+      { "math": [ "faction_trust('br_lost') = 20" ] },
+      { "math": [ "faction_like('br_breakroom') = -10" ] },
+      { "u_spawn_item": "lighter", "suppress_message": true },
+      { "u_spawn_item": "pipe", "suppress_message": true },
+      { "u_spawn_item": "blanket", "suppress_message": true },
+      {
+        "u_message": "Sandbags, bedrolls, a brazier, and a pool that never stops dripping.  It isn't much, but it's yours, and theirs.  Boil the water.  Watch the dark between the lights.",
+        "type": "info"
+      }
+    ]
+  }
+]

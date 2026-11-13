@@ -12,7 +12,11 @@ almond water).
    your user folder's `mods/`).
 2. When creating a world, enable **The Backrooms** (ships with the game)
    and then **Backrooms Expanded**.
-3. Pick the **Backrooms** scenario when creating your character.
+3. Pick a scenario when creating your character: **Backrooms** starts on
+   Level 0. To start on Level 1, pick one of:
+   - **Wrong Exit**: alone, next to your stalled car.
+   - **Breakroom Hire**: inside the Breakroom, among people who trust you.
+   - **One of the Lost**: in a squatter camp. Harder; the Breakroom is wary of you.
 
 ## Requirements
 

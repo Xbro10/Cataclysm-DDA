@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Three scenarios that start on Level 1. **Wrong Exit**: you start in an arrival alcove with your out-of-gas car in the lane outside, plus a flashlight and some road-trip food. **Breakroom Hire** (1 point): you start inside the Breakroom next to the Foreman, the Breakroom likes and trusts you, and the nearest squatter camp is marked on your map. **One of the Lost** (-1 point): you start inside a squatter camp with its survivors, the Lost like you, and the Breakroom is cooler towards you. Upstream's two Backrooms scenarios are still available.
 - Water on Level 1: drip pools under leaking pipes and inside every squatter camp (never run dry; boil before drinking), and two rigged taps of clean water in the Breakroom. NPCs within 6 tiles drink from them on their own.
 - Vending alcoves: one or two stocked vending machines (snacks and drinks) under a working light. Pay with a cash card or break in.
 - The Breakroom: a walled survivor hub on Level 1 with Dot Kowalczyk ("the Foreman"), who explains Level 1, and Marcus "Mile Marker" Reyes, who keeps the maps, can mark the nearest camp for you, and has rumours of what lies beyond. It forms once per world, 4 to 10 squares from your first arrival, and is marked on your map.
