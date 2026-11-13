@@ -1,0 +1,66 @@
+[
+  {
+    "type": "snippet",
+    "category": "<sm_m_helpless_kind>",
+    "text": [ "They weren't even fighting back!", "What did you do?  They'd given up!", "That wasn't self-defense.  That was murder.", "I can't believe you just did that." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_helpless_ruthless>",
+    "text": [ "One less mouth.", "Smart.  They'd have come back for us.", "Can't leave loose ends.", "Good.  Don't hesitate." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_helpless_uneasy>",
+    "text": [ "Was that really necessary?", "I… didn't think you'd do that.", "They weren't a threat anymore.", "Let's not make a habit of that." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_fight_ruthless>",
+    "text": [ "Nice work.", "That's how it's done.", "They had it coming." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_cannibal_disgust>",
+    "text": [ "Is that… is that a person?", "Don't ever do that in front of me again.", "We're not animals.  Not yet.", "I'm going to be sick." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_cannibal_fellow>",
+    "text": [ "Waste not, want not.", "Save me a piece.", "Finally, someone who gets it." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_shared_thanks>",
+    "text": [ "Thanks.  I mean it.", "You didn't have to do that.  Thank you.", "I won't forget this.", "Food.  Real food.  Thank you." ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_warning>",
+    "text": [
+      "I don't like what you're becoming.",
+      "One more thing like that and I'm gone.",
+      "I'm starting to wonder why I'm still with you.",
+      "Keep this up and you'll be on your own."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_leaving>",
+    "text": [
+      "That's it.  I'm done.  I'm leaving.",
+      "I can't be around you anymore.  Goodbye.",
+      "I'll take my chances out there alone.",
+      "Don't follow me."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_m_journal_helpless>",
+    "text": [ "I don't know them anymore.", "I keep seeing it.", "How long before that's me?" ]
+  },
+  { "type": "snippet", "category": "<sm_m_journal_uneasy>", "text": [ "I didn't say anything.  I should have.", "Maybe it had to be done.  Maybe." ] },
+  { "type": "snippet", "category": "<sm_m_journal_cannibal>", "text": [ "I couldn't eat after that.", "I'm watching my back now.", "Something has broken in them." ] },
+  { "type": "snippet", "category": "<sm_m_journal_shared>", "text": [ "Didn't have to.  Did anyway.", "Maybe there are still good people.", "I owe them." ] },
+  { "type": "snippet", "category": "<sm_m_journal_left>", "text": [ "I couldn't stay.", "Better alone than with that.", "I hope I'm doing the right thing." ] }
+]

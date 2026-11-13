@@ -1,0 +1,252 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_ENSURE_CONSCIENCE",
+    "//": "u is an NPC. JSON cannot read an NPC's real personality (aggression, altruism...), so Survivor Minds rolls its own once and keeps it: kindness and ruthlessness, each -5..5. Phase 3 can swap in the real values.",
+    "condition": { "not": { "math": [ "has_var(u_sm_kindness)" ] } },
+    "effect": [
+      { "math": [ "u_sm_kindness = floor(rng(-5, 5.99))" ] },
+      { "math": [ "u_sm_ruthless = floor(rng(-5, 5.99))" ] },
+      { "math": [ "u_sm_disapproval = 0" ] }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_TRACK_MELEE_ATTACK",
+    "//": "Remember when each character last attacked someone, to tell a fight from a killing of someone who wasn't fighting back.",
+    "eoc_type": "EVENT",
+    "required_event": "character_melee_attacks_character",
+    "effect": [ { "math": [ "u_sm_last_attacked = time('now')" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_TRACK_RANGED_ATTACK",
+    "eoc_type": "EVENT",
+    "required_event": "character_ranged_attacks_character",
+    "effect": [ { "math": [ "u_sm_last_attacked = time('now')" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_PLAYER_KILLS_PERSON",
+    "//": "The player killed a person. Decide whether they were fighting back (attacked anyone in the last 2 minutes), then let followers who saw it react.",
+    "eoc_type": "EVENT",
+    "required_event": "character_kills_character",
+    "condition": "u_is_avatar",
+    "effect": [
+      { "set_string_var": "<u_name>", "target_var": { "global_val": "sm_player_name" }, "parse_tags": true },
+      { "set_string_var": { "context_val": "victim_name" }, "target_var": { "global_val": "sm_victim_name" } },
+      { "math": [ "sm_kill_helpless = 1" ] },
+      { "run_eocs": "EOC_SM_CHECK_VICTIM_FIGHTING", "alpha_talker": { "context_val": "victim" } },
+      { "u_run_npc_eocs": [ "EOC_SM_WITNESS_KILL" ], "local": true, "npc_range": 30, "npc_must_see": true }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_CHECK_VICTIM_FIGHTING",
+    "//": "u is the victim, just before they are removed.",
+    "condition": { "and": [ { "math": [ "has_var(u_sm_last_attacked)" ] }, { "math": [ "time_since(u_sm_last_attacked) <= time('2 m')" ] } ] },
+    "effect": [ { "math": [ "sm_kill_helpless = 0" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_WITNESS_KILL",
+    "//": "u is a follower who saw the player kill a person.",
+    "condition": "u_following",
+    "effect": [
+      { "run_eocs": "EOC_SM_ENSURE_CONSCIENCE" },
+      {
+        "if": { "math": [ "sm_kill_helpless == 1" ] },
+        "then": {
+          "if": { "math": [ "u_sm_kindness >= 2" ] },
+          "then": [
+            { "math": [ "u_sm_disapproval += 4" ] },
+            { "math": [ "sm_trust_change = -2" ] },
+            { "run_eocs": "EOC_SM_CHANGE_TRUST", "alpha_talker": "avatar", "beta_talker": "u" },
+            { "message": "<u_name>: \"<sm_m_helpless_kind>\"", "type": "bad" },
+            {
+              "set_string_var": "Watched <global_val:sm_player_name> kill someone who wasn't fighting back.  <sm_m_journal_helpless>",
+              "target_var": { "u_val": "sm_line" },
+              "parse_tags": true
+            },
+            { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" }
+          ],
+          "else": {
+            "if": { "math": [ "u_sm_ruthless >= 3" ] },
+            "then": [ { "math": [ "u_sm_disapproval -= 1" ] }, { "message": "<u_name>: \"<sm_m_helpless_ruthless>\"", "type": "neutral" } ],
+            "else": [
+              { "math": [ "u_sm_disapproval += 2" ] },
+              { "math": [ "sm_trust_change = -1" ] },
+              { "run_eocs": "EOC_SM_CHANGE_TRUST", "alpha_talker": "avatar", "beta_talker": "u" },
+              { "message": "<u_name>: \"<sm_m_helpless_uneasy>\"", "type": "bad" },
+              {
+                "set_string_var": "<global_val:sm_player_name> killed someone today who wasn't fighting back.  <sm_m_journal_uneasy>",
+                "target_var": { "u_val": "sm_line" },
+                "parse_tags": true
+              },
+              { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" }
+            ]
+          }
+        },
+        "else": {
+          "if": { "and": [ { "math": [ "u_sm_ruthless >= 3" ] }, { "x_in_y_chance": { "x": 1, "y": 2 } } ] },
+          "then": [ { "math": [ "u_sm_disapproval -= 1" ] }, { "message": "<u_name>: \"<sm_m_fight_ruthless>\"", "type": "neutral" } ]
+        }
+      },
+      { "run_eocs": "EOC_SM_MORAL_SETTLE" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_PLAYER_EATS",
+    "//": "The player ate something. Raw human meat, organs and fat are caught by item id; cooked dishes made with human meat are not (the game only marks those through digestion).",
+    "eoc_type": "EVENT",
+    "required_event": "character_eats_item",
+    "condition": {
+      "and": [
+        "u_is_avatar",
+        {
+          "compare_string": [
+            { "context_val": "itype" },
+            "human_flesh",
+            "mutant_human_flesh",
+            "human_meat_scrap",
+            "meat_tainted_human",
+            "human_brain",
+            "human_heart",
+            "human_kidney",
+            "human_liver",
+            "human_lung",
+            "human_sweetbread",
+            "human_marrow",
+            "human_fat",
+            "human_tallow",
+            "hstomach",
+            "hstomach_boiled",
+            "small_hstomach_boiled",
+            "tainted_innards_human",
+            "tainted_marrow_human",
+            "fat_tainted_human",
+            "mutant_human_heart",
+            "mutant_human_marrow",
+            "mutant_human_fat",
+            "mutant_human_tallow"
+          ]
+        }
+      ]
+    },
+    "effect": [
+      { "set_string_var": "<u_name>", "target_var": { "global_val": "sm_player_name" }, "parse_tags": true },
+      { "u_run_npc_eocs": [ "EOC_SM_WITNESS_CANNIBAL" ], "local": true, "npc_range": 15, "npc_must_see": true }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_WITNESS_CANNIBAL",
+    "//": "u is a follower who saw the player eat human flesh. At most one reaction per hour each.",
+    "condition": {
+      "and": [
+        "u_following",
+        { "or": [ { "not": { "math": [ "has_var(u_sm_last_cannibal_react)" ] } }, { "math": [ "time_since(u_sm_last_cannibal_react) > time('1 h')" ] } ] }
+      ]
+    },
+    "effect": [
+      { "run_eocs": "EOC_SM_ENSURE_CONSCIENCE" },
+      { "math": [ "u_sm_last_cannibal_react = time('now')" ] },
+      {
+        "if": { "u_has_trait": "CANNIBAL" },
+        "then": [ { "math": [ "u_sm_disapproval -= 1" ] }, { "message": "<u_name>: \"<sm_m_cannibal_fellow>\"", "type": "neutral" } ],
+        "else": [
+          {
+            "if": { "math": [ "u_sm_kindness >= 2" ] },
+            "then": { "math": [ "u_sm_disapproval += 4" ] },
+            "else": {
+              "if": { "math": [ "u_sm_ruthless >= 3" ] },
+              "then": { "math": [ "u_sm_disapproval += 2" ] },
+              "else": { "math": [ "u_sm_disapproval += 3" ] }
+            }
+          },
+          { "math": [ "sm_trust_change = -1" ] },
+          { "run_eocs": "EOC_SM_CHANGE_TRUST", "alpha_talker": "avatar", "beta_talker": "u" },
+          { "message": "<u_name>: \"<sm_m_cannibal_disgust>\"", "type": "bad" },
+          {
+            "set_string_var": "Saw <global_val:sm_player_name> eat human flesh.  <sm_m_journal_cannibal>",
+            "target_var": { "u_val": "sm_line" },
+            "parse_tags": true
+          },
+          { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" }
+        ]
+      },
+      { "run_eocs": "EOC_SM_MORAL_SETTLE" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_SHARED_FOOD",
+    "//": "u is the follower the player just gave food to. The approval counts at most once every 6 hours.",
+    "effect": [
+      { "run_eocs": "EOC_SM_ENSURE_CONSCIENCE" },
+      {
+        "if": { "or": [ { "not": { "math": [ "has_var(u_sm_last_shared)" ] } }, { "math": [ "time_since(u_sm_last_shared) > time('6 h')" ] } ] },
+        "then": [
+          { "math": [ "u_sm_last_shared = time('now')" ] },
+          {
+            "if": { "math": [ "u_sm_kindness >= 2" ] },
+            "then": [ { "math": [ "u_sm_disapproval -= 4" ] }, { "math": [ "sm_trust_change = 2" ] } ],
+            "else": [ { "math": [ "u_sm_disapproval -= 2" ] }, { "math": [ "sm_trust_change = 1" ] } ]
+          },
+          { "run_eocs": "EOC_SM_CHANGE_TRUST", "alpha_talker": "avatar", "beta_talker": "u" },
+          { "set_string_var": "<global_val:sm_player_name> shared their food with me.  <sm_m_journal_shared>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+          { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" }
+        ]
+      },
+      { "run_eocs": "EOC_SM_MORAL_SETTLE" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_CHANGE_TRUST",
+    "//": "u is the player, npc is the follower. Applies global sm_trust_change to the follower's trust in the player.",
+    "effect": [ { "math": [ "n_npc_trust() += sm_trust_change" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_MORAL_SETTLE",
+    "//": "u is a follower. Keep disapproval at 0 or above, warn once at 7, leave at 10. The warning resets once they calm down below 4.",
+    "effect": [
+      { "if": { "math": [ "u_sm_disapproval < 0" ] }, "then": { "math": [ "u_sm_disapproval = 0" ] } },
+      { "if": { "math": [ "u_sm_disapproval < 4" ] }, "then": { "math": [ "u_sm_warned = 0" ] } },
+      {
+        "if": { "math": [ "u_sm_disapproval >= 10" ] },
+        "then": [
+          { "message": "<u_name>: \"<sm_m_leaving>\"", "type": "bad" },
+          { "set_string_var": "I left <global_val:sm_player_name> today.  <sm_m_journal_left>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+          { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" },
+          { "math": [ "u_sm_disapproval = 5" ] },
+          { "math": [ "u_sm_warned = 0" ] },
+          { "run_eocs": "EOC_SM_LEAVE_PLAYER", "alpha_talker": "avatar", "beta_talker": "u" },
+          { "message": "<u_name> stops following you.", "type": "bad" }
+        ],
+        "else": {
+          "if": { "and": [ { "math": [ "u_sm_disapproval >= 7" ] }, { "math": [ "u_sm_warned != 1" ] } ] },
+          "then": [ { "math": [ "u_sm_warned = 1" ] }, { "message": "<u_name>: \"<sm_m_warning>\"", "type": "warning" } ]
+        }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_LEAVE_PLAYER",
+    "//": "u is the player, npc is the follower: the vanilla 'leave' (stops following, leaves your faction).",
+    "effect": [ "leave" ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_MORAL_DAILY",
+    "//": "Once a day, followers' disapproval fades by 1.",
+    "global": true,
+    "run_for_npcs": true,
+    "recurrence": "1 days",
+    "condition": { "and": [ "u_is_npc", "u_following", { "math": [ "u_sm_disapproval > 0" ] } ] },
+    "effect": [ { "math": [ "u_sm_disapproval -= 1" ] }, { "run_eocs": "EOC_SM_MORAL_SETTLE" } ]
+  }
+]

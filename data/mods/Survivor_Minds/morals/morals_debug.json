@@ -1,0 +1,56 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_MORALS_SHOW",
+    "//": "Developer shortcuts (Debug menu > Activate EOC). Remove before release. SHOW prints each follower's conscience and disapproval.",
+    "effect": [ { "u_run_npc_eocs": [ "EOC_SM_DEBUG_MORALS_SHOW_ONE" ], "local": true } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_MORALS_SHOW_ONE",
+    "condition": "u_following",
+    "effect": [
+      { "run_eocs": "EOC_SM_ENSURE_CONSCIENCE" },
+      { "message": "<u_name>: kindness <u_val:sm_kindness>, ruthlessness <u_val:sm_ruthless>, disapproval <u_val:sm_disapproval>", "type": "info" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_WITNESS_HELPLESS",
+    "//": "Every follower reacts as if they saw you kill someone who wasn't fighting back.",
+    "effect": [
+      { "set_string_var": "<u_name>", "target_var": { "global_val": "sm_player_name" }, "parse_tags": true },
+      { "math": [ "sm_kill_helpless = 1" ] },
+      { "u_run_npc_eocs": [ "EOC_SM_WITNESS_KILL" ], "local": true }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_WITNESS_CANNIBAL",
+    "//": "Every follower reacts as if they saw you eat human flesh (still limited to once per hour each).",
+    "effect": [
+      { "set_string_var": "<u_name>", "target_var": { "global_val": "sm_player_name" }, "parse_tags": true },
+      { "u_run_npc_eocs": [ "EOC_SM_WITNESS_CANNIBAL" ], "local": true }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_MORALS_RESET",
+    "//": "Every follower forgets their disapproval and rolls a new conscience.",
+    "effect": [ { "u_run_npc_eocs": [ "EOC_SM_DEBUG_MORALS_RESET_ONE" ], "local": true }, { "u_message": "Survivor Minds debug: followers' consciences reset." } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_MORALS_RESET_ONE",
+    "condition": "u_following",
+    "effect": [
+      { "u_lose_var": "sm_kindness" },
+      { "u_lose_var": "sm_ruthless" },
+      { "u_lose_var": "sm_last_cannibal_react" },
+      { "u_lose_var": "sm_last_shared" },
+      { "u_lose_var": "sm_warned" },
+      { "run_eocs": "EOC_SM_ENSURE_CONSCIENCE" },
+      { "run_eocs": "EOC_SM_DEBUG_MORALS_SHOW_ONE" }
+    ]
+  }
+]

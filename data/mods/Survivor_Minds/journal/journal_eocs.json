@@ -107,7 +107,7 @@
           {
             "id": "EOC_SM_JOURNAL_NEW_ITEM",
             "effect": [
-              { "u_spawn_item": "sm_journal" },
+              { "u_spawn_item": "sm_journal", "suppress_message": true },
               { "u_run_inv_eocs": "all", "search_data": [ { "id": "sm_journal" } ], "true_eocs": [ "EOC_SM_JOURNAL_WRITE_ITEM" ] }
             ]
           }

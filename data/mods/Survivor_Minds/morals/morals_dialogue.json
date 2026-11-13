@@ -1,0 +1,56 @@
+[
+  {
+    "type": "talk_topic",
+    "id": "TALK_FRIEND",
+    "//": "Adds two options to the vanilla follower menu (topics with the same id merge).",
+    "responses": [
+      {
+        "text": "Here, have some of my food.",
+        "effect": [
+          { "math": [ "sm_share_done = 0" ] },
+          { "set_string_var": "<u_name>", "target_var": { "global_val": "sm_player_name" }, "parse_tags": true },
+          { "npc_location_variable": { "global_val": "sm_share_target" } },
+          {
+            "u_run_inv_eocs": "manual",
+            "title": "Share which food?",
+            "search_data": [ { "category": "food" } ],
+            "true_eocs": [
+              {
+                "id": "EOC_SM_SHARE_HAND_OVER",
+                "//": "npc is the chosen food item: put it at the follower's feet.",
+                "effect": [ { "npc_teleport": { "global_val": "sm_share_target" }, "force": true }, { "math": [ "sm_share_done = 1" ] } ]
+              }
+            ]
+          },
+          { "if": { "math": [ "sm_share_done == 1" ] }, "then": { "run_eocs": "EOC_SM_SHARED_FOOD", "alpha_talker": "npc" } }
+        ],
+        "topic": "TALK_SM_SHARE_RESULT"
+      },
+      { "text": "How do you feel about me?", "effect": { "run_eocs": "EOC_SM_ENSURE_CONSCIENCE", "alpha_talker": "npc" }, "topic": "TALK_SM_FEELINGS" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_SHARE_RESULT",
+    "dynamic_line": {
+      "math": [ "sm_share_done == 1" ],
+      "yes": "<sm_m_shared_thanks>",
+      "no": "Keep it, then.  Maybe later."
+    },
+    "responses": [ { "text": "Something else.", "topic": "TALK_FRIEND" }, { "text": "That's all.", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_FEELINGS",
+    "dynamic_line": {
+      "math": [ "n_sm_disapproval >= 7" ],
+      "yes": "Honestly?  I'm thinking about leaving.  Some of the things you've done, I can't un-see them.",
+      "no": {
+        "math": [ "n_sm_disapproval >= 3" ],
+        "yes": "We're all right.  Mostly.  A few things you've done sit wrong with me.",
+        "no": "I trust you.  That's not a small thing, these days."
+      }
+    },
+    "responses": [ { "text": "Something else.", "topic": "TALK_FRIEND" }, { "text": "That's all.", "topic": "TALK_DONE" } ]
+  }
+]
