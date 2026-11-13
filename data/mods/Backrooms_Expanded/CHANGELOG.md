@@ -15,7 +15,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
-- You now land where you are when crossing between Level 0 and Level 1. If no arrival alcove (or thin-walled room on the way back) is close, one forms around you. Leaving Level 1 brings you out under where you were, not where you went in.
+- You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
 - The debug shortcuts now take the same route as the real rippling walls.
 
 ### Fixed

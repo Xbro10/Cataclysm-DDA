@@ -19,11 +19,20 @@
         "fail_message": "You press against the wall.  It's just a wall.",
         "success_message": "You fall through the wall and land hard on cold, damp concrete."
       },
+      {
+        "//": "Level 1 only has floor at ground level (z 0); every other level is solid rock. Drop to ground level first, straight down or up, which stays inside the loaded map.",
+        "u_location_variable": { "global_val": "br_ground_point" },
+        "z_adjust": 0,
+        "z_override": true
+      },
+      { "u_teleport": { "global_val": "br_ground_point" }, "force_safe": true },
       { "u_location_variable": { "global_val": "br1_arrival_point" } },
       {
+        "//": "Find the nearest rippling concrete (old or new alcoves alike) and land on the tile just inside it (south of it). Only build a new alcove if none is within 30 tiles.",
         "u_location_variable": { "global_val": "br1_arrival_point" },
-        "terrain": "t_br1_landing",
-        "target_max_radius": 24,
+        "furniture": "f_br1_thin_wall",
+        "target_max_radius": 30,
+        "y_adjust": 1,
         "false_eocs": [ "EOC_BR1_BUILD_ARRIVAL" ]
       },
       { "u_teleport": { "global_val": "br1_arrival_point" }, "force_safe": true },
@@ -37,7 +46,12 @@
     "effect": [
       { "u_location_variable": { "global_val": "br_stamp_point" } },
       { "mapgen_update": "br1_arrival_stamp", "target_var": { "global_val": "br_stamp_point" } },
-      { "u_location_variable": { "global_val": "br1_arrival_point" }, "terrain": "t_br1_landing", "target_max_radius": 24 }
+      {
+        "u_location_variable": { "global_val": "br1_arrival_point" },
+        "furniture": "f_br1_thin_wall",
+        "target_max_radius": 30,
+        "y_adjust": 1
+      }
     ]
   },
   {
@@ -69,9 +83,11 @@
       },
       { "u_location_variable": { "global_val": "br0_exit_point" } },
       {
+        "//": "Find the nearest rippling wall (including the room you came in through, or rooms from before this version) and land on the tile just inside it (north of it). Only build a new room if none is within 30 tiles.",
         "u_location_variable": { "global_val": "br0_exit_point" },
-        "terrain": "t_br0_landing",
-        "target_max_radius": 24,
+        "furniture": "f_br_thin_wall",
+        "target_max_radius": 30,
+        "y_adjust": -1,
         "false_eocs": [ "EOC_BR0_BUILD_EXIT" ]
       },
       { "u_teleport": { "global_val": "br0_exit_point" }, "force_safe": true },
@@ -85,7 +101,12 @@
     "effect": [
       { "u_location_variable": { "global_val": "br_stamp_point" } },
       { "mapgen_update": "br0_exit_stamp", "target_var": { "global_val": "br_stamp_point" } },
-      { "u_location_variable": { "global_val": "br0_exit_point" }, "terrain": "t_br0_landing", "target_max_radius": 24 }
+      {
+        "u_location_variable": { "global_val": "br0_exit_point" },
+        "furniture": "f_br_thin_wall",
+        "target_max_radius": 30,
+        "y_adjust": -1
+      }
     ]
   },
   {
