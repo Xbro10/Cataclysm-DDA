@@ -18,13 +18,11 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Level 1 loot (tools, car parts, hardware, batteries; food and water are rare) and monsters (mostly rats, some zombies; cockroaches after day 45).
 - Rippling walls: a rare room on the ground floor of Level 0 (3 to 6 per map) whose back wall you can step through into Level 1. Followers within 5 tiles come along.
 - Level 1 arrival alcoves with a rippling concrete wall that takes you back to the spot you left on Level 0.
-- Developer shortcuts `EOC_BR1_DEBUG_GO` / `EOC_BR1_DEBUG_BACK` (Debug menu > Activate EOC) to visit Level 1 before the real transitions exist.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
 - UltiCa fallback sprites for almond water and its bottle, and overmap sprites for Level 1 squares (garage), the Breakroom (shelter) and the Level 0 rippling-wall room (an ordinary Level 0 chamber).
 - You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
-- The debug shortcuts now take the same route as the real rippling walls.
 
 ### Fixed
 - Cars can no longer block an arrival alcove: any car touching the alcove or the 3 tiles in front of its opening is removed (the parking bays elsewhere keep all six car spots).
