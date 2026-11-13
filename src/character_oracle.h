@@ -49,6 +49,8 @@ class character_oracle_t : public oracle_t
         status_t has_camp_job( std::string_view ) const;
         status_t is_away_from_camp( std::string_view ) const;
         status_t is_camp_idle( std::string_view ) const;
+        // Xbro10 fork: true (running) when the NPC_AUTONOMY option is on.
+        status_t autonomy_on( std::string_view ) const;
         /**
          * Score predicates for utility strategy (return 0-1 urgency).
          */

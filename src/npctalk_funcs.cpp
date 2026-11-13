@@ -46,6 +46,7 @@
 #include "monster.h"
 #include "mutation.h"
 #include "npc.h"
+#include "npc_autonomy.h"
 #include "npc_opinion.h"
 #include "npctrade.h"
 #include "output.h"
@@ -990,6 +991,8 @@ void talk_function::flee( npc &p )
 void talk_function::leave( npc &p )
 {
     add_msg( _( "%s leaves." ), p.get_name() );
+    // Xbro10 fork: cancel their quests (NPC autonomy option only).
+    npc_autonomy::on_follower_leaves( p );
     g->remove_npc_follower( p.getID() );
     std::string new_fac_id = "solo_";
     new_fac_id += p.name;

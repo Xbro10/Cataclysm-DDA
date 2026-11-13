@@ -3914,6 +3914,8 @@ static void spawn_npc_follower()
     temp->spawn_at_precise( player_character.pos_abs() + point( -4, -4 ) );
     overmap_buffer.insert_npc( temp );
     temp->form_opinion( player_character );
+    // Xbro10 fork: without this the follower is missing from the faction screen (and radio contact) until a reload.
+    g->add_npc_follower( temp->getID() );
     temp->set_attitude( NPCATT_FOLLOW );
     temp->set_fac( faction_your_followers );
     temp->mission = NPC_MISSION_NULL;

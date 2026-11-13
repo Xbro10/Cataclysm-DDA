@@ -19,6 +19,7 @@
 #include "mapdata.h"
 #include "npc.h"
 #include "npc_arbitration.h"
+#include "npc_autonomy.h"
 #include "overmapbuffer.h"
 #include "point.h"
 #include "ret_val.h"
@@ -590,6 +591,11 @@ float character_oracle_t::return_to_camp_urgency( std::string_view ) const
     }
     // Below follow max (0.6), above duty (0.45).
     return 0.5f;
+}
+
+status_t character_oracle_t::autonomy_on( std::string_view ) const
+{
+    return npc_autonomy::enabled() ? status_t::running : status_t::failure;
 }
 
 float character_oracle_t::free_time_urgency( std::string_view ) const

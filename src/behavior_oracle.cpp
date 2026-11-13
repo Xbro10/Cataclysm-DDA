@@ -63,6 +63,8 @@ predicate_map = {{
         { "npc_has_camp_job", make_function( &character_oracle_t::has_camp_job ) },
         { "npc_is_away_from_camp", make_function( &character_oracle_t::is_away_from_camp ) },
         { "npc_is_camp_idle", make_function( &character_oracle_t::is_camp_idle ) },
+        // Xbro10 fork: gate for Phase 3 behavior nodes ("invert_result": true for vanilla-only nodes).
+        { "npc_autonomy_on", make_function( &character_oracle_t::autonomy_on ) },
         { "monster_not_hallucination", make_function( &monster_oracle_t::not_hallucination ) },
         { "monster_items_available", make_function( &monster_oracle_t::items_available ) },
         { "monster_split_possible", make_function( &monster_oracle_t::split_possible ) },

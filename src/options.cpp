@@ -1828,6 +1828,18 @@ void options_manager::add_options_general()
 
     add_empty_line();
 
+    // Xbro10 fork: playbook Phase 3. Off means NPCs behave exactly like upstream.
+    add_option_group( "general", Group( "npc_autonomy_opts", to_translation( "NPC options" ),
+                                        to_translation( "Options for how NPCs think and act." ) ),
+    [&]( const std::string & page_id ) {
+        add( "NPC_AUTONOMY", page_id, to_translation( "NPC autonomy (experimental)" ),
+             to_translation( "If true, NPCs use the experimental autonomy features from this build: for now, a follower who leaves you cancels the quests they gave you.  More behaviors will be added over time.  If false, NPCs behave like the standard game." ),
+             false
+           );
+    } );
+
+    add_empty_line();
+
     add_option_group( "general", Group( "soundpacks_opts", to_translation( "Soundpack options" ),
                                         to_translation( "Options regarding soundpack." ) ),
     [&]( const std::string & page_id ) {
