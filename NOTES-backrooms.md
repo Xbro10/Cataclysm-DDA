@@ -303,3 +303,17 @@ data/mods/Backrooms_Expanded/
 - The first-pass art is drawn by `tools/backrooms_expanded/draw_br1_overmap.ps1` (PowerShell + System.Drawing; run it with `-Out <png> [-Preview <png>]`).
   Repaint in Aseprite, LibreSprite or Piskel and keep the tile order; the JSON doesn't change.
 - `--check-mods` doesn't load graphics, so a broken sprite sheet only shows in-game.
+
+## 6. Planned for Level 1 (not built yet)
+
+How the lights work now: lit lights (`t_strconc_floor_olight`, `light_emitted` 120) are steady day and night.
+Each lane light is rolled once at mapgen (35% lit, 65% `t_br1_dead_light`) and never changes.
+The only light that changes later is the generator's: fuelling it relights dead lights within 12 tiles for 7 days.
+The engine has no terrain flicker, so anything below is mod content.
+
+- **Flickering lights.** Now and then, lit lights near the player cut out for a moment and come back.
+  Plan: a recurring EOC that swaps a lit tile to an "off" terrain and schedules the swap back a few seconds later.
+  Each flicker is a real map change, so keep it rare and close to the player.
+- **Lights failing over time.** Now and then a lit light dies for good and becomes `t_br1_dead_light`.
+  Level 1 gets darker over the weeks, which gives Smilers (`AVOIDS_LIGHT`) more ground.
+  The generator can still relight dead lights for a week at a time.
