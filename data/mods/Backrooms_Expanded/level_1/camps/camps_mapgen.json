@@ -1,0 +1,141 @@
+[
+  {
+    "type": "palette",
+    "id": "br1_camp_palette",
+    "terrain": {
+      ".": [ "t_thconc_floor" ],
+      "!": [ "t_strconc_floor_olight" ],
+      "#": [ "t_br1_pipe_wall" ],
+      "+": [ "t_door_metal_c" ],
+      "V": [ "t_thconc_floor" ],
+      "K": [ "t_thconc_floor" ],
+      "h": [ "t_thconc_floor" ],
+      "t": [ "t_thconc_floor" ],
+      "F": [ "t_thconc_floor" ],
+      "c": [ "t_thconc_floor" ],
+      "S": [ "t_thconc_floor" ],
+      "R": [ "t_thconc_floor" ],
+      "B": [ "t_thconc_floor" ],
+      "L": [ "t_thconc_floor" ],
+      "X": [ "t_thconc_floor" ],
+      "=": [ "t_thconc_floor" ],
+      "n": [ "t_thconc_floor" ],
+      "N": [ "t_thconc_floor" ],
+      "1": [ "t_thconc_floor" ],
+      "2": [ "t_thconc_floor" ]
+    },
+    "furniture": {
+      "V": "f_vending_o",
+      "K": "f_bulletin",
+      "h": "f_chair",
+      "t": "f_table",
+      "F": "f_brazier",
+      "c": "f_counter",
+      "S": "f_sink",
+      "R": "f_fridge",
+      "B": "f_makeshift_bed",
+      "L": "f_locker",
+      "X": "f_crate_c",
+      "=": "f_sandbag_half"
+    },
+    "items": {
+      "X": { "item": "br1_camp_stores", "chance": 60, "repeat": [ 1, 3 ] },
+      "L": { "item": "br1_camp_lockers", "chance": 50 },
+      "c": { "item": "br1_camp_food", "chance": 25 },
+      "t": { "item": "br1_camp_food", "chance": 10 }
+    },
+    "nested": {
+      "n": { "chunks": [ [ "br1_squatter_npc", 50 ], [ "null", 50 ] ] },
+      "N": { "chunks": [ "br1_squatter_npc" ] }
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_squatter_npc",
+    "//": "One random lost survivor. Used by the 'n' (50%) and 'N' (always) camp symbols.",
+    "object": { "mapgensize": [ 1, 1 ], "place_npcs": [ { "class": "BR1_squatter", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_breakroom",
+    "//": "The hub camp: a walled breakroom built into the garage. Garage keeps going around it; cars are cleared from the camp and its approach.",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 0, 23 ], "y": [ 0, 17 ] } ],
+      "faction_owner": [ { "id": "br_breakroom", "x": [ 2, 21 ], "y": [ 1, 11 ] } ],
+      "place_nested": [ { "chunks": [ "br1_breakroom_core" ], "x": 0, "y": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_breakroom_core",
+    "//": "Left: the breakroom (Foreman at '1'). Top right: bunks. Bottom right: camp stores (Cartographer at '2'). Spaces leave the garage underneath.",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rows": [
+        "                        ",
+        "  ####################  ",
+        "  #VVV.K....#BB.L..BB#  ",
+        "  #....!....#...!....#  ",
+        "  #.ht..ht..+...n....#  ",
+        "  #.........#BB.L..BB#  ",
+        "  #....F....##########  ",
+        "  #.ht..ht..+......XX#  ",
+        "  #....1....#..2...XX#  ",
+        "  #.ht..ht..#...!..XX#  ",
+        "  #ccSR...n.#LLLL..XX#  ",
+        "  #####..#############  ",
+        "                        ",
+        "     ====               ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        "
+      ],
+      "palettes": [ "br1_camp_palette" ],
+      "place_npcs": [ { "class": "BR1_foreman", "x": 7, "y": 8 }, { "class": "BR1_cartographer", "x": 15, "y": 8 } ],
+      "place_signs": [ { "x": 5, "y": 12, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_squatter_camp",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 6, 17 ] } ],
+      "faction_owner": [ { "id": "br_lost", "x": [ 6, 17 ], "y": [ 8, 14 ] } ],
+      "place_nested": [ { "chunks": [ "br1_squatter_camp_core" ], "x": 6, "y": 8 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_squatter_camp_core",
+    "//": "Sandbag ring with bedrolls, a brazier and a stash. Two survivors always, two more 50% each.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "=====..=====",
+        "=B.B....X.X=",
+        "=..........=",
+        "=B..N.F..t.=",
+        "=......n.h.=",
+        "=B.B.n..N.c=",
+        "============",
+        "            ",
+        "            ",
+        "            ",
+        "            ",
+        "            "
+      ],
+      "palettes": [ "br1_camp_palette" ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]

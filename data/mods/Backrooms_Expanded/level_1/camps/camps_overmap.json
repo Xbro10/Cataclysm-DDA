@@ -1,0 +1,32 @@
+[
+  {
+    "type": "overmap_terrain",
+    "id": "br1_breakroom",
+    "//": "The hub camp. Never placed by overmap generation: EOC_BR1_PLACE_BREAKROOM turns one garage square near your first arrival into it, once per world.",
+    "name": "the Breakroom",
+    "sym": "B",
+    "color": "light_green",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE", "SOURCE_PEOPLE", "SOURCE_FOOD" ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_squatter_camp",
+    "name": "parking deck",
+    "sym": ".",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE", "SOURCE_PEOPLE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br1_squatter_camp",
+    "//": "A barricaded corner where a few lost survivors have dug in. Looks like any other garage square until you see it.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_squatter_camp" } ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 4, 8 ],
+    "flags": [ "BACKROOMS_L1" ]
+  }
+]

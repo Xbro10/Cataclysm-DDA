@@ -1,0 +1,68 @@
+[
+  {
+    "type": "faction",
+    "id": "br_breakroom",
+    "name": "The Breakroom",
+    "likes_u": 10,
+    "respects_u": 0,
+    "known_by_u": false,
+    "size": 10,
+    "power": 20,
+    "fac_food_supply": [ [ 0, { "calories": 115200, "vitamins": {  } } ] ],
+    "wealth": 1000,
+    "relations": {
+      "br_breakroom": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": true,
+        "guard your stuff": true,
+        "lets you in": true,
+        "defends your space": true,
+        "knows your voice": true
+      },
+      "br_lost": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": true
+      }
+    },
+    "description": "A handful of people who fell into the Backrooms and refused to fall apart.  They hold a walled breakroom on Level 1, share what little food they find, and help newcomers get their bearings."
+  },
+  {
+    "type": "faction",
+    "id": "br_lost",
+    "name": "The Lost",
+    "likes_u": 0,
+    "respects_u": 0,
+    "known_by_u": false,
+    "size": 30,
+    "power": 10,
+    "fac_food_supply": [ [ 0, { "calories": 57600, "vitamins": {  } } ] ],
+    "wealth": 200,
+    "relations": {
+      "br_lost": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": true,
+        "guard your stuff": true,
+        "lets you in": true,
+        "defends your space": true,
+        "knows your voice": true
+      },
+      "br_breakroom": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": true
+      }
+    },
+    "description": "Not really a faction, just everyone who fell through a wall and is still alive.  They dig in behind sandbags in small groups, hoard what they find, and jump at shadows."
+  }
+]

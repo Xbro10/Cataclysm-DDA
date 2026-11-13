@@ -1,0 +1,155 @@
+[
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN",
+    "dynamic_line": {
+      "math": [ "u_br1_met_foreman == 1" ],
+      "yes": "Still breathing.  Good.  What do you need?",
+      "no": "Another one.  Sit down before you fall down.  I'm Dot.  People here call me the Foreman, because somebody has to be.  Ask what you want to ask; everybody has the same questions."
+    },
+    "responses": [
+      { "text": "Where am I?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_WHERE" },
+      { "text": "How do I get back?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_BACK" },
+      { "text": "What's dangerous down here?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_DANGER" },
+      { "text": "Where do I find food and water?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_FOOD" },
+      { "text": "What's with the stairwells?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_STAIRS" },
+      { "text": "Who else is down here?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_PEOPLE" },
+      { "text": "I'll be going.", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "id": [
+      "TALK_BR1_FOREMAN_WHERE",
+      "TALK_BR1_FOREMAN_BACK",
+      "TALK_BR1_FOREMAN_DANGER",
+      "TALK_BR1_FOREMAN_FOOD",
+      "TALK_BR1_FOREMAN_STAIRS",
+      "TALK_BR1_FOREMAN_PEOPLE"
+    ],
+    "type": "talk_topic",
+    "responses": [ { "text": "Something else.", "topic": "TALK_BR1_FOREMAN" }, { "text": "Thanks.  I'll be going.", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_WHERE",
+    "dynamic_line": "A parking garage.  That's the honest answer.  Concrete, pillars, bay lines, the lights on a timer nobody set.  The yellow rooms you came from, the people who were here before us called that Level Zero.  This is Level One.  It doesn't end.  Mile Marker has walked three days in one direction and found more of the same."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_BACK",
+    "dynamic_line": "Find a wall that moves.  There's rippling concrete in some of the little lit alcoves, it sways like a sheet on a line.  Step through and you'll fall out onto that yellow carpet again.  You won't come out where you went in, though.  You come out under wherever you're standing.  Bring your people close when you do it; whoever's near you goes with you."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_DANGER",
+    "dynamic_line": "Rats, mostly.  Lots of them, and they're braver in the dark.  Now and then one of the dead wanders in from wherever the dead come from.  Later on, roaches the size of your boot.  The real killer is the dark itself: lights die, and you'll walk into something you should've seen.  Carry a light, carry a spare, and never sleep where you can't see the door."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_FOOD",
+    "dynamic_line": "There isn't much.  The attendant booths are your best bet: snacks, drinks, sometimes something real.  Vending machines, if you've got a pry bar and patience.  Cars have glove boxes; most were emptied by the time we got here, but not all.  Water drips from the pipes in places.  Boil it.  Don't drink the puddles, I don't care how thirsty you are."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_STAIRS",
+    "dynamic_line": "They lie.  The signs say P1, P2, EXIT.  The doors are sealed, or they open on another landing that goes nowhere.  We lost two people trying to go down a stairwell that kept going down.  If you find one that actually leads somewhere, you tell Mile Marker before you tell anyone else."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_PEOPLE",
+    "dynamic_line": "Us, in here.  Mile Marker in the stores room, keeping the maps.  Out there, a few camps of folks who fell through and dug in behind sandbags.  Most are scared, not mean.  Treat them decent and they'll do the same.  If one of them wants to follow you, that's their business; just don't get them killed."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_CARTOGRAPHER",
+    "dynamic_line": {
+      "math": [ "u_br1_met_cartographer == 1" ],
+      "yes": "Back again.  Seen anything I should write down?",
+      "no": "Mind the paper, it's the only paper I've got.  Marcus.  Mile Marker, if you ask Dot.  I map the parts of this place that hold still."
+    },
+    "responses": [
+      { "text": "What do you do here?", "effect": { "math": [ "u_br1_met_cartographer = 1" ] }, "topic": "TALK_BR1_CARTOGRAPHER_JOB" },
+      {
+        "text": "Is there anything past this garage?",
+        "effect": { "math": [ "u_br1_met_cartographer = 1" ] },
+        "topic": "TALK_BR1_CARTOGRAPHER_BEYOND"
+      },
+      {
+        "text": "Can you show me where the other camps are?",
+        "condition": { "not": { "math": [ "u_br1_got_camp_map == 1" ] } },
+        "effect": [
+          { "math": [ "u_br1_met_cartographer = 1" ] },
+          { "math": [ "u_br1_got_camp_map = 1" ] },
+          {
+            "u_location_variable": { "context_val": "br1_camp_hint" },
+            "target_params": { "om_terrain": "br1_squatter_camp", "reveal_radius": 1, "z": 0 }
+          }
+        ],
+        "topic": "TALK_BR1_CARTOGRAPHER_MAP"
+      },
+      { "text": "I'll be going.", "effect": { "math": [ "u_br1_met_cartographer = 1" ] }, "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "id": [ "TALK_BR1_CARTOGRAPHER_JOB", "TALK_BR1_CARTOGRAPHER_BEYOND", "TALK_BR1_CARTOGRAPHER_MAP" ],
+    "type": "talk_topic",
+    "responses": [ { "text": "Something else.", "topic": "TALK_BR1_CARTOGRAPHER" }, { "text": "Thanks.  I'll be going.", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_CARTOGRAPHER_JOB",
+    "dynamic_line": "I walk, I count pillars, I write it down.  Every six bays there's a pillar line, every twenty-four steps the pattern repeats, and every so often it doesn't, and that's where the interesting things are.  The alcoves with the moving walls, the booths, the camps.  Places hold still.  People don't.  So I keep the maps and they keep me fed."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_CARTOGRAPHER_BEYOND",
+    "//": "Placeholder: add a line or a sub-topic here for each new level as it is added to the mod.",
+    "dynamic_line": "Everyone asks.  Here's what I've got, and none of it's proven.  Somebody before us numbered the levels, so there are more numbers.  People swear they've heard water below this one, a lot of it, like a flooded tunnel.  Others talk about a hotel hallway that never ends, or a room where the lights are warm.  I haven't found a way through.  Yet.  If you find one, come back and tell me, and I'll put your name on the map."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_CARTOGRAPHER_MAP",
+    "dynamic_line": "Here.  Nearest camp I know of, give or take.  They move their sandbags, but not far.  Go easy on them; they jump at shadows."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_SQUATTER",
+    "dynamic_line": "<br1_squatter_greet>",
+    "responses": [
+      { "text": "How did you end up down here?", "topic": "TALK_BR1_SQUATTER_STORY" },
+      { "text": "Let's talk about something else.", "topic": "TALK_STRANGER_NEUTRAL" },
+      { "text": "Take care.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_SQUATTER_STORY",
+    "dynamic_line": "<br1_squatter_story>",
+    "responses": [
+      { "text": "Let's talk about something else.", "topic": "TALK_STRANGER_NEUTRAL" },
+      { "text": "Take care.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<br1_squatter_greet>",
+    "text": [
+      "Easy.  Easy.  You're real, right?  Okay.  Okay.",
+      "Keep your voice down.  The rats come when you talk too loud.",
+      "You came from the yellow rooms too, didn't you?  You've got that look.",
+      "If you're here for the food, there isn't any.  If you're here to talk, sit.",
+      "Don't touch the sandbags.  Took us a week to drag those."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<br1_squatter_story>",
+    "text": [
+      "I was running from the dead.  Ducked into a mall, the lights went yellow, and then I was in a room I'd never seen.  Walked for days.  Leaned on a wall to rest and fell straight through it.",
+      "I don't know.  I closed my eyes in a stairwell during the evacuation.  When I opened them the stairs went the wrong way.  I've been down here since.",
+      "My car broke down at the edge of town.  I walked into the parking garage to find help.  The exit ramp just… kept going.  I never found the street again.",
+      "There was a crowd, and a door, and then carpet.  So much carpet.  Somebody here told me I was lucky I found a soft wall at all.",
+      "I followed a man who said he knew the way out.  He walked through the concrete and I followed.  I never saw him again on this side."
+    ]
+  }
+]

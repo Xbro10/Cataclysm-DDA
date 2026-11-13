@@ -1,0 +1,46 @@
+[
+  {
+    "type": "item_group",
+    "id": "br1_camp_food",
+    "subtype": "distribution",
+    "//": "What lost people hoard from booths and vending machines.",
+    "items": [
+      { "item": "granola", "prob": 20 },
+      { "item": "crackers", "prob": 20 },
+      { "item": "chips", "prob": 15 },
+      { "item": "candy", "prob": 10 },
+      { "item": "candy2", "prob": 10 },
+      { "item": "protein_bar_evac", "prob": 15 },
+      { "item": "protein_bar_peanut", "prob": 10 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_camp_stores",
+    "subtype": "distribution",
+    "items": [
+      { "group": "br1_camp_food", "prob": 40 },
+      { "group": "br1_garage_loot", "prob": 30 },
+      { "item": "bandages", "prob": 8 },
+      { "item": "aspirin", "prob": 6 },
+      { "item": "duct_tape", "prob": 6 },
+      { "item": "light_battery_cell", "prob": 6 },
+      { "item": "lighter", "prob": 4 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_camp_lockers",
+    "subtype": "distribution",
+    "items": [
+      { "item": "jumpsuit", "prob": 20 },
+      { "item": "hat_hard", "prob": 10 },
+      { "item": "tool_belt", "prob": 10 },
+      { "item": "flashlight", "prob": 15 },
+      { "item": "canteen", "prob": 10 },
+      { "item": "permanent_marker", "prob": 15 },
+      { "item": "cig", "prob": 10 },
+      { "item": "survivormap", "prob": 10 }
+    ]
+  }
+]

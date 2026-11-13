@@ -6,6 +6,9 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- The Breakroom: a walled survivor hub on Level 1 with Dot Kowalczyk ("the Foreman"), who explains Level 1, and Marcus "Mile Marker" Reyes, who keeps the maps, can mark the nearest camp for you, and has rumours of what lies beyond. It forms once per world, 4 to 10 squares from your first arrival, and is marked on your map.
+- Squatter camps: 4 to 8 sandbagged camps per map with 2 to 4 random lost survivors who can be talked to, traded with and recruited, each with their own story of falling through.
+- Two factions: The Breakroom and The Lost. Each owns its camp's stores, so taking from them counts as stealing.
 - Level 1, the Parking Deck: a new dimension of endless concrete parking garage (pillars, faded bay lines, ceiling lights that may be dead).
 - Level 1 variety: puddles, leaking pipe runs, junk piles, guaranteed working lights, maintenance and electrical rooms, an attendant booth (best odds of food and drink), sealed stairwells with misleading signs, and the odd wrecked car.
 - Level 1 loot (tools, car parts, hardware, batteries; food and water are rare) and monsters (mostly rats, some zombies; cockroaches after day 45).

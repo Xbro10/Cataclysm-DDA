@@ -36,7 +36,33 @@
         "false_eocs": [ "EOC_BR1_BUILD_ARRIVAL" ]
       },
       { "u_teleport": { "global_val": "br1_arrival_point" }, "force_safe": true },
-      { "u_run_npc_eocs": [ "EOC_BR_FOLLOWER_TO_L1_ARRIVAL" ], "local": true }
+      { "u_run_npc_eocs": [ "EOC_BR_FOLLOWER_TO_L1_ARRIVAL" ], "local": true },
+      { "run_eocs": "EOC_BR1_PLACE_BREAKROOM" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_PLACE_BREAKROOM",
+    "//": "Once per world, on the first trip into Level 1: turn a garage square 4-10 squares away into the Breakroom hub and mark it on the map. 4+ keeps it outside the loaded area, so it is generated fresh with its NPCs.",
+    "condition": { "not": { "math": [ "br1_breakroom_placed == 1" ] } },
+    "effect": [
+      { "math": [ "br1_breakroom_placed = 1" ] },
+      {
+        "u_location_variable": { "global_val": "br1_breakroom_point" },
+        "target_params": {
+          "om_terrain": "br1_breakroom",
+          "om_terrain_replace": "br1_garage",
+          "random": true,
+          "search_range": 10,
+          "min_distance": 4,
+          "reveal_radius": 1,
+          "z": 0
+        }
+      },
+      {
+        "u_message": "Scrawled on the nearest pillar in fresh marker: an arrow, and the word BREAKROOM.  Someone down here is still keeping order.  You note the direction on your map.",
+        "type": "good"
+      }
     ]
   },
   {

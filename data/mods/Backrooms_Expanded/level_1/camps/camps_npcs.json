@@ -1,0 +1,99 @@
+[
+  {
+    "type": "npc",
+    "id": "BR1_foreman",
+    "//": "Breakroom hub. Gives the Level 1 rundown. Stays put (GUARD).",
+    "name_unique": "Dot Kowalczyk",
+    "gender": "female",
+    "name_suffix": "the Foreman",
+    "class": "NC_BR1_FOREMAN",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_FOREMAN",
+    "faction": "br_breakroom"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_FOREMAN",
+    "name": { "str": "Foreman" },
+    "job_description": "I keep the Breakroom running.",
+    "common": false,
+    "worn_override": "NC_BR1_FOREMAN_worn",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_str": { "rng": [ 0, 2 ] },
+    "bonus_per": { "rng": [ 1, 3 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "fabrication", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "mechanics", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "melee", "bonus": { "rng": [ 1, 3 ] } },
+      { "skill": "bashing", "bonus": { "rng": [ 1, 3 ] } }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_FOREMAN_worn",
+    "subtype": "collection",
+    "items": [ "jumpsuit", "hat_hard", "tool_belt", "socks", "boots_steel", "gloves_work" ]
+  },
+  {
+    "type": "npc",
+    "id": "BR1_cartographer",
+    "//": "Breakroom hub. Maps Level 1 and talks about what lies beyond. Stays put (GUARD).",
+    "name_unique": "Marcus Reyes",
+    "gender": "male",
+    "name_suffix": "Mile Marker",
+    "class": "NC_BR1_CARTOGRAPHER",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_CARTOGRAPHER",
+    "faction": "br_breakroom"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_CARTOGRAPHER",
+    "name": { "str": "Cartographer" },
+    "job_description": "I map the parts of this place that hold still.",
+    "common": false,
+    "worn_override": "NC_BR1_CARTOGRAPHER_worn",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_per": { "rng": [ 2, 4 ] },
+    "bonus_int": { "rng": [ 1, 3 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "survival", "bonus": { "rng": [ 2, 5 ] } },
+      { "skill": "speech", "bonus": { "rng": [ 1, 3 ] } }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_CARTOGRAPHER_worn",
+    "subtype": "collection",
+    "items": [ "jeans", "tshirt", "jacket_windbreaker", "socks", "sneakers", "backpack" ]
+  },
+  {
+    "type": "npc",
+    "id": "BR1_squatter",
+    "//": "Random lost survivor in Level 1 camps. Ordinary NPC: can be talked to, traded with and recruited.",
+    "class": "NC_BR1_SQUATTER",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_SQUATTER",
+    "faction": "br_lost"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_SQUATTER",
+    "name": { "str": "Lost Survivor" },
+    "job_description": "I fell through a wall.  I'm trying to stay alive until I find the way out.",
+    "common": false,
+    "traits": [ { "group": "BG_survival_story_EVACUEE" }, { "group": "NPC_starting_traits" }, { "group": "Appearance_demographics" } ],
+    "bonus_aggression": { "rng": [ 0, 2 ] },
+    "bonus_bravery": { "rng": [ 0, 3 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -3 } ] } },
+      { "skill": "survival", "bonus": { "rng": [ 0, 2 ] } },
+      { "skill": "melee", "bonus": { "rng": [ 0, 2 ] } }
+    ]
+  }
+]
