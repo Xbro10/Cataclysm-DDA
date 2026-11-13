@@ -36,9 +36,9 @@
     "//": "An empty office with two doors and a rippling stretch of back wall.",
     "object": {
       "mapgensize": [ 8, 8 ],
-      "rows": [ "---D----", "-      -", "-  .   -", "D      -", "-      -", "-  ..  -", "-      -", "---TT---" ],
+      "rows": [ "---D----", "-      -", "-  .   -", "D      -", "-      -", "-  .@  -", "-      -", "---TT---" ],
       "palettes": [ "backrooms_palette" ],
-      "terrain": { "T": "t_carpet_backrooms" },
+      "terrain": { "T": "t_carpet_backrooms", "@": "t_br0_landing" },
       "furniture": { "T": "f_br_thin_wall" },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
@@ -68,6 +68,7 @@
     "om_terrain": "br1_arrival",
     "object": {
       "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 7, 16 ], "y": [ 7, 18 ] } ],
       "place_nested": [ { "chunks": [ "br1_arrival_core" ], "x": 8, "y": 8 } ]
     }
   },
@@ -83,5 +84,20 @@
       "furniture": { "Z": "f_br1_thin_wall" },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
+  },
+  {
+    "type": "mapgen",
+    "update_mapgen_id": "br1_arrival_stamp",
+    "//": "Builds an arrival alcove in the map square the traveller landed in, when none is close by. Clears any car touching the alcove or the 3 tiles in front of its opening.",
+    "object": {
+      "remove_vehicles": [ { "x": [ 7, 16 ], "y": [ 7, 18 ] } ],
+      "place_nested": [ { "chunks": [ "br1_arrival_core" ], "x": 8, "y": 8 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "update_mapgen_id": "br0_exit_stamp",
+    "//": "Builds a thin-walled room in the Level 0 map square the traveller comes out in, when none is close by.",
+    "object": { "place_nested": [ { "chunks": [ "br0_thin_room_core" ], "x": 8, "y": 8 } ] }
   }
 ]

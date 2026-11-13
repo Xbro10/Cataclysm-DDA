@@ -15,9 +15,11 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- You now land where you are when crossing between Level 0 and Level 1. If no arrival alcove (or thin-walled room on the way back) is close, one forms around you. Leaving Level 1 brings you out under where you were, not where you went in.
+- The debug shortcuts now take the same route as the real rippling walls.
 
 ### Fixed
-- Removed vehicle spawn points from the arrival alcove's southern approach so cars cannot block the entrance.
-- Expanded dimension travel's follower pickup radius from 5 to 20 tiles so followers who lag behind are carried across.
+- Cars can no longer block an arrival alcove: any car touching the alcove or the 3 tiles in front of its opening is removed (the parking bays elsewhere keep all six car spots).
+- Followers now arrive with you through rippling walls (they were left stranded where you first landed). Followers within 20 tiles come along and land on free tiles next to you.
 
 ### Removed

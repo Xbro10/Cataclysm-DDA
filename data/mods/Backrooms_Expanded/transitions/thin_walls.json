@@ -34,5 +34,13 @@
     "name": "lit concrete floor",
     "description": "Concrete under a single working light.  There's a faint outline on the floor here, roughly the shape of a person, where the dust hasn't settled.",
     "looks_like": "t_strconc_floor_olight"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br0_landing",
+    "copy-from": "t_carpet_backrooms_light",
+    "name": "faded carpet, overhead light",
+    "description": "Damp yellow carpet under a buzzing light.  The pile is pressed flat in a rough outline, as if someone fell here from a great height and simply got up.",
+    "looks_like": "t_carpet_backrooms_light"
   }
 ]

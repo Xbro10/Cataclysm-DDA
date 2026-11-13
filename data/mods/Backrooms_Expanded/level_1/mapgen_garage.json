@@ -57,7 +57,7 @@
   },
   {
     "type": "mapgen",
-    "//": "Base layout: two bands of parking bays and two driving lanes. Pillars every 6 tiles line up across neighbouring squares. 'L' is a ceiling light that may be dead. Keep the lower approach clear for the arrival alcove; then features, rooms and the odd wrecked car are layered on top.",
+    "//": "Base layout: two bands of parking bays and two driving lanes. Pillars every 6 tiles line up across neighbouring squares. 'L' is a ceiling light that may be dead. Then features, rooms and the odd wrecked car are layered on top.",
     "om_terrain": "br1_garage",
     "object": {
       "fill_ter": "t_thconc_floor",
@@ -91,7 +91,10 @@
       "place_vehicles": [
         { "vehicle": "parking_garage_short", "x": 6, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
         { "vehicle": "parking_garage_short", "x": 12, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
-        { "vehicle": "parking_garage_short", "x": 18, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 }
+        { "vehicle": "parking_garage_short", "x": 18, "y": 4, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 6, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 12, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 },
+        { "vehicle": "parking_garage_short", "x": 18, "y": 16, "rotation": 90, "chance": 12, "status": 1, "fuel": 0 }
       ],
       "place_nested": [
         {
