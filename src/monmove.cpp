@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "behavior.h"
@@ -27,6 +28,7 @@
 #include "game.h"
 #include "gates.h"
 #include "item.h"
+#include "lightmap.h"
 #include "line.h"
 #include "map.h"
 #include "map_iterator.h"
@@ -108,6 +110,49 @@ static const ter_str_id ter_t_lava( "t_lava" );
 static const ter_str_id ter_t_pit( "t_pit" );
 static const ter_str_id ter_t_pit_glass( "t_pit_glass" );
 static const ter_str_id ter_t_pit_spiked( "t_pit_spiked" );
+
+// Xbro10 fork: light-aware monsters. These flags aren't defined by the base game; a mod
+// (Backrooms Expanded) defines them. They're checked lazily so the game runs fine
+// without that mod, and the mod still loads (the flags just do nothing) on an official build.
+static const mon_flag_str_id mon_flag_AVOIDS_LIGHT( "AVOIDS_LIGHT" );
+static const mon_flag_str_id mon_flag_SEEKS_LIGHT( "SEEKS_LIGHT" );
+
+static bool has_optional_flag( const monster &mon, const mon_flag_str_id &flag )
+{
+    return flag.is_valid() && mon.has_flag( flag.id() );
+}
+
+static bool is_lit_for_monsters( const map &here, const tripoint_bub_ms &p )
+{
+    return here.ambient_light_at( p ) > LIGHT_AMBIENT_LIT;
+}
+
+// Xbro10 fork: SEEKS_LIGHT. Head for the brightest lit tile in view (a working lamp, or
+// a survivor's flashlight). Nearer light wins over slightly brighter light further away.
+static void move_toward_light( monster &mon, map &here )
+{
+    constexpr int search_radius = 10;
+    const tripoint_bub_ms pos = mon.pos_bub( here );
+    // Already in the light: mostly stay and flutter, now and then look for a brighter spot.
+    if( is_lit_for_monsters( here, pos ) && !one_in( 4 ) ) {
+        return;
+    }
+    std::optional<tripoint_bub_ms> best;
+    float best_score = 0.0f;
+    for( const tripoint_bub_ms &p : here.points_in_radius( pos, search_radius ) ) {
+        if( !is_lit_for_monsters( here, p ) ) {
+            continue;
+        }
+        const float score = here.ambient_light_at( p ) - 2.0f * rl_dist( pos, p );
+        if( score > best_score && here.sees( pos, p, search_radius ) ) {
+            best = p;
+            best_score = score;
+        }
+    }
+    if( best ) {
+        mon.set_dest( here.get_abs( *best ) );
+    }
+}
 
 bool monster::is_immune_field( const field_type_id &fid ) const
 {
@@ -233,6 +278,13 @@ bool monster::will_move_to( map *here, const tripoint_bub_ms &p ) const
     }
 
     if( has_flag( mon_flag_SUNDEATH ) && g->is_in_sunlight( here, p ) ) {
+        return false;
+    }
+
+    // Xbro10 fork: AVOIDS_LIGHT won't step from darkness into light, so it waits at the
+    // edge of a light until the light goes out. Once caught in light it may go anywhere.
+    if( has_optional_flag( *this, mon_flag_AVOIDS_LIGHT ) && is_lit_for_monsters( *here, p ) &&
+        !is_lit_for_monsters( *here, pos_bub( *here ) ) ) {
         return false;
     }
 
@@ -919,6 +971,13 @@ void monster::plan()
         // To use stairs smoothly, if the destination is on a different Z-level,
         // move there first.
         set_dest( player_character.pos_abs() );
+    }
+
+    // Xbro10 fork: SEEKS_LIGHT drifts toward light when it has nothing to fight or flee.
+    if( friendly == 0 && !mon_plan.fleeing && has_optional_flag( *this, mon_flag_SEEKS_LIGHT ) &&
+        ( mon_plan.target == nullptr ||
+          attitude_to( *mon_plan.target ) != Attitude::HOSTILE ) ) {
+        move_toward_light( *this, here );
     }
 }
 
