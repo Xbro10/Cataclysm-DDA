@@ -24,6 +24,9 @@
         ],
         "topic": "TALK_BR1_FOREMAN_GIFT"
       },
+      { "text": "Need a hand with anything?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_WORK" },
+      { "text": "About that job…", "condition": "has_assigned_mission", "topic": "TALK_MISSION_INQUIRE" },
+      { "text": "About one of those jobs…", "condition": "has_many_assigned_missions", "topic": "TALK_MISSION_LIST_ASSIGNED" },
       { "text": "I'll be going.", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_DONE" }
     ]
   },
@@ -103,6 +106,9 @@
         ],
         "topic": "TALK_BR1_CARTOGRAPHER_MAP"
       },
+      { "text": "Got any work for me?", "effect": { "math": [ "u_br1_met_cartographer = 1" ] }, "topic": "TALK_BR1_CARTOGRAPHER_WORK" },
+      { "text": "About that job…", "condition": "has_assigned_mission", "topic": "TALK_MISSION_INQUIRE" },
+      { "text": "About one of those jobs…", "condition": "has_many_assigned_missions", "topic": "TALK_MISSION_LIST_ASSIGNED" },
       { "text": "I'll be going.", "effect": { "math": [ "u_br1_met_cartographer = 1" ] }, "topic": "TALK_DONE" }
     ]
   },
