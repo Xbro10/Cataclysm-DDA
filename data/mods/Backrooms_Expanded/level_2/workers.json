@@ -1,0 +1,229 @@
+[
+  {
+    "type": "faction",
+    "id": "br_tunnel_workers",
+    "name": "The Tunnel Crew",
+    "//": "Level 2's only people. A trading faction with no jobs on offer (only the Breakroom gives jobs).",
+    "likes_u": 0,
+    "respects_u": 0,
+    "known_by_u": false,
+    "size": 12,
+    "power": 15,
+    "fac_food_supply": [ [ 0, { "calories": 57600, "vitamins": {  } } ] ],
+    "wealth": 600,
+    "relations": {
+      "br_tunnel_workers": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": true,
+        "guard your stuff": true,
+        "lets you in": true,
+        "defends your space": true,
+        "knows your voice": true
+      },
+      "br_breakroom": {
+        "kill on sight": false,
+        "watch your back": false,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": false
+      },
+      "br_lost": {
+        "kill on sight": false,
+        "watch your back": false,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": false
+      }
+    },
+    "description": "Maintenance workers, or people who dress like them now.  They keep a few camps in the hot tunnels below the parking deck, bleed the pipes when the heat gets bad, and trade with anyone who comes down without causing trouble."
+  },
+  {
+    "type": "npc",
+    "id": "BR2_worker",
+    "//": "Random tunnel crew member at a Level 2 camp. Talks, trades and can be recruited; offers no jobs.",
+    "class": "NC_BR2_WORKER",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR2_WORKER",
+    "faction": "br_tunnel_workers"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR2_WORKER",
+    "name": { "str": "Tunnel Crew" },
+    "job_description": "I keep the pipes from killing us.  Mostly.",
+    "common": false,
+    "worn_override": "NC_BR2_WORKER_worn",
+    "traits": [ { "group": "NPC_starting_traits" }, { "group": "Appearance_demographics" } ],
+    "bonus_str": { "rng": [ 0, 2 ] },
+    "bonus_aggression": { "rng": [ 0, 2 ] },
+    "bonus_bravery": { "rng": [ 1, 3 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -3 } ] } },
+      { "skill": "mechanics", "bonus": { "rng": [ 1, 3 ] } },
+      { "skill": "survival", "bonus": { "rng": [ 1, 2 ] } },
+      { "skill": "melee", "bonus": { "rng": [ 0, 2 ] } }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR2_WORKER_worn",
+    "subtype": "collection",
+    "items": [ "jumpsuit", "tank_top", "socks", "boots_steel", "gloves_work", "hat_hard" ]
+  },
+  {
+    "type": "item_group",
+    "id": "br2_worker_stores",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "br1_camp_food", "prob": 30 },
+      { "item": "water_clean", "container-item": "bottle_plastic", "prob": 20 },
+      { "group": "tools_mechanic", "prob": 15 },
+      { "group": "hardware", "prob": 15 },
+      { "group": "batteries", "prob": 10 },
+      { "item": "gasoline", "container-item": "jerrycan", "charges": [ 1000, 4000 ], "prob": 5 },
+      { "group": "almond_water_sealed", "prob": 5 }
+    ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br2_workers_camp",
+    "name": "maintenance tunnels",
+    "sym": "#",
+    "looks_like": "br2_tunnels",
+    "color": "brown",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE", "SOURCE_PEOPLE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br2_workers_camp",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_workers_camp" } ],
+    "locations": [ "br2_tunnels" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 3 ],
+    "flags": [ "BACKROOMS_L2", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_workers_camp",
+    "object": {
+      "predecessor_mapgen": "br2_tunnels",
+      "faction_owner": [ { "id": "br_tunnel_workers", "x": [ 0, 10 ], "y": [ 0, 10 ] } ],
+      "place_nested": [ { "chunks": [ "br2_workers_core" ], "x": 0, "y": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_workers_core",
+    "//": "A camp in an old pump room: bunks, a cold boiler they cook on, a water drum filled from the drips, stores, and two to four crew. Doorways east and south like the boiler rooms.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "########### ",
+        "#bb.x.x.bb# ",
+        "#.........# ",
+        "#.N..L..n.# ",
+        "#.......... ",
+        "#.O.tt..~.. ",
+        "#...tt..... ",
+        "#.n..L..N.# ",
+        "#.........# ",
+        "#bb.x.x.bb# ",
+        "####...#### ",
+        "            "
+      ],
+      "terrain": {
+        "#": "t_br2_pipe_wall",
+        ".": "t_metal_floor",
+        "b": "t_metal_floor",
+        "x": "t_metal_floor",
+        "N": "t_metal_floor",
+        "n": "t_metal_floor",
+        "O": "t_metal_floor",
+        "t": "t_metal_floor",
+        "~": "t_br1_drip_pool",
+        "L": "t_br2_light"
+      },
+      "furniture": { "b": "f_makeshift_bed", "x": "f_crate_o", "O": "f_br2_boiler_cold", "t": "f_table" },
+      "items": { "x": { "item": "br2_worker_stores", "chance": 80, "repeat": [ 1, 2 ] } },
+      "nested": {
+        "n": { "chunks": [ [ "br2_worker_npc", 50 ], [ "null", 50 ] ] },
+        "N": { "chunks": [ "br2_worker_npc" ] }
+      },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_worker_npc",
+    "object": { "mapgensize": [ 1, 1 ], "place_npcs": [ { "class": "BR2_worker", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR2_WORKER",
+    "dynamic_line": "<br2_worker_greet>",
+    "responses": [
+      { "text": "What is this place?", "topic": "TALK_BR2_WORKER_PLACE" },
+      { "text": "How do you stand the heat?", "topic": "TALK_BR2_WORKER_HEAT" },
+      { "text": "Does it go any deeper?", "topic": "TALK_BR2_WORKER_DEEPER" },
+      { "text": "How did you end up down here?", "topic": "TALK_BR2_WORKER_STORY" },
+      { "text": "Got anything to trade?", "effect": "start_trade", "topic": "TALK_BR2_WORKER" },
+      { "text": "Let's talk about something else.", "topic": "TALK_STRANGER_NEUTRAL" },
+      { "text": "Take care.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "id": [ "TALK_BR2_WORKER_PLACE", "TALK_BR2_WORKER_HEAT", "TALK_BR2_WORKER_DEEPER", "TALK_BR2_WORKER_STORY" ],
+    "type": "talk_topic",
+    "responses": [ { "text": "Something else.", "topic": "TALK_BR2_WORKER" }, { "text": "Take care.", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR2_WORKER_PLACE",
+    "dynamic_line": "Maintenance.  Pipes.  Somebody built all this to carry something somewhere, and it never stopped running.  Upstairs they call it Level Two.  We just call it the job.  Corridors go in a grid, more or less.  The middle lines always go through.  The side ones lie."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR2_WORKER_HEAT",
+    "dynamic_line": "You don't.  You drink, you strip down, you stay out of the boiler rooms unless you need what's in them.  See a red wheel with a BLEED tag?  Turn it.  Shuts the leaks for a couple of days.  Loud, though.  Things hear it."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR2_WORKER_DEEPER",
+    "dynamic_line": "Ladders go up to the car park, if you find one.  Down?  There's talk.  Hatches past the biggest boilers, offices down there, desks and quiet.  Nobody I know has gone and come back to say.  Don't go looking yet.  Not till you know the tunnels."
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR2_WORKER_STORY",
+    "dynamic_line": "<br2_worker_story>"
+  },
+  {
+    "type": "snippet",
+    "category": "<br2_worker_greet>",
+    "text": [
+      "Shut the door behind you, if you can find it.  Heat gets in.",
+      "New face.  You came down the stairs, didn't you?  They do that.  Fall in.",
+      "Drink something before you talk.  You look like boiled meat.",
+      "Mind the pool, that's tomorrow's water.",
+      "You're not crew.  That's fine.  Just don't touch the wheels without asking."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<br2_worker_story>",
+    "text": [
+      "I was a plumber.  Actually a plumber.  Got called out to a basement leak, followed the pipe behind the boiler, and the pipe kept going.  So did I.",
+      "Took the stairs in the car park.  The ones that weren't filled in.  Everyone says don't, and everyone does.",
+      "I came up from somewhere.  I don't remember where.  I remember water, a lot of it, and tile.  Then pipes.",
+      "Night shift at a hospital.  Went down to check the boiler room.  This is a very big boiler room.",
+      "We were six when we came down.  We're three now.  The rest went looking for the way down."
+    ]
+  }
+]
