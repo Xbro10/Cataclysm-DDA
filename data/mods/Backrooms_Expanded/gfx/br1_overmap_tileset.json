@@ -21,7 +21,8 @@
           { "id": "br1_squatter_camp", "fg": 5, "rotates": false },
           { "id": "br1_dead_zone", "fg": 6, "rotates": false },
           { "id": "br1_overrun_camp", "fg": 7, "rotates": false },
-          { "id": "br1_elevator_lobby", "fg": 8, "rotates": false }
+          { "id": "br1_elevator_lobby", "fg": 8, "rotates": false },
+          { "id": "br1_generator_site", "fg": 9, "rotates": false }
         ]
       }
     ]

@@ -64,7 +64,8 @@
       { "item": "hat_ball", "prob": 6 },
       { "item": "wristwatch", "prob": 5 },
       { "item": "cell_phone", "prob": 5 },
-      { "item": "br1_note_lost", "prob": 10 }
+      { "item": "br1_note_lost", "prob": 10 },
+      { "item": "br1_note_generator", "prob": 4 }
     ]
   },
   {

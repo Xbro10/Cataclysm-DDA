@@ -12,7 +12,8 @@
       { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 10 },
       { "group": "br_cat_snacks", "count": [ 3, 6 ], "prob": 3 },
       { "group": "cannedfood", "count": [ 3, 6 ], "prob": 3 },
-      { "item": "br1_note_lost", "prob": 2 }
+      { "item": "br1_note_lost", "prob": 2 },
+      { "item": "br1_note_generator", "prob": 1 }
     ]
   },
   {

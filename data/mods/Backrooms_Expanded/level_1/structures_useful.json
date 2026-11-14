@@ -18,7 +18,8 @@
       { "group": "br_cat_power", "count": [ 2, 4 ], "prob": 50 },
       { "item": "radio", "prob": 15 },
       { "item": "cash_card", "charges": [ 500, 3000 ], "prob": 20 },
-      { "item": "br1_note_lost", "prob": 10 }
+      { "item": "br1_note_lost", "prob": 10 },
+      { "item": "br1_note_generator", "prob": 4 }
     ]
   },
   {

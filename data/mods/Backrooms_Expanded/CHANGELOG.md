@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Oil-stained notes: a rarer note with a hand-drawn sketch. Activate it on Level 1 and it marks a generator room on your map, 3 to 8 squares away (on squares you haven't seen yet), with its own amber map sign. Half the time someone left a can of gas there too. Each note leads somewhere once. The old crumpled note about the generator now says the writer never found it again.
 - Level 0 map sprites (UltiCa and UndeadPeople): the yellow rooms seen from above (three layouts of walls, doorways and lights), the border wall, the stairs (a staircase with an up or down arrow) and a signboard for the rippling-wall room.
 - Level 0 furniture and item sprites (UltiCa and UndeadPeople): the water cooler (white cabinet, blue jug), the waycircle (a boulder with a painted glyph, candles and a bone), the Level 0 rippling wall (wallpaper whose stripes bend like cloth), the Level 1 sealed concrete patch, and almond water and its bottle (milky water, paper label).
 - Level 0 wall and floor sprites (UltiCa and UndeadPeople): yellow wallpaper walls and grey walls that join properly at corners and junctions, showing their papered face only on the side you look at, damp yellow carpet with three stain variants, carpet and tile under buzzing ceiling-light panels, and faded tile. Level 0 used to borrow the base game's yellow wall and carpet.
