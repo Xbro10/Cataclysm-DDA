@@ -304,16 +304,17 @@ data/mods/Backrooms_Expanded/
   Repaint in Aseprite, LibreSprite or Piskel and keep the tile order; the JSON doesn't change.
 - `--check-mods` doesn't load graphics, so a broken sprite sheet only shows in-game.
 
-## 6. Planned for Level 1 (not built yet)
+## 6. Level 1 lights (built 2026-11-14, `level_1/lights.json`)
 
-How the lights work now: lit lights (`t_strconc_floor_olight`, `light_emitted` 120) are steady day and night.
-Each lane light is rolled once at mapgen (35% lit, 65% `t_br1_dead_light`) and never changes.
-The only light that changes later is the generator's: fuelling it relights dead lights within 12 tiles for 7 days.
-The engine has no terrain flicker, so anything below is mod content.
+Each lane light is rolled once at mapgen (35% lit `t_strconc_floor_olight`, 65% `t_br1_dead_light`).
+The engine has no terrain flicker, so everything here is a recurring EOC that swaps real map tiles near the player
+(`u_transform_radius` with a weighted `ter_furn_transform` result, and a timed swap back via `time_in_future`).
+All three only run in the `backrooms_level_1` dimension.
 
-- **Flickering lights.** Now and then, lit lights near the player cut out for a moment and come back.
-  Plan: a recurring EOC that swaps a lit tile to an "off" terrain and schedules the swap back a few seconds later.
-  Each flicker is a real map change, so keep it rare and close to the player.
-- **Lights failing over time.** Now and then a lit light dies for good and becomes `t_br1_dead_light`.
-  Level 1 gets darker over the weeks, which gives Smilers (`AVOIDS_LIGHT`) more ground.
-  The generator can still relight dead lights for a week at a time.
+- **Flicker** (`EOC_BR1_LIGHTS_FLICKER`, every 5-15 min): each lit lane light within 20 tiles has a 3% chance to become
+  `t_br1_light_flicker` (dark) and comes back 2-3 seconds later. If the player changes level in those seconds, the light stays dark.
+- **Failing** (`EOC_BR1_LIGHTS_FAIL`, every 6 h): each lit lane light within 30 tiles has a 1 in 150 chance to become
+  `t_br1_dead_light` for good. Lights you live near are about half dead after a month. The generator still relights them for a week.
+- **Lobby blackout** (`EOC_BR1_LOBBY_BLACKOUT`, checked every 1-2 h, 1 in 6 while the player is inside an elevator lobby square):
+  every `t_br1_lobby_light` within 24 tiles becomes `t_br1_lobby_light_off` for 30-60 minutes; 1 time in 3 a Smiler spawns 8-14 tiles away.
+- Lobby lights (`t_br1_lobby_light`) and generator lights (`t_br1_light_powered`) never flicker or fail.
