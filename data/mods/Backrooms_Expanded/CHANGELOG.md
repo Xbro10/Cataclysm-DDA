@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Entity sprites for the Smiler (a shadow with a glowing grin), Hound (a pale person on all fours), Deathmoth (a giant moth with eyespots) and Wretch (a grey-skinned survivor in a ruined jacket). Original pixel art in the style of UndeadPeople, used with UltiCa or UndeadPeople; other tilesets keep the old look-alike sprites.
 - Level 2 map art, notes and graffiti. In UltiCa the tunnels (two variants), service ladders, boiler rooms, valve junctions, flooded dips and Tunnel Crew camps each have their own overmap sprite. Sweat-stained notes turn up at the landing, in junk heaps and in boiler lockers, and paint on the walls points the way (not always truthfully).
 - Level 2 spawns and loot. Rats in the pipes, Hound packs in the corridors, Smilers in the long dark stretches, Deathmoths at the caged bulbs (sometimes already waiting at one), a few sluggish zombies, and later cockroaches and Wretches. Heaps of junk along the corridors hold pipe, fittings, scrap, tools and the odd battery; food is rarer than on Level 1.
 - The Tunnel Crew: Level 2's only people. 1 to 3 camps per map in old pump rooms (bunks, a cold boiler they cook on, a drip pool for water, stores) with 2 to 4 crew who talk, trade and can be recruited. They explain the tunnels and the BLEED wheels and pass on rumours of a way further down. They offer no jobs; only the Breakroom does.
@@ -36,6 +37,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- The Level 1 and Level 2 map sprites now also show with the UndeadPeople tileset, not just UltiCa.
 - Level 2 has far fewer leaking steam joints: about 1 tunnel square in 4 has one (it was about one per square), so the tunnels are hot but not scalding everywhere.
 - UltiCa fallback sprites for almond water and its bottle, and overmap sprites for Level 1 squares (garage), the Breakroom (shelter) and the Level 0 rippling-wall room (an ordinary Level 0 chamber).
 - You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
