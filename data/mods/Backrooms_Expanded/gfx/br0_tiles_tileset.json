@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Level 0 walls and floors (upstream Backrooms terrain), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br0_tiles.ps1 in UndeadPeople style. Walls are full connecting multitiles: sprite N (0-15 yellow, 16-31 grey) is connection mask N with S=1, E=2, W=4, N=8. Rotation orders follow cata_tiles::get_rotation_and_subtile: corner [SE, SW, NW, NE connections], t_connection [missing N, missing E, missing S, missing W], edge [NS, EW], end_piece [S, W, N, E].",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br0_tiles.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          {
+            "id": [ "t_backroom_wall", "t_backroom_wall_border" ],
+            "fg": 0,
+            "multitile": true,
+            "additional_tiles": [
+              { "id": "center", "fg": 15 },
+              { "id": "corner", "fg": [ 3, 5, 12, 10 ] },
+              { "id": "t_connection", "fg": [ 7, 13, 14, 11 ] },
+              { "id": "edge", "fg": [ 9, 6 ] },
+              { "id": "end_piece", "fg": [ 1, 4, 8, 2 ] },
+              { "id": "unconnected", "fg": 0 }
+            ]
+          },
+          {
+            "id": "t_backroom_wall_gray",
+            "fg": 16,
+            "multitile": true,
+            "additional_tiles": [
+              { "id": "center", "fg": 31 },
+              { "id": "corner", "fg": [ 19, 21, 28, 26 ] },
+              { "id": "t_connection", "fg": [ 23, 29, 30, 27 ] },
+              { "id": "edge", "fg": [ 25, 22 ] },
+              { "id": "end_piece", "fg": [ 17, 20, 24, 18 ] },
+              { "id": "unconnected", "fg": 16 }
+            ]
+          },
+          {
+            "id": "t_carpet_backrooms",
+            "fg": [ { "weight": 6, "sprite": 32 }, { "weight": 3, "sprite": 33 }, { "weight": 1, "sprite": 34 } ],
+            "rotates": false
+          },
+          { "id": "t_carpet_backrooms_light", "fg": 35, "rotates": false },
+          { "id": "t_tile_backrooms", "fg": 36, "rotates": false },
+          { "id": "t_tile_backrooms_light", "fg": 37, "rotates": false }
+        ]
+      }
+    ]
+  }
+]
