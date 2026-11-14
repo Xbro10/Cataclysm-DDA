@@ -5,6 +5,10 @@ playbook PDF at
 `C:\Users\xande\Documents\CDDA documents for modding\CDDA Backrooms + Autonomous NPCs — Claude Code Playbook.pdf`
 (Phases 0–4 plus testing/publishing prompts). Map every request to a playbook prompt.
 
+**If you're not Xbro10** (a tester or contributor), read `FORK-CONTRIBUTING.md` first: the paths,
+playbook and launcher below are on Xbro10's PC. `FORK-CHANGELOG.md` lists everything made so far;
+every change adds a line at the top of its "New entries" as well as to its mod's `CHANGELOG.md`.
+
 ## The project's parts
 
 | Part | Where | What |
