@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Security office gun safe: the guard office now has a lockable gun safe (pick or pry it). About 2 in 5 hold a duty sidearm (Glock 19, M1911 or a .38 revolver) with a magazine and a little ammo; some hold only loose rounds.
 - Oil-stained notes: a rarer note with a hand-drawn sketch. Activate it on Level 1 and it marks a generator room on your map, 3 to 8 squares away (on squares you haven't seen yet), with its own amber map sign. Half the time someone left a can of gas there too. Each note leads somewhere once. The old crumpled note about the generator now says the writer never found it again.
 - Level 0 map sprites (UltiCa and UndeadPeople): the yellow rooms seen from above (three layouts of walls, doorways and lights), the border wall, the stairs (a staircase with an up or down arrow) and a signboard for the rippling-wall room.
 - Level 0 furniture and item sprites (UltiCa and UndeadPeople): the water cooler (white cabinet, blue jug), the waycircle (a boulder with a painted glyph, candles and a bone), the Level 0 rippling wall (wallpaper whose stripes bend like cloth), the Level 1 sealed concrete patch, and almond water and its bottle (milky water, paper label).

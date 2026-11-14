@@ -23,17 +23,29 @@
     ]
   },
   {
+    "type": "item_group",
+    "id": "br1_security_guns",
+    "//": "The gun safe in the guard office: a duty sidearm with a little ammo. Usually empty or already taken.",
+    "subtype": "distribution",
+    "entries": [
+      { "collection": [ { "item": "glock_19" }, { "item": "glockmag", "ammo-item": "9mm", "charges": [ 3, 15 ] }, { "item": "9mm", "charges": [ 5, 20 ] } ], "prob": 40 },
+      { "collection": [ { "item": "m1911" }, { "item": "m1911mag", "ammo-item": "45_acp", "charges": [ 2, 7 ] }, { "item": "45_acp", "charges": [ 4, 14 ] } ], "prob": 25 },
+      { "collection": [ { "item": "sw_619", "ammo-item": "38_special", "charges": [ 0, 7 ] }, { "item": "38_special", "charges": [ 6, 18 ] } ], "prob": 25 },
+      { "item": "9mm", "charges": [ 5, 20 ], "prob": 10 }
+    ]
+  },
+  {
     "type": "mapgen",
     "nested_mapgen_id": "br1_room_security",
     "//": "A locked security office: dead CCTV, the guard's lockers, and the logbook. Pick or pry the door.",
     "object": {
       "mapgensize": [ 8, 8 ],
       "rotation": [ 0, 3 ],
-      "rows": [ "########", "#MMMM.l#", "#.h....#", "#.dd..l#", "#......#", "#....L.#", "#......#", "###D####" ],
+      "rows": [ "########", "#MMMM.l#", "#.h....#", "#.dd..l#", "#......#", "#....L.#", "#G.....#", "###D####" ],
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "M": "t_thconc_floor", "h": "t_thconc_floor", "d": "t_thconc_floor", "D": "t_door_metal_locked" },
-      "furniture": { "M": "f_br1_cctv", "h": "f_chair", "d": "f_desk" },
-      "items": { "l": { "item": "br1_security_locker", "chance": 70 } },
+      "furniture": { "M": "f_br1_cctv", "h": "f_chair", "d": "f_desk", "G": "f_gunsafe_ml" },
+      "items": { "l": { "item": "br1_security_locker", "chance": 70 }, "G": { "item": "br1_security_guns", "chance": 40 } },
       "place_item": [ { "item": "br1_security_log", "x": [ 2, 3 ], "y": 3, "chance": 100 } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
