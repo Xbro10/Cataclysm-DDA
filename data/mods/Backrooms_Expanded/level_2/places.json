@@ -1,0 +1,274 @@
+[
+  {
+    "type": "emit",
+    "id": "emit_br2_boiler",
+    "//": "A boiler throws off more heat than a leaking joint.",
+    "field": "fd_hot_air3",
+    "intensity": 1,
+    "qty": 80
+  },
+  {
+    "type": "furniture",
+    "id": "f_br2_boiler",
+    "name": "boiler",
+    "description": "A riveted iron boiler the size of a car, still running on nothing anyone can find.  Gauges with cracked glass, all needles past the red.  It ticks and groans, and the heat coming off it makes your eyes water.",
+    "symbol": "0",
+    "color": "red",
+    "looks_like": "f_machinery_heavy",
+    "move_cost_mod": -1,
+    "required_str": -1,
+    "coverage": 100,
+    "flags": [ "NOITEM", "BLOCKSDOOR" ],
+    "emissions": [ "emit_br2_boiler" ]
+  },
+  {
+    "type": "item_group",
+    "id": "br2_boiler_loot",
+    "//": "Boiler-room lockers: the best tool and fuel loot on Level 2, behind the worst heat.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "tools_mechanic", "prob": 25 },
+      { "group": "hardware", "prob": 20 },
+      { "group": "tools_lighting", "prob": 15 },
+      { "group": "batteries", "prob": 15 },
+      { "item": "gasoline", "container-item": "jerrycan", "charges": [ 1000, 5000 ], "prob": 10 },
+      { "item": "water_clean", "container-item": "bottle_plastic", "prob": 10 },
+      { "item": "br1_note_lost", "prob": 5 }
+    ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br2_boiler_room",
+    "name": "maintenance tunnels",
+    "sym": "#",
+    "looks_like": "br2_tunnels",
+    "color": "brown",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br2_boiler_room",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_boiler_room" } ],
+    "locations": [ "br2_tunnels" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 3, 6 ],
+    "flags": [ "BACKROOMS_L2", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_boiler_room",
+    "//": "A boiler room fills the north-west quarter, with doorways onto the centre cross (east) and the corridor below it (south).",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_boiler_core" ], "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_boiler_core",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "########### ",
+        "#BB.l.l.BB# ",
+        "#BB.....BB# ",
+        "#....L....# ",
+        "#.M.....M.. ",
+        "#.M..t..M.. ",
+        "#.M.....M.. ",
+        "#....L....# ",
+        "#BB.....BB# ",
+        "#BB.l.l.BB# ",
+        "####...#### ",
+        "            "
+      ],
+      "terrain": {
+        "#": "t_br2_pipe_wall",
+        ".": "t_metal_floor",
+        "B": "t_metal_floor",
+        "M": "t_metal_floor",
+        "l": "t_metal_floor",
+        "t": "t_metal_floor",
+        "L": "t_br2_light"
+      },
+      "furniture": { "B": "f_br2_boiler", "M": "f_machinery_old", "l": "f_locker", "t": "f_workbench" },
+      "items": {
+        "l": { "item": "br2_boiler_loot", "chance": 70, "repeat": [ 1, 2 ] },
+        "t": { "item": "br2_boiler_loot", "chance": 50 }
+      },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "furniture",
+    "id": "f_br2_steam_vent_off",
+    "name": "dripping steam joint",
+    "description": "A pipe joint that was hissing steam until someone shut the line.  It drips and ticks as it cools.  The pressure is building somewhere; it won't stay shut forever.",
+    "symbol": "~",
+    "color": "light_gray",
+    "looks_like": "f_vent_pipe",
+    "move_cost_mod": 2,
+    "required_str": -1,
+    "flags": [ "TRANSPARENT", "NOITEM" ]
+  },
+  {
+    "type": "furniture",
+    "id": "f_br2_valve",
+    "name": "valve wheel",
+    "description": "A big iron wheel on a pipe as thick as your waist, painted red once.  A tag wired to it reads BLEED.  Somebody has scratched an arrow and the word LEFT.",
+    "symbol": "*",
+    "color": "red",
+    "looks_like": "f_machinery_old",
+    "move_cost_mod": -1,
+    "required_str": -1,
+    "coverage": 40,
+    "flags": [ "NOITEM", "BLOCKSDOOR" ],
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR2_VALVE" ] }
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br2_valve_shut",
+    "furniture": [ { "result": "f_br2_steam_vent_off", "valid_furniture": [ "f_br2_steam_vent" ] } ]
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br2_valve_reopen",
+    "furniture": [ { "result": "f_br2_steam_vent", "valid_furniture": [ "f_br2_steam_vent_off" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR2_VALVE",
+    "//": "Shuts every steam joint within 20 tiles for 2 days, then the pressure brings them back. Turning it is hard, slow and loud.",
+    "condition": { "u_query": "Put your weight on the valve wheel and try to turn it?", "default": true },
+    "effect": [
+      { "u_location_variable": { "u_val": "br2_valve_point" } },
+      { "turn_cost": "2 m" },
+      { "u_make_sound": "a long shriek of metal and a bang in the pipes", "volume": 30, "type": "destructive_activity" },
+      { "u_transform_radius": 20, "ter_furn_transform": "br2_valve_shut" },
+      {
+        "u_transform_radius": 20,
+        "ter_furn_transform": "br2_valve_reopen",
+        "target_var": { "u_val": "br2_valve_point" },
+        "time_in_future": "2 days"
+      },
+      {
+        "u_message": "The wheel fights you, then gives all at once.  Something bangs through the pipes, and up and down the tunnel the hissing dies away.  It won't hold forever.",
+        "type": "good"
+      }
+    ],
+    "false_effect": [ { "u_message": "You leave the wheel alone.", "type": "info" } ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br2_valve_junction",
+    "name": "maintenance tunnels",
+    "sym": "#",
+    "looks_like": "br2_tunnels",
+    "color": "brown",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br2_valve_junction",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_valve_junction" } ],
+    "locations": [ "br2_tunnels" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 4, 8 ],
+    "flags": [ "BACKROOMS_L2", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_valve_junction",
+    "//": "A valve wheel at the centre of the cross, with a run of leaking joints around it that it can shut.",
+    "object": {
+      "predecessor_mapgen": "br2_tunnels",
+      "place_furniture": [
+        { "furn": "f_br2_valve", "x": 13, "y": 10 },
+        { "furn": "f_br2_steam_vent", "x": 11, "y": 4 },
+        { "furn": "f_br2_steam_vent", "x": 13, "y": 18 },
+        { "furn": "f_br2_steam_vent", "x": 4, "y": 13 },
+        { "furn": "f_br2_steam_vent", "x": 19, "y": 11 }
+      ],
+      "place_terrain": [ { "ter": "t_br2_light", "x": 12, "y": 12 } ]
+    }
+  },
+  {
+    "type": "terrain",
+    "id": "t_br2_flood",
+    "copy-from": "t_water_sh",
+    "name": "standing water",
+    "description": "Warm, brown water pooled ankle- to knee-deep on the decking where the tunnel dips.  Things knock against your shins.  It's water, if you boil it.",
+    "looks_like": "t_water_sh",
+    "roof": "t_concrete_roof",
+    "extend": { "flags": [ "INDOORS" ] },
+    "delete": { "flags": [ "FISHABLE", "SWIMMABLE" ] }
+  },
+  {
+    "type": "item_group",
+    "id": "br2_flood_loot",
+    "//": "Whatever washed down and sank: worth wading for, sometimes.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "tools_lighting", "prob": 15 },
+      { "group": "hardware", "prob": 20 },
+      { "group": "cannedfood", "prob": 15 },
+      { "item": "rag", "prob": 20 },
+      { "item": "bone_human", "prob": 10 },
+      { "item": "br1_note_lost", "prob": 10 },
+      { "item": "almond_water", "container-item": "bottle_almond_water", "prob": 5 }
+    ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br2_flooded",
+    "name": "maintenance tunnels",
+    "sym": "#",
+    "looks_like": "br2_tunnels",
+    "color": "brown",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br2_flooded",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_flooded" } ],
+    "locations": [ "br2_tunnels" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 2, 4 ],
+    "flags": [ "BACKROOMS_L2", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_flooded",
+    "//": "The tunnels dip: the centre cross stands in water for 9 tiles each way, with sunken things to fish out.",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_flood_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_flood_core",
+    "//": "Water only where the cross is (columns and rows 5-7 of this chunk); spaces leave the walls alone.",
+    "object": {
+      "mapgensize": [ 13, 13 ],
+      "rows": [
+        "     ~~~     ",
+        "     ~~~     ",
+        "     ~x~     ",
+        "     ~~~     ",
+        "     ~~~     ",
+        "~~~~~~~~~~~~~",
+        "~~x~~~x~~~x~~",
+        "~~~~~~~~~~~~~",
+        "     ~~~     ",
+        "     ~~~     ",
+        "     ~x~     ",
+        "     ~~~     ",
+        "     ~~~     "
+      ],
+      "terrain": { "~": "t_br2_flood", "x": "t_br2_flood" },
+      "items": { "x": { "item": "br2_flood_loot", "chance": 60 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]

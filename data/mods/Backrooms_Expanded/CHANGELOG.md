@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Level 2 places. **Boiler rooms** (3 to 6 per map): a room of roaring boilers, the hottest spot on the level, with lockers of tools, batteries and fuel. **Valve junctions** (4 to 8 per map): turn the BLEED wheel (slow and loud) to shut every leaking steam joint within 20 tiles for 2 days. **Flooded dips** (2 to 4 per map): the tunnels stand in warm, knee-deep water, with sunken things to fish out.
 - Level 2 heat and water. The tunnels run hot all year (about 30 C, rarely below 20 C, spikes past 40 C) with close, wet air, so you sweat, get thirsty and can get heat stroke. Leaking steam joints make the air around them 10 to 20 C hotter still. Condensation drips into pools in the tunnels (never run dry, boil before drinking).
 - Level 2, Pipe Dreams (first step): a new dimension of hot, narrow maintenance tunnels, 3 tiles wide between pipe-choked walls, laid out as a maze of loops and dead ends that runs on across map squares, lit only by the odd caged bulb. **Way in:** about 1 Level 1 stairwell in 4 is still open; take the stairs down and they collapse behind you. **Way back:** rare service ladders (2 to 4 per map) climb to a floor hatch on Level 1. Followers within 20 tiles come along both ways. Heat, steam, places, people and spawns come in the next steps.
 - Siphonable cars on Level 1: about 1 parked car in 4 still has a little fuel left (a few litres), enough to siphon for a generator or two. The rest are bone dry.
