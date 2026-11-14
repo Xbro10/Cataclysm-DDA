@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Backrooms entity sprites, original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br_entities.ps1 in the style of UndeadPeople and UltiCa monsters. Used with either tileset; others fall back to each monster's looks_like. Sprites face right; the game mirrors them.",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br_entities.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          { "id": "mon_br_smiler", "fg": 0, "rotates": false },
+          { "id": "mon_br_hound", "fg": 1, "rotates": false },
+          { "id": "mon_br_deathmoth", "fg": 2, "rotates": false },
+          { "id": "mon_br_wretch", "fg": 3, "rotates": false }
+        ]
+      }
+    ]
+  }
+]

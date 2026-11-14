@@ -1,8 +1,8 @@
 [
   {
     "type": "mod_tileset",
-    "//": "Level 2 overmap sprites, drawn for this mod (CC-BY-SA 3.0) by tools/backrooms_expanded/draw_br2_overmap.ps1. Only used with UltiCa; other tilesets fall back to each terrain's looks_like. Sprite numbers count from 0 within br2_overmap.png (seven 32x32 tiles in a row).",
-    "compatibility": [ "UltimateCataclysm" ],
+    "//": "Level 2 overmap sprites, drawn for this mod (CC-BY-SA 3.0) by tools/backrooms_expanded/draw_br2_overmap.ps1. Used with UltiCa or UndeadPeople; other tilesets fall back to each terrain's looks_like. Sprite numbers count from 0 within br2_overmap.png (seven 32x32 tiles in a row).",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
     "tiles-new": [
       {
         "file": "gfx/br2_overmap.png",
