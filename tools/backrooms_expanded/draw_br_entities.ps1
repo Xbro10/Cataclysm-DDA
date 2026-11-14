@@ -163,23 +163,35 @@ Px 5 12 15 $maw; Px 5 14 15 $maw
 Line 5 21 10 22 13 $hideD
 Outline 5; Shadow 5 17 31 6
 
-# ---- 6: Partygoer. A smooth yellow figure with a big round head, a wide fixed grin, and a red balloon.
-$yel = Hex '#f0cf3a'; $yelD = Hex '#c49e1c'; $yelL = Hex '#fff3a0'; $blk = Hex '#1a1410'; $teeth = Hex '#fbfbec'
-$bal = Hex '#d8302a'; $balD = Hex '#9c1c18'; $balL = Hex '#ff8a7a'; $str = Hex '#e8e4d8'
-Line 6 14 21 13 29 $yelD 2; Line 6 17 21 18 29 $yel 2
-Fill 6 12 30 3 1 $yelD; Fill 6 18 30 3 1 $yel
-Ell 6 15 17 4 5 $yel; Line 6 11 15 11 20 $yelD
-Line 6 12 14 9 21 $yelD
-Line 6 18 14 22 11 $yel
-Ell 6 15 7 6 5 $yel
-Line 6 9 6 9 9 $yelD; Px 6 10 10 $yelD
-Px 6 12 3 $yelL; Px 6 13 3 $yelL; Px 6 11 4 $yelL
-Fill 6 15 5 1 2 $blk; Fill 6 19 5 1 2 $blk
-Px 6 12 8 $blk; Px 6 21 8 $blk; Line 6 13 9 20 9 $blk
-Px 6 13 10 $blk; Fill 6 14 10 6 1 $teeth; Px 6 20 10 $blk; Line 6 14 11 19 11 $blk
-Ell 6 26 4 3 4 $bal; Px 6 25 2 $balL; Px 6 25 3 $balL; Px 6 28 6 $balD; Px 6 27 7 $balD
-Px 6 26 9 $balD; Line 6 26 10 23 11 $str
-Outline 6; Shadow 6 15 31 5
+# ---- 6: Partygoer. Tall and thin, the colour of old mustard, skin ridged at the neck, belly and knees.
+# A small egg-shaped head with two dark slit eyes and a wide red grin; hands that end in mouths;
+# legs that swell into thick stumps; a red balloon on a string beside it.
+$och = Hex '#c8a238'; $ochD = Hex '#94741e'; $ochL = Hex '#e2c25a'; $slit = Hex '#2a1208'; $red = Hex '#8a1c14'; $teeth = Hex '#e8d8b0'
+$bal = Hex '#d8302a'; $balD = Hex '#9c1c18'; $balL = Hex '#ff8a7a'; $str = Hex '#3a3440'
+# legs: thin above the knee, swelling into thick stumps
+Line 6 12 21 12 26 $och 2; Line 6 15 21 15 26 $och 2
+Fill 6 10 26 4 4 $och; Fill 6 15 26 4 4 $och
+Line 6 10 27 10 29 $ochD; Line 6 18 27 18 29 $ochD; Fill 6 10 30 4 1 $ochD; Fill 6 15 30 4 1 $ochD
+Px 6 12 24 $ochD; Px 6 13 24 $ochD; Px 6 15 24 $ochD; Px 6 16 24 $ochD
+# torso: shoulders, ribbed belly, narrow waist
+Fill 6 11 12 7 4 $och; Px 6 10 12 $och; Px 6 18 12 $och; Fill 6 12 16 5 3 $och; Fill 6 12 19 5 2 $och
+Line 6 12 17 16 17 $ochD; Line 6 13 19 15 19 $ochD; Line 6 14 13 14 15 $ochD
+Line 6 12 13 13 13 $ochL; Line 6 15 13 16 13 $ochL
+# long arms hanging past the hips, hands that are mouths
+Line 6 8 12 6 21 $och 2; Line 6 19 12 21 21 $och 2
+Fill 6 5 22 3 3 $och; Line 6 6 22 6 24 $red; Px 6 5 23 $teeth; Px 6 7 23 $teeth
+Fill 6 21 22 3 3 $och; Line 6 22 22 22 24 $red; Px 6 21 23 $teeth; Px 6 23 23 $teeth
+# ringed neck
+Fill 6 12 10 5 1 $ochD; Fill 6 12 11 5 1 $och; Line 6 12 11 16 11 $ochD
+# head: small egg, slit eyes, wide red grin
+Ell 6 14 5 3 4 $och
+Px 6 12 2 $ochL; Px 6 12 3 $ochL
+Line 6 13 3 13 6 $slit; Line 6 15 3 15 6 $slit
+Px 6 11 7 $slit; Px 6 17 7 $slit; Px 6 12 8 $slit; Line 6 13 8 15 8 $red; Px 6 16 8 $slit; Line 6 13 9 15 9 $slit
+# the balloon, its string trailing down to the hand
+Ell 6 27 5 3 4 $bal; Px 6 25 3 $balL; Px 6 25 4 $balL; Px 6 26 2 $balL; Px 6 29 7 $balD; Px 6 28 8 $balD
+Px 6 27 10 $balD; Line 6 27 11 26 15 $str; Line 6 26 16 23 21 $str
+Outline 6; Shadow 6 14 31 6
 
 $bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
 

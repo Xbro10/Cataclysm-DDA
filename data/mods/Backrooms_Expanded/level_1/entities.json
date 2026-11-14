@@ -209,7 +209,7 @@
     "type": "MONSTER",
     "id": "mon_br_partygoer",
     "name": { "str": "partygoer" },
-    "description": "A smooth yellow figure with a round head, two black dot eyes and a grin that takes up half its face.  It holds a red balloon on a string.  It is very fast, it is very strong, and it wants you to come to the party.  Nobody who went to the party has said what it was like.",
+    "description": "A tall, thin figure the colour of old mustard, its skin ridged in rings at the neck, belly and knees, its legs swelling into thick stumps.  The small egg-shaped head has two dark slits for eyes and a wide red grin under them.  Its hands end in mouths.  A red balloon bobs beside it on a string.  It is very fast, it is very strong, and it wants you to come to the party.  Nobody who went to the party has said what it was like.",
     "default_faction": "nether",
     "looks_like": "mon_shoggoth",
     "bodytype": "human",
