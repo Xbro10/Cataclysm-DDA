@@ -1,0 +1,77 @@
+[
+  {
+    "type": "behavior",
+    "id": "npc_autonomy_meal",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). Mealtimes: Peckish or worse with food in the pack, once per breakfast/lunch/dinner. score_argument is the weight (0-1) in npc_priorities; following a far-off player scores 0.3-0.6, guard duty 0.45.",
+    "conditions": [ { "predicate": "npc_autonomy_wants_meal" } ],
+    "goal": "autonomy_meal",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.35"
+  },
+  {
+    "type": "behavior",
+    "id": "npc_autonomy_socialize",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). Social 50+: walk over to a friendly person within 15 tiles and chat (at most every 30 minutes). score_argument is the weight (0-1).",
+    "conditions": [ { "predicate": "npc_autonomy_wants_company" } ],
+    "goal": "autonomy_socialize",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.25"
+  },
+  {
+    "type": "snippet",
+    "category": "npc_autonomy_breakfast",
+    "//": "%1$s is the NPC.",
+    "text": [
+      "%1$s stops for breakfast.",
+      "%1$s digs some breakfast out of their pack.",
+      "%1$s has a quick bite to start the day.",
+      "%1$s eats breakfast standing up."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "npc_autonomy_lunch",
+    "//": "%1$s is the NPC.",
+    "text": [
+      "%1$s takes a break for lunch.",
+      "%1$s digs out some lunch.",
+      "%1$s eats a midday meal.",
+      "%1$s grabs a bite while things are quiet."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "npc_autonomy_dinner",
+    "//": "%1$s is the NPC.",
+    "text": [
+      "%1$s sits down to dinner.",
+      "%1$s eats an early supper.",
+      "%1$s has dinner before it gets dark.",
+      "%1$s eats their evening meal."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "npc_autonomy_chat_npc",
+    "//": "%1$s is the NPC who started the chat, %2$s the other one.",
+    "text": [
+      "%1$s and %2$s trade stories for a while.",
+      "%1$s chats with %2$s.",
+      "%1$s and %2$s talk quietly about the old days.",
+      "%1$s shares a joke with %2$s.",
+      "%1$s and %2$s compare notes on what's out there."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "npc_autonomy_chat_player",
+    "//": "%1$s is the NPC; the other person is the player.",
+    "text": [
+      "%1$s chats with you for a bit.",
+      "%1$s tells you about a place they used to know.",
+      "%1$s asks how you're holding up.",
+      "%1$s talks with you about the weather.",
+      "%1$s shares a story from before."
+    ]
+  }
+]

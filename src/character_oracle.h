@@ -51,6 +51,9 @@ class character_oracle_t : public oracle_t
         status_t is_camp_idle( std::string_view ) const;
         // Xbro10 fork: true (running) when the NPC_AUTONOMY option is on.
         status_t autonomy_on( std::string_view ) const;
+        // Xbro10 fork: NPC autonomy daily life (see npc_autonomy.h).
+        status_t autonomy_wants_meal( std::string_view ) const;
+        status_t autonomy_wants_company( std::string_view ) const;
         /**
          * Score predicates for utility strategy (return 0-1 urgency).
          */
@@ -68,6 +71,8 @@ class character_oracle_t : public oracle_t
         // Xbro10 fork: NPC autonomy needs (0 when the option is off).
         float safety_urgency( std::string_view ) const;
         float social_urgency( std::string_view ) const;
+        // Xbro10 fork: a fixed weight from the node's "score_argument" (0 when the option is off).
+        float autonomy_weight( std::string_view weight ) const;
     private:
         const Character *subject;
 };

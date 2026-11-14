@@ -6,6 +6,7 @@
 #include "calendar.h"
 #include "cata_catch.h"
 #include "coordinates.h"
+#include "item.h"
 #include "map.h"
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
@@ -17,7 +18,10 @@
 #include "point.h"
 #include "type_id.h"
 
+static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
+
+static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
 
 static const faction_id faction_your_followers( "your_followers" );
 
@@ -141,6 +145,78 @@ TEST_CASE( "npc_autonomy_felt_needs", "[npc][autonomy]" )
         CHECK_FALSE( needs.eats );
         CHECK( needs.food == 0 );
         CHECK( needs.water == 0 );
+    }
+}
+
+TEST_CASE( "npc_autonomy_mealtimes", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 10, 0 ) );
+    // Peckish: below the game's own "eat when Hungry" line (hunger 80).
+    guy.stomach.empty();
+    guy.set_hunger( 50 );
+    guy.add_effect( effect_hunger_hungry, 1_days );
+    guy.i_add( item( itype_sandwich_cheese_grilled ) );
+
+    SECTION( "option off: never" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        set_time( calendar::turn_zero + 7_hours );
+        CHECK_FALSE( npc_autonomy::wants_meal( guy ) );
+    }
+    SECTION( "at breakfast, a Peckish NPC with food eats, once" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        set_time( calendar::turn_zero + 7_hours );
+        REQUIRE( npc_autonomy::wants_meal( guy ) );
+        CHECK( npc_autonomy::run_goal( guy, "autonomy_meal" ) != npc_autonomy::goal_result::none );
+        CHECK_FALSE( npc_autonomy::wants_meal( guy ) );
+    }
+    SECTION( "at 3 PM, not a mealtime" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        set_time( calendar::turn_zero + 15_hours );
+        CHECK_FALSE( npc_autonomy::wants_meal( guy ) );
+    }
+    SECTION( "no food in the pack: no meal" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        set_time( calendar::turn_zero + 12_hours );
+        guy.remove_items_with( []( const item & it ) {
+            return it.is_food();
+        } );
+        CHECK_FALSE( npc_autonomy::wants_meal( guy ) );
+    }
+}
+
+TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 10, 0 ) );
+    npc &friend_npc = spawn_follower( player_pos + point( 11, 0 ) );
+    guy.set_value( "autonomy_need_social", 80.0 );
+    friend_npc.set_value( "autonomy_need_social", 60.0 );
+
+    SECTION( "option off: never" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK_FALSE( npc_autonomy::wants_company( guy ) );
+    }
+    SECTION( "a lonely NPC chats with a friend next to them" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        REQUIRE( npc_autonomy::chat_partner( guy ) == &friend_npc );
+        REQUIRE( npc_autonomy::wants_company( guy ) );
+        CHECK( npc_autonomy::run_goal( guy, "autonomy_socialize" ) == npc_autonomy::goal_result::acted );
+        CHECK( stored( guy, "autonomy_need_social" ) == Approx( 40.0 ) );
+        CHECK( stored( friend_npc, "autonomy_need_social" ) == Approx( 20.0 ) );
+        // Then a 30-minute break before the next chat.
+        guy.set_value( "autonomy_need_social", 80.0 );
+        CHECK_FALSE( npc_autonomy::wants_company( guy ) );
+    }
+    SECTION( "not lonely enough: no chat" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_value( "autonomy_need_social", 30.0 );
+        CHECK_FALSE( npc_autonomy::wants_company( guy ) );
     }
 }
 

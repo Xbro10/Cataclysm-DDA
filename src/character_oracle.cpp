@@ -1,6 +1,7 @@
 #include "character_oracle.h"
 
 #include <algorithm>
+#include <charconv>
 #include <memory>
 #include <optional>
 #include <string>
@@ -609,6 +610,28 @@ float character_oracle_t::social_urgency( std::string_view ) const
 {
     const npc *n = dynamic_cast<const npc *>( subject );
     return n && npc_autonomy::enabled() ? npc_autonomy::social_need( *n ) : 0.0f;
+}
+
+status_t character_oracle_t::autonomy_wants_meal( std::string_view ) const
+{
+    const npc *n = dynamic_cast<const npc *>( subject );
+    return n && npc_autonomy::wants_meal( *n ) ? status_t::running : status_t::failure;
+}
+
+status_t character_oracle_t::autonomy_wants_company( std::string_view ) const
+{
+    const npc *n = dynamic_cast<const npc *>( subject );
+    return n && npc_autonomy::wants_company( *n ) ? status_t::running : status_t::failure;
+}
+
+float character_oracle_t::autonomy_weight( std::string_view weight ) const
+{
+    if( !npc_autonomy::enabled() ) {
+        return 0.0f;
+    }
+    float value = 0.0f;
+    std::from_chars( weight.data(), weight.data() + weight.size(), value );
+    return std::clamp( value, 0.0f, 1.0f );
 }
 
 float character_oracle_t::free_time_urgency( std::string_view ) const

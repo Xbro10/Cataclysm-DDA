@@ -65,6 +65,8 @@ predicate_map = {{
         { "npc_is_camp_idle", make_function( &character_oracle_t::is_camp_idle ) },
         // Xbro10 fork: gate for Phase 3 behavior nodes ("invert_result": true for vanilla-only nodes).
         { "npc_autonomy_on", make_function( &character_oracle_t::autonomy_on ) },
+        { "npc_autonomy_wants_meal", make_function( &character_oracle_t::autonomy_wants_meal ) },
+        { "npc_autonomy_wants_company", make_function( &character_oracle_t::autonomy_wants_company ) },
         { "monster_not_hallucination", make_function( &monster_oracle_t::not_hallucination ) },
         { "monster_items_available", make_function( &monster_oracle_t::items_available ) },
         { "monster_split_possible", make_function( &monster_oracle_t::split_possible ) },
@@ -88,7 +90,8 @@ score_predicate_map = {{
         { "npc_free_time_urgency", make_score_function( &character_oracle_t::free_time_urgency ) },
         // Xbro10 fork: NPC autonomy needs.
         { "npc_safety_urgency", make_score_function( &character_oracle_t::safety_urgency ) },
-        { "npc_social_urgency", make_score_function( &character_oracle_t::social_urgency ) }
+        { "npc_social_urgency", make_score_function( &character_oracle_t::social_urgency ) },
+        { "npc_autonomy_weight", make_score_function( &character_oracle_t::autonomy_weight ) }
     }
 };
 

@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -10,16 +12,22 @@
 #include "character_oracle.h"
 #include "coordinates.h"
 #include "creature.h"
+#include "character.h"
 #include "dialogue_chatbin.h"
 #include "game.h"
+#include "map.h"
 #include "math_parser_diag_value.h"
 #include "messages.h"
 #include "mission.h"
 #include "npc.h"
+#include "npc_trip.h"
 #include "options.h"
 #include "string_formatter.h"
+#include "text_snippets.h"
+#include "translation.h"
 #include "translations.h"
 #include "type_id.h"
+#include "viewer.h"
 
 static const efftype_id effect_hunger_famished( "hunger_famished" );
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
@@ -53,9 +61,9 @@ constexpr const char *var_social = "autonomy_need_social";
 // Turns since the start of the game at the last update.
 constexpr const char *var_updated = "autonomy_needs_updated";
 
-double get_num( const npc &guy, const char *key, double fallback )
+double get_num( const Creature &who, const char *key, double fallback )
 {
-    const diag_value *val = guy.maybe_get_value( key );
+    const diag_value *val = who.maybe_get_value( key );
     return val != nullptr && val->is_dbl() ? val->dbl() : fallback;
 }
 
@@ -276,6 +284,216 @@ std::string needs_text( const npc &guy )
                           needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
                           need_part( _( "Sleep" ), needs.sleep ), need_part( _( "Warmth" ), needs.warmth ),
                           need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ) );
+}
+
+// ---- Daily life ----
+
+namespace
+{
+
+constexpr const char *goal_meal = "autonomy_meal";
+constexpr const char *goal_socialize = "autonomy_socialize";
+
+// Too unsafe to stop for a meal or a chat (Safety 50+).
+constexpr float unsafe = 0.5f;
+// Peckish is enough at mealtimes; outside them the game's own "eat when Hungry" applies.
+constexpr int meal_hunger = 25;
+constexpr float lonely = 0.5f;
+constexpr int chat_range = 15;
+constexpr time_duration chat_cooldown = 30_minutes;
+constexpr double chat_social_relief = 40.0;
+
+// Day * 3 + meal index of the last meal (eaten or tried), so it happens once per meal.
+constexpr const char *var_last_meal = "autonomy_last_meal";
+// Turns since the start of the game at the last chat (or failed try).
+constexpr const char *var_last_chat = "autonomy_last_chat";
+
+struct mealtime {
+    int start_hour; // inclusive
+    int end_hour;   // exclusive
+    const char *lines; // snippet category, %1$s = the NPC
+};
+// Breakfast 6-9 AM, lunch 11 AM-1 PM, dinner 5-8 PM.
+constexpr std::array<mealtime, 3> mealtimes{ {
+        { 6, 9, "npc_autonomy_breakfast" },
+        { 11, 13, "npc_autonomy_lunch" },
+        { 17, 20, "npc_autonomy_dinner" }
+    }
+};
+
+// Index into mealtimes, or -1 outside them.
+int current_meal()
+{
+    const int hour = to_hours<int>( time_past_midnight( calendar::turn ) );
+    for( size_t i = 0; i < mealtimes.size(); ++i ) {
+        if( hour >= mealtimes[i].start_hour && hour < mealtimes[i].end_hour ) {
+            return static_cast<int>( i );
+        }
+    }
+    return -1;
+}
+
+double meal_key( int meal )
+{
+    return to_days<int>( calendar::turn - calendar::turn_zero ) * 3.0 + meal;
+}
+
+bool is_safe( const npc &guy )
+{
+    return safety_need( guy ) < unsafe;
+}
+
+// Food in the pack they'd eat, and room in the stomach. (The behavior tree's own
+// npc_has_food also demands hunger past "Hungry", too late for a Peckish meal.)
+bool carries_meal( const npc &guy )
+{
+    if( !guy.intake_fits( npc::need_goal_id::eat_food ) ) {
+        return false;
+    }
+    for( const item *food : guy.items_with( []( const item & it ) {
+    return it.is_food();
+    } ) ) {
+        if( guy.can_satisfy( *food, npc::need_goal_id::eat_food ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string line_from( const char *category )
+{
+    const std::optional<translation> line = SNIPPET.random_from_category( category );
+    return line ? line->translated() : std::string();
+}
+
+bool player_sees( const Creature &who )
+{
+    return get_player_view().sees( get_map(), who );
+}
+
+goal_result eat_meal( npc &guy )
+{
+    const int meal = current_meal();
+    if( meal < 0 ) {
+        return goal_result::none;
+    }
+    // Marked even if eating fails, so a failed try doesn't repeat every turn.
+    guy.set_value( var_last_meal, meal_key( meal ) );
+    if( !guy.consume_food( npc::consume_filter::food_only ) ) {
+        return goal_result::none;
+    }
+    if( player_sees( guy ) ) {
+        add_msg( m_neutral, "%s", string_format( line_from( mealtimes[meal].lines ), guy.get_name() ) );
+    }
+    return guy.activity ? goal_result::activity : goal_result::acted;
+}
+
+void chat( npc &guy, Character &partner )
+{
+    const double now = turns_since_start();
+    for( Character *who : std::array<Character *, 2> { &guy, &partner } ) {
+        if( who->is_npc() ) {
+            const double social = get_num( *who, var_social, 0.0 ) - chat_social_relief;
+            who->set_value( var_social, std::max( social, 0.0 ) );
+            who->set_value( var_last_chat, now );
+        }
+    }
+    if( player_sees( guy ) || player_sees( partner ) ) {
+        if( partner.is_avatar() ) {
+            add_msg( m_neutral, "%s", string_format( line_from( "npc_autonomy_chat_player" ),
+                     guy.get_name() ) );
+        } else {
+            add_msg( m_neutral, "%s", string_format( line_from( "npc_autonomy_chat_npc" ),
+                     guy.get_name(), partner.get_name() ) );
+        }
+    }
+    // A turn spent talking.
+    guy.mod_moves( -guy.get_speed() );
+}
+
+goal_result socialize( npc &guy )
+{
+    Character *partner = chat_partner( guy );
+    if( partner != nullptr ) {
+        if( rl_dist( guy.pos_abs(), partner->pos_abs() ) <= 1 ) {
+            chat( guy, *partner );
+            return goal_result::acted;
+        }
+        if( guy.move_to_and_verify( npc_trip_spec::within_range( partner->pos_bub(), 1, true ) ) ) {
+            return goal_result::acted;
+        }
+    }
+    // Nobody to talk to, or no way there: try again after the cooldown.
+    guy.set_value( var_last_chat, static_cast<double>( turns_since_start() ) );
+    return goal_result::none;
+}
+
+} // namespace
+
+bool is_goal( const std::string &goal )
+{
+    return goal == goal_meal || goal == goal_socialize;
+}
+
+bool wants_meal( const npc &guy )
+{
+    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ) {
+        return false;
+    }
+    const int meal = current_meal();
+    if( meal < 0 || get_num( guy, var_last_meal, -1.0 ) == meal_key( meal ) ||
+        food_need( guy ) < meal_hunger ) {
+        return false;
+    }
+    return carries_meal( guy );
+}
+
+Character *chat_partner( const npc &guy )
+{
+    const map &here = get_map();
+    Character *best = nullptr;
+    int best_dist = chat_range + 1;
+    const auto consider = [&]( Character & other ) {
+        if( other.is_dead_state() || other.in_sleep_state() ) {
+            return;
+        }
+        const int dist = rl_dist( guy.pos_abs(), other.pos_abs() );
+        if( dist < best_dist && guy.attitude_to( other ) == Creature::Attitude::FRIENDLY &&
+            guy.sees( here, other ) ) {
+            best = &other;
+            best_dist = dist;
+        }
+    };
+    consider( get_avatar() );
+    for( npc &other : g->all_npcs() ) {
+        if( &other != &guy ) {
+            consider( other );
+        }
+    }
+    return best;
+}
+
+bool wants_company( const npc &guy )
+{
+    if( !enabled() || guy.in_sleep_state() || !is_safe( guy ) || social_need( guy ) < lonely ) {
+        return false;
+    }
+    const double last = get_num( guy, var_last_chat, -1.0e9 );
+    if( turns_since_start() - last < to_turns<int>( chat_cooldown ) ) {
+        return false;
+    }
+    return chat_partner( guy ) != nullptr;
+}
+
+goal_result run_goal( npc &guy, const std::string &goal )
+{
+    if( goal == goal_meal ) {
+        return eat_meal( guy );
+    }
+    if( goal == goal_socialize ) {
+        return socialize( guy );
+    }
+    return goal_result::none;
 }
 
 // ---- Quests ----

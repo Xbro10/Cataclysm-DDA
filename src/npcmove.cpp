@@ -88,6 +88,7 @@
 #include "npc.h"
 #include "npc_arbitration.h"
 #include "npc_attack.h"
+#include "npc_autonomy.h"
 #include "npc_decision_category.h"
 #include "npc_opinion.h"
 #include "npc_sleep.h"
@@ -327,7 +328,8 @@ decision_category bt_goal_to_category( const std::string &goal )
     if( goal == "return_to_camp" ) {
         return decision_category::camp_travel;
     }
-    if( goal == "free_time" ) {
+    // Xbro10 fork: NPC autonomy goals rank with camp free time.
+    if( goal == "free_time" || npc_autonomy::is_goal( goal ) ) {
         return decision_category::free_time;
     }
     if( goal == "idle" ) {
@@ -1884,6 +1886,9 @@ void npc::move()
                     completed_goal = ( new_goal != "return_to_camp" );
                 } else if( committed == "free_time" ) {
                     completed_goal = ( new_goal != "free_time" );
+                } else if( npc_autonomy::is_goal( committed ) ) {
+                    // Xbro10 fork: NPC autonomy goals last while the tree keeps choosing them.
+                    completed_goal = ( new_goal != committed );
                 }
                 if( completed_goal ) {
                     ai_cache.intention = {};
@@ -1944,6 +1949,22 @@ void npc::move()
                 action = address_needs();
                 if( action == npc_undecided ) {
                     action = npc_worker_downtime;
+                }
+            } else if( npc_autonomy::is_goal( new_goal ) ) {
+                // Xbro10 fork: NPC autonomy daily life (mealtimes, socializing).
+                switch( npc_autonomy::run_goal( *this, new_goal ) ) {
+                    case npc_autonomy::goal_result::activity:
+                        // Self-initiated, not a player order: undo assign_activity's attitude change.
+                        attitude = saved_att;
+                        mission = saved_mis;
+                        action = npc_player_activity;
+                        break;
+                    case npc_autonomy::goal_result::acted:
+                        action = npc_noop;
+                        break;
+                    case npc_autonomy::goal_result::none:
+                        action = address_needs();
+                        break;
                 }
             } else if( new_goal == "idle" ) {
                 if( guard_pos && is_guarding() ) {

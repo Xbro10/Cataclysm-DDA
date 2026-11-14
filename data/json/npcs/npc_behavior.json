@@ -42,7 +42,9 @@
       "npc_player_order",
       "npc_camp_work",
       "npc_return_to_camp",
-      "npc_free_time"
+      "npc_free_time",
+      "npc_autonomy_meal",
+      "npc_autonomy_socialize"
     ]
   },
   {

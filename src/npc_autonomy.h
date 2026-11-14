@@ -10,6 +10,7 @@
 
 #include "calendar.h"
 
+class Character;
 class npc;
 
 namespace npc_autonomy
@@ -53,6 +54,24 @@ float social_need( const npc &guy );
 bool has_company( const npc &guy );
 /** Colour-tagged "Needs: ..." text for the look-around panel. */
 std::string needs_text( const npc &guy );
+
+// ---- Daily life (step 3.3): behavior-tree goals "autonomy_meal", "autonomy_socialize" ----
+
+/** True for the goal ids above (npc::move() dispatches them to run_goal()). */
+bool is_goal( const std::string &goal );
+/** Mealtime (breakfast, lunch, dinner), Peckish or worse, food in the pack, not yet eaten this meal, safe. */
+bool wants_meal( const npc &guy );
+/** Social 50+, safe, awake, not chatted in the last 30 minutes, someone to talk to nearby. */
+bool wants_company( const npc &guy );
+/** Nearest friendly, awake person within 15 tiles the NPC can see (nullptr if none). */
+Character *chat_partner( const npc &guy );
+
+enum class goal_result {
+    activity, // started an activity (eating): a self-initiated one, not a player order
+    acted,    // spent its moves (walked, chatted, ate something instant)
+    none      // nothing to do: fall back to the game's own needs handling
+};
+goal_result run_goal( npc &guy, const std::string &goal );
 
 // ---- Quests (step 3.1) ----
 
