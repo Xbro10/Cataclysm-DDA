@@ -81,13 +81,13 @@
     "id": "br2_worker_stores",
     "subtype": "distribution",
     "entries": [
-      { "group": "br1_camp_food", "prob": 30 },
-      { "item": "water_clean", "container-item": "bottle_plastic", "prob": 20 },
-      { "group": "tools_mechanic", "prob": 15 },
-      { "group": "hardware", "prob": 15 },
-      { "group": "batteries", "prob": 10 },
+      { "group": "br1_camp_food", "count": [ 3, 6 ], "prob": 30 },
+      { "item": "water_clean", "container-item": "bottle_plastic", "count": [ 3, 6 ], "prob": 20 },
+      { "group": "br_cat_tools", "count": [ 3, 6 ], "prob": 15 },
+      { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 15 },
+      { "group": "br_cat_power", "count": [ 3, 6 ], "prob": 10 },
       { "item": "gasoline", "container-item": "jerrycan", "charges": [ 1000, 4000 ], "prob": 5 },
-      { "group": "almond_water_sealed", "prob": 5 }
+      { "group": "almond_water_sealed", "count": [ 1, 2 ], "prob": 5 }
     ]
   },
   {
@@ -152,7 +152,7 @@
         "L": "t_br2_light"
       },
       "furniture": { "b": "f_makeshift_bed", "x": "f_crate_o", "O": "f_br2_boiler_cold", "t": "f_table" },
-      "items": { "x": { "item": "br2_worker_stores", "chance": 80, "repeat": [ 1, 2 ] } },
+      "items": { "x": { "item": "br2_worker_stores", "chance": 80 } },
       "nested": {
         "n": { "chunks": [ [ "br2_worker_npc", 50 ], [ "null", 50 ] ] },
         "N": { "chunks": [ "br2_worker_npc" ] }

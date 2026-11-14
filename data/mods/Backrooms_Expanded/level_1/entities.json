@@ -132,7 +132,7 @@
     "items": [
       { "group": "clothing_outdoor_torso", "prob": 60 },
       { "group": "clothing_outdoor_pants", "prob": 50 },
-      { "group": "br1_garage_loot", "prob": 40 },
+      { "group": "br_scav_pick", "prob": 40 },
       { "item": "flashlight", "prob": 15 },
       { "group": "almond_water_sealed", "prob": 5 }
     ]

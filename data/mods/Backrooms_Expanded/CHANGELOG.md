@@ -40,6 +40,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- Loot is now a themed handful instead of a whole store. Every crate, locker, junk heap and shelf on Levels 1 and 2 picks **one** kind of thing (tools, hardware, car stuff, lights, batteries, first aid, food or snacks) and holds 3 to 6 of it. Before, some piles pulled in the base game's full toolbox, battery box or vending-machine sets and could hold dozens of items.
 - Redrew the Level 1 and Level 2 map sprites in an UndeadPeople style: textured ground for the garage, dead zones and tunnels, and landmarks shown as signboards with a pictogram (a rippling wall for arrival alcoves, a steaming mug for the Breakroom, sandbags and fire for squatter camps, bloodied sandbags for overrun camps, elevator doors for lobbies, a ladder, a boiler, a valve wheel, a water drop and a hard hat for the Tunnel Crew).
 - The Level 1 and Level 2 map sprites now also show with the UndeadPeople tileset, not just UltiCa.
 - Level 2 has far fewer leaking steam joints: about 1 tunnel square in 4 has one (it was about one per square), so the tunnels are hot but not scalding everywhere.

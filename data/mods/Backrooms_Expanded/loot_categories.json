@@ -1,0 +1,132 @@
+[
+  {
+    "type": "item_group",
+    "id": "br_cat_tools",
+    "//": "One hand tool. Category groups give one item per roll; caches ask for 3-6 rolls of a single category so a crate is a themed handful, never a whole store.",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "hammer", "prob": 15 },
+      { "item": "wrench", "prob": 15 },
+      { "item": "screwdriver", "prob": 15 },
+      { "item": "pliers", "prob": 12 },
+      { "item": "tape_measure", "prob": 10 },
+      { "item": "hacksaw", "prob": 8 },
+      { "item": "saw", "prob": 6 },
+      { "item": "crowbar", "prob": 6 },
+      { "item": "pockknife", "prob": 5 },
+      { "item": "wrench_large", "prob": 4 },
+      { "item": "socket_wrench_set", "prob": 4 },
+      { "item": "multitool", "prob": 3 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_cat_hardware",
+    "//": "One piece of hardware or salvage.",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "scrap", "prob": 20 },
+      { "item": "pipe", "prob": 15 },
+      { "item": "nail", "charges": [ 10, 40 ], "prob": 15 },
+      { "item": "wire", "prob": 12 },
+      { "item": "pipe_fittings", "prob": 10 },
+      { "item": "spring", "prob": 10 },
+      { "item": "hose", "prob": 10 },
+      { "item": "sheet_metal_small", "prob": 10 },
+      { "item": "duct_tape", "prob": 8 },
+      { "item": "lc_steel_chunk", "prob": 8 },
+      { "item": "chain", "prob": 6 },
+      { "item": "rope_6", "prob": 6 },
+      { "item": "solder_wire", "prob": 4 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_cat_car",
+    "//": "One thing that lives in a car boot.",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "jumper_cable", "prob": 10 },
+      { "item": "funnel", "prob": 10 },
+      { "item": "hose", "prob": 10 },
+      { "item": "jack_small", "prob": 8 },
+      { "item": "lug_wrench", "prob": 8 },
+      { "item": "roadmap", "prob": 8 },
+      { "item": "umbrella", "prob": 8 },
+      { "item": "flashlight", "charges": [ 0, 300 ], "prob": 8 },
+      { "item": "jerrycan", "prob": 5 },
+      { "item": "matches", "charges": [ 1, 20 ], "prob": 6 },
+      { "item": "rag", "prob": 10 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_cat_light",
+    "//": "One light source.",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "flashlight", "charges": [ 0, 300 ], "prob": 25 },
+      { "item": "candle", "charges": [ 0, 100 ], "prob": 20 },
+      { "item": "glowstick", "charges": 1400, "prob": 15 },
+      { "item": "matches", "charges": [ 1, 20 ], "prob": 15 },
+      { "item": "lighter", "charges": [ 0, 100 ], "prob": 15 },
+      { "item": "handflare", "charges": 300, "prob": 8 },
+      { "item": "heavy_flashlight", "charges": [ 0, 300 ], "prob": 6 },
+      { "item": "oil_lamp", "charges": [ 0, 750 ], "prob": 4 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_cat_power",
+    "//": "One battery cell, not a whole box.",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "light_battery_cell", "charges": [ 100, 1000 ], "prob": 50 },
+      { "item": "light_minus_disposable_cell", "charges": [ 100, 1000 ], "prob": 20 },
+      { "item": "light_cell_rechargeable", "charges": [ 100, 1000 ], "prob": 10 },
+      { "item": "light_minus_battery_cell", "charges": [ 100, 1000 ], "prob": 5 },
+      { "item": "medium_battery_cell", "charges": [ 100, 1000 ], "prob": 5 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_cat_medical",
+    "//": "One bit of first aid.",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "bandages", "prob": 30 },
+      { "item": "adhesive_bandages", "prob": 25 },
+      { "item": "aspirin", "prob": 20 },
+      { "item": "disinfectant", "prob": 15 },
+      { "item": "medical_gauze", "prob": 10 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_cat_food",
+    "//": "One packaged or canned meal.",
+    "subtype": "distribution",
+    "entries": [ { "group": "br1_camp_food", "prob": 60 }, { "group": "cannedfood", "prob": 40 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_cat_snacks",
+    "//": "One snack or drink from the dead vending machines (vanilla's single-item vending lists).",
+    "subtype": "distribution",
+    "entries": [ { "group": "vending_food_items", "prob": 55 }, { "group": "vending_drink_items", "prob": 45 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_scav_pick",
+    "//": "A single scavenged item from any category: what someone had on them.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "br_cat_tools", "prob": 20 },
+      { "group": "br_cat_hardware", "prob": 20 },
+      { "group": "br_cat_light", "prob": 20 },
+      { "group": "br_cat_power", "prob": 10 },
+      { "group": "br_cat_food", "prob": 20 },
+      { "group": "br_cat_medical", "prob": 10 }
+    ]
+  }
+]

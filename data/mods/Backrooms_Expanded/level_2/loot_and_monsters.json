@@ -20,15 +20,11 @@
     "//": "What turns up in the tunnels: pipe, fittings, scrap and tools. Food is rarer than on Level 1.",
     "subtype": "distribution",
     "entries": [
-      { "item": "pipe", "prob": 20 },
-      { "item": "pipe_fittings", "prob": 10 },
-      { "item": "scrap", "prob": 20 },
-      { "group": "hardware", "prob": 15 },
-      { "group": "tools_mechanic", "prob": 10 },
-      { "group": "trash_junkyard", "prob": 10 },
-      { "group": "tools_lighting", "prob": 8 },
-      { "group": "batteries", "prob": 7 },
-      { "group": "cannedfood", "prob": 2 },
+      { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 45 },
+      { "group": "br_cat_tools", "count": [ 3, 6 ], "prob": 15 },
+      { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "br_cat_power", "count": [ 3, 6 ], "prob": 8 },
+      { "group": "cannedfood", "count": [ 3, 6 ], "prob": 2 },
       { "item": "br2_note_tunnel", "prob": 3 }
     ]
   },
@@ -36,6 +32,6 @@
     "type": "mapgen",
     "nested_mapgen_id": "br2_feature_junk",
     "//": "A heap of dropped and washed-down junk on the decking.",
-    "object": { "mapgensize": [ 1, 1 ], "place_items": [ { "item": "br2_tunnel_loot", "x": 0, "y": 0, "chance": 100, "repeat": [ 1, 2 ] } ] }
+    "object": { "mapgensize": [ 1, 1 ], "place_items": [ { "item": "br2_tunnel_loot", "x": 0, "y": 0, "chance": 100 } ] }
   }
 ]

@@ -15,7 +15,7 @@
     "items": [
       { "item": "flashlight", "prob": 50 },
       { "item": "baton", "prob": 35 },
-      { "group": "batteries", "prob": 50 },
+      { "group": "br_cat_power", "count": [ 2, 4 ], "prob": 50 },
       { "item": "radio", "prob": 15 },
       { "item": "cash_card", "charges": [ 500, 3000 ], "prob": 20 },
       { "item": "br1_note_lost", "prob": 10 }
@@ -158,12 +158,11 @@
     "//": "Storage cages: the best tool loot on Level 1, behind a padlocked gate.",
     "subtype": "distribution",
     "entries": [
-      { "group": "tools_mechanic", "prob": 25 },
-      { "group": "tools_carpentry", "prob": 20 },
-      { "group": "hardware", "prob": 20 },
-      { "group": "car_misc", "prob": 15 },
-      { "group": "tools_lighting", "prob": 10 },
-      { "group": "cannedfood", "prob": 5 },
+      { "group": "br_cat_tools", "count": [ 3, 6 ], "prob": 30 },
+      { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 25 },
+      { "group": "br_cat_car", "count": [ 3, 6 ], "prob": 20 },
+      { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "cannedfood", "count": [ 3, 6 ], "prob": 5 },
       { "item": "br1_note_lost", "prob": 3 }
     ]
   },
@@ -178,7 +177,7 @@
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "f": "t_chainfence", "g": "t_chaingate_l" },
       "furniture": { "X": "f_crate_c" },
-      "items": { "X": { "item": "br1_cage_loot", "chance": 80, "repeat": [ 1, 2 ] } },
+      "items": { "X": { "item": "br1_cage_loot", "chance": 80 } },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   }
