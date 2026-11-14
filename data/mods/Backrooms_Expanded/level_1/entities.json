@@ -98,7 +98,7 @@
     "type": "MONSTER",
     "id": "mon_br_wretch",
     "name": { "str": "wretch", "str_pl": "wretches" },
-    "description": "A survivor who stayed on Level 1 too long.  Their clothes are still recognisable; their face isn't.  They shuffle between the pillars, muttering bay numbers, and lash out at anything that gets close.",
+    "description": "A survivor who stayed on Level 1 too long.  The skin is gone; raw red muscle stretches over bone, the ribs show through, and pale growths crust the joints.  Yellow eyes burn in a face that is mostly skull.  It shuffles between the pillars on long, thin legs, muttering bay numbers, and rakes at anything that gets close with curved claws of bone.",
     "default_faction": "nether",
     "looks_like": "mon_zombie_survivor",
     "bodytype": "human",

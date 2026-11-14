@@ -1,0 +1,24 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Level 0 furniture and items (upstream Backrooms ids plus our rippling walls), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br0_objects.ps1 in UndeadPeople style.",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br0_objects.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          { "id": "f_watercooler", "fg": 0, "rotates": false },
+          { "id": "f_waycircle", "fg": 1, "rotates": false },
+          { "id": "f_br_thin_wall", "fg": 2, "rotates": false },
+          { "id": "f_br1_thin_wall", "fg": 3, "rotates": false },
+          { "id": "almond_water", "fg": 4, "rotates": false },
+          { "id": "bottle_almond_water", "fg": 5, "rotates": false }
+        ]
+      }
+    ]
+  }
+]
