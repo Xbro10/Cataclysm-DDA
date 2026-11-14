@@ -318,3 +318,20 @@ All three only run in the `backrooms_level_1` dimension.
 - **Lobby blackout** (`EOC_BR1_LOBBY_BLACKOUT`, checked every 1-2 h, 1 in 6 while the player is inside an elevator lobby square):
   every `t_br1_lobby_light` within 24 tiles becomes `t_br1_lobby_light_off` for 30-60 minutes; 1 time in 3 a Smiler spawns 8-14 tiles away.
 - Lobby lights (`t_br1_lobby_light`) and generator lights (`t_br1_light_powered`) never flicker or fail.
+
+## 7. Planned: entity behaviours (to do)
+
+Only two entities behave differently from a plain CDDA monster so far: the **Smiler** (`AVOIDS_LIGHT`: keeps to the dark,
+won't step into light) and the **Deathmoth** (`SEEKS_LIGHT`: flies to the brightest light in view). Both flags are fork C++
+in `src/monmove.cpp`. Everything else only has stats, triggers and speech. To give each one its own behaviour:
+
+| Entity | Now | Wanted (ideas) | Needs |
+|---|---|---|---|
+| Hound | Pack spawns, flees when a packmate dies | Hunts by sound: drawn to noise from far off, circles before rushing in, reacts to being stared at | JSON for hearing; circling and staring need C++ |
+| Wretch | Slow, mutters nothing | Mutters bay numbers (speech), drifts toward lit areas and old camps, sometimes still carries a survivor's gear | Speech and drops are JSON; drifting needs C++ or `SEEKS_LIGHT` |
+| Faceling | Ignores everything, fights back when hurt | Follows you at a distance and stops when you turn; wanders between rooms; a rare hostile kind | Following and stopping need C++; a hostile kind is JSON |
+| Skin-stealer | Calls out in a human voice, attacks on sight | Looks like a survivor (`@`, NPC sprite) until you get close, then shows what it is; uses the names of people you've met; backs off from light | A disguise could be two monsters swapped by EOC; names need C++ |
+| Partygoer | Very fast, speech, attacks on sight | Only appears in the dark or after a lobby blackout; vanishes and reappears nearby ("hide and seek"); ties in with a future Level Fun | Spawning in the dark is JSON/EOC; vanishing needs a spell (like the Redeemer's teleport) |
+| Redeemer (boss) | Shock storm, electric bite, not placed | Teleports, rides power lines, its own arena level | A teleport spell, plus a level |
+
+Do these one entity at a time, each with its own checklist entry.
