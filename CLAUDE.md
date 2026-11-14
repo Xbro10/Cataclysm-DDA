@@ -43,7 +43,9 @@ every change adds a line at the top of its "New entries" as well as to its mod's
 - `master` tracks upstream. Mod work lives on branch **`dev`**. C++ work goes on **`npc-autonomy`** (branched from `dev`).
 - Sync with upstream (playbook T.3): update `master` from `upstream/master`, then merge `master` into `dev`.
 - **`testing`** is the branch outside testers build from (created 2026-11-13). It only moves when the user asks
-  ("push to testing"): merge the latest `npc-autonomy` (which already holds `dev`) into it, then push it. Never commit straight to it.
+  ("push to testing"): merge the latest `npc-autonomy` (which already holds `dev`) into it, then push it. Never commit straight to it,
+  except `TESTER-GUIDE.md` (the testers' guide), which lives only on `testing`; keep its "What's in this build" current when testing moves.
+  The user's own team guide is `D:\dev\TEAM-MANAGEMENT-GUIDE.txt`, outside git on purpose.
 - Release tags are per mod: `survivor-minds-vX.Y.Z`, `backrooms-expanded-vX.Y.Z`.
 
 ## Fork changes to the game itself (watch these during upstream merges)
