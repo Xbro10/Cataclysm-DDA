@@ -90,19 +90,37 @@ Ell 2 16 7 2 2 $fur
 Line 2 15 5 12 1 $fur; Line 2 17 5 20 1 $fur
 Outline 2; Shadow 2 16 30 6
 
-# ---- 3: Wretch. A survivor who stayed too long: grey skin, a faded jacket, head hanging.
-$skin = Hex '#9c9086'; $skinD = Hex '#766a62'; $jac = Hex '#3f5470'; $jacD = Hex '#2b3a4f'; $jeans = Hex '#4b5a7a'; $boot = Hex '#2a2420'; $hairG = Hex '#7a746e'; $hole = Hex '#241818'; $blood = Hex '#6e1c1c'
-Fill 3 13 23 3 7 $jeans; Fill 3 17 23 3 7 $jeans
-Fill 3 13 29 3 1 $boot; Fill 3 17 29 4 1 $boot
-Fill 3 12 14 9 10 $jac; Fill 3 19 14 2 10 $jacD
-Fill 3 10 15 2 10 $jac; Fill 3 10 25 2 2 $skin
-Fill 3 21 15 2 9 $jacD; Fill 3 21 24 2 2 $skinD
-Px 3 14 18 $blood; Px 3 15 19 $blood; Px 3 17 21 $blood
-Ell 3 18 10 4 4 $skin
-Fill 3 20 11 2 3 $skinD
-Line 3 14 6 20 6 $hairG; Px 3 14 7 $hairG; Px 3 15 8 $hairG; Px 3 21 7 $hairG
-Fill 3 18 9 1 2 $hole; Fill 3 20 9 1 2 $hole; Fill 3 19 12 2 1 $hole
-Fill 3 15 14 4 1 $skinD; Line 3 16 15 16 22 $jacD
+# ---- 3: Wretch. What's left of someone who stayed too long: no skin, all raw red muscle over bone,
+# a skull face with glowing yellow eyes, ribs showing, long thin limbs, curved bone claws, pale growths.
+$meat = Hex '#8e2a22'; $meatD = Hex '#5e1612'; $meatL = Hex '#b8483a'; $rib = Hex '#cc6a5a'
+$bone = Hex '#dcd0b2'; $boneD = Hex '#a8987a'; $eyeY = Hex '#ffe066'; $glowY = Hex '#c89a2a'; $jaw = Hex '#2a0a08'; $growth = Hex '#e8dcc4'
+# legs: long and thin, knobbly knees, splayed bony feet
+Line 3 15 21 14 25 $meat 2; Line 3 14 25 13 29 $meat 2
+Line 3 17 21 18 25 $meat 2; Line 3 18 25 19 29 $meat 2
+Px 3 14 25 $meatD; Px 3 18 25 $meatD
+Fill 3 12 30 3 1 $meatD; Fill 3 19 30 3 1 $meatD
+# pelvis, sunken waist, ribcage
+Ell 3 16 20 3 1 $meat
+Fill 3 15 17 3 3 $meatD
+Ell 3 16 13 3 3 $meat
+Line 3 14 12 18 12 $rib; Line 3 14 14 18 14 $rib; Line 3 15 16 17 16 $rib
+Line 3 16 11 16 16 $meatD
+Px 3 18 13 $meatL; Px 3 18 15 $meatL
+# arms: thin, hanging to the knees, ending in long curved bone claws
+Line 3 13 11 11 17 $meat; Line 3 11 17 11 23 $meat
+Line 3 19 11 21 17 $meat; Line 3 21 17 21 23 $meatL
+Line 3 11 24 10 27 $bone; Px 3 9 28 $bone; Px 3 10 26 $boneD
+Line 3 21 24 22 27 $bone; Px 3 23 28 $bone; Px 3 22 26 $boneD
+# skull head on a thin neck: glowing eyes, gaping jaw
+Line 3 16 8 16 10 $meatD
+Ell 3 16 5 3 3 $meat
+Px 3 18 4 $meatL; Px 3 18 5 $meatL
+Px 3 15 4 $eyeY; Px 3 17 4 $eyeY; Px 3 15 5 $glowY; Px 3 17 5 $glowY
+Fill 3 15 7 3 2 $jaw; Px 3 15 7 $bone; Px 3 17 7 $bone
+# pale growths on the shoulder, hip and shins
+Px 3 18 10 $growth; Px 3 19 11 $growth; Px 3 18 11 $boneD
+Px 3 13 20 $growth; Px 3 13 21 $boneD
+Px 3 14 27 $growth; Px 3 19 27 $growth; Px 3 18 28 $boneD
 Outline 3; Shadow 3 16 31 5
 
 $bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
