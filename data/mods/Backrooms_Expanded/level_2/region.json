@@ -1,5 +1,17 @@
 [
   {
+    "type": "weather_generator",
+    "id": "backrooms_level_2",
+    "//": "Level 2 runs hot all year: about 30 C on average, rarely below 20 C, with the worst spikes past 40 C. Seasons are flattened (winter +12, summer -10 against the usual swing), and the air is close and wet. Heat, thirst and heat stroke come from CDDA's own systems.",
+    "copy-from": "default_backrooms",
+    "base_temperature": 30.0,
+    "base_humidity": 90.0,
+    "base_pressure": 1015.0,
+    "base_wind": 0.5,
+    "winter_temp_manual_mod": 12,
+    "summer_temp_manual_mod": -10
+  },
+  {
     "type": "dimension_region_layout",
     "id": "backrooms_level_2",
     "generation_mode": "UNIFORM",
@@ -25,7 +37,7 @@
     "forest_composition": "no_forests",
     "map_extras": "no_map_extras",
     "terrain_furniture": "default",
-    "weather": "default_backrooms",
+    "weather": "backrooms_level_2",
     "npc_spawntime": 0,
     "place_roads": false,
     "place_specials": true,
