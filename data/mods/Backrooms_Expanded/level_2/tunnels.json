@@ -78,6 +78,9 @@
         { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 0 },
         { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 8 },
         { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 16 },
+        { "chunks": [ [ "null", 55 ], [ "br2_feature_vent", 45 ] ], "x": [ 11, 13 ], "y": [ 0, 23 ], "repeat": [ 1, 2 ] },
+        { "chunks": [ [ "null", 55 ], [ "br2_feature_vent", 45 ] ], "x": [ 0, 23 ], "y": [ 11, 13 ] },
+        { "chunks": [ [ "null", 75 ], [ "br2_feature_drip", 25 ] ], "x": [ 0, 23 ], "y": [ 11, 13 ] },
         { "chunks": [ [ "null", 60 ], [ "br2_feature_light", 40 ] ], "x": 12, "y": 12 },
         { "chunks": [ [ "null", 85 ], [ "br2_feature_light", 15 ] ], "x": 4, "y": 12 },
         { "chunks": [ [ "null", 85 ], [ "br2_feature_light", 15 ] ], "x": 20, "y": 12 },
@@ -111,6 +114,38 @@
   {
     "type": "mapgen",
     "nested_mapgen_id": "br2_feature_light",
-    "object": { "mapgensize": [ 1, 1 ], "place_terrain": [ { "ter": "t_br2_light", "x": 0, "y": 0 } ] }
+    "object": { "mapgensize": [ 1, 1 ], "place_terrain": [ { "ter": "t_br2_light", "x": 0, "y": 0 } ], "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ] }
+  },
+  {
+    "type": "emit",
+    "id": "emit_br2_steam",
+    "//": "A steady bleed of hot air from a leaking steam joint: a few tiles around it run 10-20 C hotter than the tunnel.",
+    "field": "fd_hot_air3",
+    "intensity": 1,
+    "qty": 40
+  },
+  {
+    "type": "furniture",
+    "id": "f_br2_steam_vent",
+    "name": "leaking steam joint",
+    "description": "A pipe joint that has given up: it hisses steam in a thin, scalding plume, and the air around it is thick enough to drink.  The metal is far too hot to touch.",
+    "symbol": "~",
+    "color": "white",
+    "looks_like": "f_vent_pipe",
+    "move_cost_mod": 2,
+    "required_str": -1,
+    "flags": [ "TRANSPARENT", "NOITEM" ],
+    "emissions": [ "emit_br2_steam" ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_feature_vent",
+    "object": { "mapgensize": [ 1, 1 ], "place_furniture": [ { "furn": "f_br2_steam_vent", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_feature_drip",
+    "//": "Condensation drips into a pool on the decking: never runs dry, boil it first. Reuses Level 1's drip pool.",
+    "object": { "mapgensize": [ 1, 1 ], "place_terrain": [ { "ter": "t_br1_drip_pool", "x": 0, "y": 0 } ], "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ] }
   }
 ]
