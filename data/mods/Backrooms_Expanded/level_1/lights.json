@@ -1,0 +1,123 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br1_light_flicker",
+    "copy-from": "t_thconc_floor",
+    "//": "A lane light in the middle of a flicker. EOC_BR1_LIGHTS_FLICKER turns it back into t_strconc_floor_olight a few seconds later.",
+    "name": "concrete floor, flickering light",
+    "description": "Concrete under a ceiling light that has just cut out.  The tube ticks and buzzes.  It will probably come back on.",
+    "looks_like": "t_thconc_floor"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_lobby_light_off",
+    "copy-from": "t_thconc_floor",
+    "//": "A lobby light during a blackout (EOC_BR1_LOBBY_BLACKOUT). Comes back as t_br1_lobby_light.",
+    "name": "lobby floor, dead panel",
+    "description": "Clean concrete under a panel light that has gone out.  All of them went out at once.",
+    "looks_like": "t_thconc_floor"
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_lights_flicker",
+    "//": "Each lit lane light has a 3 in 100 chance to cut out. Lobby and generator lights have their own ids and are left alone.",
+    "terrain": [
+      {
+        "result": [ [ "t_strconc_floor_olight", 97 ], [ "t_br1_light_flicker", 3 ] ],
+        "valid_terrain": [ "t_strconc_floor_olight" ]
+      }
+    ]
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_lights_flicker_back",
+    "terrain": [ { "result": "t_strconc_floor_olight", "valid_terrain": [ "t_br1_light_flicker" ] } ]
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_lights_fail",
+    "//": "Each lit lane light near the player has a 1 in 150 chance to die for good. Run every 6 hours: around half the lights you live near are dead after a month.",
+    "terrain": [
+      {
+        "result": [ [ "t_strconc_floor_olight", 149 ], [ "t_br1_dead_light", 1 ] ],
+        "valid_terrain": [ "t_strconc_floor_olight", "t_br1_light_flicker" ]
+      }
+    ]
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_lobby_blackout",
+    "terrain": [ { "result": "t_br1_lobby_light_off", "valid_terrain": [ "t_br1_lobby_light" ] } ]
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br1_lobby_blackout_end",
+    "terrain": [ { "result": "t_br1_lobby_light", "valid_terrain": [ "t_br1_lobby_light_off" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_LIGHTS_FLICKER",
+    "//": "Every 5-15 minutes on Level 1, some lit lane lights within 20 tiles cut out for 2-3 seconds. Each flicker is a real map change, so it stays close to the player.",
+    "recurrence": [ "5 minutes", "15 minutes" ],
+    "condition": { "current_dimension": "backrooms_level_1" },
+    "effect": [
+      { "u_location_variable": { "global_val": "br1_flicker_point" } },
+      { "u_transform_radius": 20, "ter_furn_transform": "br1_lights_flicker" },
+      {
+        "u_transform_radius": 20,
+        "ter_furn_transform": "br1_lights_flicker_back",
+        "target_var": { "global_val": "br1_flicker_point" },
+        "time_in_future": [ "2 seconds", "3 seconds" ]
+      },
+      {
+        "if": { "x_in_y_chance": { "x": 1, "y": 3 } },
+        "then": [ { "u_message": "Overhead, a light buzzes and stutters.", "type": "info" } ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_LIGHTS_FAIL",
+    "//": "Every 6 hours on Level 1, a few lit lane lights within 30 tiles die for good (t_br1_dead_light). The generator can still relight them for a week at a time.",
+    "recurrence": [ "6 hours", "6 hours" ],
+    "condition": { "current_dimension": "backrooms_level_1" },
+    "effect": [
+      { "u_transform_radius": 30, "ter_furn_transform": "br1_lights_fail" },
+      {
+        "if": { "x_in_y_chance": { "x": 1, "y": 3 } },
+        "then": [ { "u_message": "Somewhere in the lanes, a tube pops and fizzles out.", "type": "info" } ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_LOBBY_BLACKOUT",
+    "//": "Rarely, while the player is in an elevator lobby, every lobby light dies at once for 30-60 minutes. Sometimes a Smiler comes to the dark.",
+    "recurrence": [ "1 hours", "2 hours" ],
+    "condition": {
+      "and": [
+        { "current_dimension": "backrooms_level_1" },
+        { "u_near_om_location": "br1_elevator_lobby", "range": 0 },
+        { "x_in_y_chance": { "x": 1, "y": 6 } }
+      ]
+    },
+    "effect": [
+      { "u_location_variable": { "global_val": "br1_blackout_point" } },
+      { "u_transform_radius": 24, "ter_furn_transform": "br1_lobby_blackout" },
+      {
+        "u_transform_radius": 24,
+        "ter_furn_transform": "br1_lobby_blackout_end",
+        "target_var": { "global_val": "br1_blackout_point" },
+        "time_in_future": [ "30 minutes", "60 minutes" ]
+      },
+      {
+        "message": "Every light in the lobby dies at once, with a sound like a breath going out.  The hum stops.  In the dark you can hear the lift cables creak.",
+        "type": "bad"
+      },
+      {
+        "if": { "x_in_y_chance": { "x": 1, "y": 3 } },
+        "then": [ { "u_spawn_monster": "mon_br_smiler", "real_count": 1, "min_radius": 8, "max_radius": 14 } ]
+      }
+    ]
+  }
+]

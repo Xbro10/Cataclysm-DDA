@@ -12,7 +12,15 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 ## New entries
 
-*(newest first; nothing yet since the summary below)*
+*(newest first)*
+
+- 2026-11-14, Levels: [BE] **Level 1 lights**: lane lights flicker and slowly fail for good, and lobbies sometimes black out for up to an hour (a Smiler may come).
+- 2026-11-14, Monsters: [BE] **Faceling, Skin-stealer and Partygoer**: a harmless blank-faced wanderer, a skin-wearing mimic that calls for help, and a very rare, very fast grinning partygoer, each with its own sprite.
+- 2026-11-14, Monsters: [BE] **The Redeemer** (boss, not placed yet; debug spawn `mon_br_redeemer`): a car-sized three-headed beast with power poles on its back, shock storms and an electric bite, with its own large 128x96 sprite.
+- 2026-11-14, Missions and jobs: [BE] **Breakroom standing.** 3 jobs earn Dot's supply key (a weekly ration locker in the Breakroom); 6 jobs earn Marcus's hand-drawn map and extra almond water. Ask Dot "Where do I stand with you lot?". Job rewards now fit each job.
+- 2026-11-14, Structures and places: [BE] The Level 1 **security office** has a gun safe (about 2 in 5 hold a sidearm and a little ammo).
+- 2026-11-14, Items and resources: [BE] **Oil-stained notes:** activate one on Level 1 to mark a generator room 3-8 squares away on your map.
+- 2026-11-14, Items and resources: [BE] **Loot is a themed handful:** every crate, locker, heap and shelf holds 3-6 items of one kind instead of whole stores.
 
 ---
 

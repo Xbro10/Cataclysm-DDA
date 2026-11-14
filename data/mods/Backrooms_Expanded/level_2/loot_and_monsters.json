@@ -11,7 +11,9 @@
       { "monster": "mon_large_cockroach", "weight": 10, "starts": "30 days", "pack_size": [ 1, 3 ] },
       { "group": "GROUP_ZOMBIE", "weight": 8 },
       { "monster": "mon_blob_sewer", "weight": 4 },
-      { "monster": "mon_br_wretch", "weight": 3, "starts": "30 days" }
+      { "monster": "mon_br_wretch", "weight": 3, "starts": "30 days" },
+      { "monster": "mon_br_faceling", "weight": 4, "pack_size": [ 1, 2 ] },
+      { "monster": "mon_br_partygoer", "weight": 1, "starts": "40 days" }
     ]
   },
   {

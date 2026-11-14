@@ -14,7 +14,10 @@
           { "id": "mon_br_smiler", "fg": 0, "rotates": false },
           { "id": "mon_br_hound", "fg": 1, "rotates": false },
           { "id": "mon_br_deathmoth", "fg": 2, "rotates": false },
-          { "id": "mon_br_wretch", "fg": 3, "rotates": false }
+          { "id": "mon_br_wretch", "fg": 3, "rotates": false },
+          { "id": "mon_br_faceling", "fg": 4, "rotates": false },
+          { "id": "mon_br_skin_stealer", "fg": 5, "rotates": false },
+          { "id": "mon_br_partygoer", "fg": 6, "rotates": false }
         ]
       }
     ]
