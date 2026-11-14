@@ -27,12 +27,12 @@
     "//": "Boiler-room lockers: the best tool and fuel loot on Level 2, behind the worst heat.",
     "subtype": "distribution",
     "entries": [
-      { "group": "tools_mechanic", "prob": 25 },
-      { "group": "hardware", "prob": 20 },
-      { "group": "tools_lighting", "prob": 15 },
-      { "group": "batteries", "prob": 15 },
+      { "group": "br_cat_tools", "count": [ 3, 6 ], "prob": 30 },
+      { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 20 },
+      { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 15 },
+      { "group": "br_cat_power", "count": [ 3, 6 ], "prob": 15 },
       { "item": "gasoline", "container-item": "jerrycan", "charges": [ 1000, 5000 ], "prob": 10 },
-      { "item": "water_clean", "container-item": "bottle_plastic", "prob": 10 },
+      { "item": "water_clean", "container-item": "bottle_plastic", "count": [ 3, 6 ], "prob": 10 },
       { "item": "br2_note_tunnel", "prob": 5 }
     ]
   },
@@ -92,7 +92,7 @@
       },
       "furniture": { "B": "f_br2_boiler", "M": "f_machinery_old", "l": "f_locker", "t": "f_workbench" },
       "items": {
-        "l": { "item": "br2_boiler_loot", "chance": 70, "repeat": [ 1, 2 ] },
+        "l": { "item": "br2_boiler_loot", "chance": 70 },
         "t": { "item": "br2_boiler_loot", "chance": 50 }
       },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
@@ -203,11 +203,11 @@
     "//": "Whatever washed down and sank: worth wading for, sometimes.",
     "subtype": "distribution",
     "entries": [
-      { "group": "tools_lighting", "prob": 15 },
-      { "group": "hardware", "prob": 20 },
-      { "group": "cannedfood", "prob": 15 },
-      { "item": "rag", "prob": 20 },
-      { "item": "bone_human", "prob": 10 },
+      { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 15 },
+      { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 20 },
+      { "group": "cannedfood", "count": [ 3, 6 ], "prob": 15 },
+      { "item": "rag", "count": [ 3, 6 ], "prob": 20 },
+      { "item": "bone_human", "count": [ 1, 3 ], "prob": 10 },
       { "item": "br1_note_lost", "prob": 10 },
       { "item": "almond_water", "container-item": "bottle_almond_water", "prob": 5 }
     ]

@@ -202,7 +202,7 @@
         "             "
       ],
       "terrain": { "~": "t_br2_flood", "x": "t_br2_flood" },
-      "items": { "x": { "item": "br2_flood_loot", "chance": 80, "repeat": [ 1, 2 ] } },
+      "items": { "x": { "item": "br2_flood_loot", "chance": 80 } },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   }

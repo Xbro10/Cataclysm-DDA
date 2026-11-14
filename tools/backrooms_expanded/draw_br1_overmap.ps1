@@ -1,10 +1,11 @@
 param([string]$Out, [string]$Preview)
-# Draws the Level 1 overmap sprite sheet: nine 32x32 tiles in a row, UndeadPeople-style.
-# 0-2 garage variants, 3 arrival alcove, 4 Breakroom, 5 squatter camp, 6 dead zone, 7 overrun camp, 8 elevator lobby.
+# Draws the Level 1 overmap sprite sheet: ten 32x32 tiles in a row, UndeadPeople-style.
+# 0-2 garage variants, 3 arrival alcove, 4 Breakroom, 5 squatter camp, 6 dead zone, 7 overrun camp, 8 elevator lobby,
+# 9 generator room (marked by an oil-stained note).
 # Plain squares are textured ground; landmarks are signboards with a pictogram (see sprite_common.ps1).
 Add-Type -AssemblyName System.Drawing
 $T = 32
-$Count = 9
+$Count = 10
 $bmp = New-Object System.Drawing.Bitmap ($Count * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 . "$PSScriptRoot\sprite_common.ps1"
 $rng = New-Object System.Random 1337
@@ -74,5 +75,12 @@ Garage 8; Sign 8 (Hex '#5fb8d0') (Hex '#3a8094')
 $steel = Hex '#d4d8dc'; $steelD = Hex '#8e959c'; $arrow = Hex '#ff9a3a'
 ORect 8 9 6 6 9 $steel; ORect 8 17 6 6 9 $steel; Fill 8 14 6 1 9 $steelD; Fill 8 22 6 1 9 $steelD
 Px 8 15 5 $arrow; Px 8 16 5 $arrow; Px 8 15 4 $arrow; Px 8 16 4 $arrow
+
+
+# 9: generator room: a squat generator with a lightning bolt, amber band
+Garage 9; Sign 9 (Hex '#e0a82e') (Hex '#9a7018')
+$gen = Hex '#c8432e'; $genD = Hex '#8a2c1e'; $bolt = Hex '#ffe24a'
+ORect 9 7 7 11 7 $gen; Fill 9 8 12 9 1 $genD; Fill 9 9 9 3 2 (Hex '#3a3a3a'); Px 9 10 6 $INK; Px 9 15 6 $INK
+Line 9 22 4 20 9 $bolt; Line 9 20 9 23 9 $bolt; Line 9 23 9 21 14 $bolt
 
 SaveSheet $Out $Preview $Count

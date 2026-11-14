@@ -15,10 +15,23 @@
     "items": [
       { "item": "flashlight", "prob": 50 },
       { "item": "baton", "prob": 35 },
-      { "group": "batteries", "prob": 50 },
+      { "group": "br_cat_power", "count": [ 2, 4 ], "prob": 50 },
       { "item": "radio", "prob": 15 },
       { "item": "cash_card", "charges": [ 500, 3000 ], "prob": 20 },
-      { "item": "br1_note_lost", "prob": 10 }
+      { "item": "br1_note_lost", "prob": 10 },
+      { "item": "br1_note_generator", "prob": 4 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_security_guns",
+    "//": "The gun safe in the guard office: a duty sidearm with a little ammo. Usually empty or already taken.",
+    "subtype": "distribution",
+    "entries": [
+      { "collection": [ { "item": "glock_19" }, { "item": "glockmag", "ammo-item": "9mm", "charges": [ 3, 15 ] }, { "item": "9mm", "charges": [ 5, 20 ] } ], "prob": 40 },
+      { "collection": [ { "item": "m1911" }, { "item": "m1911mag", "ammo-item": "45_acp", "charges": [ 2, 7 ] }, { "item": "45_acp", "charges": [ 4, 14 ] } ], "prob": 25 },
+      { "collection": [ { "item": "sw_619", "ammo-item": "38_special", "charges": [ 0, 7 ] }, { "item": "38_special", "charges": [ 6, 18 ] } ], "prob": 25 },
+      { "item": "9mm", "charges": [ 5, 20 ], "prob": 10 }
     ]
   },
   {
@@ -28,11 +41,11 @@
     "object": {
       "mapgensize": [ 8, 8 ],
       "rotation": [ 0, 3 ],
-      "rows": [ "########", "#MMMM.l#", "#.h....#", "#.dd..l#", "#......#", "#....L.#", "#......#", "###D####" ],
+      "rows": [ "########", "#MMMM.l#", "#.h....#", "#.dd..l#", "#......#", "#....L.#", "#G.....#", "###D####" ],
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "M": "t_thconc_floor", "h": "t_thconc_floor", "d": "t_thconc_floor", "D": "t_door_metal_locked" },
-      "furniture": { "M": "f_br1_cctv", "h": "f_chair", "d": "f_desk" },
-      "items": { "l": { "item": "br1_security_locker", "chance": 70 } },
+      "furniture": { "M": "f_br1_cctv", "h": "f_chair", "d": "f_desk", "G": "f_gunsafe_ml" },
+      "items": { "l": { "item": "br1_security_locker", "chance": 70 }, "G": { "item": "br1_security_guns", "chance": 40 } },
       "place_item": [ { "item": "br1_security_log", "x": [ 2, 3 ], "y": 3, "chance": 100 } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
@@ -158,12 +171,11 @@
     "//": "Storage cages: the best tool loot on Level 1, behind a padlocked gate.",
     "subtype": "distribution",
     "entries": [
-      { "group": "tools_mechanic", "prob": 25 },
-      { "group": "tools_carpentry", "prob": 20 },
-      { "group": "hardware", "prob": 20 },
-      { "group": "car_misc", "prob": 15 },
-      { "group": "tools_lighting", "prob": 10 },
-      { "group": "cannedfood", "prob": 5 },
+      { "group": "br_cat_tools", "count": [ 3, 6 ], "prob": 30 },
+      { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 25 },
+      { "group": "br_cat_car", "count": [ 3, 6 ], "prob": 20 },
+      { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "cannedfood", "count": [ 3, 6 ], "prob": 5 },
       { "item": "br1_note_lost", "prob": 3 }
     ]
   },
@@ -178,7 +190,7 @@
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "f": "t_chainfence", "g": "t_chaingate_l" },
       "furniture": { "X": "f_crate_c" },
-      "items": { "X": { "item": "br1_cage_loot", "chance": 80, "repeat": [ 1, 2 ] } },
+      "items": { "X": { "item": "br1_cage_loot", "chance": 80 } },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   }

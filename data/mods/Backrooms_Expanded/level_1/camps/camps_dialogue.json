@@ -24,6 +24,7 @@
         ],
         "topic": "TALK_BR1_FOREMAN_GIFT"
       },
+      { "text": "Where do I stand with you lot?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_STANDING" },
       { "text": "Need a hand with anything?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_WORK" },
       { "text": "About that job…", "condition": "has_assigned_mission", "topic": "TALK_MISSION_INQUIRE" },
       { "text": "About one of those jobs…", "condition": "has_many_assigned_missions", "topic": "TALK_MISSION_LIST_ASSIGNED" },

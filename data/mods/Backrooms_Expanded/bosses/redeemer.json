@@ -1,0 +1,33 @@
+[
+  {
+    "type": "MONSTER",
+    "id": "mon_br_redeemer",
+    "//": "Boss, not placed anywhere yet (debug spawn only). Placeholder stats: shock storm and an electric body for now; teleporting comes when it gets a level.",
+    "name": { "str": "Redeemer" },
+    "description": "A beast the size of a car, shaped like a starved wolf with three heads, and a weathered wooden power pole rising out of its spine.  Black cables run from the cross-arms down into its fur, and current crawls between the insulators with a sound like a transformer about to blow, and the air around it smells of ozone.  It is never quite where you last looked.",
+    "default_faction": "nether",
+    "looks_like": "mon_dog_zombie_brute",
+    "bodytype": "dog",
+    "species": [ "NETHER" ],
+    "volume": "800 L",
+    "weight": "600 kg",
+    "hp": 600,
+    "speed": 130,
+    "material": [ "flesh" ],
+    "symbol": "R",
+    "color": "light_blue",
+    "aggression": 100,
+    "morale": 100,
+    "melee_skill": 7,
+    "melee_dice": 3,
+    "melee_dice_sides": 8,
+    "melee_damage": [ { "damage_type": "electric", "amount": 8 } ],
+    "dodge": 3,
+    "armor": { "bash": 8, "cut": 10, "electric": 100 },
+    "vision_day": 40,
+    "vision_night": 20,
+    "special_attacks": [ [ "SHOCKSTORM", 15 ] ],
+    "anger_triggers": [ "HOSTILE_SEEN", "PLAYER_CLOSE" ],
+    "flags": [ "SEES", "HEARS", "SMELLS", "WARM", "ELECTRIC", "NO_BREATHE", "PUSH_MON", "DESTROYS", "PATH_AVOID_DANGER" ]
+  }
+]

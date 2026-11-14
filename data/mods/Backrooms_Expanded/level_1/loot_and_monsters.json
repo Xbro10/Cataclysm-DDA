@@ -5,15 +5,15 @@
     "//": "General Level 1 loot: tools and scrap are common, food and drink are rare. Water scarcity is deliberate (see playbook 1.5).",
     "subtype": "distribution",
     "entries": [
-      { "group": "tools_mechanic", "prob": 20 },
-      { "group": "car_misc", "prob": 20 },
-      { "group": "trash_junkyard", "prob": 20 },
-      { "group": "hardware", "prob": 15 },
-      { "group": "batteries", "prob": 10 },
-      { "group": "tools_lighting", "prob": 10 },
-      { "group": "cannedfood", "prob": 3 },
+      { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 25 },
+      { "group": "br_cat_tools", "count": [ 3, 6 ], "prob": 20 },
+      { "group": "br_cat_car", "count": [ 3, 6 ], "prob": 20 },
+      { "group": "br_cat_power", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "br_cat_snacks", "count": [ 3, 6 ], "prob": 3 },
+      { "group": "cannedfood", "count": [ 3, 6 ], "prob": 3 },
       { "item": "br1_note_lost", "prob": 2 },
-      { "group": "vending_drink", "prob": 2 }
+      { "item": "br1_note_generator", "prob": 1 }
     ]
   },
   {
@@ -22,11 +22,10 @@
     "//": "The attendant booth: the one place on Level 1 where snacks and drinks are likely.",
     "subtype": "distribution",
     "entries": [
-      { "group": "vending_food", "prob": 40 },
-      { "group": "vending_drink", "prob": 30 },
-      { "group": "batteries", "prob": 15 },
-      { "group": "tools_lighting", "prob": 15 },
-      { "group": "almond_water_sealed", "prob": 5 }
+      { "group": "br_cat_snacks", "count": [ 3, 6 ], "prob": 70 },
+      { "group": "br_cat_power", "count": [ 3, 6 ], "prob": 15 },
+      { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 15 },
+      { "group": "almond_water_sealed", "count": [ 1, 2 ], "prob": 5 }
     ]
   },
   {
