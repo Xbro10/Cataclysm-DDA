@@ -1,0 +1,176 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br1_breakroom_key",
+    "copy-from": "old_key",
+    "looks_like": "old_key",
+    "name": { "str": "Breakroom supply key" },
+    "description": "A small brass key on a loop of red string, with a paper tag: STORES.  Dot gave it to you.  It opens the supply locker in the Breakroom stores, and everybody there knows you have it."
+  },
+  {
+    "type": "ITEM",
+    "id": "br1_marcus_map",
+    "copy-from": "survivormap",
+    "looks_like": "survivormap",
+    "name": { "str": "Marcus's hand-drawn map", "str_pl": "copies of Marcus's hand-drawn map" },
+    "description": "Graph paper taped into a sheet the size of a table, folded small.  Lanes, ramps, pillars, lobbies and camps in Marcus's tiny handwriting, with notes like 'moved?' and 'NOT HERE ANY MORE'.  Copy it onto your own map (activate) and it's used up.",
+    "use_action": [
+      {
+        "type": "effect_on_conditions",
+        "menu_text": "Copy onto your map",
+        "description": "Marks nearby elevator lobbies, camps and a generator room on your map.",
+        "effect_on_conditions": [ "EOC_BR1_MARCUS_MAP" ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_MARCUS_MAP",
+    "//": "Reveals up to 3 elevator lobbies, 2 squatter camps and 1 generator room within 20 squares, then uses up the map. Level 1 only.",
+    "condition": { "current_dimension": "backrooms_level_1" },
+    "effect": [
+      {
+        "u_location_variable": { "context_val": "br1_map_hint" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 20, "reveal_radius": 1, "z": 0 }
+      },
+      {
+        "u_location_variable": { "context_val": "br1_map_hint" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 20, "reveal_radius": 1, "z": 0 }
+      },
+      {
+        "u_location_variable": { "context_val": "br1_map_hint" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 20, "reveal_radius": 1, "z": 0 }
+      },
+      {
+        "u_location_variable": { "context_val": "br1_map_hint" },
+        "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 20, "reveal_radius": 1, "z": 0 }
+      },
+      {
+        "u_location_variable": { "context_val": "br1_map_hint" },
+        "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 20, "reveal_radius": 1, "z": 0 }
+      },
+      {
+        "u_location_variable": { "context_val": "br1_map_hint" },
+        "target_params": {
+          "om_terrain": "br1_generator_site",
+          "om_terrain_replace": "br1_garage",
+          "random": true,
+          "search_range": 12,
+          "min_distance": 4,
+          "cant_see": true,
+          "reveal_radius": 1,
+          "z": 0
+        }
+      },
+      { "u_consume_item": "br1_marcus_map", "count": 1 },
+      {
+        "message": "You spend an hour copying lobbies, camps and a generator room onto your own map.  Some of Marcus's notes say 'moved?'.  You copy those too.",
+        "type": "good",
+        "popup": true
+      },
+      { "turn_cost": "1 h" }
+    ],
+    "false_effect": [ { "message": "Nothing on Marcus's map looks like anything around here.  It's a map of the parking levels.", "type": "info" } ]
+  },
+  {
+    "type": "furniture",
+    "id": "f_br1_supply_locker",
+    "copy-from": "f_locker",
+    "looks_like": "f_locker",
+    "name": "Breakroom supply locker",
+    "description": "A steel locker with a fresh padlock and a paper sign: RATIONS.  ONE DRAW A WEEK.  KEY HOLDERS ONLY.  - DOT.",
+    "examine_action": {
+      "type": "effect_on_condition",
+      "effect_on_conditions": [
+        {
+          "id": "EOC_BR1_SUPPLY_LOCKER_NOKEY",
+          "condition": { "not": { "u_has_item": "br1_breakroom_key" } },
+          "effect": [ { "u_message": "Padlocked.  The sign says key holders only.  Dot has the keys, and Dot gives them to people who pull their weight.", "type": "info" } ]
+        },
+        {
+          "id": "EOC_BR1_SUPPLY_LOCKER_WAIT",
+          "condition": { "and": [ { "u_has_item": "br1_breakroom_key" }, { "math": [ "u_br1_ration_next > time('now')" ] } ] },
+          "effect": [ { "u_message": "You already drew your ration this week.  Someone has pencilled your name on the sign.", "type": "info" } ]
+        },
+        {
+          "id": "EOC_BR1_SUPPLY_LOCKER_DRAW",
+          "condition": { "and": [ { "u_has_item": "br1_breakroom_key" }, { "math": [ "u_br1_ration_next <= time('now')" ] } ] },
+          "effect": [
+            { "u_spawn_item": "br1_breakroom_ration", "use_item_group": true, "suppress_message": true },
+            { "math": [ "u_br1_ration_next = time('now') + time('7 d')" ] },
+            { "u_add_morale": "morale_br1_regular", "bonus": 5, "max_bonus": 10, "duration": "6 h", "decay_start": "3 h" },
+            { "u_message": "You unlock the locker and take your week's ration: food, water, a few supplies.  Next draw in a week.", "type": "good" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "type": "item_group",
+    "id": "br1_breakroom_ration",
+    "//": "One week's draw from the Breakroom supply locker.",
+    "subtype": "collection",
+    "entries": [
+      { "item": "almond_water", "container-item": "bottle_almond_water", "count": 2 },
+      { "group": "br1_camp_food", "count": [ 3, 4 ] },
+      { "group": "br_cat_medical", "count": [ 1, 2 ] },
+      { "group": "br_cat_power", "count": 1, "prob": 50 },
+      { "group": "br_cat_light", "count": 1, "prob": 30 }
+    ]
+  },
+  {
+    "type": "morale_type",
+    "id": "morale_br1_regular",
+    "text": "Breakroom regular"
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_STANDING_UP",
+    "//": "Run at the end of every Breakroom job. Counts finished jobs (u_br1_standing) and hands out the milestone rewards at 3 and 6.",
+    "effect": [
+      { "math": [ "u_br1_standing += 1" ] },
+      {
+        "if": { "math": [ "u_br1_standing >= 3" ] },
+        "then": [ { "u_add_morale": "morale_br1_regular", "bonus": 5, "max_bonus": 10, "duration": "6 h", "decay_start": "3 h" } ]
+      },
+      {
+        "if": { "math": [ "u_br1_standing == 3" ] },
+        "then": [
+          { "u_spawn_item": "br1_breakroom_key" },
+          {
+            "message": "Breakroom regular.\n\nDot presses a small brass key into your hand.  \"Stores locker.  One draw a week, same as the rest of us.  You've earned it.\"  Somebody has written your name on the roster by the kettle.",
+            "type": "good",
+            "popup": true
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "u_br1_standing == 6" ] },
+        "then": [
+          { "u_spawn_item": "br1_marcus_map" },
+          { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "count": 3 },
+          { "math": [ "faction_trust('br_breakroom') += 20" ] },
+          {
+            "message": "One of us.\n\nMarcus hands you a folded square of graph paper as thick as a book.  \"Copy of the big map.  Don't lose it.  Don't show it to the sandbag lot.\"  Dot gives you three bottles from her own ration tin and won't hear a word about it.",
+            "type": "good",
+            "popup": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_STANDING",
+    "dynamic_line": {
+      "math": [ "u_br1_standing >= 6" ],
+      "yes": "You?  You're one of us.  Your name's on the roster in ink, not pencil.  Keep drawing from the locker, and keep coming back.",
+      "no": {
+        "math": [ "u_br1_standing >= 3" ],
+        "yes": "You're a regular.  You've got a key, you've got a name on the roster.  Few more jobs and Marcus might even trust you with his map.",
+        "no": "You're new.  Everyone's new once.  Do some work for us and people start to remember your name.  Do enough and there's a key in it."
+      }
+    },
+    "responses": [ { "text": "Good to know.", "topic": "TALK_BR1_FOREMAN" } ]
+  }
+]

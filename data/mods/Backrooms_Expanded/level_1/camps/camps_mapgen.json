@@ -102,6 +102,7 @@
       ],
       "palettes": [ "br1_camp_palette" ],
       "place_npcs": [ { "class": "BR1_foreman", "x": 7, "y": 8 }, { "class": "BR1_cartographer", "x": 15, "y": 8 } ],
+      "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 17, "y": 10 } ],
       "place_signs": [ { "x": 5, "y": 12, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
