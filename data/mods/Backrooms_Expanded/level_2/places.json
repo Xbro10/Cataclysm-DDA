@@ -33,7 +33,7 @@
       { "group": "batteries", "prob": 15 },
       { "item": "gasoline", "container-item": "jerrycan", "charges": [ 1000, 5000 ], "prob": 10 },
       { "item": "water_clean", "container-item": "bottle_plastic", "prob": 10 },
-      { "item": "br1_note_lost", "prob": 5 }
+      { "item": "br2_note_tunnel", "prob": 5 }
     ]
   },
   {

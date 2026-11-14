@@ -29,7 +29,7 @@
       { "group": "tools_lighting", "prob": 8 },
       { "group": "batteries", "prob": 7 },
       { "group": "cannedfood", "prob": 2 },
-      { "item": "br1_note_lost", "prob": 3 }
+      { "item": "br2_note_tunnel", "prob": 3 }
     ]
   },
   {

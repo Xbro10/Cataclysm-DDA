@@ -1,0 +1,47 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br2_note_tunnel",
+    "copy-from": "survnote",
+    "name": { "str": "sweat-stained note" },
+    "description": "A note written on the back of a work order, the ink run where a damp hand held it.",
+    "snippet_category": "br2_note_tunnel"
+  },
+  {
+    "type": "snippet",
+    "category": "br2_note_tunnel",
+    "//": "Level 2 notes: at the landing, in junk heaps and boiler lockers. Hints, not instructions; some are wrong.",
+    "text": [
+      { "id": "br2_note_tunnel_1", "text": "The middle corridors always go through.  The side ones end in walls.  Stay in the middle." },
+      { "id": "br2_note_tunnel_2", "text": "Red wheel, BLEED tag.  Turn it and the hissing stops.  Turn it and everything for a long way hears you do it." },
+      { "id": "br2_note_tunnel_3", "text": "Drink before you're thirsty.  By the time you're thirsty down here it's too late to be comfortable." },
+      { "id": "br2_note_tunnel_4", "text": "The stairs fell in behind me.  There are ladders up.  Ladders.  Plural.  Somewhere." },
+      { "id": "br2_note_tunnel_5", "text": "The crew trade fair.  Don't touch their wheels.  Don't touch their water." },
+      { "id": "br2_note_tunnel_6", "text": "Boiler rooms have the good stuff and they will cook you for it.  Go in fast, come out faster." },
+      { "id": "br2_note_tunnel_7", "text": "Something walks on top of the pipes.  You can hear it keep pace with you.  It stops when you stop." },
+      { "id": "br2_note_tunnel_8", "text": "Day 9.  The water in the dips is warm as a bath.  It isn't clean.  I keep forgetting it isn't clean." },
+      { "id": "br2_note_tunnel_9", "text": "Somebody said there are offices further down.  Carpet.  Quiet.  Cold air.  I'd give my last boot for cold air." }
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "br2_graffiti",
+    "//": "Paint and marker on the pipes and walls.",
+    "text": [
+      "STAY IN THE MIDDLE",
+      "← LADDER (?)",
+      "DEAD END",
+      "BLEED → (LOUD)",
+      "BOIL IT",
+      "HOT AHEAD",
+      "CREW ↓ TRADE",
+      "IT WALKS ON THE PIPES",
+      "DOWN IS QUIET"
+    ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_feature_graffiti",
+    "object": { "mapgensize": [ 1, 1 ], "place_graffiti": [ { "x": 0, "y": 0, "snippet": "br2_graffiti" } ] }
+  }
+]

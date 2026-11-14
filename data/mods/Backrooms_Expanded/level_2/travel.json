@@ -66,6 +66,7 @@
       "rows": [ " RR     ", " ..     ", " .L     ", "        ", "        ", "        ", "        ", "        " ],
       "terrain": { "R": "t_metal_floor", ".": "t_metal_floor", "L": "t_br2_light" },
       "furniture": { "R": "f_br2_choked_stairs" },
+      "place_item": [ { "item": "br2_note_tunnel", "x": 1, "y": 1, "chance": 70 } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
