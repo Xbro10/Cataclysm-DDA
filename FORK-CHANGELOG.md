@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-14, Monsters: [BE] **Faceling, Skin-stealer and Partygoer**: a harmless blank-faced wanderer, a skin-wearing mimic that calls for help, and a very rare, very fast grinning partygoer, each with its own sprite.
 - 2026-11-14, Monsters: [BE] **The Redeemer** (boss, not placed yet; debug spawn `mon_br_redeemer`): a car-sized three-headed beast with power poles on its back, shock storms and an electric bite, with its own large 128x96 sprite.
 - 2026-11-14, Missions and jobs: [BE] **Breakroom standing.** 3 jobs earn Dot's supply key (a weekly ration locker in the Breakroom); 6 jobs earn Marcus's hand-drawn map and extra almond water. Ask Dot "Where do I stand with you lot?". Job rewards now fit each job.
 - 2026-11-14, Structures and places: [BE] The Level 1 **security office** has a gun safe (about 2 in 5 hold a sidearm and a little ammo).

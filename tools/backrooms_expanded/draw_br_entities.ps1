@@ -2,10 +2,10 @@ param([string]$Out, [string]$Preview)
 # Draws the Backrooms Expanded entity sprite sheet: 32x32 tiles in a row, facing right (the game mirrors them).
 # Original art in the style of UndeadPeople/UltiCa monsters: side view, standing on the bottom row,
 # 2-3 shades per colour and a 1 px near-black outline added automatically around each figure.
-# 0 Smiler, 1 Hound, 2 Deathmoth, 3 Wretch.
+# 0 Smiler, 1 Hound, 2 Deathmoth, 3 Wretch, 4 Faceling, 5 Skin-Stealer, 6 Partygoer.
 Add-Type -AssemblyName System.Drawing
 $T = 32
-$Count = 4
+$Count = 7
 $bmp = New-Object System.Drawing.Bitmap ($Count * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 
 function Hex([string]$hex) { [System.Drawing.ColorTranslator]::FromHtml($hex) }
@@ -122,6 +122,64 @@ Px 3 18 10 $growth; Px 3 19 11 $growth; Px 3 18 11 $boneD
 Px 3 13 20 $growth; Px 3 13 21 $boneD
 Px 3 14 27 $growth; Px 3 19 27 $growth; Px 3 18 28 $boneD
 Outline 3; Shadow 3 16 31 5
+
+
+# ---- 4: Faceling. An ordinary-looking person in plain clothes, except the face: smooth skin, nothing on it.
+$fs = Hex '#d6ccbc'; $fsD = Hex '#ada190'; $fsL = Hex '#ece4d6'
+$shirt = Hex '#6a7480'; $shirtD = Hex '#4b535e'; $pants = Hex '#3b3b44'; $pantsD = Hex '#2a2a31'; $shoe = Hex '#1e1c1e'
+Line 4 14 20 14 29 $pantsD 2; Line 4 17 20 17 29 $pants 2
+Fill 4 13 30 3 1 $shoe; Fill 4 17 30 4 1 $shoe
+Fill 4 13 11 7 9 $shirt; Fill 4 13 11 1 9 $shirtD; Fill 4 13 19 7 1 $pantsD
+Line 4 12 12 12 20 $shirtD; Px 4 12 21 $fsD; Px 4 12 22 $fsD
+Line 4 19 12 20 20 $shirt; Px 4 20 21 $fs; Px 4 20 22 $fs
+Fill 4 15 9 3 2 $fsD
+Ell 4 16 5 3 4 $fs
+Line 4 13 4 13 7 $fsD; Px 4 14 8 $fsD
+Px 4 18 4 $fsL; Px 4 18 5 $fsL; Px 4 19 5 $fsL
+Outline 4; Shadow 4 16 31 5
+
+# ---- 5: Skin-Stealer. Tall, grey and sinewy, leaning forward on long legs, with a stolen human skin
+# hanging loose off its shoulders and back (the slack face still on it) and long hooked fingers.
+$gr = Hex '#6c6870'; $grD = Hex '#48444c'; $grL = Hex '#8e8a92'; $hide = Hex '#c49a80'; $hideD = Hex '#96705a'
+$wht = Hex '#e8e4d8'; $maw = Hex '#200c0c'; $hook = Hex '#d8d0c0'
+Line 5 15 19 13 24 $grD 2; Line 5 13 24 14 29 $grD 2
+Line 5 18 19 20 24 $gr 2; Line 5 20 24 19 29 $gr 2
+Fill 5 12 30 4 1 $grD; Fill 5 19 30 4 1 $gr
+Ell 5 16 18 3 2 $gr
+Line 5 16 17 18 8 $gr 3
+Px 5 19 11 $grL; Px 5 19 13 $grL; Px 5 18 15 $grL
+Line 5 17 9 14 15 $grD; Line 5 14 15 13 22 $grD; Px 5 13 23 $hook; Px 5 12 24 $hook
+Ell 5 21 5 3 3 $gr; Fill 5 23 5 3 2 $gr
+Px 5 22 4 $wht; Px 5 24 4 $wht; Line 5 21 7 25 7 $maw
+Line 5 20 9 23 14 $gr; Line 5 23 14 24 21 $gr; Line 5 24 22 25 24 $hook; Px 5 26 24 $hook
+# the stolen skin: a ragged flap from the shoulders down its back, a slack face on it
+Ell 5 15 10 3 2 $hide
+for ($j = 11; $j -le 21; $j++) { $hw = 5 - [int][Math]::Floor(($j - 11) / 3); Fill 5 (11 + ($j % 2)) $j $hw 1 $hide }
+Px 5 12 22 $hideD; Px 5 14 22 $hideD; Px 5 11 20 $hideD
+Px 5 12 14 $maw; Px 5 14 14 $maw; Line 5 12 17 14 17 $hideD; Px 5 13 15 $hideD
+# its hair still on: a scalp hanging off the shoulder, strands down the back
+$hair5 = Hex '#3a2a20'; Fill 5 13 8 4 1 $hair5; Px 5 12 9 $hair5; Line 5 11 10 11 13 $hair5; Px 5 12 10 $hair5
+Px 5 12 15 $maw; Px 5 14 15 $maw
+Line 5 21 10 22 13 $hideD
+Outline 5; Shadow 5 17 31 6
+
+# ---- 6: Partygoer. A smooth yellow figure with a big round head, a wide fixed grin, and a red balloon.
+$yel = Hex '#f0cf3a'; $yelD = Hex '#c49e1c'; $yelL = Hex '#fff3a0'; $blk = Hex '#1a1410'; $teeth = Hex '#fbfbec'
+$bal = Hex '#d8302a'; $balD = Hex '#9c1c18'; $balL = Hex '#ff8a7a'; $str = Hex '#e8e4d8'
+Line 6 14 21 13 29 $yelD 2; Line 6 17 21 18 29 $yel 2
+Fill 6 12 30 3 1 $yelD; Fill 6 18 30 3 1 $yel
+Ell 6 15 17 4 5 $yel; Line 6 11 15 11 20 $yelD
+Line 6 12 14 9 21 $yelD
+Line 6 18 14 22 11 $yel
+Ell 6 15 7 6 5 $yel
+Line 6 9 6 9 9 $yelD; Px 6 10 10 $yelD
+Px 6 12 3 $yelL; Px 6 13 3 $yelL; Px 6 11 4 $yelL
+Fill 6 15 5 1 2 $blk; Fill 6 19 5 1 2 $blk
+Px 6 12 8 $blk; Px 6 21 8 $blk; Line 6 13 9 20 9 $blk
+Px 6 13 10 $blk; Fill 6 14 10 6 1 $teeth; Px 6 20 10 $blk; Line 6 14 11 19 11 $blk
+Ell 6 26 4 3 4 $bal; Px 6 25 2 $balL; Px 6 25 3 $balL; Px 6 28 6 $balD; Px 6 27 7 $balD
+Px 6 26 9 $balD; Line 6 26 10 23 11 $str
+Outline 6; Shadow 6 15 31 5
 
 $bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
 

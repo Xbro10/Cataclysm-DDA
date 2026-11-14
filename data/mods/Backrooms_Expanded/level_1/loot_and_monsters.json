@@ -41,6 +41,9 @@
       { "monster": "mon_br_smiler", "weight": 8 },
       { "monster": "mon_br_deathmoth", "weight": 6, "pack_size": [ 2, 3 ] },
       { "monster": "mon_br_wretch", "weight": 5, "starts": "30 days" },
+      { "monster": "mon_br_faceling", "weight": 5, "pack_size": [ 1, 2 ] },
+      { "monster": "mon_br_skin_stealer", "weight": 3, "starts": "20 days" },
+      { "monster": "mon_br_partygoer", "weight": 1, "starts": "40 days" },
       { "monster": "mon_zombie_technician", "weight": 3 },
       { "monster": "mon_blob_sewer", "weight": 3 }
     ]
