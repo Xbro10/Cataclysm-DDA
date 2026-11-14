@@ -37,6 +37,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- Redrew the Level 1 and Level 2 map sprites in an UndeadPeople style: textured ground for the garage, dead zones and tunnels, and landmarks shown as signboards with a pictogram (a rippling wall for arrival alcoves, a steaming mug for the Breakroom, sandbags and fire for squatter camps, bloodied sandbags for overrun camps, elevator doors for lobbies, a ladder, a boiler, a valve wheel, a water drop and a hard hat for the Tunnel Crew).
 - The Level 1 and Level 2 map sprites now also show with the UndeadPeople tileset, not just UltiCa.
 - Level 2 has far fewer leaking steam joints: about 1 tunnel square in 4 has one (it was about one per square), so the tunnels are hot but not scalding everywhere.
 - UltiCa fallback sprites for almond water and its bottle, and overmap sprites for Level 1 squares (garage), the Breakroom (shelter) and the Level 0 rippling-wall room (an ordinary Level 0 chamber).

@@ -1,128 +1,78 @@
 param([string]$Out, [string]$Preview)
-# Draws the Level 1 overmap sprite sheet: nine 32x32 tiles in a row.
+# Draws the Level 1 overmap sprite sheet: nine 32x32 tiles in a row, UndeadPeople-style.
 # 0-2 garage variants, 3 arrival alcove, 4 Breakroom, 5 squatter camp, 6 dead zone, 7 overrun camp, 8 elevator lobby.
+# Plain squares are textured ground; landmarks are signboards with a pictogram (see sprite_common.ps1).
 Add-Type -AssemblyName System.Drawing
 $T = 32
-$bmp = New-Object System.Drawing.Bitmap (9 * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$Count = 9
+$bmp = New-Object System.Drawing.Bitmap ($Count * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+. "$PSScriptRoot\sprite_common.ps1"
 $rng = New-Object System.Random 1337
 
-function Hex([string]$hex) { [System.Drawing.ColorTranslator]::FromHtml($hex) }
-function DrawPx($tile, $x, $y, $col) { if ($x -ge 0 -and $x -lt $T -and $y -ge 0 -and $y -lt $T) { $bmp.SetPixel($tile * $T + $x, $y, $col) } }
-function DrawRect($tile, $x, $y, $w, $h, $col) { for ($i = $x; $i -lt $x + $w; $i++) { for ($j = $y; $j -lt $y + $h; $j++) { DrawPx $tile $i $j $col } } }
-function Box($tile, $x, $y, $w, $h, $col) { DrawRect $tile $x $y $w 1 $col; DrawRect $tile $x ($y + $h - 1) $w 1 $col; DrawRect $tile $x $y 1 $h $col; DrawRect $tile ($x + $w - 1) $y 1 $h $col }
+$con = Hex '#4e5054'; $conD = Hex '#3e4044'; $conL = Hex '#5c5e62'
+$line = Hex '#b89a2e'; $lineD = Hex '#7e6a20'
+$pil = Hex '#6a6c70'; $pilL = Hex '#86888c'
+$lit = Hex '#f2ecc0'; $glow = Hex '#7a7a68'; $dead = Hex '#2e3034'
 
-$concrete = Hex '#5f6266'; $speck1 = Hex '#55585c'; $speck2 = Hex '#6b6e72'
-$line = Hex '#b89a2e'; $pillar = Hex '#2f3133'; $pillarHi = Hex '#45484b'
-$lightCore = Hex '#f2ecc0'; $lightGlow = Hex '#8a8a78'; $deadLight = Hex '#3d3f42'
-$puddle = Hex '#3f5868'; $puddleHi = Hex '#5f7f92'
-$edge = Hex '#4b4e52'
-
-function Floor($tile) {
-  DrawRect $tile 0 0 $T $T $concrete
-  for ($k = 0; $k -lt 70; $k++) { DrawPx $tile ($rng.Next(0, $T)) ($rng.Next(0, $T)) $speck1 }
-  for ($k = 0; $k -lt 40; $k++) { DrawPx $tile ($rng.Next(0, $T)) ($rng.Next(0, $T)) $speck2 }
-}
-# Garage layout mirrors the real mapgen: two bands of bays (rows 0-5 and 12-17 of 24), lanes between.
-function Bays($tile) {
-  foreach ($x in 0, 4, 8, 12, 16, 20, 24, 28) { DrawRect $tile $x 1 1 7 $line; DrawRect $tile $x 17 1 7 $line }
-  foreach ($x in 4, 12, 20, 28) { DrawRect $tile ($x - 1) 3 3 3 $pillar; DrawPx $tile $x 4 $pillarHi; DrawRect $tile ($x - 1) 19 3 3 $pillar; DrawPx $tile $x 20 $pillarHi }
+function Garage($tile, $dark = $false) {
+  $base = if ($dark) { Hex '#363839' } else { $con }
+  Fill $tile 0 0 $T $T $base
+  Grain $tile 0 0 $T $T $conD $conL 90 $rng
+  $ln = if ($dark) { $lineD } else { $line }
+  foreach ($x in 0, 4, 8, 12, 16, 20, 24, 28) { Fill $tile $x 1 1 7 $ln; Fill $tile $x 17 1 7 $ln }
+  foreach ($x in 4, 12, 20, 28) { ORect $tile ($x - 1) 3 3 3 $pil; Px $tile ($x - 1) 3 $pilL; ORect $tile ($x - 1) 19 3 3 $pil; Px $tile ($x - 1) 19 $pilL }
 }
 function Light($tile, $x, $y, $on) {
-  if ($on) { DrawRect $tile ($x - 2) ($y - 1) 5 3 $lightGlow; DrawRect $tile ($x - 1) $y 3 1 $lightCore }
-  else { DrawRect $tile ($x - 1) $y 3 1 $deadLight }
+  if ($on) { Fill $tile ($x - 2) ($y - 1) 5 3 $glow; ORect $tile ($x - 1) $y 3 1 $lit } else { ORect $tile ($x - 1) $y 3 1 $dead }
 }
-function Car($tile, $x, $y, $body, $roof) { DrawRect $tile $x $y 3 6 $body; DrawRect $tile $x ($y + 2) 3 2 $roof; DrawPx $tile $x $y $roof; DrawPx $tile ($x + 2) $y $roof }
+function Car($tile, $x, $y, $body, $roof) {
+  ORect $tile $x $y 4 7 $body
+  Fill $tile $x ($y + 2) 4 3 $roof
+  Fill $tile ($x + 1) ($y + 1) 2 1 (Hex '#a8c4d4'); Fill $tile ($x + 1) ($y + 5) 2 1 (Hex '#6f8794')
+}
 
-# 0: plain garage, lights on
-Floor 0; Bays 0; Light 0 8 11 $true; Light 0 24 11 $true; Light 0 16 28 $true
-# 1: garage with parked cars
-Floor 1; Bays 1; Light 1 8 11 $true; Light 1 24 11 $false; Light 1 16 28 $true
-Car 1 1 1 (Hex '#7a3b36') (Hex '#a35a52'); Car 1 21 17 (Hex '#3a4f6e') (Hex '#5a739a'); Car 1 9 17 (Hex '#6b6b5a') (Hex '#8e8e78')
-# 2: dim garage: dead lights and puddles
-Floor 2; Bays 2; Light 2 8 11 $false; Light 2 24 11 $false; Light 2 16 28 $true
-DrawRect 2 10 12 5 2 $puddle; DrawRect 2 11 12 2 1 $puddleHi; DrawRect 2 22 26 4 2 $puddle; DrawRect 2 23 26 2 1 $puddleHi
+# 0-2: the garage, plain / with cars / dim and wet
+Garage 0; Light 0 8 11 $true; Light 0 24 11 $true; Light 0 16 28 $true
+Garage 1; Light 1 8 11 $true; Light 1 24 11 $false; Light 1 16 28 $true
+Car 1 1 1 (Hex '#8a3b34') (Hex '#a85a50'); Car 1 21 17 (Hex '#3a4f6e') (Hex '#5a739a'); Car 1 9 17 (Hex '#6b6b5a') (Hex '#8e8e78')
+Garage 2; Light 2 8 11 $false; Light 2 24 11 $false; Light 2 16 28 $true
+$pud = Hex '#3f5868'; $pudL = Hex '#6f8fa2'
+ORect 2 10 12 5 2 $pud; Fill 2 11 12 2 1 $pudL; ORect 2 22 26 4 2 $pud; Fill 2 23 26 2 1 $pudL
 
-# 3: arrival alcove: pipe-walled box with a rippling wall section (cyan) and one working light
-Floor 3; Bays 3
-$pipe = Hex '#3e4a40'; $pipeHi = Hex '#5c6e5e'; $ripple1 = Hex '#7fd6e0'; $ripple2 = Hex '#3fa3b5'
-DrawRect 3 9 9 14 14 $concrete
-Box 3 9 9 14 14 $pipe; Box 3 10 10 12 12 $pipeHi
-DrawRect 3 14 22 4 1 $concrete; DrawRect 3 14 21 4 1 $concrete   # opening at the bottom
-for ($i = 0; $i -lt 6; $i++) { DrawPx 3 (13 + $i) 9 ($(if ($i % 2) { $ripple1 } else { $ripple2 })); DrawPx 3 (13 + $i) 10 ($(if ($i % 2) { $ripple2 } else { $ripple1 })) }
-Light 3 16 15 $true
+# 3: arrival alcove: a rippling cyan wall on the sign
+Garage 3; Sign 3 (Hex '#3fa3b5') (Hex '#2a7080')
+$c1 = Hex '#7fd6e0'; $c2 = Hex '#3fa3b5'; $pipe = Hex '#4a5a4c'
+ORect 3 9 5 14 9 $pipe
+for ($x = 10; $x -lt 22; $x++) { for ($y = 6; $y -lt 13; $y++) { if ((($x + $y) % 3) -eq 0) { Px 3 $x $y $c1 } else { Px 3 $x $y $c2 } } }
 
-# 4: the Breakroom: thick walls, warm lit floor, green door, sign arrow
-Floor 4
-$wall = Hex '#2b332b'; $wallHi = Hex '#47574a'; $warm = Hex '#8c7350'; $warm2 = Hex '#9e8560'; $green = Hex '#6fd06f'; $table = Hex '#5a4430'
-DrawRect 4 3 3 26 20 $wall; DrawRect 4 5 5 22 16 $warm
-for ($k = 0; $k -lt 40; $k++) { DrawPx 4 ($rng.Next(5, 27)) ($rng.Next(5, 21)) $warm2 }
-Box 4 4 4 24 18 $wallHi
-DrawRect 4 17 5 1 16 $wall; DrawRect 4 18 12 9 1 $wall             # inner walls: breakroom | bunks / stores
-DrawRect 4 7 9 3 2 $table; DrawRect 4 12 9 3 2 $table; DrawRect 4 7 15 3 2 $table; DrawRect 4 12 15 3 2 $table
-DrawRect 4 20 6 2 3 $table; DrawRect 4 24 6 2 3 $table               # bunks
-DrawRect 4 20 15 6 4 (Hex '#6e5a3a')                            # crates
-Light 4 10 12 $true; Light 4 22 16 $true
-DrawRect 4 10 22 4 1 $green; DrawRect 4 10 23 4 1 $green             # door gap, marked green
-DrawRect 4 10 26 4 1 $line; DrawRect 4 10 27 4 1 $line; DrawPx 4 11 25 $line; DrawPx 4 12 25 $line # sign arrow pointing up
+# 4: the Breakroom: a steaming mug, green band
+Garage 4; Sign 4 (Hex '#4f9a4a') (Hex '#2f6a2c')
+$mug = Hex '#eeeae0'; $mugD = Hex '#b8b4aa'; $tea = Hex '#7a4a26'; $steam = Hex '#f4f2ec'
+ORect 4 11 8 9 6 $mug; Fill 4 18 9 1 5 $mugD; Fill 4 12 8 7 1 $tea
+Box 4 20 9 3 4 $INK; Px 4 21 10 $mug; Px 4 21 11 $mug
+Px 4 13 6 $steam; Px 4 14 5 $steam; Px 4 16 6 $steam; Px 4 17 5 $steam
 
-# 5: squatter camp: sandbag ring, bedrolls, brazier glow
-Floor 5; Bays 5
-$sand = Hex '#a8915e'; $sandDk = Hex '#7d6a42'; $bed = Hex '#4f5f7a'; $fire = Hex '#ff8c1a'; $fireCore = Hex '#ffd27a'; $glow = Hex '#7a5a3a'
-DrawRect 5 7 9 18 12 $concrete
-Box 5 7 9 18 12 $sand; Box 5 8 10 16 10 $sandDk
-DrawRect 5 14 9 4 1 $concrete; DrawRect 5 14 10 4 1 $concrete        # gap in the ring
-DrawRect 5 13 13 6 5 $glow; DrawRect 5 15 14 2 3 $fire; DrawPx 5 15 15 $fireCore; DrawPx 5 16 15 $fireCore
-DrawRect 5 9 12 2 4 $bed; DrawRect 5 21 12 2 4 $bed; DrawRect 5 9 17 3 2 $bed
-DrawRect 5 20 17 2 2 (Hex '#6e5a3a')                            # stash crate
-DrawRect 5 11 19 2 1 $puddle                                   # drip pool
+# 5: squatter camp: sandbags around a fire, tan band
+Garage 5; Sign 5 (Hex '#a8915e') (Hex '#73633e')
+$sand = Hex '#c8ae76'; $sandD = Hex '#94804e'; $fire = Hex '#ff8c1a'; $fireY = Hex '#ffd96a'
+foreach ($p in @(@(9,12), @(14,12), @(19,12), @(11,10), @(17,10))) { OEll 5 $p[0] $p[1] 2 1 $sand; Px 5 ($p[0] + 1) ($p[1] + 1) $sandD }
+OEll 5 14 7 2 2 $fire; Px 5 14 7 $fireY; Px 5 14 5 $fire
 
-
-# 6: dead zone: the garage with every light out, darker concrete, more parked cars
-$dark = Hex '#3f4144'; $darkSpeck = Hex '#36383b'; $darkLine = Hex '#7a6620'
-DrawRect 6 0 0 $T $T $dark
-for ($k = 0; $k -lt 70; $k++) { DrawPx 6 ($rng.Next(0, $T)) ($rng.Next(0, $T)) $darkSpeck }
-foreach ($x in 0, 4, 8, 12, 16, 20, 24, 28) { DrawRect 6 $x 1 1 7 $darkLine; DrawRect 6 $x 17 1 7 $darkLine }
-foreach ($x in 4, 12, 20, 28) { DrawRect 6 ($x - 1) 3 3 3 $pillar; DrawRect 6 ($x - 1) 19 3 3 $pillar }
-Light 6 8 11 $false; Light 6 24 11 $false; Light 6 16 28 $false
+# 6: dead zone: the garage with every light out, darker, more cars
+Garage 6 $true; Light 6 8 11 $false; Light 6 24 11 $false; Light 6 16 28 $false
 Car 6 1 1 (Hex '#4a2c29') (Hex '#5e3a36'); Car 6 13 17 (Hex '#2a3546') (Hex '#3a4a60'); Car 6 25 1 (Hex '#46463c') (Hex '#57574a')
 
-# 7: overrun camp: the sandbag ring broken open, blood, a cold brazier
-Floor 7; Bays 7
-$blood = Hex '#6e1f1a'; $ash = Hex '#4a4440'
-DrawRect 7 7 9 18 12 $concrete
-Box 7 7 9 18 12 $sand
-DrawRect 7 13 9 6 1 $concrete; DrawRect 7 7 13 1 4 $concrete; DrawRect 7 24 15 1 3 $concrete; DrawRect 7 18 20 4 1 $concrete
-DrawPx 7 12 8 $sand; DrawPx 7 6 14 $sand; DrawPx 7 25 16 $sand
-DrawRect 7 15 14 2 3 $ash
-DrawRect 7 10 12 2 3 $blood; DrawPx 7 12 13 $blood; DrawRect 7 19 16 3 2 $blood; DrawPx 7 13 18 $blood
-DrawRect 7 9 17 2 2 $bed; DrawRect 7 21 11 2 3 $bed
+# 7: overrun camp: knocked-over sandbags and blood, dark red band
+Garage 7; Sign 7 (Hex '#7a2a24') (Hex '#4e1814')
+$blood = Hex '#8a1e1a'; $bloodD = Hex '#5a1210'; $ash = Hex '#5a5450'
+foreach ($p in @(@(9,12), @(20,11), @(12,8))) { OEll 7 $p[0] $p[1] 2 1 $sand }
+OEll 7 16 11 2 1 $ash
+Fill 7 14 6 3 2 $blood; Px 7 17 7 $blood; Px 7 13 9 $bloodD; Fill 7 18 12 2 1 $bloodD; Px 7 22 8 $blood
 
-# 8: elevator lobby: a walled, brightly lit room, steel elevator doors along the top wall, glass front at the bottom
-Floor 8; Bays 8
-$lwall = Hex '#2c2f33'; $lfloor = Hex '#8f9296'; $lfloor2 = Hex '#9a9da1'; $steel = Hex '#c9ced4'; $steelDk = Hex '#7d848c'
-$glass = Hex '#7fb8d0'; $callBtn = Hex '#ff9a3a'; $bench = Hex '#5a4430'; $plant = Hex '#4f8a4a'
-DrawRect 8 5 6 22 18 $lwall; DrawRect 8 6 7 20 16 $lfloor
-for ($k = 0; $k -lt 25; $k++) { DrawPx 8 ($rng.Next(6, 26)) ($rng.Next(9, 23)) $lfloor2 }
-foreach ($x in 8, 14, 20) { DrawRect 8 $x 6 3 2 $steel; DrawPx 8 ($x + 1) 6 $steelDk; DrawPx 8 ($x + 1) 7 $steelDk; DrawPx 8 ($x + 3) 7 $callBtn }
-DrawRect 8 6 23 20 1 $glass; DrawRect 8 14 23 4 1 $lfloor
-DrawRect 8 5 13 1 3 $glass
-DrawRect 8 8 12 3 1 $bench; DrawRect 8 21 12 3 1 $bench; DrawRect 8 8 18 3 1 $bench; DrawRect 8 21 18 3 1 $bench
-DrawPx 8 7 15 $plant; DrawPx 8 24 15 $plant
-Light 8 11 10 $true; Light 8 21 10 $true; Light 8 16 15 $true; Light 8 11 20 $true; Light 8 21 20 $true
-$bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
+# 8: elevator lobby: two steel doors with up/down arrows, light cyan band
+Garage 8; Sign 8 (Hex '#5fb8d0') (Hex '#3a8094')
+$steel = Hex '#d4d8dc'; $steelD = Hex '#8e959c'; $arrow = Hex '#ff9a3a'
+ORect 8 9 6 6 9 $steel; ORect 8 17 6 6 9 $steel; Fill 8 14 6 1 9 $steelD; Fill 8 22 6 1 9 $steelD
+Px 8 15 5 $arrow; Px 8 16 5 $arrow; Px 8 15 4 $arrow; Px 8 16 4 $arrow
 
-if ($Preview) {
-  # 8x nearest-neighbour preview with a 1px gap between tiles, for checking by eye.
-  $s = 8
-  $pv = New-Object System.Drawing.Bitmap ($bmp.Width * $s + 8 * $s), ($T * $s)
-  $g = [System.Drawing.Graphics]::FromImage($pv)
-  $g.Clear((Hex '#1e1e1e'))
-  $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::NearestNeighbor
-  $g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::Half
-  for ($n = 0; $n -lt 9; $n++) {
-    $src = New-Object System.Drawing.Rectangle ($n * $T), 0, $T, $T
-    $dst = New-Object System.Drawing.Rectangle ($n * ($T * $s + $s)), 0, ($T * $s), ($T * $s)
-    $g.DrawImage($bmp, $dst, $src, [System.Drawing.GraphicsUnit]::Pixel)
-  }
-  $pv.Save($Preview, [System.Drawing.Imaging.ImageFormat]::Png)
-}
+SaveSheet $Out $Preview $Count
