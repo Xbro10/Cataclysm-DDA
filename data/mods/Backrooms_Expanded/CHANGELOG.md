@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Level 0 wall and floor sprites (UltiCa and UndeadPeople): yellow wallpaper walls and grey walls that join properly at corners and junctions, showing their papered face only on the side you look at, damp yellow carpet with three stain variants, carpet and tile under buzzing ceiling-light panels, and faded tile. Level 0 used to borrow the base game's yellow wall and carpet.
 - Entity sprites for the Smiler (a shadow with a glowing grin), Hound (a pale person on all fours), Deathmoth (a giant moth with eyespots) and Wretch (a grey-skinned survivor in a ruined jacket). Original pixel art in the style of UndeadPeople, used with UltiCa or UndeadPeople; other tilesets keep the old look-alike sprites.
 - Level 2 map art, notes and graffiti. In UltiCa the tunnels (two variants), service ladders, boiler rooms, valve junctions, flooded dips and Tunnel Crew camps each have their own overmap sprite. Sweat-stained notes turn up at the landing, in junk heaps and in boiler lockers, and paint on the walls points the way (not always truthfully).
 - Level 2 spawns and loot. Rats in the pipes, Hound packs in the corridors, Smilers in the long dark stretches, Deathmoths at the caged bulbs (sometimes already waiting at one), a few sluggish zombies, and later cockroaches and Wretches. Heaps of junk along the corridors hold pipe, fittings, scrap, tools and the odd battery; food is rarer than on Level 1.
