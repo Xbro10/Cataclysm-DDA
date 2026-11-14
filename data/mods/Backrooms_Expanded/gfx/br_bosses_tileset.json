@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Backrooms boss sprites, 64x64 (two map tiles across), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br_bosses.ps1 in UndeadPeople style. Offset so the beast stands on its own tile and looms over the ones behind it. Sprites face right; the game mirrors them.",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br_bosses.png",
+        "sprite_width": 64,
+        "sprite_height": 64,
+        "sprite_offset_x": -16,
+        "sprite_offset_y": -32,
+        "tiles": [ { "id": "mon_br_redeemer", "fg": 0, "rotates": false } ]
+      }
+    ]
+  }
+]
