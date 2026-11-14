@@ -60,7 +60,7 @@
     "type": "mapgen",
     "om_terrain": "br2_boiler_room",
     "//": "A boiler room fills the north-west quarter, with doorways onto the centre cross (east) and the corridor below it (south).",
-    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_boiler_core" ], "x": 0, "y": 0 } ] }
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ [ "br2_boiler_core", 50 ], [ "br2_boiler_core_cold", 25 ], [ "br2_boiler_core_pump", 25 ] ], "x": 0, "y": 0 } ] }
   },
   {
     "type": "mapgen",
@@ -183,14 +183,7 @@
     "//": "A valve wheel at the centre of the cross, with a run of leaking joints around it that it can shut.",
     "object": {
       "predecessor_mapgen": "br2_tunnels",
-      "place_furniture": [
-        { "furn": "f_br2_valve", "x": 13, "y": 10 },
-        { "furn": "f_br2_steam_vent", "x": 11, "y": 4 },
-        { "furn": "f_br2_steam_vent", "x": 13, "y": 18 },
-        { "furn": "f_br2_steam_vent", "x": 4, "y": 13 },
-        { "furn": "f_br2_steam_vent", "x": 19, "y": 11 }
-      ],
-      "place_terrain": [ { "ter": "t_br2_light", "x": 12, "y": 12 } ]
+      "place_nested": [ { "chunks": [ [ "br2_valve_core_a", 50 ], [ "br2_valve_core_b", 30 ], [ "br2_valve_core_c", 20 ] ], "x": 0, "y": 0 } ]
     }
   },
   {
@@ -243,7 +236,7 @@
     "type": "mapgen",
     "om_terrain": "br2_flooded",
     "//": "The tunnels dip: the centre cross stands in water for 9 tiles each way, with sunken things to fish out.",
-    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_flood_core" ], "x": 6, "y": 6 } ] }
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ [ "br2_flood_core", 50 ], [ "br2_flood_core_drowned", 30 ], [ "br2_flood_core_draining", 20 ] ], "x": 6, "y": 6 } ] }
   },
   {
     "type": "mapgen",

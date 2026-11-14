@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Level 2 structure variants. Boiler rooms can be **cold** (dead boilers, someone camped there; cooler, with their stores and a note) or a **pump room** (two boilers, banks of pumps and its own BLEED wheel). Valve junctions can be a **burst main** (six joints hissing and a body short of the wheel) or a **control closet** (the wheel in a side room). Flooded dips can hold a **drowned traveller** with their gear, or be **draining** (just a pool at the crossing).
 - Level 2 places. **Boiler rooms** (3 to 6 per map): a room of roaring boilers, the hottest spot on the level, with lockers of tools, batteries and fuel. **Valve junctions** (4 to 8 per map): turn the BLEED wheel (slow and loud) to shut every leaking steam joint within 20 tiles for 2 days. **Flooded dips** (2 to 4 per map): the tunnels stand in warm, knee-deep water, with sunken things to fish out.
 - Level 2 heat and water. The tunnels run hot all year (about 30 C, rarely below 20 C, spikes past 40 C) with close, wet air, so you sweat, get thirsty and can get heat stroke. Leaking steam joints make the air around them 10 to 20 C hotter still. Condensation drips into pools in the tunnels (never run dry, boil before drinking).
 - Level 2, Pipe Dreams (first step): a new dimension of hot, narrow maintenance tunnels, 3 tiles wide between pipe-choked walls, laid out as a maze of loops and dead ends that runs on across map squares, lit only by the odd caged bulb. **Way in:** about 1 Level 1 stairwell in 4 is still open; take the stairs down and they collapse behind you. **Way back:** rare service ladders (2 to 4 per map) climb to a floor hatch on Level 1. Followers within 20 tiles come along both ways. Heat, steam, places, people and spawns come in the next steps.
@@ -32,6 +33,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- Level 2 has far fewer leaking steam joints: about 1 tunnel square in 4 has one (it was about one per square), so the tunnels are hot but not scalding everywhere.
 - UltiCa fallback sprites for almond water and its bottle, and overmap sprites for Level 1 squares (garage), the Breakroom (shelter) and the Level 0 rippling-wall room (an ordinary Level 0 chamber).
 - You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
 
