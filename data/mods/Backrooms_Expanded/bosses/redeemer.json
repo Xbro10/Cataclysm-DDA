@@ -4,7 +4,7 @@
     "id": "mon_br_redeemer",
     "//": "Boss, not placed anywhere yet (debug spawn only). Placeholder stats: shock storm and an electric body for now; teleporting comes when it gets a level.",
     "name": { "str": "Redeemer" },
-    "description": "A beast the size of a car, shaped like a starved wolf, with a crown of black wire rods rising from its spine.  Current crawls between the rods with a sound like a transformer about to blow, and the air around it smells of ozone.  It is never quite where you last looked.",
+    "description": "A beast the size of a car, shaped like a starved wolf with three heads, and a weathered wooden power pole rising out of its spine.  Black cables run from the cross-arms down into its fur, and current crawls between the insulators with a sound like a transformer about to blow, and the air around it smells of ozone.  It is never quite where you last looked.",
     "default_faction": "nether",
     "looks_like": "mon_dog_zombie_brute",
     "bodytype": "dog",
