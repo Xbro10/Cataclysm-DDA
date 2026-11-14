@@ -1,0 +1,359 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br1_camp_roster",
+    "name": { "str": "camp roster" },
+    "description": "A sheet of cardboard torn from a box, with five names written down one side in different hands.  Dot asked you to bring it back so somebody remembers them.",
+    "weight": "20 g",
+    "volume": "50 ml",
+    "material": [ "paper" ],
+    "symbol": "?",
+    "color": "brown",
+    "looks_like": "survnote",
+    "flags": [ "MISSION_ITEM" ]
+  },
+  {
+    "type": "ITEM",
+    "id": "br1_supply_crate",
+    "name": { "str": "sealed supply crate" },
+    "description": "A heavy plastic crate, its lid strapped and taped shut, with BREAKROOM - DO NOT OPEN written across it in marker.  Marcus wants it back sealed.",
+    "weight": "15 kg",
+    "volume": "30 L",
+    "longest_side": "60 cm",
+    "material": [ "plastic" ],
+    "symbol": "[",
+    "color": "light_gray",
+    "looks_like": "box_medium",
+    "flags": [ "MISSION_ITEM" ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_den_scraps",
+    "subtype": "distribution",
+    "entries": [ { "item": "bone", "prob": 70 }, { "item": "rag", "prob": 30 } ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_hound_den",
+    "//": "Never placed by overmap generation: Dot's 'Hound den' job turns an unseen garage square into one.",
+    "name": "parking deck",
+    "sym": ".",
+    "looks_like": "s_garage",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_hound_den",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ],
+      "place_nested": [ { "chunks": [ "br1_hound_den_core" ], "x": 6, "y": 6 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_hound_den_core",
+    "//": "Where a Hound pack sleeps: dragged-in junk, flattened bedding, bones and old blood. The pack itself is placed by the job (MISSION_BR1_HOUND_DEN).",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "            ",
+        "  X..X..X   ",
+        " X.o..%..o. ",
+        " .b..b..%.X ",
+        " ..%.o..b.. ",
+        " X..b..%..X ",
+        " .o..%.b..o ",
+        " ..b.....%. ",
+        " X..o.b..X  ",
+        "  ..X..X.   ",
+        "            ",
+        "            "
+      ],
+      "terrain": { ".": "t_thconc_floor", "X": "t_thconc_floor", "o": "t_thconc_floor", "%": "t_thconc_floor", "b": "t_thconc_floor" },
+      "furniture": { "X": "f_wreckage", "b": "f_straw_bed" },
+      "fields": { "%": { "field": "fd_blood", "intensity": 2, "age": 50 } },
+      "items": { "o": { "item": "br1_den_scraps", "chance": 90, "repeat": [ 1, 3 ] } },
+      "place_item": [ { "item": "bone_human", "x": [ 4, 8 ], "y": [ 4, 7 ], "chance": 60 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_supply_cage",
+    "//": "Never placed by overmap generation: Marcus's 'Supply drop' job turns an unseen garage square into one.",
+    "name": "parking deck",
+    "sym": ".",
+    "looks_like": "s_garage",
+    "color": "dark_gray",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_supply_cage",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 6, 17 ], "y": [ 4, 13 ] } ],
+      "place_nested": [ { "chunks": [ "br1_supply_cage_core" ], "x": 8, "y": 6 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_supply_cage_core",
+    "//": "A padlocked chain-link lockup in the middle of a lane, with the Breakroom's sealed crate inside. Pick, pry or cut the gate.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ "ffffffff", "f.x..x.f", "f..C...f", "f.x....f", "fffgffff", "        ", "        ", "        " ],
+      "terrain": { "f": "t_chainfence", "g": "t_chaingate_l", ".": "t_thconc_floor", "x": "t_thconc_floor", "C": "t_thconc_floor" },
+      "furniture": { "x": "f_crate_c" },
+      "items": { "x": { "item": "br1_cage_loot", "chance": 60 } },
+      "place_item": [ { "item": "br1_supply_crate", "x": 3, "y": 2, "chance": 100 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mission_definition",
+    "id": "MISSION_BR1_FUEL_RUN",
+    "name": { "str": "Fuel run" },
+    "description": "Bring Dot five litres of gasoline for the Breakroom's generator.  Some parked cars still have a little in the tank.",
+    "goal": "MGOAL_FIND_ITEM",
+    "difficulty": 1,
+    "value": 0,
+    "item": "gasoline",
+    "count": 5000,
+    "origins": [ "ORIGIN_SECONDARY" ],
+    "has_generic_rewards": false,
+    "end": {
+      "effect": [
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 2 },
+        { "math": [ "faction_like('br_breakroom') += 5" ] },
+        { "math": [ "u_br1_fuel_next = time('now') + time('2 d')" ] }
+      ]
+    },
+    "dialogue": {
+      "describe": "The generator drinks faster than we can feed it.",
+      "offer": "Five litres of gas.  That's a night and a day of light for everyone in here.  The parked cars are mostly dry, but not all of them.  Bring a hose and a can, and don't stand around siphoning in the dark.",
+      "accepted": "Good.  Don't drink any of it.",
+      "rejected": "Then we'll sit in the dark a bit sooner.  Your call.",
+      "advice": "Check the cars nobody's touched yet.  One in three or four still has a little left.  The generator rooms sometimes have a can someone forgot.",
+      "inquire": "Got that gas?",
+      "success": "That'll keep the lights on.  Here, you earned this.",
+      "success_lie": "That's not gas.  Don't play games with me.",
+      "failure": "Shame.  We'll manage."
+    }
+  },
+  {
+    "type": "mission_definition",
+    "id": "MISSION_BR1_PEST_CONTROL",
+    "name": { "str": "Thin the Hounds" },
+    "description": "Kill three Hounds anywhere on Level 1, then report back to Dot.",
+    "goal": "MGOAL_KILL_MONSTER_TYPE",
+    "monster_type": "mon_br_hound",
+    "monster_kill_goal": 3,
+    "difficulty": 2,
+    "value": 0,
+    "origins": [ "ORIGIN_SECONDARY" ],
+    "has_generic_rewards": false,
+    "end": {
+      "effect": [
+        { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 2 },
+        { "u_spawn_item": "batteries", "use_item_group": true },
+        { "math": [ "faction_like('br_breakroom') += 5" ] },
+        { "math": [ "u_br1_pest_next = time('now') + time('3 d')" ] }
+      ]
+    },
+    "dialogue": {
+      "describe": "The Hounds have been circling closer.",
+      "offer": "The packs have been sniffing round the Breakroom doors at night.  Kill three of them.  Anywhere, I don't care where, as long as there are fewer of them.",
+      "accepted": "They scatter when one drops.  Use that.",
+      "rejected": "Then keep your door shut at night.",
+      "advice": "They hunt by sound and they don't like a real fight.  Stand your ground, drop the first one fast, and the rest lose their nerve.",
+      "inquire": "How's the hunting?",
+      "success": "Quieter out there already.  Take these.",
+      "success_lie": "I've seen what a Hound does to a person.  You haven't been near one.",
+      "failure": "Fair enough.  They're nasty things."
+    }
+  },
+  {
+    "type": "mission_definition",
+    "id": "MISSION_BR1_HOUND_DEN",
+    "name": { "str": "The Hound den" },
+    "description": "A Hound pack has denned up nearby.  Dot marked it on your map.  Kill every Hound in the den.",
+    "goal": "MGOAL_KILL_MONSTERS",
+    "difficulty": 4,
+    "value": 0,
+    "origins": [ "ORIGIN_SECONDARY" ],
+    "has_generic_rewards": false,
+    "start": {
+      "assign_mission_target": {
+        "om_terrain": "br1_hound_den",
+        "om_terrain_replace": "br1_garage",
+        "random": true,
+        "search_range": 15,
+        "min_distance": 4,
+        "cant_see": true,
+        "reveal_radius": 1,
+        "z": 0
+      },
+      "update_mapgen": {
+        "place_monster": [
+          { "monster": "mon_br_hound", "x": 9, "y": 10, "target": true },
+          { "monster": "mon_br_hound", "x": 13, "y": 10, "target": true },
+          { "monster": "mon_br_hound", "x": 10, "y": 13, "target": true },
+          { "monster": "mon_br_hound", "x": 14, "y": 13, "target": true }
+        ]
+      }
+    },
+    "end": {
+      "effect": [
+        { "u_spawn_item": "tools_lighting", "use_item_group": true },
+        { "u_spawn_item": "batteries", "use_item_group": true, "count": 2 },
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "math": [ "faction_like('br_breakroom') += 10" ] },
+        { "math": [ "faction_trust('br_breakroom') += 5" ] },
+        { "math": [ "u_br1_den_done = 1" ] }
+      ]
+    },
+    "dialogue": {
+      "describe": "There's a den.  Somebody has to deal with it.",
+      "offer": "One of the packs has gone to ground close by.  Bedding, bones, the lot.  Four of them, maybe more.  As long as that den's there, nobody walks that way.  I'll mark it for you.  Go in with light and go in ready.",
+      "accepted": "Don't go in alone if you can help it.",
+      "rejected": "Can't blame you.  It's a bad job.",
+      "advice": "Four of them in a den won't scatter like a lone pack.  Fight from a corner or a doorway so they come at you one or two at a time.",
+      "inquire": "The den?",
+      "success": "Every one of them?  Good.  Better than good.  Here.  And people will hear about this.",
+      "success_lie": "There's still howling from that way.  Try again.",
+      "failure": "Then we keep clear of that side.  Come back alive, that's the main thing."
+    }
+  },
+  {
+    "type": "mission_definition",
+    "id": "MISSION_BR1_OVERRUN_ROSTER",
+    "name": { "str": "Who they were" },
+    "description": "Find the overrun camp Dot marked on your map and bring back their roster, so somebody remembers their names.",
+    "goal": "MGOAL_FIND_ITEM",
+    "item": "br1_camp_roster",
+    "count": 1,
+    "difficulty": 2,
+    "value": 0,
+    "origins": [ "ORIGIN_SECONDARY" ],
+    "has_generic_rewards": false,
+    "start": {
+      "assign_mission_target": {
+        "om_terrain": "br1_overrun_camp",
+        "om_terrain_replace": "br1_garage",
+        "random": true,
+        "search_range": 30,
+        "reveal_radius": 1,
+        "z": 0
+      },
+      "update_mapgen": { "place_item": [ { "item": "br1_camp_roster", "x": 10, "y": 11, "chance": 100 } ] }
+    },
+    "end": {
+      "effect": [
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "count": 2 },
+        { "math": [ "faction_trust('br_breakroom') += 10" ] },
+        { "math": [ "u_br1_roster_done = 1" ] }
+      ]
+    },
+    "dialogue": {
+      "describe": "A camp went quiet.  I want to know who they were.",
+      "offer": "There was a sandbag camp out that way.  Five of them.  We traded with them now and then.  It's been quiet too long.  They kept a roster, cardboard, names down the side.  Bring it back.  Somebody should remember them, and nobody else is going to.",
+      "accepted": "Thank you.  Watch yourself.  Whatever got them might still be there.",
+      "rejected": "All right.  Maybe someone else will.",
+      "advice": "It'll be near the brazier, or on one of them.  Go in the day.  Well.  You know what I mean.",
+      "inquire": "Did you find them?",
+      "success": "Five names.  I'll write them on the wall with the others.  Thank you.  Here, take these.",
+      "success_lie": "That's not theirs.  Don't do that.",
+      "failure": "I understand.  Some places you don't go back to."
+    }
+  },
+  {
+    "type": "mission_definition",
+    "id": "MISSION_BR1_SUPPLY_DROP",
+    "name": { "str": "Supply drop" },
+    "description": "Marcus heard of a padlocked storage cage with a sealed Breakroom crate inside.  He marked it on your map.  Bring the crate back unopened.",
+    "goal": "MGOAL_FIND_ITEM",
+    "item": "br1_supply_crate",
+    "count": 1,
+    "difficulty": 3,
+    "value": 0,
+    "origins": [ "ORIGIN_SECONDARY" ],
+    "has_generic_rewards": false,
+    "start": {
+      "assign_mission_target": {
+        "om_terrain": "br1_supply_cage",
+        "om_terrain_replace": "br1_garage",
+        "random": true,
+        "search_range": 15,
+        "min_distance": 4,
+        "cant_see": true,
+        "reveal_radius": 1,
+        "z": 0
+      }
+    },
+    "end": {
+      "effect": [
+        { "u_spawn_item": "batteries", "use_item_group": true, "count": 2 },
+        { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 3 },
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "math": [ "faction_like('br_breakroom') += 5" ] },
+        { "math": [ "u_br1_supply_done = 1" ] }
+      ]
+    },
+    "dialogue": {
+      "describe": "One of our caches.  Somebody has to fetch it.",
+      "offer": "Before my time, the Breakroom stashed crates around the deck in lockups, in case the doors ever had to close.  I found one in the old notes, and I think I've placed it.  Padlocked cage, middle of a lane.  Bring the crate back sealed and you get a share of what's in it.",
+      "accepted": "Bring something to cut a padlock.  Or a lot of patience.",
+      "rejected": "It's been sitting there for years.  It'll keep.",
+      "advice": "Pick the lock, pry the gate, or cut the chain-link.  The crate's heavy, so leave room in your pack, or drag it.",
+      "inquire": "Any luck with the crate?",
+      "success": "Still sealed.  Good.  Batteries, tins.  Here's your share.",
+      "success_lie": "That isn't our crate.",
+      "failure": "Pity.  Maybe it's been emptied anyway."
+    }
+  },
+  {
+    "type": "mission_definition",
+    "id": "MISSION_BR1_RIDE_LIFTS",
+    "name": { "str": "Ride the lifts" },
+    "description": "Ride the lobby elevators three times, arriving in a lobby each time, then tell Marcus what you saw.",
+    "goal": "MGOAL_CONDITION",
+    "goal_condition": { "math": [ "u_br1_lobby_arrivals >= u_br1_lifts_mark + 3" ] },
+    "difficulty": 2,
+    "value": 0,
+    "origins": [ "ORIGIN_SECONDARY" ],
+    "has_generic_rewards": false,
+    "start": { "effect": [ { "math": [ "u_br1_lifts_mark = u_br1_lobby_arrivals" ] } ] },
+    "end": {
+      "effect": [
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        {
+          "u_location_variable": { "context_val": "br1_lobby_hint" },
+          "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 40, "reveal_radius": 1, "z": 0 }
+        },
+        {
+          "u_location_variable": { "context_val": "br1_lobby_hint" },
+          "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 40, "reveal_radius": 1, "z": 0 }
+        },
+        { "math": [ "faction_like('br_breakroom') += 3" ] },
+        { "math": [ "u_br1_lifts_next = time('now') + time('3 d')" ] }
+      ]
+    },
+    "dialogue": {
+      "describe": "I need eyes in the lobbies.",
+      "offer": "The lifts.  I can't ride them, they make me sick, and I can't map what I can't see.  Ride them for me.  Three times, lobby to lobby, and tell me where you came out.  I'll pay in water and in map.",
+      "accepted": "Count the doors.  Count the benches.  Tell me if anything's different.",
+      "rejected": "Can't say I blame you.  I won't ride them either.",
+      "advice": "Only rides that end in a lobby count.  If the doors open somewhere dark, walk, and try again from the next lobby you find.",
+      "inquire": "Been riding?",
+      "success": "That one, and that one, and there.  Good.  Here's water, and here's two more lobbies I've had word of.",
+      "success_lie": "You've not been near a lift.",
+      "failure": "Fair enough.  They're not for everyone."
+    }
+  }
+]

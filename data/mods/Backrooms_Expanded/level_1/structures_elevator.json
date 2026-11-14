@@ -475,6 +475,7 @@
         "y_adjust": 6
       },
       { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
+      { "math": [ "u_br1_lobby_arrivals++" ] },
       { "turn_cost": "1 m" },
       {
         "u_message": "Ding.\n\nThe doors close.  No music, no floor numbers, just a long, smooth glide that could be up, down or sideways.  The doors open on a lobby.",
@@ -521,6 +522,7 @@
         "y_adjust": 6
       },
       { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
+      { "math": [ "u_br1_lobby_arrivals++" ] },
       { "math": [ "u_val('thirst') += 40" ] },
       { "math": [ "u_val('sleepiness') += 60" ] },
       { "u_add_morale": "morale_br1_elevator_stuck", "bonus": -15, "max_bonus": -15, "duration": "6 h", "decay_start": "2 h" },
@@ -544,6 +546,7 @@
         "y_adjust": 6
       },
       { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
+      { "math": [ "u_br1_lobby_arrivals++" ] },
       {
         "if": { "math": [ "rand(1) == 0" ] },
         "then": [
@@ -612,6 +615,7 @@
         "y_adjust": 6
       },
       { "run_eocs": "EOC_BR1_ELEVATOR_MOVE" },
+      { "math": [ "u_br1_lobby_arrivals++" ] },
       {
         "u_message": "Dark lobby.\n\nThe doors open on a lobby with every light dead.  It smells of copper.  Someone tried to camp here.  Something is still here.",
         "type": "bad",

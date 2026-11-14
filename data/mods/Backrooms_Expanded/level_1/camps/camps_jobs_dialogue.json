@@ -1,0 +1,127 @@
+[
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_WORK",
+    "//": "Dot's jobs (missions in level_1/jobs.json). Fuel run and Thin the Hounds repeat after a short wait; the den and the roster are one-off.",
+    "dynamic_line": "Always.  There's never enough hands down here.  What are you good for?",
+    "responses": [
+      {
+        "text": "[Fuel run] You need fuel?",
+        "condition": {
+          "and": [ { "not": { "u_has_mission": "MISSION_BR1_FUEL_RUN" } }, { "math": [ "time('now') >= u_br1_fuel_next" ] } ]
+        },
+        "topic": "TALK_BR1_JOB_FUEL"
+      },
+      {
+        "text": "[Thin the Hounds] Want something dead?",
+        "condition": {
+          "and": [
+            { "not": { "u_has_mission": "MISSION_BR1_PEST_CONTROL" } },
+            { "math": [ "time('now') >= u_br1_pest_next" ] }
+          ]
+        },
+        "topic": "TALK_BR1_JOB_PEST"
+      },
+      {
+        "text": "[The Hound den] Is there anything bigger?",
+        "condition": { "and": [ { "not": { "u_has_mission": "MISSION_BR1_HOUND_DEN" } }, { "math": [ "u_br1_den_done != 1" ] } ] },
+        "topic": "TALK_BR1_JOB_DEN"
+      },
+      {
+        "text": "[Who they were] You look like something's on your mind.",
+        "condition": {
+          "and": [ { "not": { "u_has_mission": "MISSION_BR1_OVERRUN_ROSTER" } }, { "math": [ "u_br1_roster_done != 1" ] } ]
+        },
+        "topic": "TALK_BR1_JOB_ROSTER"
+      },
+      { "text": "Something else.", "topic": "TALK_BR1_FOREMAN" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_FUEL",
+    "dynamic_line": "Five litres of gas.  That's a night and a day of light for everyone in here.  The parked cars are mostly dry, but not all of them.  Bring a hose and a can, and don't stand around siphoning in the dark.",
+    "responses": [
+      { "text": "I'll find you some.", "effect": { "assign_mission": "MISSION_BR1_FUEL_RUN" }, "topic": "TALK_BR1_JOB_TAKEN_DOT" },
+      { "text": "Not right now.", "topic": "TALK_BR1_FOREMAN_WORK" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_PEST",
+    "dynamic_line": "The packs have been sniffing round the doors at night.  Kill three Hounds.  Anywhere, I don't care where, as long as there are fewer of them.",
+    "responses": [
+      { "text": "Consider it done.", "effect": { "assign_mission": "MISSION_BR1_PEST_CONTROL" }, "topic": "TALK_BR1_JOB_TAKEN_DOT" },
+      { "text": "Not right now.", "topic": "TALK_BR1_FOREMAN_WORK" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_DEN",
+    "dynamic_line": "One of the packs has gone to ground close by.  Bedding, bones, the lot.  Four of them, maybe more.  As long as that den's there, nobody walks that way.  I'll mark it for you.  Go in with light and go in ready.",
+    "responses": [
+      { "text": "Mark it.  I'll clear it.", "effect": { "assign_mission": "MISSION_BR1_HOUND_DEN" }, "topic": "TALK_BR1_JOB_TAKEN_DOT" },
+      { "text": "Not right now.", "topic": "TALK_BR1_FOREMAN_WORK" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_ROSTER",
+    "dynamic_line": "There was a sandbag camp out that way.  Five of them.  We traded with them now and then.  It's been quiet too long.  They kept a roster, cardboard, names down the side.  Bring it back.  Somebody should remember them, and nobody else is going to.",
+    "responses": [
+      { "text": "I'll bring it back.", "effect": { "assign_mission": "MISSION_BR1_OVERRUN_ROSTER" }, "topic": "TALK_BR1_JOB_TAKEN_DOT" },
+      { "text": "Not right now.", "topic": "TALK_BR1_FOREMAN_WORK" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_TAKEN_DOT",
+    "dynamic_line": "Good.  Come back in one piece; that's the real job.",
+    "responses": [ { "text": "Something else.", "topic": "TALK_BR1_FOREMAN" }, { "text": "I'll be going.", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_CARTOGRAPHER_WORK",
+    "//": "Marcus's jobs. The supply drop is one-off; Ride the lifts repeats after a short wait.",
+    "dynamic_line": "Work.  Yes.  There's always more map than there is me.",
+    "responses": [
+      {
+        "text": "[Supply drop] You mentioned old caches?",
+        "condition": { "and": [ { "not": { "u_has_mission": "MISSION_BR1_SUPPLY_DROP" } }, { "math": [ "u_br1_supply_done != 1" ] } ] },
+        "topic": "TALK_BR1_JOB_SUPPLY"
+      },
+      {
+        "text": "[Ride the lifts] Need eyes anywhere?",
+        "condition": {
+          "and": [ { "not": { "u_has_mission": "MISSION_BR1_RIDE_LIFTS" } }, { "math": [ "time('now') >= u_br1_lifts_next" ] } ]
+        },
+        "topic": "TALK_BR1_JOB_LIFTS"
+      },
+      { "text": "Something else.", "topic": "TALK_BR1_CARTOGRAPHER" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_SUPPLY",
+    "dynamic_line": "Before my time, the Breakroom stashed crates around the deck in lockups, in case the doors ever had to close.  I found one in the old notes, and I think I've placed it.  Padlocked cage, middle of a lane.  Bring the crate back sealed and you get a share of what's in it.",
+    "responses": [
+      { "text": "Show me where.", "effect": { "assign_mission": "MISSION_BR1_SUPPLY_DROP" }, "topic": "TALK_BR1_JOB_TAKEN_MARCUS" },
+      { "text": "Not right now.", "topic": "TALK_BR1_CARTOGRAPHER_WORK" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_LIFTS",
+    "dynamic_line": "The lifts.  I can't ride them, they make me sick, and I can't map what I can't see.  Ride them for me.  Three times, lobby to lobby, and tell me where you came out.  I'll pay in water and in map.",
+    "responses": [
+      { "text": "I'll ride them.", "effect": { "assign_mission": "MISSION_BR1_RIDE_LIFTS" }, "topic": "TALK_BR1_JOB_TAKEN_MARCUS" },
+      { "text": "Not right now.", "topic": "TALK_BR1_CARTOGRAPHER_WORK" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_TAKEN_MARCUS",
+    "dynamic_line": "Good.  Bring me back details.  Numbers, if you can.",
+    "responses": [ { "text": "Something else.", "topic": "TALK_BR1_CARTOGRAPHER" }, { "text": "I'll be going.", "topic": "TALK_DONE" } ]
+  }
+]

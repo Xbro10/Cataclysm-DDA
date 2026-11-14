@@ -1,0 +1,214 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br1_stairs_down",
+    "copy-from": "t_thconc_floor",
+    "name": "stairwell going down",
+    "description": "Concrete stairs going down, where every other stairwell on this level is filled in.  The welds on the door were cut a long time ago.  Warm, wet air breathes up out of the dark, and somewhere below, pipes are knocking.",
+    "symbol": ">",
+    "color": "light_gray",
+    "looks_like": "t_stairs_down",
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR1_STAIRS_DOWN" ] }
+  },
+  {
+    "type": "furniture",
+    "id": "f_br2_choked_stairs",
+    "name": "choked stairwell",
+    "description": "The foot of a concrete stairwell, packed to the ceiling with broken concrete and twisted rebar.  Whatever came down after you, it wasn't meant to let you back up.",
+    "symbol": "^",
+    "color": "light_gray",
+    "looks_like": "f_rubble",
+    "move_cost_mod": -1,
+    "required_str": -1,
+    "coverage": 100,
+    "flags": [ "NOITEM", "BLOCKSDOOR" ],
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR2_CHOKED_STAIRS" ] }
+  },
+  {
+    "type": "furniture",
+    "id": "f_br2_service_ladder",
+    "name": "service ladder",
+    "description": "Steel rungs bolted to the wall, climbing into a hatch in the ceiling.  A faded stencil beside it reads P1.  Cooler air spills down from above, and it smells of oil and concrete.",
+    "symbol": "H",
+    "color": "light_gray",
+    "looks_like": "f_ladder",
+    "move_cost_mod": -1,
+    "required_str": -1,
+    "coverage": 30,
+    "flags": [ "NOITEM", "BLOCKSDOOR" ],
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR2_LADDER_UP" ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_stairwell_open",
+    "//": "The one stairwell in four whose shaft is still open: the way down to Level 2.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "########", "#S.....#", "#......#", "#..vv..#", "#..vv..#", "#...L..#", "#......#", "####D###" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "v": "t_br1_stairs_down" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "update_mapgen_id": "br2_landing_stamp",
+    "//": "Builds the foot of a choked stairwell in the north-west block of the Level 2 square the traveller landed in, opening onto the centre cross.",
+    "object": { "place_nested": [ { "chunks": [ "br2_landing_core" ], "x": 8, "y": 8 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_landing_core",
+    "//": "Stairs at (1-2,0), landing at (1,2) and (2,1-2). Spaces leave the tunnels as they are.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ " RR     ", " ..     ", " .L     ", "        ", "        ", "        ", "        ", "        " ],
+      "terrain": { "R": "t_metal_floor", ".": "t_metal_floor", "L": "t_br2_light" },
+      "furniture": { "R": "f_br2_choked_stairs" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br2_service_ladder",
+    "name": "maintenance tunnels",
+    "sym": "#",
+    "looks_like": "br2_tunnels",
+    "color": "brown",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br2_service_ladder",
+    "//": "The way back up: a ladder to Level 1. Rare, and it looks like any other tunnel square until you find it.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_service_ladder" } ],
+    "locations": [ "br2_tunnels" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 2, 4 ],
+    "flags": [ "BACKROOMS_L2", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_service_ladder",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_ladder_core" ], "x": 8, "y": 8 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_ladder_core",
+    "//": "A ladder in a nook off the centre cross, under a caged bulb.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ " ..     ", " H.     ", " .L     ", "        ", "        ", "        ", "        ", "        " ],
+      "terrain": { "H": "t_metal_floor", ".": "t_metal_floor", "L": "t_br2_light" },
+      "furniture": { "H": "f_br2_service_ladder" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_STAIRS_DOWN",
+    "condition": {
+      "u_query": "The stairs go down into warm, wet dark, and the pipes below knock like something asking to be let in.  There may be no coming back the same way.  Go down?",
+      "default": false
+    },
+    "effect": [ { "run_eocs": "EOC_BR_GO_L2" } ],
+    "false_effect": [ { "u_message": "You step back from the top step.", "type": "info" } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_GO_L2",
+    "//": "Level 1 -> Level 2. You land under where you were, at the foot of the nearest choked stairwell (one forms if none is within 30 tiles). Followers within 20 tiles come along. The stairs collapse behind you: the way back is a service ladder.",
+    "effect": [
+      {
+        "u_travel_to_dimension": "backrooms_level_2",
+        "npc_travel_radius": 20,
+        "npc_travel_filter": "follower",
+        "fail_message": "The stairs just go down to a concrete floor.  Nothing.",
+        "success_message": "The stairs go on far longer than they should.  The air gets hotter with every flight."
+      },
+      { "u_location_variable": { "global_val": "br_ground_point" }, "z_adjust": 0, "z_override": true },
+      { "u_teleport": { "global_val": "br_ground_point" }, "force_safe": true },
+      {
+        "u_location_variable": { "global_val": "br2_arrival_point" },
+        "furniture": "f_br2_choked_stairs",
+        "target_max_radius": 30,
+        "y_adjust": 2,
+        "false_eocs": [ "EOC_BR2_BUILD_LANDING" ]
+      },
+      { "u_teleport": { "global_val": "br2_arrival_point" }, "force_safe": true },
+      { "u_run_npc_eocs": [ "EOC_BR2_FOLLOWER_TO_ARRIVAL" ], "local": true },
+      {
+        "u_message": "Behind you, with a long grinding roar, the stairwell fills with falling concrete.  The dust settles.  You're in a tunnel of pipes, and it's hot.",
+        "type": "bad",
+        "popup": true
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR2_BUILD_LANDING",
+    "effect": [
+      { "u_location_variable": { "global_val": "br_stamp_point" } },
+      { "mapgen_update": "br2_landing_stamp", "target_var": { "global_val": "br_stamp_point" } },
+      {
+        "u_location_variable": { "global_val": "br2_arrival_point" },
+        "furniture": "f_br2_choked_stairs",
+        "target_max_radius": 30,
+        "y_adjust": 2
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR2_FOLLOWER_TO_ARRIVAL",
+    "condition": "u_following",
+    "effect": [ { "u_teleport": { "global_val": "br2_arrival_point" }, "force_safe": true } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR2_CHOKED_STAIRS",
+    "effect": [
+      {
+        "u_message": "You pull at a slab of concrete.  Three more slide down to take its place.  There's no digging through this.",
+        "type": "bad"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR2_LADDER_UP",
+    "condition": { "u_query": "The rungs climb into a hatch and cooler air.  Climb up?", "default": true },
+    "effect": [ { "run_eocs": "EOC_BR_GO_L1_FROM_L2" } ],
+    "false_effect": [ { "u_message": "You leave the ladder for now.", "type": "info" } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_GO_L1_FROM_L2",
+    "//": "Level 2 -> Level 1. You come out of a floor hatch under where you were. Followers within 20 tiles come along.",
+    "effect": [
+      {
+        "u_travel_to_dimension": "backrooms_level_1",
+        "npc_travel_radius": 20,
+        "npc_travel_filter": "follower",
+        "fail_message": "The hatch won't budge.",
+        "success_message": "You climb for a long time.  The hatch opens on cold concrete and the hum of a parking garage."
+      },
+      { "u_location_variable": { "global_val": "br_ground_point" }, "z_adjust": 0, "z_override": true },
+      { "u_teleport": { "global_val": "br_ground_point" }, "force_safe": true },
+      { "u_run_npc_eocs": [ "EOC_BR2_FOLLOWER_TO_GROUND" ], "local": true },
+      {
+        "u_message": "When you look down, the hatch is gone.  Just a square of newer concrete in the floor.",
+        "type": "neutral"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR2_FOLLOWER_TO_GROUND",
+    "condition": "u_following",
+    "effect": [ { "u_teleport": { "global_val": "br_ground_point" }, "force_safe": true } ]
+  }
+]
