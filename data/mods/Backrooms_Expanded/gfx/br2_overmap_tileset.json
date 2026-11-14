@@ -1,0 +1,24 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Level 2 overmap sprites, drawn for this mod (CC-BY-SA 3.0) by tools/backrooms_expanded/draw_br2_overmap.ps1. Only used with UltiCa; other tilesets fall back to each terrain's looks_like. Sprite numbers count from 0 within br2_overmap.png (seven 32x32 tiles in a row).",
+    "compatibility": [ "UltimateCataclysm" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br2_overmap.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          { "id": "br2_tunnels", "fg": [ { "weight": 1, "sprite": 0 }, { "weight": 1, "sprite": 1 } ], "rotates": false },
+          { "id": "br2_service_ladder", "fg": 2, "rotates": false },
+          { "id": "br2_boiler_room", "fg": 3, "rotates": false },
+          { "id": "br2_valve_junction", "fg": 4, "rotates": false },
+          { "id": "br2_flooded", "fg": 5, "rotates": false },
+          { "id": "br2_workers_camp", "fg": 6, "rotates": false }
+        ]
+      }
+    ]
+  }
+]

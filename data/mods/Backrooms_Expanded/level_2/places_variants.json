@@ -1,0 +1,209 @@
+[
+  {
+    "type": "furniture",
+    "id": "f_br2_boiler_cold",
+    "name": "dead boiler",
+    "description": "A riveted iron boiler gone cold, its firebox door hanging open and full of ash.  The gauges have all dropped to zero.  The metal is only warm, and someone has hung wet socks on it to dry.",
+    "symbol": "0",
+    "color": "dark_gray",
+    "looks_like": "f_machinery_heavy",
+    "move_cost_mod": -1,
+    "required_str": -1,
+    "coverage": 100,
+    "flags": [ "NOITEM", "BLOCKSDOOR" ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_boiler_core_cold",
+    "//": "Variant: the boilers died, and someone lived here for a while. Cool enough to rest in, and they left some of their things.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "########### ",
+        "#BB.l...BB# ",
+        "#BB..b..BB# ",
+        "#....L....# ",
+        "#.M.....M.. ",
+        "#.M..t..M.. ",
+        "#.M..b..M.. ",
+        "#.........# ",
+        "#BB.....BB# ",
+        "#BB.l...BB# ",
+        "####...#### ",
+        "            "
+      ],
+      "terrain": {
+        "#": "t_br2_pipe_wall",
+        ".": "t_metal_floor",
+        "B": "t_metal_floor",
+        "M": "t_metal_floor",
+        "l": "t_metal_floor",
+        "t": "t_metal_floor",
+        "b": "t_metal_floor",
+        "L": "t_br2_light"
+      },
+      "furniture": { "B": "f_br2_boiler_cold", "M": "f_machinery_old", "l": "f_locker", "t": "f_workbench", "b": "f_makeshift_bed" },
+      "items": {
+        "l": { "item": "br2_boiler_loot", "chance": 40 },
+        "t": { "item": "br1_camp_stores", "chance": 60 }
+      },
+      "place_item": [ { "item": "br1_note_lost", "x": 5, "y": 2, "chance": 30 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_boiler_core_pump",
+    "//": "Variant: a pump room with two running boilers, a bank of pumps and its own BLEED wheel.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "########### ",
+        "#BB.....PP# ",
+        "#BB..L..PP# ",
+        "#.........# ",
+        "#.l.....*.. ",
+        "#.l..t..... ",
+        "#.l........ ",
+        "#....L....# ",
+        "#PP.....PP# ",
+        "#PP.....PP# ",
+        "####...#### ",
+        "            "
+      ],
+      "terrain": {
+        "#": "t_br2_pipe_wall",
+        ".": "t_metal_floor",
+        "B": "t_metal_floor",
+        "P": "t_metal_floor",
+        "l": "t_metal_floor",
+        "t": "t_metal_floor",
+        "*": "t_metal_floor",
+        "L": "t_br2_light"
+      },
+      "furniture": { "B": "f_br2_boiler", "P": "f_machinery_heavy", "l": "f_locker", "t": "f_workbench", "*": "f_br2_valve" },
+      "items": {
+        "l": { "item": "br2_boiler_loot", "chance": 60 },
+        "t": { "item": "br2_boiler_loot", "chance": 40 }
+      },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_valve_core_a",
+    "//": "Valve junction, plain: the wheel at the crossing, four leaking joints around it.",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "place_furniture": [
+        { "furn": "f_br2_valve", "x": 13, "y": 10 },
+        { "furn": "f_br2_steam_vent", "x": 11, "y": 4 },
+        { "furn": "f_br2_steam_vent", "x": 13, "y": 18 },
+        { "furn": "f_br2_steam_vent", "x": 4, "y": 13 },
+        { "furn": "f_br2_steam_vent", "x": 19, "y": 11 }
+      ],
+      "place_terrain": [ { "ter": "t_br2_light", "x": 12, "y": 12 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_valve_core_b",
+    "//": "Valve junction, burst main: six joints hissing at once, and a body that did not reach the wheel in time.",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "place_furniture": [
+        { "furn": "f_br2_valve", "x": 10, "y": 13 },
+        { "furn": "f_br2_steam_vent", "x": 11, "y": 2 },
+        { "furn": "f_br2_steam_vent", "x": 13, "y": 7 },
+        { "furn": "f_br2_steam_vent", "x": 11, "y": 17 },
+        { "furn": "f_br2_steam_vent", "x": 2, "y": 11 },
+        { "furn": "f_br2_steam_vent", "x": 17, "y": 13 },
+        { "furn": "f_br2_steam_vent", "x": 21, "y": 11 }
+      ],
+      "place_terrain": [ { "ter": "t_br2_light", "x": 12, "y": 11 }, { "ter": "t_br2_light", "x": 12, "y": 13 } ],
+      "place_item": [ { "item": "corpse_bloody", "x": 9, "y": 12, "chance": 100 }, { "item": "br1_note_lost", "x": 9, "y": 12, "chance": 50 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_valve_core_c",
+    "//": "Valve junction, control closet: the wheel is in a small side room off the crossing, under its own light.",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "place_nested": [ { "chunks": [ "br2_valve_closet" ], "x": 14, "y": 8 } ],
+      "place_furniture": [
+        { "furn": "f_br2_steam_vent", "x": 12, "y": 3 },
+        { "furn": "f_br2_steam_vent", "x": 3, "y": 12 },
+        { "furn": "f_br2_steam_vent", "x": 12, "y": 21 }
+      ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_valve_closet",
+    "//": "A 3-tile closet opening west onto the centre cross. Its last row is left alone so the cross stays open.",
+    "object": {
+      "mapgensize": [ 4, 4 ],
+      "rows": [ "####", ".*.#", "..L#", "    " ],
+      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "*": "t_metal_floor", "L": "t_br2_light" },
+      "furniture": { "*": "f_br2_valve" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_flood_core_drowned",
+    "//": "Variant: the flood took someone. Same water, a body at the deepest point, and what they were carrying.",
+    "object": {
+      "mapgensize": [ 13, 13 ],
+      "rows": [
+        "     ~~~     ",
+        "     ~~~     ",
+        "     ~x~     ",
+        "     ~~~     ",
+        "     ~~~     ",
+        "~~~~~~~~~~~~~",
+        "~~x~~~C~~~x~~",
+        "~~~~~~~~~~~~~",
+        "     ~~~     ",
+        "     ~~~     ",
+        "     ~x~     ",
+        "     ~~~     ",
+        "     ~~~     "
+      ],
+      "terrain": { "~": "t_br2_flood", "x": "t_br2_flood", "C": "t_br2_flood" },
+      "items": {
+        "x": { "item": "br2_flood_loot", "chance": 60 },
+        "C": [ { "item": "corpse_bloody", "chance": 100 }, { "item": "br1_camp_lockers", "chance": 80 } ]
+      },
+      "place_item": [ { "item": "br1_note_last", "x": 6, "y": 6, "chance": 60 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_flood_core_draining",
+    "//": "Variant: most of the water has gone down a drain somewhere. Just a pool at the crossing.",
+    "object": {
+      "mapgensize": [ 13, 13 ],
+      "rows": [
+        "             ",
+        "             ",
+        "             ",
+        "             ",
+        "     ~~~     ",
+        "    ~~~~~    ",
+        "    ~~x~~    ",
+        "    ~~~~~    ",
+        "     ~~~     ",
+        "             ",
+        "             ",
+        "             ",
+        "             "
+      ],
+      "terrain": { "~": "t_br2_flood", "x": "t_br2_flood" },
+      "items": { "x": { "item": "br2_flood_loot", "chance": 80, "repeat": [ 1, 2 ] } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]

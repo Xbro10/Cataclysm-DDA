@@ -30,6 +30,7 @@
     "looks_like": "sewer",
     "color": "brown",
     "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BR2_TUNNELS", "population": [ 1, 4 ], "chance": 30 },
     "flags": [ "NO_ROTATE" ]
   },
   {
@@ -78,9 +79,12 @@
         { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 0 },
         { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 8 },
         { "chunks": [ [ "null", 45 ], [ "br2_seg_v", 55 ] ], "x": 19, "y": 16 },
-        { "chunks": [ [ "null", 55 ], [ "br2_feature_vent", 45 ] ], "x": [ 11, 13 ], "y": [ 0, 23 ], "repeat": [ 1, 2 ] },
-        { "chunks": [ [ "null", 55 ], [ "br2_feature_vent", 45 ] ], "x": [ 0, 23 ], "y": [ 11, 13 ] },
+        { "chunks": [ [ "null", 85 ], [ "br2_feature_vent", 15 ] ], "x": [ 11, 13 ], "y": [ 0, 23 ] },
+        { "chunks": [ [ "null", 85 ], [ "br2_feature_vent", 15 ] ], "x": [ 0, 23 ], "y": [ 11, 13 ] },
         { "chunks": [ [ "null", 75 ], [ "br2_feature_drip", 25 ] ], "x": [ 0, 23 ], "y": [ 11, 13 ] },
+        { "chunks": [ [ "null", 65 ], [ "br2_feature_junk", 35 ] ], "x": [ 0, 23 ], "y": [ 11, 13 ] },
+        { "chunks": [ [ "null", 70 ], [ "br2_feature_graffiti", 30 ] ], "x": [ 0, 23 ], "y": [ 11, 13 ] },
+        { "chunks": [ [ "null", 65 ], [ "br2_feature_junk", 35 ] ], "x": [ 11, 13 ], "y": [ 0, 23 ] },
         { "chunks": [ [ "null", 60 ], [ "br2_feature_light", 40 ] ], "x": 12, "y": 12 },
         { "chunks": [ [ "null", 85 ], [ "br2_feature_light", 15 ] ], "x": 4, "y": 12 },
         { "chunks": [ [ "null", 85 ], [ "br2_feature_light", 15 ] ], "x": 20, "y": 12 },
@@ -114,7 +118,7 @@
   {
     "type": "mapgen",
     "nested_mapgen_id": "br2_feature_light",
-    "object": { "mapgensize": [ 1, 1 ], "place_terrain": [ { "ter": "t_br2_light", "x": 0, "y": 0 } ], "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ] }
+    "object": { "mapgensize": [ 1, 1 ], "place_terrain": [ { "ter": "t_br2_light", "x": 0, "y": 0 } ], "place_monster": [ { "monster": "mon_br_deathmoth", "x": 0, "y": 0, "chance": 10 } ], "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ] }
   },
   {
     "type": "emit",
