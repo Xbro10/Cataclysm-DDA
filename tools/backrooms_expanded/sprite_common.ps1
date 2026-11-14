@@ -64,3 +64,22 @@ function SaveSheet($out, $preview, $count, $bg = '#2a2826') {
   }
   $pv.Save($preview, [System.Drawing.Imaging.ImageFormat]::Png)
 }
+
+# Outline a whole figure: every transparent pixel touching (4-way) an opaque pixel becomes $INK.
+# Use it for furniture, items and monsters drawn on a transparent tile.
+function Outline($tile) {
+  $hits = New-Object System.Collections.Generic.List[object]
+  for ($y = 0; $y -lt $T; $y++) { for ($x = 0; $x -lt $T; $x++) {
+    if ($bmp.GetPixel($tile * $T + $x, $y).A -ne 0) { continue }
+    foreach ($d in @(@(1, 0), @(-1, 0), @(0, 1), @(0, -1))) {
+      $nx = $x + $d[0]; $ny = $y + $d[1]
+      if ($nx -ge 0 -and $nx -lt $T -and $ny -ge 0 -and $ny -lt $T -and $bmp.GetPixel($tile * $T + $nx, $ny).A -eq 255) { $hits.Add(@($x, $y)); break }
+    }
+  } }
+  foreach ($p in $hits) { Px $tile $p[0] $p[1] $INK }
+}
+# A soft ground shadow under a figure, drawn after Outline so it isn't outlined.
+function Shadow($tile, $cx, $cy, $rx) {
+  $sh = [System.Drawing.Color]::FromArgb(70, 0, 0, 0)
+  for ($i = -$rx; $i -le $rx; $i++) { if ($bmp.GetPixel($tile * $T + $cx + $i, $cy).A -eq 0) { Px $tile ($cx + $i) $cy $sh } }
+}
