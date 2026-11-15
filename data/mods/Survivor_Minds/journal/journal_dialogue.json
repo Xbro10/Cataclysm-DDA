@@ -1,7 +1,7 @@
 [
   {
     "type": "talk_topic",
-    "id": "TALK_FRIEND",
+    "id": "TALK_SM_FOLLOWER",
     "//": "Adds one option to the vanilla follower menu (topics with the same id merge).",
     "responses": [ { "text": "Can I read your journal?", "topic": "TALK_SM_JOURNAL" } ]
   },
@@ -14,7 +14,7 @@
       "no": "Nothing in it yet.  I write in the mornings; ask me tomorrow."
     },
     "responses": [
-      { "text": "Thanks.  Let's talk about something else.", "topic": "TALK_FRIEND" },
+      { "text": "Thanks.  Let's talk about something else.", "topic": "TALK_SM_FOLLOWER" },
       { "text": "Thanks.", "topic": "TALK_DONE" }
     ]
   }

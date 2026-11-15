@@ -54,7 +54,7 @@
     "subtype": "distribution",
     "entries": [
       { "group": "tools_lighting", "prob": 15 },
-      { "group": "batteries", "prob": 15 },
+      { "group": "br_cat_power", "prob": 15 },
       { "group": "cannedfood", "prob": 12 },
       { "item": "water_clean", "container-item": "bottle_plastic", "prob": 10 },
       { "group": "almond_water_sealed", "prob": 3 },
@@ -64,7 +64,8 @@
       { "item": "hat_ball", "prob": 6 },
       { "item": "wristwatch", "prob": 5 },
       { "item": "cell_phone", "prob": 5 },
-      { "item": "br1_note_lost", "prob": 10 }
+      { "item": "br1_note_lost", "prob": 10 },
+      { "item": "br1_note_generator", "prob": 4 }
     ]
   },
   {
@@ -291,8 +292,8 @@
       },
       "furniture": { "k": "f_rack", "x": "f_crate_c", "V": "f_vending_c" },
       "items": {
-        "k": { "item": "br1_cage_loot", "chance": 70, "repeat": [ 1, 2 ] },
-        "x": { "item": "br1_camp_stores", "chance": 90, "repeat": [ 1, 3 ] },
+        "k": { "item": "br1_cage_loot", "chance": 70 },
+        "x": { "item": "br1_camp_stores", "chance": 90 },
         "V": { "item": "default_vending_machine", "chance": 100 }
       }
     }

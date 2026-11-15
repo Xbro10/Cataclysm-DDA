@@ -1,12 +1,17 @@
 // Xbro10 fork: tests for "NPC autonomy (experimental)" (src/npc_autonomy.*).
 
+#include <sstream>
 #include <string>
 
+#include "activity_type.h"
 #include "avatar.h"
 #include "calendar.h"
 #include "cata_catch.h"
 #include "coordinates.h"
+#include "flexbuffer_json.h"
 #include "item.h"
+#include "json.h"
+#include "json_loader.h"
 #include "map.h"
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
@@ -21,8 +26,16 @@
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
 
-static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
+static const activity_id ACT_CONSUME( "ACT_CONSUME" );
 
+static const itype_id itype_backpack( "backpack" );
+static const itype_id itype_bottle_plastic( "bottle_plastic" );
+static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
+static const itype_id itype_water_clean( "water_clean" );
+
+static const ter_str_id ter_t_water_sh( "t_water_sh" );
+
+static const faction_id faction_no_faction( "no_faction" );
 static const faction_id faction_your_followers( "your_followers" );
 
 static npc &spawn_follower( const point_bub_ms &where )
@@ -133,9 +146,16 @@ TEST_CASE( "npc_autonomy_felt_needs", "[npc][autonomy]" )
         CHECK( needs.water == 63 );
         CHECK( needs.sleep == 100 );
     }
-    SECTION( "lost body reserves count as hunger" ) {
-        guy.set_stored_kcal( guy.get_healthy_kcal() * 3 / 4 );
+    // get_healthy_kcal() is a fat BMI of 5; the game calls 3 normal and 2 underweight.
+    SECTION( "a normal weight adds nothing" ) {
+        guy.set_stored_kcal( guy.get_healthy_kcal() * 7 / 10 ); // fat BMI 3.5
+        CHECK( npc_autonomy::current_needs( guy ).food == 0 );
+    }
+    SECTION( "being underweight counts as hunger" ) {
+        guy.set_stored_kcal( guy.get_healthy_kcal() * 2 / 5 ); // fat BMI 2
         CHECK( npc_autonomy::current_needs( guy ).food == 50 );
+        guy.set_stored_kcal( guy.get_healthy_kcal() / 5 );     // fat BMI 1, emaciated
+        CHECK( npc_autonomy::current_needs( guy ).food == 75 );
     }
     SECTION( "with No NPC Food, food and water are 0" ) {
         override_option no_food( "NO_NPC_FOOD", "true" );
@@ -187,6 +207,48 @@ TEST_CASE( "npc_autonomy_mealtimes", "[npc][autonomy]" )
     }
 }
 
+// Xbro10 fork fixes: an NPC saved mid-meal used to lose its food on load. It isn't
+// registered with the game while it loads ("Failed to find item_location owner"), and
+// every item in a pocket got a new uid on load ("UID not found in container contents").
+TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    set_time( calendar::turn_zero + 7_hours );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 10, 0 ) );
+    guy.stomach.empty();
+    guy.set_hunger( 50 );
+    guy.add_effect( effect_hunger_hungry, 1_days );
+    // In a backpack, so the meal points into a container on the NPC.
+    guy.wear_item( item( itype_backpack ), false );
+    guy.i_add( item( itype_sandwich_cheese_grilled ) );
+    REQUIRE( npc_autonomy::run_goal( guy, "autonomy_meal" ) == npc_autonomy::goal_result::activity );
+    REQUIRE( guy.activity.id() == ACT_CONSUME );
+    const auto sandwich_uid = []( const npc & who ) {
+        const std::vector<const item *> found = who.items_with( []( const item & it ) {
+            return it.typeId() == itype_sandwich_cheese_grilled;
+        } );
+        return found.empty() ? int64_t( 0 ) : found.front()->uid().get_value();
+    };
+    const int64_t uid_before = sandwich_uid( guy );
+    REQUIRE( uid_before != 0 );
+
+    std::ostringstream saved;
+    JsonOut jsout( saved );
+    guy.serialize( jsout );
+    // Gone from the game, like every NPC before a save is loaded.
+    clear_npcs();
+
+    // Fails the test with a debug message if the meal can't find its food.
+    npc loaded;
+    JsonValue jv = json_loader::from_string( saved.str() );
+    loaded.deserialize( jv.get_object() );
+    CHECK( sandwich_uid( loaded ) == uid_before );
+    CHECK( loaded.activity.id() == ACT_CONSUME );
+}
+
 TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
 {
     clear_map();
@@ -217,6 +279,76 @@ TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
         override_option autonomy( "NPC_AUTONOMY", "true" );
         guy.set_value( "autonomy_need_social", 30.0 );
         CHECK_FALSE( npc_autonomy::wants_company( guy ) );
+    }
+}
+
+TEST_CASE( "npc_autonomy_get_water", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    // Past the game's own 6-tile search, inside ours.
+    const tripoint_bub_ms pool( player_pos + point( 12, 0 ), 0 );
+    here.ter_set( pool, ter_t_water_sh );
+    guy.stomach.empty();
+    guy.set_thirst( 100 ); // Very thirsty: Water about 53
+
+    SECTION( "option off: never, and the search stays at 6 tiles" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK( npc_autonomy::water_search_radius() == 6 );
+        CHECK_FALSE( npc_autonomy::wants_water( guy ) );
+    }
+    SECTION( "not thirsty enough: no trip" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_thirst( 40 ); // Thirsty: Water 25
+        CHECK_FALSE( npc_autonomy::wants_water( guy ) );
+    }
+    SECTION( "following a player on the move: the game's leash keeps them from far water" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        CHECK_FALSE( npc_autonomy::wants_water( guy ) );
+    }
+    SECTION( "very thirsty, on their own: walks to water 10 tiles off and drinks" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_no_faction );
+        REQUIRE( npc_autonomy::current_needs( guy ).water >= 50 );
+        REQUIRE( npc_autonomy::wants_water( guy ) );
+        for( int turn = 0; turn < 60 && guy.get_thirst() >= 100; ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            npc_autonomy::run_goal( guy, "autonomy_get_water" );
+        }
+        CHECK( rl_dist( guy.pos_bub(), pool ) <= 1 );
+        CHECK( guy.get_thirst() < 100 );
+    }
+}
+
+TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
+    const auto water_carried = [&guy]() {
+        int charges = 0;
+        for( const item *it : guy.items_with( []( const item & i ) {
+        return i.typeId() == itype_water_clean;
+        } ) ) {
+            charges += it->charges;
+        }
+        return charges;
+    };
+
+    SECTION( "no empty container: nothing to fill" ) {
+        CHECK_FALSE( npc_autonomy::refill_bottle( guy, itype_water_clean ) );
+    }
+    SECTION( "an empty bottle gets filled" ) {
+        guy.i_add( item( itype_bottle_plastic ) );
+        REQUIRE( water_carried() == 0 );
+        CHECK( npc_autonomy::refill_bottle( guy, itype_water_clean ) );
+        CHECK( water_carried() > 0 );
     }
 }
 

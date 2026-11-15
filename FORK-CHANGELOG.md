@@ -1,7 +1,7 @@
 # Fork changelog
 
 Everything this fork adds to Cataclysm: Dark Days Ahead, sorted by kind.
-Tags: **[BE]** Backrooms Expanded mod, **[SM]** Survivor Minds mod, **[C++]** a change to the game itself.
+Tags: **[BE]** Backrooms Expanded mod, **[SM]** Survivor Minds mod, **[C++]** a change to the game itself, **[Launcher]** the launcher in `tools/launcher/`.
 The full detail for each mod is in its own `CHANGELOG.md` (`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
 Backrooms Expanded builds on TGWeaver's Backrooms mod.
 
@@ -12,7 +12,25 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 ## New entries
 
-*(newest first; nothing yet since the summary below)*
+*(newest first)*
+
+- 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher** is now in the fork (`tools/launcher/`). It installs and updates **Xbro10 tester builds** (the `testing-build-*` releases) by default, says when a new one is out, and updates itself from the `testing` branch. Official CDDA experimental builds are still one click away.
+- 2026-11-14, NPC brain: [C++] **Step 3.4a, getting water:** very thirsty NPCs (Water 50+) walk to water they can see up to 20 tiles away, drink, and fill an empty bottle at clean water. They say "goes to get water", the look-around panel shows the plan, and after 3 failed tries they give up for an hour.
+- 2026-11-14, NPCs and factions: [SM] **Gabriel is never Timid:** his personality is fixed instead of rolled (Freedom fighter, Brave and Hero), to fit "I don't run".
+- 2026-11-14, NPC behaviour: [SM] The follower menu has one **"Got a minute?"** entry for all Survivor Minds options (journal, gossip, marks, food, feelings, Gabriel's chat) instead of six.
+- 2026-11-14, Game options and fixes: [C++] Saving in the middle of eating (or any action on an item in a bag) no longer loses the item on load: NPCs are found while they load, and items in pockets keep their identity across a save (no more "item_location" error pop-ups).
+- 2026-11-14, NPC brain: [C++] The **Food** need now only counts body weight once an NPC is underweight, so it drops as soon as they eat (a normal-weight NPC read about 46 and never went down).
+- 2026-11-14, NPCs and factions: [SM] **Gabriel's look:** light skin, long blond hair, green eyes, a cyan hoodie and a blue wool scarf (its own sprite in UltiCa and UndeadPeople).
+- 2026-11-14, Developer tools: [SM] **Watch Gabriel:** `EOC_SM_DEBUG_WATCH_GABRIEL` spawns an unrecruited Gabriel nearby and hides you completely (invisible, silent, no scent, no damage, sees through walls) so you can watch him on his own; `EOC_SM_DEBUG_WATCH_STOP` ends it.
+- 2026-11-14, NPCs and factions: [SM] **Gabriel**, a unique recruitable NPC (class Brawler): a veteran fighter with a morningstar and a hatchet, short on words, hates teamers, never snitches. Ask "Want to team up?" and tell him you trust him. Debug spawn `EOC_SM_DEBUG_SPAWN_GABRIEL` (his real spawn point comes later).
+- 2026-11-14, NPCs: [BE] **Breakroom runners**: two named runners really travel Level 1 on errands for Dot, bring back extra for the supply locker, and sometimes go missing, which opens a "Find the runner" job.
+- 2026-11-14, Levels: [BE] **Level 1 lights**: lane lights flicker and slowly fail for good, and lobbies sometimes black out for up to an hour (a Smiler may come).
+- 2026-11-14, Monsters: [BE] **Faceling, Skin-stealer and Partygoer**: a harmless blank-faced wanderer, a skin-wearing mimic that calls for help, and a very rare, very fast grinning partygoer, each with its own sprite.
+- 2026-11-14, Monsters: [BE] **The Redeemer** (boss, not placed yet; debug spawn `mon_br_redeemer`): a car-sized three-headed beast with power poles on its back, shock storms and an electric bite, with its own large 128x96 sprite.
+- 2026-11-14, Missions and jobs: [BE] **Breakroom standing.** 3 jobs earn Dot's supply key (a weekly ration locker in the Breakroom); 6 jobs earn Marcus's hand-drawn map and extra almond water. Ask Dot "Where do I stand with you lot?". Job rewards now fit each job.
+- 2026-11-14, Structures and places: [BE] The Level 1 **security office** has a gun safe (about 2 in 5 hold a sidearm and a little ammo).
+- 2026-11-14, Items and resources: [BE] **Oil-stained notes:** activate one on Level 1 to mark a generator room 3-8 squares away on your map.
+- 2026-11-14, Items and resources: [BE] **Loot is a themed handful:** every crate, locker, heap and shelf holds 3-6 items of one kind instead of whole stores.
 
 ---
 

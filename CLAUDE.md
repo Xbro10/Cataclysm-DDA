@@ -45,7 +45,18 @@ every change adds a line at the top of its "New entries" as well as to its mod's
 - **`testing`** is the branch outside testers build from (created 2026-11-13). It only moves when the user asks
   ("push to testing"): merge the latest `npc-autonomy` (which already holds `dev`) into it, then push it. Never commit straight to it,
   except `TESTER-GUIDE.md` (the testers' guide), which lives only on `testing`; keep its "What's in this build" current when testing moves.
-  The user's own team guide is `D:\dev\TEAM-MANAGEMENT-GUIDE.txt`, outside git on purpose.
+  The user's own files live outside git on purpose, in `D:\dev\Important Files\`: `TEAM-MANAGEMENT-GUIDE.txt`,
+  `GABRIEL-SUMMARY.txt`, a read-only copy of `TESTER-GUIDE.md` (refresh it when testing's guide changes), and the in-game
+  checklists `TESTING-CHECKLIST-BACKROOMS.md` (levels work) and `TESTING-CHECKLIST-NPCS.md` (NPC brain and Survivor Minds).
+  Add each finished step's test items to the matching checklist.
+- **Tester releases** (first: `testing-build-2026-11-14`): when testing moves and the user wants a build, make sure
+  `src/` matches `origin/testing` and build; stage `git archive origin/testing data gfx doc README.md LICENSE*.txt TESTER-GUIDE.md`,
+  plus the compiled `data/shaders/*.dxil|*.spv`, `gfx/UltimateCataclysm`, `gfx/MSX++UnDeadPeopleEdition` (git-ignored here),
+  the exe and a `VERSION.txt`; check-mods it from the staged folder (create `config/` first), then delete first-run folders (including `data/cache`) and zip
+  to `D:\dev\releases\`. Publish as a pre-release with tag `testing-build-YYYY-MM-DD` (`-2`, `-3` for more that day) targeting `testing`, with one asset named `CDDA-Xbro10-testing-*.zip`: the launcher looks for exactly that. The built-in browser can't
+  attach files, so the user drags the zip in.
+- A ruleset (PR required, no force-push or delete) covers `master`, `dev`, `npc-autonomy`, `testing`; Xbro10 bypasses it,
+  so pushes still work and GitHub prints a "must be made through a pull request" note.
 - Release tags are per mod: `survivor-minds-vX.Y.Z`, `backrooms-expanded-vX.Y.Z`.
 
 ## Fork changes to the game itself (watch these during upstream merges)
@@ -57,10 +68,11 @@ Search for `Xbro10 fork` in `src/` to find every C++ change.
 | Character creator crash fix: past achievements are loaded before the first ImGui frame | `src/newcharacter.cpp` (`character_creator_ui::display`) | Their "please wait" popup redrew mid-frame and crashed in `GetCursorScreenPos`. Drop it if upstream fixes this. |
 | Legacy sandbox world options restored (branch `sandbox-options`) | `src/options.cpp` (world option groups), `data/core/external_options.json` (7 entries set to `"stub": true`) | Upstream hid them or made them JSON-only (#79310, #80640). |
 | City size / spacing / NPC spawn time as % world options | `src/regional_settings.cpp` (`region_settings_city::finalize`), `src/game.cpp` (`perhaps_add_random_npc`), `src/newcharacter.cpp` (`cities_enabled`) | Upstream moved them into region settings; ours scale the region's value. New ids `CITY_SIZE_SCALING`, `CITY_SPACING_SCALING`, `NPC_SPAWNTIME_SCALING`. |
-| Light-aware monster flags `AVOIDS_LIGHT` (won't step from dark into light) and `SEEKS_LIGHT` (heads for the brightest light in view) | `src/monmove.cpp` (`will_move_to`, end of `monster::plan`, helpers near the top) | Backrooms Expanded's Smiler and Deathmoth. The mod defines the flags; the C++ checks them lazily, so official builds load the mod and just skip the behaviour. A candidate for an upstream PR (then the flags move to `data/json/monsters/monster_flags.json`). |
+| Light-aware monster flags `AVOIDS_LIGHT` (won't step from dark into light) and `SEEKS_LIGHT` (heads for the brightest light in view) | `src/monmove.cpp` (`will_move_to`, end of `monster::plan`, helpers near the top) | Backrooms Expanded's Smiler and Deathmoth. The mod defines the flags; the C++ checks them lazily, so official builds load the mod and just skip the behaviour. |
 
-| Debug "Spawn NPC follower" adds the NPC to the follower list | `src/debug_menu.cpp` (`spawn_npc_follower`) | Upstream bug: spawned followers were missing from the faction screen and radio contact until a reload. A candidate for an upstream PR. |
-| **NPC autonomy (Phase 3, branch `npc-autonomy`)**: game option `NPC_AUTONOMY` (General > NPC options, default off), behavior-tree predicate `npc_autonomy_on`, quests cancelled when a follower leaves, needs 0–100 (food, water, sleep, warmth, safety, social) stored as NPC vars `autonomy_need_*` and shown in the look-around panel, scores `npc_safety_urgency` / `npc_social_urgency`, mealtimes and socializing (goals `autonomy_meal` / `autonomy_socialize`, weights in `data/json/npcs/npc_autonomy.json`) | New `src/npc_autonomy.{h,cpp}`, `tests/npc_autonomy_test.cpp`, `data/json/npcs/npc_autonomy.json`; hooks in `src/options.cpp`, `src/behavior_oracle.cpp`, `src/character_oracle.{h,cpp}` (`autonomy_*`, `safety_urgency`, `social_urgency`), `src/npctalk_funcs.cpp` (`talk_function::leave`), `src/npc.cpp` (`npc_update_body`, `print_info`), `src/npcmove.cpp` (`npc::move` goal dispatch and commitment, `bt_goal_to_category`); `data/json/npcs/npc_behavior.json` (two children of `npc_priorities`) | Phase 3 logic lives in `npc_autonomy.*`; base files only get small hooks. With the option off, NPCs behave like upstream. |
+| Debug "Spawn NPC follower" adds the NPC to the follower list | `src/debug_menu.cpp` (`spawn_npc_follower`) | Upstream bug: spawned followers were missing from the faction screen and radio contact until a reload. |
+| NPCs saved mid-meal keep their food on load; items in pockets keep their uid across a load | `src/item_location.{h,cpp}` (`item_location_owner_scope`, `item_on_person::ensure_who_unpacked`), `src/savegame_json.cpp` (`Character::load` around `activity`/`backlog`; `item::deserialize` passes `keep_uids`), `src/item_contents.{h,cpp}` (`combine`, new `keep_uids`), `src/item.h` (`restore_uid`) | Two upstream bugs: an NPC is not registered with the game while it loads ("Failed to find item_location owner"), and loading copied every pocketed item, and a copied item gets a new uid ("UID not found in container contents"), so any saved activity on an item in a bag lost it, the player's too. Test `npc_meal_survives_save_and_load`. |
+| **NPC autonomy (Phase 3, branch `npc-autonomy`)**: game option `NPC_AUTONOMY` (General > NPC options, default off), behavior-tree predicate `npc_autonomy_on`, quests cancelled when a follower leaves, needs 0–100 (food, water, sleep, warmth, safety, social) stored as NPC vars `autonomy_need_*` and shown in the look-around panel, scores `npc_safety_urgency` / `npc_social_urgency`, mealtimes and socializing (goals `autonomy_meal` / `autonomy_socialize`), getting water (3.4a: goal `autonomy_get_water` drives upstream's `npc::execute_drink_water` from Water 50, search radius 20 via `npc_autonomy::water_search_radius()`, bottle refill at clean water, give up after 3 failed targets), weights in `data/json/npcs/npc_autonomy.json` | New `src/npc_autonomy.{h,cpp}`, `tests/npc_autonomy_test.cpp`, `data/json/npcs/npc_autonomy.json`; hooks in `src/options.cpp`, `src/behavior_oracle.cpp`, `src/character_oracle.{h,cpp}` (`autonomy_*`, `safety_urgency`, `social_urgency`), `src/npctalk_funcs.cpp` (`talk_function::leave`), `src/npc.cpp` (`npc_update_body`, `print_info`), `src/npcmove.cpp` (`npc::move` goal dispatch and commitment, `bt_goal_to_category`, radius in `find_nearby_water_sources`, Very-thirsty line in `npc::intake_useful`); `data/json/npcs/npc_behavior.json` (three children of `npc_priorities`) | Phase 3 logic lives in `npc_autonomy.*`; base files only get small hooks. With the option off, NPCs behave like upstream. |
 
 Not restored on purpose: wandering hordes, character point pools, default region, initial
 visibility distance, 3D FOV range.
@@ -72,9 +84,11 @@ visibility distance, 3D FOV range.
   `& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" Cataclysm-vcpkg-static.sln /t:Cataclysm-vcpkg-static /p:Configuration=Release /p:Platform=x64 /m /v:minimal`
 - Outputs in the repo root: `cataclysm-tiles.exe` (game), `Cataclysm-test-vcpkg-static-Release-x64.exe` (tests).
 - This build's saves and config live in `save\` and `config\` (git-ignored).
-- The official build (for pre-release checks) is installed by the launcher at
-  `D:\Games\CDDA MY FORK\` (`Start CDDA Launcher.bat`, game in `Game\`, user data in `UserData\`).
-  Its "Sync my mods from my fork" copies our mods into `UserData\mods`.
+- **The launcher** (`tools/launcher/`, on `dev`, shipped to testers on `testing`) installs builds into a folder of its own.
+  The user's install is `D:\Games\CDDA MY FORK\` (`Start CDDA Launcher.bat`, game in `Game\`, user data in `UserData\`).
+  Its "Builds from" picks Xbro10 tester builds (default) or official experimental; "Sync my mods from my fork" copies our mods
+  into `UserData\mods`. It updates itself from `testing`: when the launcher changes, raise `$script:LauncherVersion` (a date).
+  Never edit the copy in `D:\Games` by hand; change `tools/launcher` and copy it there.
 
 ## Checking mods
 

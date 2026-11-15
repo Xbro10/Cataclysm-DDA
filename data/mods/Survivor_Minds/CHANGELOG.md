@@ -6,6 +6,10 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Gabriel's look, picked by the person he's based on: light skin, long blond hair, green eyes, a cyan hoodie and a blue wool scarf (new item `sm_scarf_blue`, with recoloured UltiCa and UndeadPeople sprites).
+- Developer shortcut `EOC_SM_DEBUG_WATCH_GABRIEL` (watch mode): spawns an unrecruited Gabriel 6-10 tiles away and makes you invisible, silent, scentless, unhurtable and able to see through walls, so you can watch him act on his own. `EOC_SM_DEBUG_WATCH_STOP` turns it off.
+- Gabriel, a unique NPC with his own class (Brawler): a veteran fighter with a morningstar (Mace Mastery, high bashing and melee), a hatchet as backup (axe proficiencies), Tough and Fast Learner, dressed for the cold. He has his own first-meeting dialogue in his short, blunt voice; to recruit him you have to tell him you trust him. As a follower he gets "Gabriel, what's on your mind?" in the follower menu. His kindness and ruthlessness are fixed (3 and 2) instead of rolled, and so is his personality (aggression 5, bravery 6, altruism 3: Freedom fighter, Brave and Hero), so he never comes out Timid.
+- Developer shortcut `EOC_SM_DEBUG_SPAWN_GABRIEL` spawns Gabriel next to you (his real spawn point comes later).
 - Danger warnings: followers watch for hostile monsters they can see within 30 tiles and speak up on their own when something new shows up or the odds get worse. They name the most dangerous one, say how many there are and where, and weigh the game's own monster threat ratings against your side (you and nearby followers, by melee and gun skill and how hurt you are): "We can take them", "Doable if we stick together", "That's risky" or "Too many. We should go." You hear it in the log when within 12 tiles, or as `[Radio]` when you both carry a two-way radio. Followers you left waiting or guarding a spot report in too. Only one follower reports the same sighting.
 - Developer shortcut `EOC_SM_DEBUG_DANGER` prints each follower's raw numbers (hostiles seen, threat, our side, verdict, distance from you, who has a radio) and clears past warnings.
 - Gossip (lite): "Seen anything around here?" in the follower menu. Followers report what is really around right now, with a compass direction: the hostiles they can see (named, with a verdict), the nearest drinkable water (Breakroom tap, drip pool, pump, stream or shallow water) and any LOOTED mark nearby. Once a day they also mark a place on your map: a nearby shop or service building, or in the Backrooms a squatter camp (Level 1) or a rippling-wall room (Level 0).
@@ -26,6 +30,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- The follower menu has one Survivor Minds entry, "Got a minute?", instead of six: it opens a submenu with "Gabriel, what's on your mind?" (Gabriel only), "Seen anything around here?", "Can I read your journal?", "Mark this place as looted.", "Here, have some of my food." and "How do you feel about me?". "Something else" in each of them goes back to that submenu.
 - The survivor's journal now shows a book sprite in UltiCa instead of the placeholder.
 - Panicked people are a quarter as common in city civilian spawns and come in smaller crowds.
 

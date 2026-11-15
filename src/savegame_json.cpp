@@ -1018,9 +1018,14 @@ void Character::load( const JsonObject &data )
         setID( tmpid );
     }
 
-    data.read( "activity", activity );
-    if( data.has_array( "backlog" ) ) {
-        data.read( "backlog", backlog );
+    {
+        // Xbro10 fork: an NPC's activity can point into its own pack (a meal), but the
+        // NPC isn't registered with the game until it has loaded. See item_location_owner_scope.
+        item_location_owner_scope owner_scope( *this );
+        data.read( "activity", activity );
+        if( data.has_array( "backlog" ) ) {
+            data.read( "backlog", backlog );
+        }
     }
     if( !backlog.empty() && !backlog.front().str_values.empty() && ( ( activity &&
             activity.id() == ACT_FETCH_REQUIRED ) || ( destination_activity &&
@@ -3565,7 +3570,9 @@ void item::deserialize( const JsonObject &data )
         data.read( "contents", read_contents );
         contents.read_mods( read_contents );
         update_modified_pockets();
-        contents.combine( read_contents, false, true, false, true );
+        // Xbro10 fork: keep_uids, or every item in a pocket got a new uid on each load
+        // and saved item_locations into containers (an NPC's meal, say) were lost.
+        contents.combine( read_contents, false, true, false, true, true );
 
         //migrate SOFTWARE pocket
         auto pockets_e_legacy = []( item_pocket const & pocket ) {

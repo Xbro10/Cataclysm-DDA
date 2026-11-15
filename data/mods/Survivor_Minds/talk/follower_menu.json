@@ -1,0 +1,18 @@
+[
+  {
+    "type": "talk_topic",
+    "id": "TALK_FRIEND",
+    "//": "Survivor Minds adds a single entry to the vanilla follower menu.  Every Survivor Minds option goes in TALK_SM_FOLLOWER instead (topics with the same id merge, in load order, so this folder loads after the features and 'Never mind.' ends up last).",
+    "responses": [ { "text": "Got a minute?", "topic": "TALK_SM_FOLLOWER" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_FOLLOWER",
+    "dynamic_line": {
+      "npc_has_trait": "SM_GABRIEL",
+      "yes": [ "Sure bet.  What?", "Hm.  Go on.", "Aight.  What is it?" ],
+      "no": [ "Sure, what is it?", "Yeah?  What's up?", "I've got a minute.", "What's on your mind?" ]
+    },
+    "responses": [ { "text": "Never mind.", "topic": "TALK_FRIEND" } ]
+  }
+]

@@ -1,0 +1,19 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Gabriel's blue scarf for UndeadPeople: its wool scarf sprites (CC-BY-SA 3.0) recoloured blue by tools/survivor_minds/draw_gabriel_scarf.ps1.  One mod_tileset per file: with two, the game reports the first one's tiles as unread.",
+    "compatibility": [ "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/gabriel_udp.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "tiles": [
+          { "id": "sm_scarf_blue", "fg": 0 },
+          { "id": "overlay_male_worn_sm_scarf_blue", "fg": 1 },
+          { "id": "overlay_worn_sm_scarf_blue", "fg": 2 }
+        ]
+      }
+    ]
+  }
+]

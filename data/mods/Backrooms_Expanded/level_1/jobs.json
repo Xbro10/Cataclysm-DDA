@@ -131,7 +131,8 @@
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 2 },
         { "math": [ "faction_like('br_breakroom') += 5" ] },
-        { "math": [ "u_br1_fuel_next = time('now') + time('2 d')" ] }
+        { "math": [ "u_br1_fuel_next = time('now') + time('2 d')" ] },
+        { "run_eocs": "EOC_BR1_STANDING_UP" }
       ]
     },
     "dialogue": {
@@ -161,9 +162,11 @@
     "end": {
       "effect": [
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 2 },
-        { "u_spawn_item": "batteries", "use_item_group": true },
+        { "u_spawn_item": "br_cat_power", "use_item_group": true, "count": 2 },
         { "math": [ "faction_like('br_breakroom') += 5" ] },
-        { "math": [ "u_br1_pest_next = time('now') + time('3 d')" ] }
+        { "u_spawn_item": "br_cat_medical", "use_item_group": true, "count": 3 },
+        { "math": [ "u_br1_pest_next = time('now') + time('3 d')" ] },
+        { "run_eocs": "EOC_BR1_STANDING_UP" }
       ]
     },
     "dialogue": {
@@ -211,11 +214,12 @@
     "end": {
       "effect": [
         { "u_spawn_item": "tools_lighting", "use_item_group": true },
-        { "u_spawn_item": "batteries", "use_item_group": true, "count": 2 },
+        { "u_spawn_item": "br_cat_power", "use_item_group": true, "count": 4 },
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
         { "math": [ "faction_like('br_breakroom') += 10" ] },
         { "math": [ "faction_trust('br_breakroom') += 5" ] },
-        { "math": [ "u_br1_den_done = 1" ] }
+        { "math": [ "u_br1_den_done = 1" ] },
+        { "run_eocs": "EOC_BR1_STANDING_UP" }
       ]
     },
     "dialogue": {
@@ -257,7 +261,9 @@
       "effect": [
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "count": 2 },
         { "math": [ "faction_trust('br_breakroom') += 10" ] },
-        { "math": [ "u_br1_roster_done = 1" ] }
+        { "u_spawn_item": "br_cat_medical", "use_item_group": true, "count": 3 },
+        { "math": [ "u_br1_roster_done = 1" ] },
+        { "run_eocs": "EOC_BR1_STANDING_UP" }
       ]
     },
     "dialogue": {
@@ -298,11 +304,13 @@
     },
     "end": {
       "effect": [
-        { "u_spawn_item": "batteries", "use_item_group": true, "count": 2 },
+        { "u_spawn_item": "br_cat_power", "use_item_group": true, "count": 4 },
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 3 },
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
         { "math": [ "faction_like('br_breakroom') += 5" ] },
-        { "math": [ "u_br1_supply_done = 1" ] }
+        { "u_spawn_item": "br_cat_tools", "use_item_group": true, "count": 2 },
+        { "math": [ "u_br1_supply_done = 1" ] },
+        { "run_eocs": "EOC_BR1_STANDING_UP" }
       ]
     },
     "dialogue": {
@@ -341,7 +349,8 @@
           "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 40, "reveal_radius": 1, "z": 0 }
         },
         { "math": [ "faction_like('br_breakroom') += 3" ] },
-        { "math": [ "u_br1_lifts_next = time('now') + time('3 d')" ] }
+        { "math": [ "u_br1_lifts_next = time('now') + time('3 d')" ] },
+        { "run_eocs": "EOC_BR1_STANDING_UP" }
       ]
     },
     "dialogue": {

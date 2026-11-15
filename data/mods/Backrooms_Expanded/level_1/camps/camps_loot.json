@@ -18,15 +18,14 @@
     "type": "item_group",
     "id": "br1_camp_stores",
     "subtype": "distribution",
-    "items": [
-      { "group": "br1_camp_food", "prob": 40 },
-      { "group": "br1_garage_loot", "prob": 30 },
-      { "item": "bandages", "prob": 8 },
-      { "item": "aspirin", "prob": 6 },
-      { "item": "duct_tape", "prob": 6 },
-      { "item": "light_battery_cell", "prob": 6 },
-      { "item": "lighter", "prob": 4 },
-      { "group": "almond_water_sealed", "prob": 3 }
+    "entries": [
+      { "group": "br1_camp_food", "count": [ 3, 6 ], "prob": 40 },
+      { "group": "br_cat_medical", "count": [ 3, 6 ], "prob": 15 },
+      { "group": "br_cat_tools", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "br_cat_power", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 10 },
+      { "group": "almond_water_sealed", "count": [ 1, 2 ], "prob": 3 }
     ]
   },
   {
@@ -42,7 +41,8 @@
       { "item": "permanent_marker", "prob": 15 },
       { "item": "cig", "prob": 10 },
       { "item": "survivormap", "prob": 10 },
-      { "item": "br1_note_lost", "prob": 8 }
+      { "item": "br1_note_lost", "prob": 8 },
+      { "item": "br1_note_generator", "prob": 4 }
     ]
   }
 ]

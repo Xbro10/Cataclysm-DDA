@@ -1,0 +1,87 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br1_note_generator",
+    "copy-from": "survnote",
+    "name": { "str": "oil-stained note" },
+    "description": "A note smeared with engine oil.  Under the smears is a rough sketch of parking lanes, a box marked GEN, and arrows.  Read it (activate) on Level 1 to work out where the sketch leads; you'll mark it on your map.",
+    "snippet_category": "br1_note_generator",
+    "use_action": [
+      {
+        "type": "effect_on_conditions",
+        "menu_text": "Follow the sketch",
+        "description": "Match the sketch to the lanes around you and mark the generator room on your map.",
+        "effect_on_conditions": [ "EOC_BR1_GENERATOR_NOTE" ]
+      }
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "br1_note_generator",
+    "text": [
+      { "id": "br1_note_generator_1", "text": "Generator in a side room, past the third row of pillars.  Two cans of gas and the lights come on for a week.  A WEEK.  I drew the way.  Don't lose this." },
+      { "id": "br1_note_generator_2", "text": "GEN ROOM.  Follow the arrows.  Pull cord twice, it's stubborn.  Bring gas, it's dry." },
+      { "id": "br1_note_generator_3", "text": "Found the light room.  I'm not telling Marcus.  The map's for whoever finds this after me." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_GENERATOR_NOTE",
+    "//": "Reading an oil-stained note turns an unseen garage square 3-8 squares away into a generator room and reveals it. Each note leads somewhere once (item var).",
+    "condition": { "and": [ { "current_dimension": "backrooms_level_1" }, { "math": [ "n_br1_note_used != 1" ] } ] },
+    "effect": [
+      {
+        "u_location_variable": { "context_val": "br1_gen_site" },
+        "target_params": {
+          "om_terrain": "br1_generator_site",
+          "om_terrain_replace": "br1_garage",
+          "random": true,
+          "search_range": 8,
+          "min_distance": 3,
+          "cant_see": true,
+          "reveal_radius": 1,
+          "z": 0
+        }
+      },
+      { "math": [ "n_br1_note_used = 1" ] },
+      {
+        "message": "You turn the sketch until the lanes on it line up with the lanes around you.  The arrows lead off into the dark, some way off.  You mark the generator room on your map.",
+        "type": "good",
+        "popup": true
+      }
+    ],
+    "false_effect": [
+      {
+        "run_eocs": [
+          {
+            "id": "EOC_BR1_GENERATOR_NOTE_FAIL",
+            "condition": { "math": [ "n_br1_note_used == 1" ] },
+            "effect": [ { "message": "You already followed this sketch.  The room is on your map.", "type": "info" } ],
+            "false_effect": [ { "message": "None of the sketch matches anything around here.  It must be from the parking levels.", "type": "info" } ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_generator_site",
+    "//": "Never placed by overmap generation: an oil-stained note turns an unseen garage square into one.",
+    "name": "parking deck (generator room)",
+    "sym": "G",
+    "looks_like": "s_garage",
+    "color": "yellow",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_generator_site",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 6, 17 ], "y": [ 6, 17 ] } ],
+      "place_nested": [ { "chunks": [ "br1_room_generator" ], "x": 8, "y": 8 } ],
+      "place_items": [ { "item": "br1_generator_fuel", "x": 11, "y": 16, "chance": 50 } ]
+    }
+  }
+]

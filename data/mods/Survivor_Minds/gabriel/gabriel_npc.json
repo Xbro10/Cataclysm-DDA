@@ -1,0 +1,115 @@
+[
+  {
+    "type": "mutation",
+    "id": "SM_GABRIEL",
+    "name": { "str": "Gabriel" },
+    "description": "Marks Survivor Minds' unique NPC Gabriel, so his dialogue and quirks can find him.  If you see this, it's a bug.",
+    "points": 0,
+    "player_display": false,
+    "purifiable": false,
+    "valid": false
+  },
+  {
+    "type": "npc",
+    "id": "sm_gabriel",
+    "//": "Survivor Minds' unique NPC.  A veteran brawler with a morningstar and a code: hates teamers, never snitches, short on words.  Recruitable.",
+    "name_unique": "Gabriel",
+    "class": "NC_SM_GABRIEL",
+    "gender": "male",
+    "attitude": 0,
+    "mission": "NULL",
+    "chat": "TALK_SM_GABRIEL_MEET",
+    "//2": "Fixed personality instead of rolled, so he's never Timid.  Shows as Freedom fighter, Brave and Hero: picks fights with bullies, doesn't run, looks out for people.",
+    "personality": { "aggression": 5, "bravery": 6, "collector": 0, "altruism": 3 },
+    "faction": "no_faction"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_SM_GABRIEL",
+    "name": { "str": "Brawler" },
+    "job_description": "I fight.  Mostly things that team up on people.",
+    "common": false,
+    "//2": "His look was picked by the person he's based on: light skin, long blond hair, green eyes, cyan hoodie, blue scarf.",
+    "traits": [
+      { "trait": "SKIN_LIGHT" },
+      { "trait": "hair_long", "variant": "blond" },
+      { "trait": "eye_color", "variant": "green" },
+      { "trait": "SM_GABRIEL" },
+      { "trait": "TOUGH" },
+      { "trait": "FASTLEARNER" }
+    ],
+    "bonus_str": { "constant": 2 },
+    "bonus_dex": { "constant": 1 },
+    "bonus_per": { "constant": 1 },
+    "skills": [
+      { "skill": "melee", "bonus": { "rng": [ 6, 7 ] } },
+      { "skill": "bashing", "bonus": { "rng": [ 7, 8 ] } },
+      { "skill": "cutting", "bonus": { "rng": [ 4, 5 ] } },
+      { "skill": "dodge", "bonus": { "rng": [ 4, 5 ] } },
+      { "skill": "survival", "bonus": { "rng": [ 2, 3 ] } },
+      { "skill": "firstaid", "bonus": { "rng": [ 1, 2 ] } },
+      { "skill": "speech", "bonus": { "rng": [ 1, 2 ] } }
+    ],
+    "proficiencies": [
+      "prof_maces_familiar",
+      "prof_maces_pro",
+      "prof_maces_master",
+      "prof_great_hammers_familiar",
+      "prof_hand_axes_familiar",
+      "prof_hand_axes_pro",
+      "prof_great_axes_familiar"
+    ],
+    "weapon_override": "NC_SM_GABRIEL_weapon",
+    "worn_override": "NC_SM_GABRIEL_worn",
+    "carry_override": "NC_SM_GABRIEL_carry"
+  },
+  {
+    "id": "sm_scarf_blue",
+    "type": "ITEM",
+    "copy-from": "scarf",
+    "//": "Gabriel's scarf.  No vanilla scarf comes in blue; gfx/gabriel_tileset_*.json draw it for UltiCa and UndeadPeople, other tilesets show the plain wool scarf.  It can't be loosened, so it stays blue.",
+    "looks_like": "scarf",
+    "color": "blue",
+    "name": { "str": "blue wool scarf", "str_pl": "blue wool scarves" },
+    "description": "A long blue wool scarf, worn over the mouth for warmth.",
+    "use_action": [  ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_SM_GABRIEL_weapon",
+    "subtype": "collection",
+    "items": [ { "item": "morningstar" } ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_SM_GABRIEL_worn",
+    "subtype": "collection",
+    "//": "Dressed for the cold.  He likes winter.",
+    "items": [
+      { "item": "boxer_briefs" },
+      { "item": "socks" },
+      { "item": "tshirt" },
+      { "item": "hoodie", "variant": "hoodie_cyan" },
+      { "item": "jeans" },
+      { "item": "boots_combat" },
+      { "item": "gloves_leather" },
+      { "item": "hat_knit" },
+      { "item": "sm_scarf_blue" },
+      { "item": "backpack" }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_SM_GABRIEL_carry",
+    "subtype": "collection",
+    "//": "The hatchet is his backup weapon.",
+    "items": [
+      { "item": "hatchet" },
+      { "item": "bandages", "count": 3 },
+      { "item": "lighter" },
+      { "item": "granola", "count": 2 },
+      { "item": "pemmican", "count": 2 },
+      { "item": "water_clean", "container-item": "bottle_plastic" }
+    ]
+  }
+]

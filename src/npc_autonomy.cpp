@@ -9,13 +9,18 @@
 #include <vector>
 
 #include "avatar.h"
+#include "behavior.h"
 #include "character_oracle.h"
 #include "coordinates.h"
 #include "creature.h"
 #include "character.h"
 #include "dialogue_chatbin.h"
 #include "game.h"
+#include "game_constants.h"
+#include "item.h"
+#include "itype.h"
 #include "map.h"
+#include "mapdata.h"
 #include "math_parser_diag_value.h"
 #include "messages.h"
 #include "mission.h"
@@ -115,8 +120,16 @@ constexpr std::array<curve_point, 4> sleepiness_curve{ {
 
 // ---- Each need ----
 
-// Felt hunger: the game's hunger state (what the sidebar shows), or lost body
-// reserves, whichever is worse.
+// Body fat below the game's "normal" weight (fat BMI 3; 2 is underweight's floor,
+// 1 emaciated's): just under normal is near 0, emaciated 50-75, no fat left 100.
+constexpr std::array<curve_point, 4> fat_deficit_curve{ {
+        { 0, 0 }, { 1, 50 }, { 2, 75 }, { 3, 100 }
+    }
+};
+
+// Felt hunger: the game's hunger state (what the sidebar shows), or being
+// underweight, whichever is worse. A normal or heavier body adds nothing, so a
+// meal shows up right away.
 int food_need( const npc &guy )
 {
     // Worst first.
@@ -135,13 +148,8 @@ int food_need( const npc &guy )
             break;
         }
     }
-    int reserves = 0;
-    if( const int healthy = guy.get_healthy_kcal(); healthy > 0 ) {
-        // Down a quarter of a healthy reserve = 50, down half = 100.
-        const float lost = 1.0f - static_cast<float>( guy.get_stored_kcal() ) / healthy;
-        reserves = to_need( 2.0f * lost );
-    }
-    return std::max( felt, reserves );
+    const double fat_deficit = character_weight_category::normal - guy.get_bmi_fat();
+    return std::max( felt, on_curve( fat_deficit, fat_deficit_curve ) );
 }
 
 int water_need( const npc &guy )
@@ -279,11 +287,13 @@ void on_npc_turn( npc &guy )
 std::string needs_text( const npc &guy )
 {
     const needs_t needs = current_needs( guy );
-    return string_format( "%s %s  %s  %s  %s  %s  %s", _( "Needs:" ),
+    const std::string plan = plan_text( guy );
+    return string_format( "%s %s  %s  %s  %s  %s  %s%s", _( "Needs:" ),
                           needs.eats ? need_part( _( "Food" ), needs.food ) : untracked_part( _( "Food" ) ),
                           needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
                           need_part( _( "Sleep" ), needs.sleep ), need_part( _( "Warmth" ), needs.warmth ),
-                          need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ) );
+                          need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ),
+                          plan.empty() ? std::string() : "  <color_light_cyan>" + plan + "</color>" );
 }
 
 // ---- Daily life ----
@@ -428,11 +438,172 @@ goal_result socialize( npc &guy )
     return goal_result::none;
 }
 
+// ---- Getting water (step 3.4) ----
+
+constexpr const char *goal_get_water = "autonomy_get_water";
+// Very thirsty; the game's own planner waits for Parched (100).
+constexpr int water_need_to_act = 50;
+constexpr int water_radius = 20;
+// Targets in a row that came to nothing (unreachable, no progress) before giving up.
+constexpr int max_failed_targets = 3;
+constexpr time_duration give_up_for = 1_hours;
+constexpr const char *var_water_fails = "autonomy_water_fails";
+// Turns since the start of the game until which the NPC has given up.
+constexpr const char *var_water_gave_up = "autonomy_water_gave_up_until";
+// The target last announced, so "goes to get water" shows once per trip.
+constexpr const char *var_water_target = "autonomy_water_target";
+
+bool carries_drink( const npc &guy )
+{
+    if( !guy.intake_fits( npc::need_goal_id::drink_water ) ) {
+        return false;
+    }
+    for( const item *drink : guy.items_with( []( const item & it ) {
+    return it.is_food();
+    } ) ) {
+        if( guy.can_satisfy( *drink, npc::need_goal_id::drink_water ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string target_key( const tripoint_abs_ms &p )
+{
+    return string_format( "%d,%d,%d", p.x(), p.y(), p.z() );
+}
+
+// The liquid an adjacent water terrain gives, if any (what the game's planner drinks from).
+itype_id adjacent_water( const npc &guy )
+{
+    const map &here = get_map();
+    for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), 1 ) ) {
+        const ter_t &ter = here.ter( p ).obj();
+        if( !ter.liquid_source_item_id.is_null() && ter.liquid_source_count == std::make_pair( 0, 0 ) ) {
+            return ter.liquid_source_item_id;
+        }
+    }
+    return itype_id::NULL_ID();
+}
+
+void count_failed_target( npc &guy )
+{
+    const int fails = static_cast<int>( get_num( guy, var_water_fails, 0.0 ) ) + 1;
+    if( fails < max_failed_targets ) {
+        guy.set_value( var_water_fails, static_cast<double>( fails ) );
+        return;
+    }
+    guy.set_value( var_water_fails, 0.0 );
+    guy.set_value( var_water_gave_up,
+                   static_cast<double>( turns_since_start() + to_turns<int>( give_up_for ) ) );
+    guy.remove_value( var_water_target );
+    if( player_sees( guy ) ) {
+        add_msg( m_neutral, _( "%s gives up looking for water." ), guy.get_name() );
+    }
+}
+
+goal_result get_water( npc &guy )
+{
+    const npc::need_result result = guy.execute_drink_water();
+    const npc::need_plan &plan = guy.get_water_plan();
+
+    // Off to a new source: say so once.
+    if( plan.active() && rl_dist( guy.pos_abs(), plan.target ) > 1 ) {
+        const std::string key = target_key( plan.target );
+        const diag_value *announced = guy.maybe_get_value( var_water_target );
+        if( announced == nullptr || !announced->is_str() || announced->str() != key ) {
+            guy.set_value( var_water_target, key );
+            if( player_sees( guy ) ) {
+                add_msg( m_neutral, _( "%s goes to get water." ), guy.get_name() );
+            }
+        }
+    }
+
+    switch( result ) {
+        case npc::need_result::satisfied: {
+            guy.set_value( var_water_fails, 0.0 );
+            guy.remove_value( var_water_target );
+            // Last step: top up a bottle for later, at clean water only.
+            const itype_id liquid = adjacent_water( guy );
+            if( liquid.is_valid() && !liquid.is_null() && liquid->comestible &&
+                liquid->comestible->parasites == 0 && liquid->comestible->contamination.empty() &&
+                refill_bottle( guy, liquid ) && player_sees( guy ) ) {
+                add_msg( m_neutral, _( "%s fills a bottle with water." ), guy.get_name() );
+            }
+            return goal_result::acted;
+        }
+        case npc::need_result::progressed:
+            return guy.activity ? goal_result::activity : goal_result::acted;
+        case npc::need_result::impossible:
+            guy.plan_for( npc::need_goal_id::drink_water ).clear();
+            count_failed_target( guy );
+            return goal_result::none;
+        case npc::need_result::holding:
+        case npc::need_result::blocked:
+        case npc::need_result::deferred:
+            // Wait a turn rather than wander off and back.
+            guy.mod_moves( -guy.get_speed() );
+            return goal_result::acted;
+        case npc::need_result::idle:
+            break;
+    }
+    return goal_result::none;
+}
+
 } // namespace
 
 bool is_goal( const std::string &goal )
 {
-    return goal == goal_meal || goal == goal_socialize;
+    return goal == goal_meal || goal == goal_socialize || goal == goal_get_water;
+}
+
+bool wants_water( const npc &guy )
+{
+    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ||
+        water_need( guy ) < water_need_to_act ) {
+        return false;
+    }
+    if( turns_since_start() < get_num( guy, var_water_gave_up, -1.0 ) ) {
+        return false;
+    }
+    if( !guy.intake_useful( npc::need_goal_id::drink_water ) ) {
+        return false;
+    }
+    return carries_drink( guy ) ||
+           behavior::character_oracle_t( &guy ).can_obtain_water( "" ) == behavior::status_t::running;
+}
+
+int water_search_radius()
+{
+    return enabled() ? water_radius : 6;
+}
+
+bool refill_bottle( npc &guy, const itype_id &liquid )
+{
+    const item water( liquid, calendar::turn );
+    for( item *container : guy.items_with( []( const item & it ) {
+    return it.is_watertight_container() && it.is_container_empty();
+    } ) ) {
+        const int room = container->get_remaining_capacity_for_liquid( water, guy );
+        if( room > 0 && container->fill_with( water, room ) > 0 ) {
+            guy.mod_moves( -to_moves<int>( 10_seconds ) );
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string plan_text( const npc &guy )
+{
+    const npc::need_plan &plan = guy.get_water_plan();
+    if( !enabled() || !plan.active() ) {
+        return std::string();
+    }
+    const int dist = rl_dist( guy.pos_abs(), plan.target );
+    if( dist <= 1 ) {
+        return _( "Plan: get water (drinking)" );
+    }
+    return string_format( _( "Plan: get water (heading to water %d tiles away)" ), dist );
 }
 
 bool wants_meal( const npc &guy )
@@ -492,6 +663,9 @@ goal_result run_goal( npc &guy, const std::string &goal )
     }
     if( goal == goal_socialize ) {
         return socialize( guy );
+    }
+    if( goal == goal_get_water ) {
+        return get_water( guy );
     }
     return goal_result::none;
 }
