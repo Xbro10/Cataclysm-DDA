@@ -1,0 +1,96 @@
+[
+  {
+    "type": "palette",
+    "id": "backrooms_palette",
+    "extending": true,
+    "//": "Extends the upstream Level 0 palette (data/mods/Backrooms/palettes.json): plain floor (\" \") no longer has a 5% chance per tile to be a ceiling light, so lights stop being scattered at random. They come from the grid in the backfloorchamber mapgen below instead. Rooms that draw lights on purpose (\".\" and \";\") keep them.",
+    "terrain": { " ": "t_carpet_backrooms" }
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br0_ceiling_light",
+    "//": "One spot of the Level 0 light grid: carpet or tile floor gets a ceiling light, 6 spots in 7 (the rest stay dark). Anything else (walls, doors, lit floor) is left alone.",
+    "terrain": [
+      { "result": [ [ "t_carpet_backrooms_light", 6 ], [ "t_carpet_backrooms", 1 ] ], "valid_terrain": [ "t_carpet_backrooms" ] },
+      { "result": [ [ "t_tile_backrooms_light", 6 ], [ "t_tile_backrooms", 1 ] ], "valid_terrain": [ "t_tile_backrooms" ] }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": [ "backfloorchamber" ],
+    "weight": 100000,
+    "//": "Copy of the upstream Level 0 mapgen (data/mods/Backrooms/overmap_terrain.json, TGWeaver's Backrooms mod) with one addition: the ceiling-light grid, a light every 4 tiles in rows and columns (x and y 2, 6, 10, 14, 18, 22), placed after the rooms so it lands on whatever floor they left. The high weight means this is used instead of upstream's (about 99 squares in 100). If upstream changes its version, copy the change here.",
+    "object": {
+      "fill_ter": "t_carpet_backrooms",
+      "place_nested": [
+        { "chunks": [ [ "mx_backrooms_whole", 100 ] ], "x": 0, "y": 0 },
+        {
+          "chunks": [
+            [ "null", 250 ],
+            [ "mx_backroom_big_empty", 50 ],
+            [ "mx_backroom_big_generic", 50 ],
+            [ "mx_backroom_big_common", 100 ],
+            [ "mx_backroom_big_storage", 25 ],
+            [ "mx_backroom_big_breakroom", 25 ],
+            [ "mx_backroom_big_bathroom", 20 ]
+          ],
+          "x": [ 0, 13 ],
+          "y": [ 0, 13 ],
+          "repeat": [ 0, 2 ]
+        },
+        {
+          "chunks": [
+            [ "null", 250 ],
+            [ "mx_backroom_small_empty", 50 ],
+            [ "mx_backroom_small_generic", 50 ],
+            [ "mx_backroom_small_common", 100 ],
+            [ "mx_backroom_small_storage", 25 ],
+            [ "mx_backroom_small_breakroom", 25 ],
+            [ "mx_backroom_small_bathroom", 20 ]
+          ],
+          "x": [ 0, 18 ],
+          "y": [ 0, 18 ],
+          "repeat": [ 0, 3 ]
+        }
+      ],
+      "place_ter_furn_transforms": [
+        { "transform": "br0_ceiling_light", "x": 2, "y": 2 },
+        { "transform": "br0_ceiling_light", "x": 6, "y": 2 },
+        { "transform": "br0_ceiling_light", "x": 10, "y": 2 },
+        { "transform": "br0_ceiling_light", "x": 14, "y": 2 },
+        { "transform": "br0_ceiling_light", "x": 18, "y": 2 },
+        { "transform": "br0_ceiling_light", "x": 22, "y": 2 },
+        { "transform": "br0_ceiling_light", "x": 2, "y": 6 },
+        { "transform": "br0_ceiling_light", "x": 6, "y": 6 },
+        { "transform": "br0_ceiling_light", "x": 10, "y": 6 },
+        { "transform": "br0_ceiling_light", "x": 14, "y": 6 },
+        { "transform": "br0_ceiling_light", "x": 18, "y": 6 },
+        { "transform": "br0_ceiling_light", "x": 22, "y": 6 },
+        { "transform": "br0_ceiling_light", "x": 2, "y": 10 },
+        { "transform": "br0_ceiling_light", "x": 6, "y": 10 },
+        { "transform": "br0_ceiling_light", "x": 10, "y": 10 },
+        { "transform": "br0_ceiling_light", "x": 14, "y": 10 },
+        { "transform": "br0_ceiling_light", "x": 18, "y": 10 },
+        { "transform": "br0_ceiling_light", "x": 22, "y": 10 },
+        { "transform": "br0_ceiling_light", "x": 2, "y": 14 },
+        { "transform": "br0_ceiling_light", "x": 6, "y": 14 },
+        { "transform": "br0_ceiling_light", "x": 10, "y": 14 },
+        { "transform": "br0_ceiling_light", "x": 14, "y": 14 },
+        { "transform": "br0_ceiling_light", "x": 18, "y": 14 },
+        { "transform": "br0_ceiling_light", "x": 22, "y": 14 },
+        { "transform": "br0_ceiling_light", "x": 2, "y": 18 },
+        { "transform": "br0_ceiling_light", "x": 6, "y": 18 },
+        { "transform": "br0_ceiling_light", "x": 10, "y": 18 },
+        { "transform": "br0_ceiling_light", "x": 14, "y": 18 },
+        { "transform": "br0_ceiling_light", "x": 18, "y": 18 },
+        { "transform": "br0_ceiling_light", "x": 22, "y": 18 },
+        { "transform": "br0_ceiling_light", "x": 2, "y": 22 },
+        { "transform": "br0_ceiling_light", "x": 6, "y": 22 },
+        { "transform": "br0_ceiling_light", "x": 10, "y": 22 },
+        { "transform": "br0_ceiling_light", "x": 14, "y": 22 },
+        { "transform": "br0_ceiling_light", "x": 18, "y": 22 },
+        { "transform": "br0_ceiling_light", "x": 22, "y": 22 }
+      ]
+    }
+  }
+]
