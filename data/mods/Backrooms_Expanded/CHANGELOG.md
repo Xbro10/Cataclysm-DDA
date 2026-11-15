@@ -53,6 +53,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- The Breakroom is no longer marked on your map when you first reach Level 1 (and the "arrow on the pillar" message is gone). Find it by exploring, or from notes and people. Breakroom Hire still starts you there with it marked.
 - Level 2 is harder, as a Class 3 level: about twice as many monsters per tunnel square, about half of them the Backrooms' own entities (more Hounds and Smilers, Wretches from day 20, Skin-stealers from day 10), and canned food in junk heaps half as often.
 - Breakroom job rewards fit the job better: Thin the Hounds and Who they were also pay first aid, Supply drop also pays tools, and battery rewards are a few loose cells instead of whole boxes.
 - Loot is now a themed handful instead of a whole store. Every crate, locker, junk heap and shelf on Levels 1 and 2 picks **one** kind of thing (tools, hardware, car stuff, lights, batteries, first aid, food or snacks) and holds 3 to 6 of it. Before, some piles pulled in the base game's full toolbox, battery box or vending-machine sets and could hold dozens of items.
