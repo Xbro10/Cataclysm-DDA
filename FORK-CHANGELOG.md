@@ -1,7 +1,7 @@
 # Fork changelog
 
 Everything this fork adds to Cataclysm: Dark Days Ahead, sorted by kind.
-Tags: **[BE]** Backrooms Expanded mod, **[SM]** Survivor Minds mod, **[C++]** a change to the game itself.
+Tags: **[BE]** Backrooms Expanded mod, **[SM]** Survivor Minds mod, **[C++]** a change to the game itself, **[Launcher]** the launcher in `tools/launcher/`.
 The full detail for each mod is in its own `CHANGELOG.md` (`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
 Backrooms Expanded builds on TGWeaver's Backrooms mod.
 
@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher** is now in the fork (`tools/launcher/`). It installs and updates **Xbro10 tester builds** (the `testing-build-*` releases) by default, says when a new one is out, and updates itself from the `testing` branch. Official CDDA experimental builds are still one click away.
 - 2026-11-14, NPC brain: [C++] **Step 3.4a, getting water:** very thirsty NPCs (Water 50+) walk to water they can see up to 20 tiles away, drink, and fill an empty bottle at clean water. They say "goes to get water", the look-around panel shows the plan, and after 3 failed tries they give up for an hour.
 - 2026-11-14, NPCs and factions: [SM] **Gabriel is never Timid:** his personality is fixed instead of rolled (Freedom fighter, Brave and Hero), to fit "I don't run".
 - 2026-11-14, NPC behaviour: [SM] The follower menu has one **"Got a minute?"** entry for all Survivor Minds options (journal, gossip, marks, food, feelings, Gabriel's chat) instead of six.
