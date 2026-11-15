@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-15, Levels: [BE] The **Breakroom** is no longer marked on your map when you reach Level 1; you find it by exploring.
 - 2026-11-15, Levels: [BE] **Survival Difficulty Classes**: each level has a class from the Backrooms Wiki (Level 0 and 1 Class 1, Level 2 Class 3), shown in every scenario description, on a card when you first arrive and in a new field guide. The class means something: Level 2 has about twice the monsters, much less food and bursting steam pipes; Level 0 gets a few rare Backrooms entities.
 - 2026-11-15, Scenarios: [BE] **Pipe Rat**: a hard start alone on Level 2 with almost nothing.
 - 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher.exe** replaces `Start CDDA Launcher.bat`: a small .exe with the launcher icon as its file icon that opens the launcher with no console window. Desktop shortcuts now point at it, and launcher updates add it to older folders.

@@ -41,7 +41,7 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_START_WRONG_EXIT",
-    "//": "Scenario start: take the normal trip to Level 1 (arrival alcove, Breakroom placed and marked), then leave the player's stalled car in the driving lane outside the alcove.",
+    "//": "Scenario start: take the normal trip to Level 1 (arrival alcove, Breakroom placed but not marked), then leave the player's stalled car in the driving lane outside the alcove.",
     "effect": [
       { "run_eocs": "EOC_BR_GO_L1" },
       { "u_location_variable": { "global_val": "br1_wrong_exit_point" } },
@@ -128,7 +128,7 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_START_LOST",
-    "//": "Scenario start: cross to Level 1, turn a garage square 4-8 squares away into a squatter camp (it generates fresh with its survivors), and put the player inside its sandbag ring. The Lost like you; the Breakroom is still placed and marked as usual.",
+    "//": "Scenario start: cross to Level 1, turn a garage square 4-8 squares away into a squatter camp (it generates fresh with its survivors), and put the player inside its sandbag ring. The Lost like you; the Breakroom is still placed as usual, unmarked.",
     "effect": [
       { "run_eocs": "EOC_BR_GO_L1" },
       {
