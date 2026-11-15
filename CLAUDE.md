@@ -85,7 +85,9 @@ visibility distance, 3D FOV range.
 - Outputs in the repo root: `cataclysm-tiles.exe` (game), `Cataclysm-test-vcpkg-static-Release-x64.exe` (tests).
 - This build's saves and config live in `save\` and `config\` (git-ignored).
 - **The launcher** (`tools/launcher/`, on `dev`, shipped to testers on `testing`) installs builds into a folder of its own.
-  The user's install is `D:\Games\CDDA MY FORK\` (`Start CDDA Launcher.bat`, game in `Game\`, user data in `UserData\`).
+  The user's install is `D:\Games\CDDA MY FORK\` (`CDDA Fork Launcher.exe`, game in `Game\`, user data in `UserData\`;
+  desktop shortcut "CDDA Fork Launcher"). The .exe only starts the script; rebuild it with `tools/launcher/src/build-exe.ps1`
+  after changing `launcher.ico`. Files in `$script:LauncherAssets` (icons, .exe) ship with every self-update.
   Its "Builds from" picks Xbro10 tester builds (default) or official experimental; "Sync my mods from my fork" copies our mods
   into `UserData\mods`. It updates itself from `testing`: when the launcher changes, raise `$script:LauncherVersion` (a date).
   Never edit the copy in `D:\Games` by hand; change `tools/launcher` and copy it there.
