@@ -6,8 +6,12 @@ keeps your saves safe, and lets you play with one click.
 ## Setting it up
 
 1. Make a folder with a short path, for example `C:\Games\CDDA` (not inside Program Files).
-2. Copy `Start CDDA Launcher.bat` and the `Launcher` folder (from `tools/launcher/` in the fork) into it.
-3. Double-click **`Start CDDA Launcher.bat`**. On the Folders tab you can also make a desktop shortcut.
+2. Copy `CDDA Fork Launcher.exe` and the `Launcher` folder (from `tools/launcher/` in the fork) into it.
+3. Double-click **`CDDA Fork Launcher.exe`**. If Windows SmartScreen warns you, click **More info > Run anyway**
+   (the exe isn't signed). **Settings > Create desktop shortcut** puts it on your desktop.
+
+The .exe only starts `Launcher\cdda-launcher.ps1` without a console window; its source is in `tools/launcher/src/`.
+An older folder with `Start CDDA Launcher.bat` still works, and the next launcher update adds the .exe to it.
 
 ## What it does
 
@@ -72,6 +76,7 @@ Settings are kept in `settings.json` next to the script.
 - Publishing a launcher update: change the script on `dev`, raise `$script:LauncherVersion` (a date, compared as
   text; add `.2`, `.3` for more the same day), and merge it through to `testing`. Every launcher picks it up on
   its next start. Files listed in `$script:LauncherAssets` (the icon) are downloaded along with it.
-- Changing the icon: replace `launcher-icon.png` and `launcher.ico` in `tools/launcher/Launcher/` and raise the version.
+- Changing the icon: replace `launcher-icon.png` and `launcher.ico` in `tools/launcher/Launcher/`, run
+  `tools/launcher/src/build-exe.ps1` so the .exe gets the new icon, and raise the version.
 - Testing the window: `-Screenshot out.png` saves a picture of it and closes; add `-Page game|mods|saves|settings`
   and `-Theme black|blue|light` to pick what it shows.

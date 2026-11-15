@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher.exe** replaces `Start CDDA Launcher.bat`: a small .exe with the launcher icon as its file icon that opens the launcher with no console window. Desktop shortcuts now point at it, and launcher updates add it to older folders.
 - 2026-11-15, Developer tools: [Launcher] **New look:** a sidebar with the new infinity-hexagon icon, Game / Mods / Saves & backups / Settings pages, and **Black**, **Dark blue** and **Light** themes. The new **Settings** page holds the theme, download type, close-on-play, start-up update checks, mod folder and desktop shortcut. The icon is used for the window, taskbar and shortcut, and self-update now brings icon files along.
 - 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher** is now in the fork (`tools/launcher/`). It installs and updates **Xbro10 tester builds** (the `testing-build-*` releases) by default, says when a new one is out, and updates itself from the `testing` branch. Official CDDA experimental builds are still one click away.
 - 2026-11-14, NPCs: [BE] **Breakroom runners**: two named runners really travel Level 1 on errands for Dot, bring back extra for the supply locker, and sometimes go missing, which opens a "Find the runner" job.
