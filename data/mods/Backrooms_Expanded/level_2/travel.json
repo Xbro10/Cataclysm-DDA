@@ -145,7 +145,8 @@
         "u_message": "Behind you, with a long grinding roar, the stairwell fills with falling concrete.  The dust settles.  You're in a tunnel of pipes, and it's hot.",
         "type": "bad",
         "popup": true
-      }
+      },
+      { "run_eocs": "EOC_BR_CLASS_CARD" }
     ]
   },
   {
@@ -203,7 +204,8 @@
       {
         "u_message": "When you look down, the hatch is gone.  Just a square of newer concrete in the floor.",
         "type": "neutral"
-      }
+      },
+      { "run_eocs": "EOC_BR_CLASS_CARD" }
     ]
   },
   {
