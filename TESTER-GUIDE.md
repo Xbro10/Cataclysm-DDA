@@ -6,19 +6,36 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
 ## What's in this build
 
 - **Backrooms Expanded** (mod): new Backrooms levels (the Parking Deck, Pipe Dreams), places, monsters, NPCs and jobs.
-  It builds on TGWeaver's Backrooms mod.
+  It builds on TGWeaver's Backrooms mod. New this time: Level 1 lights that flicker, fail and black out lobbies;
+  the Faceling, Skin-stealer and Partygoer; Breakroom runners who travel Level 1 and can go missing; Breakroom
+  standing, a supply locker and job rewards; loot caches.
 - **Survivor Minds** (mod): NPCs with inner lives: journals, chalk wall marks, routines, reactions to what you do,
-  gossip and danger warnings.
-- **NPC autonomy** (built into the game, off by default): NPCs with needs who eat at mealtimes and seek company.
+  gossip and danger warnings. New: **Gabriel**, a unique recruitable NPC, and one "Got a minute?" entry in the
+  follower menu for all of it.
+- **NPC autonomy** (built into the game, off by default): NPCs with needs who eat at mealtimes, seek company and,
+  new this time, go and get water when they're very thirsty.
+- **The launcher** (`tools/launcher/`): installs this build, tells you when a new one is out, and keeps your saves.
 
 What changed is listed in each mod's `CHANGELOG.md` (`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
 
 ## Getting the build
 
-**Easiest (Windows):** download the newest **Testing build** zip from the
+**Easiest (Windows): the launcher.** It downloads the newest tester build, tells you when there's a new one, and
+keeps your saves, settings and mods when it updates.
+
+1. Make a folder with a short path, for example `C:\Games\CDDA` (not inside Program Files).
+2. From this branch, copy the `tools/launcher` folder's contents into it: `Start CDDA Launcher.bat` and the
+   `Launcher` folder. (Green **Code** button > **Download ZIP** gets you the whole branch; you only need those two.)
+3. Double-click `Start CDDA Launcher.bat`. If Windows asks, allow it. Press **Install / update**, then **PLAY**.
+
+From then on, open the launcher instead of the game. When Xbro10 posts a new build, it says so when it starts
+and offers to install it. The launcher also updates itself. Your saves live in the launcher's `UserData` folder;
+**Back up my saves now** (Folders & backups tab) zips them.
+
+**Without the launcher:** download the newest **Testing build** zip from the
 [Releases page](https://github.com/Xbro10/Cataclysm-DDA/releases), unzip it anywhere (not inside Program Files)
 and run `cataclysm-tiles.exe`. If SmartScreen warns you, click **More info > Run anyway**.
-Nothing else to install.  Xbro10 posts a new zip when this branch moves.
+You'll have to check the Releases page for new zips yourself.
 
 **Building it yourself, or on another system:**
 
@@ -53,8 +70,9 @@ Open an **Issue** on GitHub (the **Issues** tab) and include:
 - what happened, and what you expected
 - where (which level, place or NPC) and the steps to make it happen again
 - the error popup text, if any
-- the last part of `config/debug.log` (in the game folder)
-- a save if you can: zip your world's folder from `save/`
+- which build you have (the launcher shows it at the top, for example "tester 2026-11-14")
+- the last part of `config/debug.log` (with the launcher it's in `UserData\config\`; otherwise in the game folder)
+- a save if you can: zip your world's folder from `save/` (`UserData\save\` with the launcher)
 
 One bug per Issue. Ideas and feedback are welcome as Issues too.
 
