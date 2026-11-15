@@ -6,7 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
-- Gabriel's look, picked by the person he's based on: black hair, green eyes, a cyan hoodie and a blue wool scarf (new item `sm_scarf_blue`, with recoloured UltiCa and UndeadPeople sprites). His skin tone still rolls like any NPC's.
+- Gabriel's look, picked by the person he's based on: light skin, black hair, green eyes, a cyan hoodie and a blue wool scarf (new item `sm_scarf_blue`, with recoloured UltiCa and UndeadPeople sprites).
 - Developer shortcut `EOC_SM_DEBUG_WATCH_GABRIEL` (watch mode): spawns an unrecruited Gabriel 6-10 tiles away and makes you invisible, silent, scentless, unhurtable and able to see through walls, so you can watch him act on his own. `EOC_SM_DEBUG_WATCH_STOP` turns it off.
 - Gabriel, a unique NPC with his own class (Brawler): a veteran fighter with a morningstar (Mace Mastery, high bashing and melee), a hatchet as backup (axe proficiencies), Tough and Fast Learner, dressed for the cold. He has his own first-meeting dialogue in his short, blunt voice; to recruit him you have to tell him you trust him. As a follower he gets "Gabriel, what's on your mind?" in the follower menu. His kindness and ruthlessness are fixed (3 and 2) instead of rolled.
 - Developer shortcut `EOC_SM_DEBUG_SPAWN_GABRIEL` spawns Gabriel next to you (his real spawn point comes later).

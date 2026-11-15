@@ -1,6 +1,6 @@
 # Makes the blue scarf sprites for Survivor Minds' Gabriel (item sm_scarf_blue) by recolouring the
 # wool scarf sprites of UltiCa and UndeadPeople (both CC-BY-SA 3.0) from brown to blue.
-# Writes data/mods/Survivor_Minds/gfx/gabriel_*.png; gabriel_tileset.json maps them.
+# Writes data/mods/Survivor_Minds/gfx/gabriel_*.png; gabriel_tileset_ultica.json and gabriel_tileset_udp.json map them.
 # UltiCa isn't in the source checkout, so point -UltiCa at a release build's gfx/UltimateCataclysm.
 param(
   [string]$UltiCa = 'D:\Games\CDDA MY FORK\Game\gfx\UltimateCataclysm',
