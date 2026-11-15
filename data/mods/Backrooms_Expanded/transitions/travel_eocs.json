@@ -37,7 +37,8 @@
       },
       { "u_teleport": { "global_val": "br1_arrival_point" }, "force_safe": true },
       { "u_run_npc_eocs": [ "EOC_BR_FOLLOWER_TO_L1_ARRIVAL" ], "local": true },
-      { "run_eocs": "EOC_BR1_PLACE_BREAKROOM" }
+      { "run_eocs": "EOC_BR1_PLACE_BREAKROOM" },
+      { "run_eocs": "EOC_BR_CLASS_CARD" }
     ]
   },
   {
@@ -115,7 +116,8 @@
         "false_eocs": [ "EOC_BR0_BUILD_EXIT" ]
       },
       { "u_teleport": { "global_val": "br0_exit_point" }, "force_safe": true },
-      { "u_run_npc_eocs": [ "EOC_BR_FOLLOWER_TO_L0_EXIT" ], "local": true }
+      { "u_run_npc_eocs": [ "EOC_BR_FOLLOWER_TO_L0_EXIT" ], "local": true },
+      { "run_eocs": "EOC_BR_CLASS_CARD" }
     ]
   },
   {

@@ -30,7 +30,8 @@
     "looks_like": "sewer",
     "color": "brown",
     "see_cost": "full_high",
-    "spawns": { "group": "GROUP_BR2_TUNNELS", "population": [ 1, 4 ], "chance": 30 },
+    "//": "Class 3 spawn density: about 1.8 monsters per tunnel square on average (Level 1's garage: about 0.9).",
+    "spawns": { "group": "GROUP_BR2_TUNNELS", "population": [ 2, 6 ], "chance": 45 },
     "flags": [ "NO_ROTATE" ]
   },
   {

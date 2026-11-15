@@ -3,14 +3,14 @@
     "type": "SCENARIO_BLACKLIST",
     "subtype": "whitelist",
     "//": "Replaces the upstream Backrooms whitelist (a second whitelist resets the first), so it lists upstream's two scenarios as well as ours.",
-    "scenarios": [ "backroom_dweller", "backroom_dweller_starternpc", "br1_wrong_exit", "br1_breakroom_hire", "br1_one_of_the_lost" ]
+    "scenarios": [ "backroom_dweller", "backroom_dweller_starternpc", "br1_wrong_exit", "br1_breakroom_hire", "br1_one_of_the_lost", "br2_pipe_rat" ]
   },
   {
     "type": "scenario",
     "id": "br1_wrong_exit",
     "name": "Wrong Exit",
     "points": 0,
-    "description": "You drove down the ramp looking for a space.  Then down another.  And another.  The engine coughed, the fuel light came on, and the ramps stopped going anywhere.  Your car is out of gas somewhere on Level 1, an endless parking garage, and there's no way back up.  Someone has been keeping order down here.  Find them.",
+    "description": "You drove down the ramp looking for a space.  Then down another.  And another.  The engine coughed, the fuel light came on, and the ramps stopped going anywhere.  Your car is out of gas somewhere on Level 1, an endless parking garage, and there's no way back up.  Someone has been keeping order down here.  Find them.\n\n<color_light_green>Level 1, Survival Difficulty: Class 1.</color>  Safe.  Secure.  Anomalous resources.\n<color_white>Expect:</color> people (the Breakroom and the squatter camps), scarce water, Hounds in packs, and Smilers wherever the lights go out.  Stairs going down lead to Level 2.",
     "allowed_locs": [ "sloc_backrooms" ],
     "start_name": "Level 1: the Parking Deck",
     "eoc": [ "EOC_BR1_START_WRONG_EXIT" ],
@@ -21,7 +21,7 @@
     "id": "br1_breakroom_hire",
     "name": "Breakroom Hire",
     "points": 1,
-    "description": "You've been on Level 1 for weeks.  The Foreman found you half-starved behind a pillar and gave you a bunk, a locker and a job.  You start inside the Breakroom, the closest thing to safety down here, among people who already trust you.",
+    "description": "You've been on Level 1 for weeks.  The Foreman found you half-starved behind a pillar and gave you a bunk, a locker and a job.  You start inside the Breakroom, the closest thing to safety down here, among people who already trust you.\n\n<color_light_green>Level 1, Survival Difficulty: Class 1.</color>  Safe.  Secure.  Anomalous resources.\n<color_white>Expect:</color> people (the Breakroom and the squatter camps), scarce water, Hounds in packs, and Smilers wherever the lights go out.  Stairs going down lead to Level 2.",
     "allowed_locs": [ "sloc_backrooms" ],
     "start_name": "Level 1: the Breakroom",
     "eoc": [ "EOC_BR1_START_HIRE" ],
@@ -32,7 +32,7 @@
     "id": "br1_one_of_the_lost",
     "name": "One of the Lost",
     "points": -1,
-    "description": "You fell through a wall and never found your way back.  Now you hold a sandbagged corner of Level 1 with a few others who did the same.  The stash is thin, the drip pool never stops, and the Breakroom folk look at your lot like you might steal from them.  Sometimes you do.",
+    "description": "You fell through a wall and never found your way back.  Now you hold a sandbagged corner of Level 1 with a few others who did the same.  The stash is thin, the drip pool never stops, and the Breakroom folk look at your lot like you might steal from them.  Sometimes you do.\n\n<color_light_green>Level 1, Survival Difficulty: Class 1.</color>  Safe.  Secure.  Anomalous resources.\n<color_white>Expect:</color> people (the Breakroom and the squatter camps), scarce water, Hounds in packs, and Smilers wherever the lights go out.  Stairs going down lead to Level 2.",
     "allowed_locs": [ "sloc_backrooms" ],
     "start_name": "Level 1: a squatter camp",
     "eoc": [ "EOC_BR1_START_LOST" ],
@@ -47,6 +47,7 @@
       { "u_location_variable": { "global_val": "br1_wrong_exit_point" } },
       { "mapgen_update": "br1_wrong_exit_car", "target_var": { "global_val": "br1_wrong_exit_point" } },
       { "u_spawn_item": "flashlight", "suppress_message": true },
+      { "u_spawn_item": "br_level_guide", "suppress_message": true },
       { "u_spawn_item": "granola", "count": 2, "suppress_message": true },
       { "u_spawn_item": "chips", "suppress_message": true },
       { "u_spawn_item": "cola", "container": "bottle_plastic", "suppress_message": true },
@@ -115,6 +116,7 @@
         "target_params": { "om_terrain": "br1_squatter_camp", "reveal_radius": 1, "z": 0 }
       },
       { "u_spawn_item": "flashlight", "suppress_message": true },
+      { "u_spawn_item": "br_level_guide", "suppress_message": true },
       { "u_spawn_item": "sandwich_t", "suppress_message": true },
       { "u_spawn_item": "bandages", "count": 2, "suppress_message": true },
       {
@@ -149,6 +151,7 @@
       { "math": [ "faction_trust('br_lost') = 20" ] },
       { "math": [ "faction_like('br_breakroom') = -10" ] },
       { "u_spawn_item": "lighter", "suppress_message": true },
+      { "u_spawn_item": "br_level_guide", "suppress_message": true },
       { "u_spawn_item": "pipe", "suppress_message": true },
       { "u_spawn_item": "blanket", "suppress_message": true },
       {
