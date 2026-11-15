@@ -6,14 +6,19 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
 ## What's in this build
 
 - **Backrooms Expanded** (mod): new Backrooms levels (the Parking Deck, Pipe Dreams), places, monsters, NPCs and jobs.
-  It builds on TGWeaver's Backrooms mod. New this time: Level 1 lights that flicker, fail and black out lobbies;
-  the Faceling, Skin-stealer and Partygoer; Breakroom runners who travel Level 1 and can go missing; Breakroom
-  standing, a supply locker and job rewards; loot caches.
+  It builds on TGWeaver's Backrooms mod. New this time: every level has a **Survival Difficulty Class** (from the
+  Backrooms Wiki), shown in the scenario descriptions, on a card when you first arrive and in a field guide you
+  start with; the class changes how the level plays (Level 2, Class 3, has twice the monsters, almost no food and
+  bursting steam pipes). A hard new start, **Pipe Rat**, alone on Level 2. Level 0's ceiling lights sit in neat
+  rows, and a few Backrooms entities turn up there now. Exits and the Breakroom are no longer marked or explained:
+  find them yourself, or listen to the people down there.
 - **Survivor Minds** (mod): NPCs with inner lives: journals, chalk wall marks, routines, reactions to what you do,
-  gossip and danger warnings. New: **Gabriel**, a unique recruitable NPC, and one "Got a minute?" entry in the
-  follower menu for all of it.
-- **NPC autonomy** (built into the game, off by default): NPCs with needs who eat at mealtimes, seek company and,
-  new this time, go and get water when they're very thirsty.
+  gossip and danger warnings, and **Gabriel**, a unique recruitable NPC.
+- **NPC autonomy** (built into the game, off by default): NPCs with needs who eat at mealtimes, seek company and
+  go and get water when they're very thirsty.
+- **Fixes in the game itself**, new this time: followers no longer get left behind when you change levels (one
+  that was eating or busy used to stay behind); saving while you or an NPC is eating or using an item in a bag no
+  longer loses the item on load; an NPC's Food need now drops when they eat.
 - **The launcher** (`tools/launcher/`): installs this build, tells you when a new one is out, and keeps your saves.
 
 What changed is listed in each mod's `CHANGELOG.md` (`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
