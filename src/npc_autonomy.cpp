@@ -502,8 +502,18 @@ void count_failed_target( npc &guy )
     }
 }
 
+bool gave_up_on_water( const npc &guy )
+{
+    return turns_since_start() < get_num( guy, var_water_gave_up, -1.0 );
+}
+
 goal_result get_water( npc &guy )
 {
+    if( gave_up_on_water( guy ) ) {
+        return goal_result::none;
+    }
+    // Only a target that turned out unreachable counts toward giving up, not "found nothing".
+    const bool had_target = guy.get_water_plan().active();
     const npc::need_result result = guy.execute_drink_water();
     const npc::need_plan &plan = guy.get_water_plan();
 
@@ -536,7 +546,9 @@ goal_result get_water( npc &guy )
             return guy.activity ? goal_result::activity : goal_result::acted;
         case npc::need_result::impossible:
             guy.plan_for( npc::need_goal_id::drink_water ).clear();
-            count_failed_target( guy );
+            if( had_target ) {
+                count_failed_target( guy );
+            }
             return goal_result::none;
         case npc::need_result::holding:
         case npc::need_result::blocked:
@@ -563,7 +575,7 @@ bool wants_water( const npc &guy )
         water_need( guy ) < water_need_to_act ) {
         return false;
     }
-    if( turns_since_start() < get_num( guy, var_water_gave_up, -1.0 ) ) {
+    if( gave_up_on_water( guy ) ) {
         return false;
     }
     if( !guy.intake_useful( npc::need_goal_id::drink_water ) ) {

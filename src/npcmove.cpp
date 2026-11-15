@@ -6685,7 +6685,12 @@ std::vector<npc::scored_item> npc::find_nearby_food( consume_filter filter )
         return w > 0.0f && will_eat( it ).success();
     };
 
-    for( const tripoint_bub_ms &p : closest_points_first( pos_bub(), 6 ) ) {
+    // Xbro10 fork: with NPC autonomy on, drinks are looked for as far as water terrain is
+    // (step 3.4), inside containers on the ground (a bottle of water) and in keg furniture,
+    // whose sealed contents aren't "seen" (a water cooler).
+    const bool autonomy_drinks = npc_autonomy::enabled() && filter == consume_filter::drink_only;
+    const int search_radius = autonomy_drinks ? npc_autonomy::water_search_radius() : 6;
+    for( const tripoint_bub_ms &p : closest_points_first( pos_bub(), search_radius ) ) {
         if( is_no_go_position( here.get_abs( p ) ) ) {
             continue;
         }
@@ -6697,11 +6702,19 @@ std::vector<npc::scored_item> npc::find_nearby_food( consume_filter filter )
             continue;
         }
         // Ground items (need sees_some_items for visibility gate).
-        if( here.sees_some_items( p, *this ) ) {
+        const bool keg = autonomy_drinks && here.has_flag_furn( ter_furn_flag::TFLAG_LIQUIDCONT, p );
+        if( keg || here.sees_some_items( p, *this ) ) {
             for( item &it : here.i_at( p ) ) {
                 item_location loc( map_cursor( p ), &it );
                 if( score_item( loc ) ) {
                     results.push_back( { loc, rate_food( *this, it, want_hunger, want_quench ) } );
+                } else if( autonomy_drinks ) {
+                    for( item *inner : it.all_items_top( pocket_type::CONTAINER ) ) {
+                        item_location inner_loc( loc, inner );
+                        if( score_item( inner_loc ) ) {
+                            results.push_back( { inner_loc, rate_food( *this, *inner, want_hunger, want_quench ) } );
+                        }
+                    }
                 }
             }
         }

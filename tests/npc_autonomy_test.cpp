@@ -33,6 +33,8 @@ static const itype_id itype_bottle_plastic( "bottle_plastic" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
 static const itype_id itype_water_clean( "water_clean" );
 
+static const furn_str_id furn_f_water_heater( "f_water_heater" );
+
 static const ter_str_id ter_t_water_sh( "t_water_sh" );
 
 static const faction_id faction_no_faction( "no_faction" );
@@ -324,6 +326,61 @@ TEST_CASE( "npc_autonomy_get_water", "[npc][autonomy]" )
         CHECK( rl_dist( guy.pos_bub(), pool ) <= 1 );
         CHECK( guy.get_thirst() < 100 );
     }
+}
+
+// A follower next to the player, water a few tiles off: a bottle on the floor, or a
+// water cooler (keg furniture, water held on its tile as in the Backrooms' f_watercooler).
+TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 1, 0 ) );
+    const tripoint_bub_ms spot( player_pos + point( 4, 0 ), 0 );
+    guy.stomach.empty();
+    guy.set_thirst( 100 );
+
+    SECTION( "a bottle of water on the floor" ) {
+        item bottle( itype_bottle_plastic );
+        bottle.fill_with( item( itype_water_clean, calendar::turn ) );
+        here.add_item_or_charges( spot, bottle );
+    }
+    SECTION( "a water cooler" ) {
+        here.furn_set( spot, furn_f_water_heater );
+        here.add_item( spot, item( itype_water_clean, calendar::turn, 30 ) );
+    }
+    REQUIRE( npc_autonomy::wants_water( guy ) );
+    for( int turn = 0; turn < 40 && guy.get_thirst() >= 100; ++turn ) {
+        guy.set_moves( guy.get_speed() );
+        if( guy.activity ) {
+            // Drinking from an item is a short activity.
+            guy.activity.do_turn( guy );
+        } else {
+            npc_autonomy::run_goal( guy, "autonomy_get_water" );
+        }
+    }
+    CHECK( guy.get_thirst() < 100 );
+}
+
+TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 1, 0 ) );
+    guy.stomach.empty();
+    guy.set_thirst( 100 );
+    for( int turn = 0; turn < 10; ++turn ) {
+        guy.set_moves( guy.get_speed() );
+        npc_autonomy::run_goal( guy, "autonomy_get_water" );
+    }
+    // Nothing to find isn't a target that failed: no giving up, no message.
+    CHECK( guy.maybe_get_value( "autonomy_water_gave_up_until" ) == nullptr );
 }
 
 TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
