@@ -52,8 +52,8 @@ every change adds a line at the top of its "New entries" as well as to its mod's
 - **Tester releases** (first: `testing-build-2026-11-14`): when testing moves and the user wants a build, make sure
   `src/` matches `origin/testing` and build; stage `git archive origin/testing data gfx doc README.md LICENSE*.txt TESTER-GUIDE.md`,
   plus the compiled `data/shaders/*.dxil|*.spv`, `gfx/UltimateCataclysm`, `gfx/MSX++UnDeadPeopleEdition` (git-ignored here),
-  the exe and a `VERSION.txt`; check-mods it from the staged folder (create `config/` first), then delete first-run folders and zip
-  to `D:\dev\releases\`. Publish as a pre-release with tag `testing-build-YYYY-MM-DD` targeting `testing`. The built-in browser can't
+  the exe and a `VERSION.txt`; check-mods it from the staged folder (create `config/` first), then delete first-run folders (including `data/cache`) and zip
+  to `D:\dev\releases\`. Publish as a pre-release with tag `testing-build-YYYY-MM-DD` (`-2`, `-3` for more that day) targeting `testing`, with one asset named `CDDA-Xbro10-testing-*.zip`: the launcher looks for exactly that. The built-in browser can't
   attach files, so the user drags the zip in.
 - A ruleset (PR required, no force-push or delete) covers `master`, `dev`, `npc-autonomy`, `testing`; Xbro10 bypasses it,
   so pushes still work and GitHub prints a "must be made through a pull request" note.
@@ -84,9 +84,11 @@ visibility distance, 3D FOV range.
   `& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" Cataclysm-vcpkg-static.sln /t:Cataclysm-vcpkg-static /p:Configuration=Release /p:Platform=x64 /m /v:minimal`
 - Outputs in the repo root: `cataclysm-tiles.exe` (game), `Cataclysm-test-vcpkg-static-Release-x64.exe` (tests).
 - This build's saves and config live in `save\` and `config\` (git-ignored).
-- The official build (for pre-release checks) is installed by the launcher at
-  `D:\Games\CDDA MY FORK\` (`Start CDDA Launcher.bat`, game in `Game\`, user data in `UserData\`).
-  Its "Sync my mods from my fork" copies our mods into `UserData\mods`.
+- **The launcher** (`tools/launcher/`, on `dev`, shipped to testers on `testing`) installs builds into a folder of its own.
+  The user's install is `D:\Games\CDDA MY FORK\` (`Start CDDA Launcher.bat`, game in `Game\`, user data in `UserData\`).
+  Its "Builds from" picks Xbro10 tester builds (default) or official experimental; "Sync my mods from my fork" copies our mods
+  into `UserData\mods`. It updates itself from `testing`: when the launcher changes, raise `$script:LauncherVersion` (a date).
+  Never edit the copy in `D:\Games` by hand; change `tools/launcher` and copy it there.
 
 ## Checking mods
 
