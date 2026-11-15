@@ -454,8 +454,10 @@ class item_contents
 
         /** Read the items in the MOD pocket only. */
         void read_mods( const item_contents &read_input );
+        // Xbro10 fork: keep_uids gives each inserted item the uid of the item it was read
+        // from, so loading a save doesn't renumber everything in pockets.
         void combine( const item_contents &read_input, bool convert = false, bool into_bottom = false,
-                      bool restack_charges = true, bool ignore_contents = false );
+                      bool restack_charges = true, bool ignore_contents = false, bool keep_uids = false );
 
         void serialize( JsonOut &json ) const;
         void deserialize( const JsonObject &data );

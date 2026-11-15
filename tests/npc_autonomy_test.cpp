@@ -1,12 +1,17 @@
 // Xbro10 fork: tests for "NPC autonomy (experimental)" (src/npc_autonomy.*).
 
+#include <sstream>
 #include <string>
 
+#include "activity_type.h"
 #include "avatar.h"
 #include "calendar.h"
 #include "cata_catch.h"
 #include "coordinates.h"
+#include "flexbuffer_json.h"
 #include "item.h"
+#include "json.h"
+#include "json_loader.h"
 #include "map.h"
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
@@ -21,6 +26,9 @@
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
 
+static const activity_id ACT_CONSUME( "ACT_CONSUME" );
+
+static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
 
 static const faction_id faction_your_followers( "your_followers" );
@@ -133,9 +141,16 @@ TEST_CASE( "npc_autonomy_felt_needs", "[npc][autonomy]" )
         CHECK( needs.water == 63 );
         CHECK( needs.sleep == 100 );
     }
-    SECTION( "lost body reserves count as hunger" ) {
-        guy.set_stored_kcal( guy.get_healthy_kcal() * 3 / 4 );
+    // get_healthy_kcal() is a fat BMI of 5; the game calls 3 normal and 2 underweight.
+    SECTION( "a normal weight adds nothing" ) {
+        guy.set_stored_kcal( guy.get_healthy_kcal() * 7 / 10 ); // fat BMI 3.5
+        CHECK( npc_autonomy::current_needs( guy ).food == 0 );
+    }
+    SECTION( "being underweight counts as hunger" ) {
+        guy.set_stored_kcal( guy.get_healthy_kcal() * 2 / 5 ); // fat BMI 2
         CHECK( npc_autonomy::current_needs( guy ).food == 50 );
+        guy.set_stored_kcal( guy.get_healthy_kcal() / 5 );     // fat BMI 1, emaciated
+        CHECK( npc_autonomy::current_needs( guy ).food == 75 );
     }
     SECTION( "with No NPC Food, food and water are 0" ) {
         override_option no_food( "NO_NPC_FOOD", "true" );
@@ -185,6 +200,48 @@ TEST_CASE( "npc_autonomy_mealtimes", "[npc][autonomy]" )
         } );
         CHECK_FALSE( npc_autonomy::wants_meal( guy ) );
     }
+}
+
+// Xbro10 fork fixes: an NPC saved mid-meal used to lose its food on load. It isn't
+// registered with the game while it loads ("Failed to find item_location owner"), and
+// every item in a pocket got a new uid on load ("UID not found in container contents").
+TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    set_time( calendar::turn_zero + 7_hours );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 10, 0 ) );
+    guy.stomach.empty();
+    guy.set_hunger( 50 );
+    guy.add_effect( effect_hunger_hungry, 1_days );
+    // In a backpack, so the meal points into a container on the NPC.
+    guy.wear_item( item( itype_backpack ), false );
+    guy.i_add( item( itype_sandwich_cheese_grilled ) );
+    REQUIRE( npc_autonomy::run_goal( guy, "autonomy_meal" ) == npc_autonomy::goal_result::activity );
+    REQUIRE( guy.activity.id() == ACT_CONSUME );
+    const auto sandwich_uid = []( const npc & who ) {
+        const std::vector<const item *> found = who.items_with( []( const item & it ) {
+            return it.typeId() == itype_sandwich_cheese_grilled;
+        } );
+        return found.empty() ? int64_t( 0 ) : found.front()->uid().get_value();
+    };
+    const int64_t uid_before = sandwich_uid( guy );
+    REQUIRE( uid_before != 0 );
+
+    std::ostringstream saved;
+    JsonOut jsout( saved );
+    guy.serialize( jsout );
+    // Gone from the game, like every NPC before a save is loaded.
+    clear_npcs();
+
+    // Fails the test with a debug message if the meal can't find its food.
+    npc loaded;
+    JsonValue jv = json_loader::from_string( saved.str() );
+    loaded.deserialize( jv.get_object() );
+    CHECK( sandwich_uid( loaded ) == uid_before );
+    CHECK( loaded.activity.id() == ACT_CONSUME );
 }
 
 TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )

@@ -381,6 +381,19 @@ class item_location::impl::item_on_map : public item_location::impl
         }
 };
 
+// Xbro10 fork: the character whose save data is being read, see item_location_owner_scope.
+static Character *loading_owner = nullptr;
+
+item_location_owner_scope::item_location_owner_scope( Character &who ) : previous( loading_owner )
+{
+    loading_owner = &who;
+}
+
+item_location_owner_scope::~item_location_owner_scope()
+{
+    loading_owner = previous;
+}
+
 class item_location::impl::item_on_person : public item_location::impl
 {
     private:
@@ -390,6 +403,10 @@ class item_location::impl::item_on_person : public item_location::impl
         bool ensure_who_unpacked() const {
             if( !who ) {
                 who = g->critter_by_id<Character>( who_id );
+                // Xbro10 fork: still loading, so not registered with the game yet.
+                if( !who && loading_owner != nullptr && loading_owner->getID() == who_id ) {
+                    who = loading_owner;
+                }
                 if( !who ) {
                     // If we failed to find it throw a debug message cause we're probably going to crash soon
                     debugmsg( "Failed to find item_location owner with character_id %d", who_id.get_value() );

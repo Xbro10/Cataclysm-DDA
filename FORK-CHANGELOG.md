@@ -14,6 +14,8 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-14, Game options and fixes: [C++] Saving in the middle of eating (or any action on an item in a bag) no longer loses the item on load: NPCs are found while they load, and items in pockets keep their identity across a save (no more "item_location" error pop-ups).
+- 2026-11-14, NPC brain: [C++] The **Food** need now only counts body weight once an NPC is underweight, so it drops as soon as they eat (a normal-weight NPC read about 46 and never went down).
 - 2026-11-14, NPCs and factions: [SM] **Gabriel's look:** light skin, long blond hair, green eyes, a cyan hoodie and a blue wool scarf (its own sprite in UltiCa and UndeadPeople).
 - 2026-11-14, Developer tools: [SM] **Watch Gabriel:** `EOC_SM_DEBUG_WATCH_GABRIEL` spawns an unrecruited Gabriel nearby and hides you completely (invisible, silent, no scent, no damage, sees through walls) so you can watch him on his own; `EOC_SM_DEBUG_WATCH_STOP` ends it.
 - 2026-11-14, NPCs and factions: [SM] **Gabriel**, a unique recruitable NPC (class Brawler): a veteran fighter with a morningstar and a hatchet, short on words, hates teamers, never snitches. Ask "Want to team up?" and tell him you trust him. Debug spawn `EOC_SM_DEBUG_SPAWN_GABRIEL` (his real spawn point comes later).

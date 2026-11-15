@@ -228,6 +228,23 @@ std::unique_ptr<talker> get_talker_for( item_location &it );
 std::unique_ptr<const_talker> get_const_talker_for( const item_location &it );
 std::unique_ptr<talker> get_talker_for( item_location *it );
 
+/**
+ * Xbro10 fork: while a character's own save data is read (an NPC's activity, for
+ * one), item locations on that character can't find them through the game: an NPC
+ * isn't registered until it has finished loading. Inside this scope they find
+ * @p who instead, so an NPC saved mid-meal keeps track of its food.
+ */
+class item_location_owner_scope
+{
+    public:
+        explicit item_location_owner_scope( Character &who );
+        ~item_location_owner_scope();
+        item_location_owner_scope( const item_location_owner_scope & ) = delete;
+        item_location_owner_scope &operator=( const item_location_owner_scope & ) = delete;
+    private:
+        Character *previous;
+};
+
 namespace std
 {
 template <>

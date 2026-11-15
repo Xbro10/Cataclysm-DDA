@@ -15,6 +15,7 @@
 #include "character.h"
 #include "dialogue_chatbin.h"
 #include "game.h"
+#include "game_constants.h"
 #include "map.h"
 #include "math_parser_diag_value.h"
 #include "messages.h"
@@ -115,8 +116,16 @@ constexpr std::array<curve_point, 4> sleepiness_curve{ {
 
 // ---- Each need ----
 
-// Felt hunger: the game's hunger state (what the sidebar shows), or lost body
-// reserves, whichever is worse.
+// Body fat below the game's "normal" weight (fat BMI 3; 2 is underweight's floor,
+// 1 emaciated's): just under normal is near 0, emaciated 50-75, no fat left 100.
+constexpr std::array<curve_point, 4> fat_deficit_curve{ {
+        { 0, 0 }, { 1, 50 }, { 2, 75 }, { 3, 100 }
+    }
+};
+
+// Felt hunger: the game's hunger state (what the sidebar shows), or being
+// underweight, whichever is worse. A normal or heavier body adds nothing, so a
+// meal shows up right away.
 int food_need( const npc &guy )
 {
     // Worst first.
@@ -135,13 +144,8 @@ int food_need( const npc &guy )
             break;
         }
     }
-    int reserves = 0;
-    if( const int healthy = guy.get_healthy_kcal(); healthy > 0 ) {
-        // Down a quarter of a healthy reserve = 50, down half = 100.
-        const float lost = 1.0f - static_cast<float>( guy.get_stored_kcal() ) / healthy;
-        reserves = to_need( 2.0f * lost );
-    }
-    return std::max( felt, reserves );
+    const double fat_deficit = character_weight_category::normal - guy.get_bmi_fat();
+    return std::max( felt, on_curve( fat_deficit, fat_deficit_curve ) );
 }
 
 int water_need( const npc &guy )

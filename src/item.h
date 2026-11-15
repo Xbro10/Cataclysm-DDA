@@ -246,6 +246,12 @@ class item
         const item_uid &uid() const {
             return uid_;
         }
+        /** Xbro10 fork: take over the uid of the item this is a copy of. Loading copies
+         * pocket contents into fresh pockets, and a copy normally gets a new uid, which
+         * broke saved item_locations into containers (see item_contents::combine). */
+        void restore_uid( const item &from ) {
+            uid_ = item_uid( from.uid_.get_value() );
+        }
 
         /**
          * Filter converting this instance to another type preserving all other aspects
