@@ -94,7 +94,7 @@
     "id": "EOC_BR_CARD_L0",
     "effect": [
       {
-        "u_message": "<color_yellow>LEVEL 0: \"THE LOBBY\"</color>\n<color_light_green>Survival Difficulty: Class 1</color>\n- Safe.\n- Secure.\n- Few entities.\n\nMono-yellow rooms that go on forever, damp carpet, and the hum of the lights.  Most of what walks here fell in from outside like you did: the dead, strays, and the odd wild animal.  The Backrooms' own things are rare this close to the edge, but not unheard of.\n\n<color_white>Expect:</color> scavenging from old offices and storerooms, long walks with no landmarks, and walls that ripple like cloth.  Step through one and you'll land on Level 1.",
+        "u_message": "<color_yellow>LEVEL 0: \"THE LOBBY\"</color>\n<color_light_green>Survival Difficulty: Class 1</color>\n- Safe.\n- Secure.\n- Few entities.\n\nMono-yellow rooms that go on forever, damp carpet, and the hum of the lights.  Most of what walks here fell in from outside like you did: the dead, strays, and the odd wild animal.  The Backrooms' own things are rare this close to the edge, but not unheard of.\n\n<color_white>Expect:</color> scavenging from old offices and storerooms, long walks with no landmarks, and the feeling that the rooms rearrange themselves when you aren't looking.",
         "type": "info",
         "popup": true
       }
@@ -105,7 +105,7 @@
     "id": "EOC_BR_CARD_L1",
     "effect": [
       {
-        "u_message": "<color_yellow>LEVEL 1: \"THE PARKING DECK\"</color>\n<color_light_green>Survival Difficulty: Class 1</color>\n- Safe.\n- Secure.\n- Anomalous resources.\n\nAn endless underground garage of concrete pillars, oil stains and dead cars.  People live here: the Breakroom keeps order, and squatter camps hold the corners.  Water is scarce and almond water scarcer.\n\n<color_white>Expect:</color> Hounds hunting in packs, Deathmoths at the lights, and Smilers in any lobby that goes dark.  The lights flicker and some die for good.  Stairs going down lead to Level 2, and they don't come back up.",
+        "u_message": "<color_yellow>LEVEL 1: \"THE PARKING DECK\"</color>\n<color_light_green>Survival Difficulty: Class 1</color>\n- Safe.\n- Secure.\n- Anomalous resources.\n\nAn endless underground garage of concrete pillars, oil stains and dead cars.  People live here: the Breakroom keeps order, and squatter camps hold the corners.  Water is scarce and almond water scarcer.\n\n<color_white>Expect:</color> Hounds hunting in packs, Deathmoths at the lights, and Smilers in any lobby that goes dark.  The lights flicker and some die for good.",
         "type": "info",
         "popup": true
       }
@@ -116,7 +116,7 @@
     "id": "EOC_BR_CARD_L2",
     "effect": [
       {
-        "u_message": "<color_yellow>LEVEL 2: \"THE PIPE TUNNELS\"</color>\n<color_red>Survival Difficulty: Class 3</color>\n- Unsafe.\n- Unstable.\n- Moderate entity count.\n\nHot, cramped maintenance tunnels, packed with pipes, cables and machines that stopped working long ago.  Hardly anyone lives here any more.  Food is very rare.\n\n<color_white>Expect:</color> more Hounds and Smilers than Level 1, long stretches with no light at all, and pipes that burst without warning and fill the tunnel with scalding steam.  Service ladders climb back to Level 1.",
+        "u_message": "<color_yellow>LEVEL 2: \"THE PIPE TUNNELS\"</color>\n<color_red>Survival Difficulty: Class 3</color>\n- Unsafe.\n- Unstable.\n- Moderate entity count.\n\nHot, cramped maintenance tunnels, packed with pipes, cables and machines that stopped working long ago.  Hardly anyone lives here any more.  Food is very rare.\n\n<color_white>Expect:</color> more Hounds and Smilers than Level 1, long stretches with no light at all, and pipes that burst without warning and fill the tunnel with scalding steam.",
         "type": "bad",
         "popup": true
       }

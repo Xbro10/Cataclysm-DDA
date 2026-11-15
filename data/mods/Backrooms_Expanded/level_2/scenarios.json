@@ -5,7 +5,7 @@
     "name": "Pipe Rat",
     "points": -2,
     "//": "The hard start: Level 2 (Class 3) on your own, with very little. Listed in the whitelist in level_1/scenarios.json.",
-    "description": "Somebody on Level 1 swore the stairs went down to a way out.  They went down, all right.  Then the stairwell came down behind you, and now you're alone in the hot, knocking dark of the maintenance tunnels with a flashlight, a wrench and one bottle of almond water.  Find a service ladder.  Find food.  Don't stop where the lights are out.\n\n<color_red>Level 2, Survival Difficulty: Class 3.</color>  Unsafe.  Unstable.  Moderate entity count.\n<color_white>Expect:</color> Hound packs and Smilers more often than on Level 1, very little food, long dark stretches, and pipes that burst into scalding steam.  Service ladders climb back up to Level 1.",
+    "description": "Somebody on Level 1 swore the stairs went down to a way out.  They went down, all right.  Then the stairwell came down behind you, and now you're alone in the hot, knocking dark of the maintenance tunnels with a flashlight, a wrench and one bottle of almond water.  Find food.  Find a way out, if there is one.  Don't stop where the lights are out.\n\n<color_red>Level 2, Survival Difficulty: Class 3.</color>  Unsafe.  Unstable.  Moderate entity count.\n<color_white>Expect:</color> Hound packs and Smilers more often than on Level 1, very little food, long dark stretches, and pipes that burst into scalding steam.",
     "allowed_locs": [ "sloc_backrooms" ],
     "start_name": "Level 2: the Pipe Tunnels",
     "eoc": [ "EOC_BR2_START_PIPE_RAT" ],
@@ -23,7 +23,7 @@
       { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "suppress_message": true },
       { "u_spawn_item": "granola", "suppress_message": true },
       {
-        "u_message": "One bar of granola, one bottle of almond water.  Somewhere in these tunnels a ladder goes back up.  Somewhere else, something is knocking on the pipes.",
+        "u_message": "One bar of granola, one bottle of almond water.  The way you came is gone.  Somewhere in the tunnels, something is knocking on the pipes.",
         "type": "bad"
       }
     ]
