@@ -1,0 +1,356 @@
+[
+  {
+    "type": "npc",
+    "id": "BR1_runner_jonah",
+    "//": "Breakroom runner. Dot sends the runners out on real overmap trips (EOC_BR1_RUNNERS_TICK). Global br1_tick_who = 1.",
+    "name_unique": "Jonah Pike",
+    "gender": "male",
+    "name_suffix": "the Runner",
+    "class": "NC_BR1_RUNNER",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_RUNNER",
+    "faction": "br_breakroom",
+    "death_eocs": [ { "id": "EOC_BR1_RUNNER_DIED_JONAH", "effect": [ { "math": [ "br1_runner_dead_1 = 1" ] }, { "run_eocs": "EOC_BR1_RUNNER_DIED" } ] } ]
+  },
+  {
+    "type": "npc",
+    "id": "BR1_runner_rosa",
+    "//": "Breakroom runner. Global br1_tick_who = 2.",
+    "name_unique": "Rosa Ibarra",
+    "gender": "female",
+    "name_suffix": "the Runner",
+    "class": "NC_BR1_RUNNER",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_RUNNER",
+    "faction": "br_breakroom",
+    "death_eocs": [ { "id": "EOC_BR1_RUNNER_DIED_ROSA", "effect": [ { "math": [ "br1_runner_dead_2 = 1" ] }, { "run_eocs": "EOC_BR1_RUNNER_DIED" } ] } ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_RUNNER",
+    "name": { "str": "Runner" },
+    "job_description": "I run errands for Dot.  Out to the camps and the lobbies, and back again.",
+    "common": false,
+    "worn_override": "NC_BR1_RUNNER_worn",
+    "carry_override": "NC_BR1_RUNNER_carry",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_dex": { "rng": [ 1, 3 ] },
+    "bonus_per": { "rng": [ 0, 2 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "survival", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "dodge", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "melee", "bonus": { "rng": [ 1, 2 ] } }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_RUNNER_worn",
+    "subtype": "collection",
+    "items": [ "pants_cargo", "tshirt", "hoodie", "socks", "sneakers", "backpack" ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_RUNNER_carry",
+    "subtype": "collection",
+    "entries": [ { "item": "flashlight", "charges": [ 50, 100 ] }, { "item": "almond_water", "container-item": "bottle_almond_water" } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_DIED",
+    "//": "A dead runner frees the run slot and ends any search for them.",
+    "effect": [ { "math": [ "br1_runner_out = 0" ] }, { "math": [ "br1_runner_missing = 0" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNERS_TICK",
+    "//": "Every 30 minutes while the player is on Level 1, each living runner takes one step of its errand (EOC_BR1_RUNNER_TICK, run as the runner). Runners in a level the player isn't on don't move, so this only runs on Level 1.",
+    "recurrence": [ "30 minutes", "30 minutes" ],
+    "condition": { "current_dimension": "backrooms_level_1" },
+    "effect": [
+      {
+        "if": { "math": [ "br1_runner_dead_1 != 1" ] },
+        "then": [ { "math": [ "br1_tick_who = 1" ] }, { "u_run_npc_eocs": [ "EOC_BR1_RUNNER_TICK" ], "unique_ids": [ "BR1_runner_jonah" ] } ]
+      },
+      {
+        "if": { "math": [ "br1_runner_dead_2 != 1" ] },
+        "then": [ { "math": [ "br1_tick_who = 2" ] }, { "u_run_npc_eocs": [ "EOC_BR1_RUNNER_TICK" ], "unique_ids": [ "BR1_runner_rosa" ] } ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_TICK",
+    "//": "Run as a runner. u_br1_run_state: 0 home, 1 out on a run, 2 heading home, 3 missing (waiting to be found). Off-screen, an NPC that reaches its goal soon picks a random new one, so every tick re-aims a runner who has strayed more than a square from where it should be. Only one runner is out at a time (global br1_runner_out). Blocks run in the order 3, 2, 1, 0 so one tick never does two steps.",
+    "effect": [
+      {
+        "if": { "math": [ "u_br1_run_state == 3" ] },
+        "then": [
+          {
+            "if": { "math": [ "distance('u', br1_missing_point) > 24" ] },
+            "then": [ { "u_set_goal": { "var": { "global_val": "br1_missing_point" } } } ]
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "u_br1_run_state == 2" ] },
+        "then": [
+          {
+            "if": { "math": [ "distance('u', u_br1_home) <= 24" ] },
+            "then": [
+              { "math": [ "u_br1_run_state = 0" ] },
+              { "math": [ "u_br1_run_next = time('now') + time('1 d') + rand(172800)" ] },
+              { "math": [ "br1_runner_out = 0" ] },
+              { "math": [ "br1_runs_done += 1" ] },
+              { "math": [ "br1_stores_bonus = min(br1_stores_bonus + 1, 3)" ] }
+            ],
+            "else": [ { "u_set_goal": { "var": { "u_val": "br1_home" } } } ]
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "u_br1_run_state == 1" ] },
+        "then": [
+          {
+            "if": { "math": [ "distance('u', u_br1_dest) > 24" ] },
+            "then": [ { "u_set_goal": { "var": { "u_val": "br1_dest" } } } ],
+            "else": [
+              {
+                "if": { "math": [ "time('now') >= u_br1_run_turn" ] },
+                "then": [
+                  {
+                    "if": { "and": [ { "math": [ "u_br1_doomed == 1" ] }, { "math": [ "br1_runner_missing == 0" ] } ] },
+                    "then": [
+                      { "math": [ "u_br1_run_state = 3" ] },
+                      { "math": [ "u_br1_doomed = 0" ] },
+                      { "math": [ "br1_runner_missing = 1" ] },
+                      { "math": [ "br1_missing_who = br1_tick_who" ] },
+                      { "u_location_variable": { "global_val": "br1_missing_point" } }
+                    ],
+                    "else": [ { "math": [ "u_br1_run_state = 2" ] }, { "u_set_goal": { "var": { "u_val": "br1_home" } } } ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "u_br1_run_state == 0" ] },
+        "then": [
+          {
+            "if": { "and": [ { "math": [ "u_br1_home_set != 1" ] }, { "u_near_om_location": "br1_breakroom", "range": 0 } ] },
+            "then": [ { "u_location_variable": { "u_val": "br1_home" } }, { "math": [ "u_br1_home_set = 1" ] } ]
+          },
+          {
+            "if": { "math": [ "u_br1_home_set == 1" ] },
+            "then": [
+              {
+                "if": { "math": [ "distance('u', u_br1_home) > 24" ] },
+                "then": [ { "u_set_goal": { "var": { "u_val": "br1_home" } } } ],
+                "else": [
+                  {
+                    "if": { "and": [ { "math": [ "br1_runner_out == 0" ] }, { "math": [ "time('now') >= u_br1_run_next" ] } ] },
+                    "then": [ { "run_eocs": "EOC_BR1_RUNNER_SEND" } ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_SEND",
+    "//": "Run as a runner at home: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-12 squares away and set off. u_br1_dest starts as the runner's own spot, so if the search finds nothing it stays close and the run is put off for 6 hours. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
+    "effect": [
+      { "math": [ "u_br1_run_dest = rng(1, 3)" ] },
+      { "u_location_variable": { "u_val": "br1_dest" } },
+      {
+        "if": { "math": [ "u_br1_run_dest == 1" ] },
+        "then": [
+          {
+            "u_location_variable": { "u_val": "br1_dest" },
+            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "u_br1_run_dest == 2" ] },
+        "then": [
+          {
+            "u_location_variable": { "u_val": "br1_dest" },
+            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "u_br1_run_dest == 3" ] },
+        "then": [
+          {
+            "u_location_variable": { "u_val": "br1_dest" },
+            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
+        "then": [ { "math": [ "u_br1_run_next = time('now') + time('6 h')" ] } ],
+        "else": [
+          { "u_set_goal": { "var": { "u_val": "br1_dest" } } },
+          { "math": [ "u_br1_run_state = 1" ] },
+          { "math": [ "u_br1_run_turn = time('now') + time('1 d') + rand(86400)" ] },
+          { "math": [ "br1_runner_out = 1" ] },
+          {
+            "if": { "and": [ { "math": [ "br1_runner_missing == 0" ] }, { "x_in_y_chance": { "x": 1, "y": 10 } } ] },
+            "then": [ { "math": [ "u_br1_doomed = 1" ] } ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_RUNNER",
+    "dynamic_line": {
+      "math": [ "n_br1_run_state == 3" ],
+      "yes": "You came out here for me?  Dot sent you?  Oh, thank God.  I twisted my ankle running from a pack, and I've been hiding in here ever since, listening to them sniff at the door.  I've got no water left.  Can you get me home?",
+      "no": {
+        "math": [ "n_br1_run_state == 1" ],
+        "yes": {
+          "math": [ "n_br1_run_dest == 1" ],
+          "yes": "On a run for Dot.  Out to one of the squatter camps to trade and see who's still alive.  Don't hold me up; I want to be back before the lights go.",
+          "no": {
+            "math": [ "n_br1_run_dest == 2" ],
+            "yes": "On a run for Dot.  Checking a lobby for Marcus: is it still there, do the lifts still come, did anything turn up in the bin.",
+            "no": "On a run for Dot.  There's a generator room out this way.  If somebody's left a can of gas there, it's coming home with me."
+          }
+        },
+        "no": {
+          "math": [ "n_br1_run_state == 2" ],
+          "yes": "Heading back to the Breakroom with what I found.  Walk with me if you like, but keep up.",
+          "no": "Between runs.  Dot'll send me out again soon enough.  Somebody has to know what's out there this week, not last week."
+        }
+      }
+    },
+    "responses": [
+      {
+        "text": "Let's get you home.  The Breakroom's waiting.",
+        "condition": { "math": [ "n_br1_run_state == 3" ] },
+        "effect": [
+          { "math": [ "n_br1_run_state = 2" ] },
+          { "math": [ "br1_runner_missing = 0" ] },
+          { "npc_set_goal": { "var": { "npc_val": "br1_home" } } },
+          {
+            "if": { "x_in_y_chance": { "x": 1, "y": 2 } },
+            "then": [
+              { "u_spawn_monster": "mon_br_hound", "real_count": 2, "min_radius": 10, "max_radius": 14 },
+              { "message": "Out in the dark, claws click on concrete.  The pack heard you talking.", "type": "bad" }
+            ]
+          }
+        ],
+        "topic": "TALK_BR1_RUNNER_FOUND"
+      },
+      {
+        "text": "Here, have some water.",
+        "condition": { "and": [ { "math": [ "n_br1_run_state == 3" ] }, { "u_has_item": "almond_water" } ] },
+        "effect": [ { "u_consume_item": "almond_water", "count": 1 }, { "math": [ "faction_like('br_breakroom') += 3" ] } ],
+        "topic": "TALK_BR1_RUNNER_WATER"
+      },
+      {
+        "text": "What's it like out there this week?",
+        "condition": { "math": [ "n_br1_run_state != 3" ] },
+        "topic": "TALK_BR1_RUNNER_NEWS"
+      },
+      { "text": "Take care out there.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_RUNNER_FOUND",
+    "dynamic_line": "Okay.  Okay.  I can walk if I lean on the wall.  I'll head straight back; you don't have to carry me.  Tell Dot I'm coming.  Tell her I'm sorry about the trade goods.",
+    "responses": [ { "text": "Go.  I'll watch your back.", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_RUNNER_WATER",
+    "dynamic_line": "Oh, that's good.  That's so good.  Thank you.  I won't forget it.",
+    "responses": [ { "text": "Let's get you home.", "topic": "TALK_BR1_RUNNER" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_RUNNER_NEWS",
+    "dynamic_line": [
+      "More dead lights than last week.  Every week there's more dark between the lanes, and the Smilers like it.",
+      "One of the lobbies near the ramps went black on me for an hour.  I sat in the corner with my flashlight off and counted to three thousand.",
+      "There's a woman calling for help two rows over from the camps.  Don't go.  Whatever that is, it isn't a woman.",
+      "Saw a faceling at a parked car, just standing there with its hand on the door.  It didn't do anything.  I hate that they don't do anything.",
+      "Squatters are short on water again.  They'll trade almost anything for almond water.",
+      "Hounds are thicker by the stairwells.  Go round, not through."
+    ],
+    "responses": [ { "text": "Thanks for the warning.", "topic": "TALK_BR1_RUNNER" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_FOREMAN_RUNNERS",
+    "dynamic_line": {
+      "math": [ "br1_runner_missing == 1" ],
+      "yes": {
+        "math": [ "br1_missing_who == 1" ],
+        "yes": "Jonah's overdue.  A day, maybe more.  He's never late; he's annoying about it.  If you've got a job in you, I'd take it as a kindness.",
+        "no": "Rosa's overdue.  A day, maybe more.  She's never late.  If you've got a job in you, I'd take it as a kindness."
+      },
+      "no": {
+        "math": [ "br1_runner_out == 1" ],
+        "yes": "One of my runners is out: a camp, a lobby or a generator room, whatever needs eyes this week.  Back in a day or two.  They bring back what they can and it goes in the stores.",
+        "no": "Both in, for now.  Jonah and Rosa: they run out to the camps and lobbies and bring back news and whatever they can carry.  I send one at a time.  I'm not losing two in one week."
+      }
+    },
+    "responses": [ { "text": "Something else.", "topic": "TALK_BR1_FOREMAN" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_JOB_RUNNER",
+    "dynamic_line": "My runner's overdue.  I've marked where they were headed.  Go and find them, and if they're alive, get them walking home.  Please.",
+    "responses": [
+      { "text": "I'll find them.", "effect": { "assign_mission": "MISSION_BR1_FIND_RUNNER" }, "topic": "TALK_BR1_JOB_TAKEN_DOT" },
+      { "text": "Not right now.", "topic": "TALK_BR1_FOREMAN_WORK" }
+    ]
+  },
+  {
+    "type": "mission_definition",
+    "id": "MISSION_BR1_FIND_RUNNER",
+    "name": { "str": "Find the runner" },
+    "description": "One of Dot's runners is overdue.  Go to the place marked on your map, find them, and talk to them to get them heading home.  Then tell Dot.",
+    "goal": "MGOAL_CONDITION",
+    "goal_condition": { "math": [ "br1_runner_missing == 0" ] },
+    "difficulty": 3,
+    "value": 0,
+    "origins": [ "ORIGIN_SECONDARY" ],
+    "has_generic_rewards": false,
+    "start": { "assign_mission_target": { "var": { "global_val": "br1_missing_point" }, "reveal_radius": 1 } },
+    "end": {
+      "effect": [
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "count": 2 },
+        { "u_spawn_item": "br_cat_medical", "use_item_group": true, "count": 2 },
+        { "math": [ "faction_like('br_breakroom') += 8" ] },
+        { "run_eocs": "EOC_BR1_STANDING_UP" }
+      ]
+    },
+    "dialogue": {
+      "describe": "One of my runners hasn't come back.",
+      "offer": "My runner's overdue.  I've marked where they were headed.  Find them.",
+      "accepted": "Thank you.  Take water; they'll need it.",
+      "rejected": "Then I'll wait.  I'm good at waiting.",
+      "advice": "They'll have holed up somewhere with a door.  Runners know to hide, not to fight.  Talk to them, they'll walk home on their own.",
+      "inquire": "Any sign of them?",
+      "success": "You found them.  Thank you.  Here, this is from all of us.",
+      "success_lie": "Don't tell me that unless it's true.",
+      "failure": "Right.  Thank you for looking."
+    }
+  }
+]
