@@ -1,0 +1,23 @@
+[
+  {
+    "type": "scenario",
+    "id": "backroom_dweller",
+    "copy-from": "backroom_dweller",
+    "//": "Override of the upstream Backrooms scenario (data/mods/Backrooms/scenarios.json): same start, plus the Level 0 briefing, the class card and a field guide.",
+    "description": "What is this place?  You can't seem to find your way back out.\n\n<color_light_green>Level 0, Survival Difficulty: Class 1.</color>  Safe.  Secure.  Few entities.\n<color_white>Expect:</color> endless yellow rooms to scavenge, the dead and the odd animal that fell in from outside, and only now and then one of the Backrooms' own things.",
+    "eoc": [ "EOC_BR0_START" ]
+  },
+  {
+    "type": "scenario",
+    "id": "backroom_dweller_starternpc",
+    "copy-from": "backroom_dweller_starternpc",
+    "//": "Override of the upstream Backrooms scenario: same start, plus the Level 0 briefing, the class card and a field guide.",
+    "description": "What is this place?  You can't seem to find your way back out.  But hey, at least you aren't alone.  Will you cannibalize them as a last resort?  Maybe get them to surgically implant bionics into you?  Just keep them around for company?  Maybe you two will protect each other?  The possibilities have just widened, my friend, for you are no longer one.  You are two, and that's better than what it used to be like.\n\n<color_light_green>Level 0, Survival Difficulty: Class 1.</color>  Safe.  Secure.  Few entities.\n<color_white>Expect:</color> endless yellow rooms to scavenge, the dead and the odd animal that fell in from outside, and only now and then one of the Backrooms' own things.",
+    "eoc": [ "EOC_BR0_START" ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR0_START",
+    "effect": [ { "u_spawn_item": "br_level_guide", "suppress_message": true }, { "run_eocs": "EOC_BR_CLASS_CARD" } ]
+  }
+]

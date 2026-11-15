@@ -1,0 +1,125 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br_level_guide",
+    "//": "The wanderer's field guide: read it to see the card for the level you are on. Survival Difficulty Classes come from the Backrooms Wiki's rating system (0 safest, 5 deadliest); the wording here is our own.",
+    "name": { "str": "wanderer's field guide" },
+    "description": "A fat little notebook held shut with a rubber band, passed from hand to hand by people who got lost before you.  Every level anyone came back from has a page: what it's like, what lives there, and a rating someone underlined twice, Class 0 for safe up to Class 5 for don't.  Read it to look up the level you're on.",
+    "category": "books",
+    "symbol": "?",
+    "color": "yellow",
+    "looks_like": "survnote",
+    "price": "0 cent",
+    "price_postapoc": "0 cent",
+    "material": [ "paper" ],
+    "flags": [ "TRADER_AVOID" ],
+    "weight": "90 g",
+    "volume": "150 ml",
+    "use_action": {
+      "type": "effect_on_conditions",
+      "menu_text": "Look up this level",
+      "description": "Read the page for the level you're on.",
+      "effect_on_conditions": [ "EOC_BR_LEVEL_GUIDE" ]
+    }
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_CLASS_CARD",
+    "//": "Run on arrival at a level (the travel EOCs and the scenario starts call it). The first visit to each level shows its full card as a popup; later visits only log the class.",
+    "effect": [
+      {
+        "if": { "current_dimension": "default" },
+        "then": [
+          {
+            "if": { "math": [ "u_br_seen_class_0 == 1" ] },
+            "then": [ { "u_message": "Level 0, \"the Lobby\".  Survival Difficulty: Class 1.", "type": "info" } ],
+            "else": [ { "math": [ "u_br_seen_class_0 = 1" ] }, { "run_eocs": "EOC_BR_CARD_L0" } ]
+          }
+        ]
+      },
+      {
+        "if": { "current_dimension": "backrooms_level_1" },
+        "then": [
+          {
+            "if": { "math": [ "u_br_seen_class_1 == 1" ] },
+            "then": [ { "u_message": "Level 1, \"the Parking Deck\".  Survival Difficulty: Class 1.", "type": "info" } ],
+            "else": [ { "math": [ "u_br_seen_class_1 = 1" ] }, { "run_eocs": "EOC_BR_CARD_L1" } ]
+          }
+        ]
+      },
+      {
+        "if": { "current_dimension": "backrooms_level_2" },
+        "then": [
+          {
+            "if": { "math": [ "u_br_seen_class_2 == 1" ] },
+            "then": [ { "u_message": "Level 2, \"the Pipe Tunnels\".  Survival Difficulty: Class 3.", "type": "bad" } ],
+            "else": [ { "math": [ "u_br_seen_class_2 = 1" ] }, { "run_eocs": "EOC_BR_CARD_L2" } ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_LEVEL_GUIDE",
+    "//": "Reading the field guide: the full card for the level you are on.",
+    "effect": [
+      {
+        "if": { "current_dimension": "default" },
+        "then": [ { "run_eocs": "EOC_BR_CARD_L0" } ],
+        "else": [
+          {
+            "if": { "current_dimension": "backrooms_level_1" },
+            "then": [ { "run_eocs": "EOC_BR_CARD_L1" } ],
+            "else": [
+              {
+                "if": { "current_dimension": "backrooms_level_2" },
+                "then": [ { "run_eocs": "EOC_BR_CARD_L2" } ],
+                "else": [
+                  {
+                    "u_message": "You leaf through every page.  None of them describe this place.  Someone has written on the inside cover: <color_red>if it isn't in here, you're the first.</color>",
+                    "type": "bad",
+                    "popup": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_CARD_L0",
+    "effect": [
+      {
+        "u_message": "<color_yellow>LEVEL 0: \"THE LOBBY\"</color>\n<color_light_green>Survival Difficulty: Class 1</color>\n- Safe.\n- Secure.\n- Few entities.\n\nMono-yellow rooms that go on forever, damp carpet, and the hum of the lights.  Most of what walks here fell in from outside like you did: the dead, strays, and the odd wild animal.  The Backrooms' own things are rare this close to the edge, but not unheard of.\n\n<color_white>Expect:</color> scavenging from old offices and storerooms, long walks with no landmarks, and the feeling that the rooms rearrange themselves when you aren't looking.",
+        "type": "info",
+        "popup": true
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_CARD_L1",
+    "effect": [
+      {
+        "u_message": "<color_yellow>LEVEL 1: \"THE PARKING DECK\"</color>\n<color_light_green>Survival Difficulty: Class 1</color>\n- Safe.\n- Secure.\n- Anomalous resources.\n\nAn endless underground garage of concrete pillars, oil stains and dead cars.  People live here: the Breakroom keeps order, and squatter camps hold the corners.  Water is scarce and almond water scarcer.\n\n<color_white>Expect:</color> Hounds hunting in packs, Deathmoths at the lights, and Smilers in any lobby that goes dark.  The lights flicker and some die for good.",
+        "type": "info",
+        "popup": true
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_CARD_L2",
+    "effect": [
+      {
+        "u_message": "<color_yellow>LEVEL 2: \"THE PIPE TUNNELS\"</color>\n<color_red>Survival Difficulty: Class 3</color>\n- Unsafe.\n- Unstable.\n- Moderate entity count.\n\nHot, cramped maintenance tunnels, packed with pipes, cables and machines that stopped working long ago.  Hardly anyone lives here any more.  Food is very rare.\n\n<color_white>Expect:</color> more Hounds and Smilers than Level 1, long stretches with no light at all, and pipes that burst without warning and fill the tunnel with scalding steam.",
+        "type": "bad",
+        "popup": true
+      }
+    ]
+  }
+]

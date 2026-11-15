@@ -1,0 +1,14 @@
+[
+  {
+    "type": "monstergroup",
+    "id": "GROUP_BACKROOMS",
+    "//": "Adds to the upstream Level 0 group (data/mods/Backrooms/monstergroups.json; without \"override\" these entries are appended). Level 0 is Class 1: the Backrooms' own entities are about 1 spawn in 70, against roughly 1000 weight of zombies and animals. Nothing here grabs or mimics; Wretches only after day 30.",
+    "monsters": [
+      { "monster": "mon_br_faceling", "weight": 6 },
+      { "monster": "mon_br_hound", "weight": 3, "pack_size": [ 1, 2 ] },
+      { "monster": "mon_br_smiler", "weight": 2 },
+      { "monster": "mon_br_deathmoth", "weight": 2, "pack_size": [ 1, 2 ] },
+      { "monster": "mon_br_wretch", "weight": 1, "starts": "30 days" }
+    ]
+  }
+]

@@ -335,3 +335,18 @@ in `src/monmove.cpp`. Everything else only has stats, triggers and speech. To gi
 | Redeemer (boss) | Shock storm, electric bite, not placed | Teleports, rides power lines, its own arena level | A teleport spell, plus a level |
 
 Do these one entity at a time, each with its own checklist entry.
+
+## 8. Exits are found in play, not told (rule, 2026-11-15)
+
+Nothing written for the player outside the game world (scenario descriptions, the class cards, the field guide)
+says how to get from one level to another. Players find exits by exploring, or hear about them from someone or
+something in the game. What already does that:
+
+- The Foreman's "What's with the stairwells?" dialogue on Level 1 (`level_1/camps/camps_dialogue.json`).
+- Tunnel Crew talk on Level 2 (`level_2/workers.json`): ladders up, rumours of a way further down.
+- Notes found in the levels.
+
+Planned: **NPCs who remember exits.** An NPC who has actually used an exit (a follower who came through with you,
+a runner or camp member who went through one) remembers it and can tell you, locked behind dialogue and trust.
+Fits Survivor Minds' memory work (journals, gossip): an NPC var per exit seen, set by the travel EOCs for followers
+who come along, and a dialogue line that only appears when it's set. Keep new hints in-world like this.

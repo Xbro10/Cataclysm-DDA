@@ -1,0 +1,18 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR2_PIPE_BURST",
+    "//": "Level 2 is Class 3, \"unstable\": every 3-6 hours on Level 2 a pipe bursts 3-6 tiles from you and floods the spot with scalding steam (the hottest hot-air field, radius 2, about 10 minutes). The shriek is loud enough to carry, so Hounds may come to look. Stepping away is the answer; standing in it brings on heatstroke fast.",
+    "recurrence": [ "3 hours", "6 hours" ],
+    "condition": { "current_dimension": "backrooms_level_2" },
+    "effect": [
+      { "u_location_variable": { "global_val": "br2_burst_point" }, "min_radius": 3, "max_radius": 6, "passable_only": true },
+      { "u_set_field": "fd_hot_air4", "radius": 2, "intensity": 3, "age": "10 minutes", "target_var": { "global_val": "br2_burst_point" } },
+      { "u_make_sound": "a shriek of tearing metal and roaring steam!", "volume": 40, "type": "destructive_activity" },
+      {
+        "u_message": "A pipe tears open nearby with a scream of metal, and the tunnel fills with scalding steam.  Get clear of it!",
+        "type": "bad"
+      }
+    ]
+  }
+]

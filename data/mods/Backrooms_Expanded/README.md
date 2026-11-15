@@ -18,6 +18,21 @@ almond water).
    - **Breakroom Hire**: inside the Breakroom, among people who trust you.
    - **One of the Lost**: in a squatter camp. Harder; the Breakroom is wary of you.
 
+   Or start on Level 2 with **Pipe Rat**: alone, with almost nothing. The hardest start.
+
+## Survival Difficulty
+
+Every level has a Survival Difficulty Class from 0 (safe) to 5 (deadly), shown in
+the scenario descriptions, on a card the first time you reach the level, and in the
+wanderer's field guide every Backrooms start gives you. The class changes how the
+level plays (how many entities, how much food, what goes wrong):
+
+| Level | Class | |
+|---|---|---|
+| 0, the Lobby | 1 | Safe, secure, few entities |
+| 1, the Parking Deck | 1 | Safe, secure, anomalous resources |
+| 2, the Pipe Tunnels | 3 | Unsafe, unstable, moderate entity count |
+
 ## Requirements
 
 - Current CDDA experimental build.
@@ -29,6 +44,8 @@ almond water).
 - **TGWeaver**: creator of the original Backrooms mod
   (github.com/TGWeaver/Backrooms-CDDA-Mod), now maintained inside CDDA.
 - The CDDA contributors who keep The Backrooms working on current builds.
+- The **Backrooms Wiki** (backrooms-wiki.wikidot.com) community, for the Survival
+  Difficulty Class system and each level's class. The level descriptions here are our own.
 
 ## License
 
