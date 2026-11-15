@@ -24,13 +24,16 @@ What changed is listed in each mod's `CHANGELOG.md` (`data/mods/Backrooms_Expand
 keeps your saves, settings and mods when it updates.
 
 1. Make a folder with a short path, for example `C:\Games\CDDA` (not inside Program Files).
-2. From this branch, copy the `tools/launcher` folder's contents into it: `Start CDDA Launcher.bat` and the
+2. From this branch, copy the `tools/launcher` folder's contents into it: `CDDA Fork Launcher.exe` and the
    `Launcher` folder. (Green **Code** button > **Download ZIP** gets you the whole branch; you only need those two.)
-3. Double-click `Start CDDA Launcher.bat`. If Windows asks, allow it. Press **Install / update**, then **PLAY**.
+3. Double-click `CDDA Fork Launcher.exe`. If Windows SmartScreen warns you, click **More info > Run anyway** (it
+   isn't signed). Press **Install / update**, then **PLAY**. **Settings > Create desktop shortcut** adds it to your desktop.
 
 From then on, open the launcher instead of the game. When Xbro10 posts a new build, it says so when it starts
 and offers to install it. The launcher also updates itself. Your saves live in the launcher's `UserData` folder;
-**Back up my saves now** (Folders & backups tab) zips them.
+**Back up my saves now** (Saves & backups page) zips them. Settings also has the theme (Black, Dark blue, Light).
+If you set the launcher up before it had an .exe, your old `Start CDDA Launcher.bat` still works, and the next
+launcher update puts the .exe next to it.
 
 **Without the launcher:** download the newest **Testing build** zip from the
 [Releases page](https://github.com/Xbro10/Cataclysm-DDA/releases), unzip it anywhere (not inside Program Files)
