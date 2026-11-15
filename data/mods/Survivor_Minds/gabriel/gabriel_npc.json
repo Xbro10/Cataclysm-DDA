@@ -27,10 +27,10 @@
     "name": { "str": "Brawler" },
     "job_description": "I fight.  Mostly things that team up on people.",
     "common": false,
-    "//2": "His look was picked by the person he's based on: light skin, black hair, green eyes, cyan hoodie, blue scarf.",
+    "//2": "His look was picked by the person he's based on: light skin, long blond hair, green eyes, cyan hoodie, blue scarf.",
     "traits": [
       { "trait": "SKIN_LIGHT" },
-      { "trait": "hair_short", "variant": "black" },
+      { "trait": "hair_long", "variant": "blond" },
       { "trait": "eye_color", "variant": "green" },
       { "trait": "SM_GABRIEL" },
       { "trait": "TOUGH" },
