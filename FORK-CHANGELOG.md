@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-15, Developer tools: [Launcher] **New look:** a sidebar with the new infinity-hexagon icon, Game / Mods / Saves & backups / Settings pages, and **Black**, **Dark blue** and **Light** themes. The new **Settings** page holds the theme, download type, close-on-play, start-up update checks, mod folder and desktop shortcut. The icon is used for the window, taskbar and shortcut, and self-update now brings icon files along.
 - 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher** is now in the fork (`tools/launcher/`). It installs and updates **Xbro10 tester builds** (the `testing-build-*` releases) by default, says when a new one is out, and updates itself from the `testing` branch. Official CDDA experimental builds are still one click away.
 - 2026-11-14, NPCs: [BE] **Breakroom runners**: two named runners really travel Level 1 on errands for Dot, bring back extra for the supply locker, and sometimes go missing, which opens a "Find the runner" job.
 - 2026-11-14, Levels: [BE] **Level 1 lights**: lane lights flicker and slowly fail for good, and lobbies sometimes black out for up to an hour (a Smiler may come).

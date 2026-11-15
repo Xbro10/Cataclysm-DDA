@@ -11,25 +11,34 @@ keeps your saves safe, and lets you play with one click.
 
 ## What it does
 
-- **Game builds tab:**
+The menu on the left switches between four pages. **PLAY** (bottom right) starts the game with `--userdir` set
+to `UserData`.
+
+- **Game:**
   - **Builds from** picks where builds come from:
     - **Xbro10 tester builds** (default): the fork's `testing-build-*` releases, which are CDDA experimental plus
       Backrooms Expanded and Survivor Minds.
-    - **Official CDDA experimental**: CleverRaven's releases, with a choice of *Graphics* or *Graphics + sounds*.
+    - **Official CDDA experimental**: CleverRaven's releases (these also come with sounds; pick that in Settings).
   - When a newer build is out, the launcher tells you on start and offers to install it.
-  - **Install / update** downloads the selected build. **What changed since my build?** lists every commit
-    between your build and the selected one.
-- **Mods tab:**
+  - **Install / update** (or double-click a build) downloads it. **What changed since my build?** lists every
+    commit between your build and the selected one.
+- **Mods:**
   - Add a mod from a GitHub link or a zip file. Removed mods go to the Recycle Bin.
   - **Sync my mods from my fork** (only shown when the fork's source folder is on this PC) copies mod folders that
     are in the fork's `data\mods` but not in the installed game.
-- **Folders & backups tab:**
-  - Open the game, user data and backup folders.
-  - Back up your saves to a zip, or swap back to the previous build.
-  - Create a desktop shortcut.
-  - **Check for a launcher update.** The launcher also checks by itself after loading the build list. Updates come
-    from `tools/launcher` on the fork's `testing` branch. The old copy is kept as `cdda-launcher.ps1.bak`.
-- **PLAY** starts the game with `--userdir` set to `UserData`.
+- **Saves & backups:** open the save and backup folders, back up your saves to a zip, or swap back to the
+  previous build.
+- **Settings:**
+  - **Theme:** Black (default), Dark blue or Light. It changes straight away.
+  - **Download:** Graphics, or Graphics + sounds (official builds only).
+  - Close the launcher when the game starts.
+  - Look for new game builds, and for launcher updates, when the launcher opens (both on by default).
+  - **Check now** for a launcher update. Updates come from `tools/launcher` on the fork's `testing` branch, with the
+    icon files. The old script is kept as `cdda-launcher.ps1.bak`.
+  - Where your mods come from (developers only), and **Create desktop shortcut** (it uses the launcher's icon).
+
+The icon is `Launcher\launcher.ico` (window, taskbar, shortcut) and `Launcher\launcher-icon.png` (the sidebar).
+If either is missing, the launcher downloads it again on its next update check.
 
 ## Folder layout
 
@@ -61,4 +70,8 @@ Settings are kept in `settings.json` next to the script.
   (add `-2`, `-3` for more builds the same day) and one asset named `CDDA-Xbro10-testing-*.zip`. Delete
   `data/cache` before zipping.
 - Publishing a launcher update: change the script on `dev`, raise `$script:LauncherVersion` (a date, compared as
-  text), and merge it through to `testing`. Every launcher picks it up on its next start.
+  text; add `.2`, `.3` for more the same day), and merge it through to `testing`. Every launcher picks it up on
+  its next start. Files listed in `$script:LauncherAssets` (the icon) are downloaded along with it.
+- Changing the icon: replace `launcher-icon.png` and `launcher.ico` in `tools/launcher/Launcher/` and raise the version.
+- Testing the window: `-Screenshot out.png` saves a picture of it and closes; add `-Page game|mods|saves|settings`
+  and `-Theme black|blue|light` to pick what it shows.
