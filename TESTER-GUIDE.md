@@ -15,7 +15,14 @@ What changed is listed in each mod's `CHANGELOG.md` (`data/mods/Backrooms_Expand
 
 ## Getting the build
 
-1. Download this branch: the green **Code** button > **Download ZIP**, or `git clone -b testing https://github.com/Xbro10/Cataclysm-DDA.git`.
+**Easiest (Windows):** download the newest **Testing build** zip from the
+[Releases page](https://github.com/Xbro10/Cataclysm-DDA/releases), unzip it anywhere (not inside Program Files)
+and run `cataclysm-tiles.exe`. If SmartScreen warns you, click **More info > Run anyway**.
+Nothing else to install.  Xbro10 posts a new zip when this branch moves.
+
+**Building it yourself, or on another system:**
+
+1. Download this branch (switch the branch menu from `master` to `testing` first; `master` is plain CDDA): the green **Code** button > **Download ZIP**, or `git clone -b testing https://github.com/Xbro10/Cataclysm-DDA.git`.
 2. Pick one:
    - **Full build (Windows):** Visual Studio 2022 with C++ and vcpkg. Open `msvc-full-features\Cataclysm-vcpkg-static.sln`,
      choose Release x64 and build `Cataclysm-vcpkg-static`. The game is `cataclysm-tiles.exe` in the main folder.
