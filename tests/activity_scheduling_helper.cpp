@@ -10,7 +10,6 @@
 #include "debug.h"
 #include "item.h"
 #include "map_helpers.h"
-#include "messages.h"
 #include "player_activity.h"
 #include "player_helpers.h"
 #include "stomach.h"
@@ -41,16 +40,6 @@ void activity_schedule::do_turn( avatar &guy ) const
     if( guy.activity.moves_left < 1000 ) {
         guy.activity.moves_left = 4000;
     }
-}
-
-void action_schedule::setup( avatar & ) const
-{
-    add_msg( "Starting cycle" );
-}
-
-void action_schedule::do_turn( avatar &guy ) const
-{
-    action( guy );
 }
 
 void meal_schedule::setup( avatar &guy ) const
@@ -95,7 +84,7 @@ void sleep_schedule::do_turn( avatar &guy ) const
     }
 }
 
-weariness_events do_activity( tasklist tasks, bool do_clear_avatar, bool fixed )
+weariness_events do_activity( tasklist tasks, bool do_clear_avatar )
 {
     // Clear stuff, ensure we're in the right place
     if( do_clear_avatar ) {
@@ -120,10 +109,7 @@ weariness_events do_activity( tasklist tasks, bool do_clear_avatar, bool fixed )
         task.setup( guy );
 
         // How many turn's we've been at it
-        // This has an off-by-one error, i.e. it will always execute one too many times.
-        // If fixed == true, init to 1_seconds to correct for that in an opt-in way.
-        // Once all the tests are migrated over we can get rid of this.
-        time_duration turns = fixed ? 1_seconds : 0_seconds;
+        time_duration turns = 0_seconds;
         while( turns <= task.interval && !task.instantaneous() ) {
             // Advance a turn
             calendar::turn += 1_turns;

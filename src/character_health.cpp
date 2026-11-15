@@ -1387,7 +1387,7 @@ float Character::maximum_exertion_level() const
 {
     switch( weariness_level() ) {
         case 0:
-            return COMBAT_EXERCISE;
+            return EXTRA_EXERCISE;
         case 1:
             return ACTIVE_EXERCISE;
         case 2:
