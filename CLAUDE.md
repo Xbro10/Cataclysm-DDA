@@ -46,6 +46,14 @@ every change adds a line at the top of its "New entries" as well as to its mod's
   ("push to testing"): merge the latest `npc-autonomy` (which already holds `dev`) into it, then push it. Never commit straight to it,
   except `TESTER-GUIDE.md` (the testers' guide), which lives only on `testing`; keep its "What's in this build" current when testing moves.
   The user's own team guide is `D:\dev\TEAM-MANAGEMENT-GUIDE.txt`, outside git on purpose.
+- **Tester releases** (first: `testing-build-2026-11-14`): when testing moves and the user wants a build, make sure
+  `src/` matches `origin/testing` and build; stage `git archive origin/testing data gfx doc README.md LICENSE*.txt TESTER-GUIDE.md`,
+  plus the compiled `data/shaders/*.dxil|*.spv`, `gfx/UltimateCataclysm`, `gfx/MSX++UnDeadPeopleEdition` (git-ignored here),
+  the exe and a `VERSION.txt`; check-mods it from the staged folder (create `config/` first), then delete first-run folders and zip
+  to `D:\dev\releases\`. Publish as a pre-release with tag `testing-build-YYYY-MM-DD` targeting `testing`. The built-in browser can't
+  attach files, so the user drags the zip in.
+- A ruleset (PR required, no force-push or delete) covers `master`, `dev`, `npc-autonomy`, `testing`; Xbro10 bypasses it,
+  so pushes still work and GitHub prints a "must be made through a pull request" note.
 - Release tags are per mod: `survivor-minds-vX.Y.Z`, `backrooms-expanded-vX.Y.Z`.
 
 ## Fork changes to the game itself (watch these during upstream merges)
