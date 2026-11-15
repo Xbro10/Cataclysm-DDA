@@ -29,8 +29,13 @@ static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
 static const activity_id ACT_CONSUME( "ACT_CONSUME" );
 
 static const itype_id itype_backpack( "backpack" );
+static const itype_id itype_bottle_plastic( "bottle_plastic" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
+static const itype_id itype_water_clean( "water_clean" );
 
+static const ter_str_id ter_t_water_sh( "t_water_sh" );
+
+static const faction_id faction_no_faction( "no_faction" );
 static const faction_id faction_your_followers( "your_followers" );
 
 static npc &spawn_follower( const point_bub_ms &where )
@@ -274,6 +279,76 @@ TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
         override_option autonomy( "NPC_AUTONOMY", "true" );
         guy.set_value( "autonomy_need_social", 30.0 );
         CHECK_FALSE( npc_autonomy::wants_company( guy ) );
+    }
+}
+
+TEST_CASE( "npc_autonomy_get_water", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    // Past the game's own 6-tile search, inside ours.
+    const tripoint_bub_ms pool( player_pos + point( 12, 0 ), 0 );
+    here.ter_set( pool, ter_t_water_sh );
+    guy.stomach.empty();
+    guy.set_thirst( 100 ); // Very thirsty: Water about 53
+
+    SECTION( "option off: never, and the search stays at 6 tiles" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK( npc_autonomy::water_search_radius() == 6 );
+        CHECK_FALSE( npc_autonomy::wants_water( guy ) );
+    }
+    SECTION( "not thirsty enough: no trip" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_thirst( 40 ); // Thirsty: Water 25
+        CHECK_FALSE( npc_autonomy::wants_water( guy ) );
+    }
+    SECTION( "following a player on the move: the game's leash keeps them from far water" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        CHECK_FALSE( npc_autonomy::wants_water( guy ) );
+    }
+    SECTION( "very thirsty, on their own: walks to water 10 tiles off and drinks" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_no_faction );
+        REQUIRE( npc_autonomy::current_needs( guy ).water >= 50 );
+        REQUIRE( npc_autonomy::wants_water( guy ) );
+        for( int turn = 0; turn < 60 && guy.get_thirst() >= 100; ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            npc_autonomy::run_goal( guy, "autonomy_get_water" );
+        }
+        CHECK( rl_dist( guy.pos_bub(), pool ) <= 1 );
+        CHECK( guy.get_thirst() < 100 );
+    }
+}
+
+TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
+    const auto water_carried = [&guy]() {
+        int charges = 0;
+        for( const item *it : guy.items_with( []( const item & i ) {
+        return i.typeId() == itype_water_clean;
+        } ) ) {
+            charges += it->charges;
+        }
+        return charges;
+    };
+
+    SECTION( "no empty container: nothing to fill" ) {
+        CHECK_FALSE( npc_autonomy::refill_bottle( guy, itype_water_clean ) );
+    }
+    SECTION( "an empty bottle gets filled" ) {
+        guy.i_add( item( itype_bottle_plastic ) );
+        REQUIRE( water_carried() == 0 );
+        CHECK( npc_autonomy::refill_bottle( guy, itype_water_clean ) );
+        CHECK( water_carried() > 0 );
     }
 }
 

@@ -1951,7 +1951,7 @@ void npc::move()
                     action = npc_worker_downtime;
                 }
             } else if( npc_autonomy::is_goal( new_goal ) ) {
-                // Xbro10 fork: NPC autonomy daily life (mealtimes, socializing).
+                // Xbro10 fork: NPC autonomy daily life (mealtimes, socializing, getting water).
                 switch( npc_autonomy::run_goal( *this, new_goal ) ) {
                     case npc_autonomy::goal_result::activity:
                         // Self-initiated, not a player order: undo assign_activity's attitude change.
@@ -5730,6 +5730,10 @@ bool npc::intake_useful( const need_goal_id id ) const
     }
     switch( id ) {
         case need_goal_id::drink_water:
+            // Xbro10 fork: with NPC autonomy on, Very thirsty is worth a drink (step 3.4).
+            if( npc_autonomy::enabled() ) {
+                return get_thirst() >= npc_autonomy::thirst_worth_a_trip;
+            }
             // adjusted thirst already subtracts water waiting in the stomach
             return get_thirst() > npc_thirst_act_level;
         case need_goal_id::eat_food:
@@ -6631,7 +6635,7 @@ std::vector<npc::scored_water_source> npc::find_nearby_water_sources() const
 {
     std::vector<scored_water_source> results;
     const map &here = get_map();
-    for( const tripoint_bub_ms &p : closest_points_first( pos_bub(), 6 ) ) {
+    for( const tripoint_bub_ms &p : closest_points_first( pos_bub(), npc_autonomy::water_search_radius() ) ) {
         if( is_no_go_position( here.get_abs( p ) ) ) {
             continue;
         }

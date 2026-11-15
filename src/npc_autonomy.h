@@ -9,6 +9,7 @@
 #include <string>
 
 #include "calendar.h"
+#include "type_id.h"
 
 class Character;
 class npc;
@@ -72,6 +73,23 @@ enum class goal_result {
     none      // nothing to do: fall back to the game's own needs handling
 };
 goal_result run_goal( npc &guy, const std::string &goal );
+
+// ---- Getting things (step 3.4): behavior-tree goal "autonomy_get_water" ----
+// Drives the game's own drink-water planner (npc::execute_drink_water: pick a target,
+// walk, drink, cross off failed targets) from Water 50 instead of Parched, over a
+// longer range, then refills a bottle at clean water. 3 failed targets in a row and
+// the NPC gives up for an hour.
+
+/** Thirst (Very thirsty) at which a drink is worth a trip with autonomy on; upstream waits for Parched (520). */
+constexpr int thirst_worth_a_trip = 80;
+/** Water 50+, safe, awake, not given up, and a drink in the pack or a source in reach. */
+bool wants_water( const npc &guy );
+/** How far NPCs look for water terrain: 6 tiles (upstream) or, with autonomy on, 20. */
+int water_search_radius();
+/** Fill one empty watertight container in the NPC's pack with `liquid`. True if one was filled. */
+bool refill_bottle( npc &guy, const itype_id &liquid );
+/** "Plan: ..." line for the look-around panel, or "" when there's no plan. */
+std::string plan_text( const npc &guy );
 
 // ---- Quests (step 3.1) ----
 

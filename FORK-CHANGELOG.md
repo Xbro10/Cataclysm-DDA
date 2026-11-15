@@ -14,9 +14,9 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-14, NPC brain: [C++] **Step 3.4a, getting water:** very thirsty NPCs (Water 50+) walk to water they can see up to 20 tiles away, drink, and fill an empty bottle at clean water. They say "goes to get water", the look-around panel shows the plan, and after 3 failed tries they give up for an hour.
 - 2026-11-14, NPCs and factions: [SM] **Gabriel is never Timid:** his personality is fixed instead of rolled (Freedom fighter, Brave and Hero), to fit "I don't run".
 - 2026-11-14, NPC behaviour: [SM] The follower menu has one **"Got a minute?"** entry for all Survivor Minds options (journal, gossip, marks, food, feelings, Gabriel's chat) instead of six.
-
 - 2026-11-14, Game options and fixes: [C++] Saving in the middle of eating (or any action on an item in a bag) no longer loses the item on load: NPCs are found while they load, and items in pockets keep their identity across a save (no more "item_location" error pop-ups).
 - 2026-11-14, NPC brain: [C++] The **Food** need now only counts body weight once an NPC is underweight, so it drops as soon as they eat (a normal-weight NPC read about 46 and never went down).
 - 2026-11-14, NPCs and factions: [SM] **Gabriel's look:** light skin, long blond hair, green eyes, a cyan hoodie and a blue wool scarf (its own sprite in UltiCa and UndeadPeople).

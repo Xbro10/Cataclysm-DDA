@@ -54,6 +54,7 @@ class character_oracle_t : public oracle_t
         // Xbro10 fork: NPC autonomy daily life (see npc_autonomy.h).
         status_t autonomy_wants_meal( std::string_view ) const;
         status_t autonomy_wants_company( std::string_view ) const;
+        status_t autonomy_wants_water( std::string_view ) const;
         /**
          * Score predicates for utility strategy (return 0-1 urgency).
          */
