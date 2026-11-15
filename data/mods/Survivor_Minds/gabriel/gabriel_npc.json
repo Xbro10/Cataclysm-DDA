@@ -19,6 +19,8 @@
     "attitude": 0,
     "mission": "NULL",
     "chat": "TALK_SM_GABRIEL_MEET",
+    "//2": "Fixed personality instead of rolled, so he's never Timid.  Shows as Freedom fighter, Brave and Hero: picks fights with bullies, doesn't run, looks out for people.",
+    "personality": { "aggression": 5, "bravery": 6, "collector": 0, "altruism": 3 },
     "faction": "no_faction"
   },
   {
