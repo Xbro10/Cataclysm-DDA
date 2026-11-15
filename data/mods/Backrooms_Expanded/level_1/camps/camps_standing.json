@@ -97,6 +97,14 @@
           "condition": { "and": [ { "u_has_item": "br1_breakroom_key" }, { "math": [ "u_br1_ration_next <= time('now')" ] } ] },
           "effect": [
             { "u_spawn_item": "br1_breakroom_ration", "use_item_group": true, "suppress_message": true },
+            {
+              "if": { "math": [ "br1_stores_bonus >= 1" ] },
+              "then": [
+                { "u_spawn_item": "br_cat_food", "use_item_group": true, "count": 2, "suppress_message": true },
+                { "math": [ "br1_stores_bonus -= 1" ] },
+                { "u_message": "The runners have been busy: there's a little extra in the locker this week.", "type": "good" }
+              ]
+            },
             { "math": [ "u_br1_ration_next = time('now') + time('7 d')" ] },
             { "u_add_morale": "morale_br1_regular", "bonus": 5, "max_bonus": 10, "duration": "6 h", "decay_start": "3 h" },
             { "u_message": "You unlock the locker and take your week's ration: food, water, a few supplies.  Next draw in a week.", "type": "good" }

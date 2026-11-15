@@ -28,6 +28,11 @@
         "topic": "TALK_BR1_JOB_DEN"
       },
       {
+        "text": "[Find the runner] Somebody's overdue, aren't they?",
+        "condition": { "and": [ { "not": { "u_has_mission": "MISSION_BR1_FIND_RUNNER" } }, { "math": [ "br1_runner_missing == 1" ] } ] },
+        "topic": "TALK_BR1_JOB_RUNNER"
+      },
+      {
         "text": "[Who they were] You look like something's on your mind.",
         "condition": {
           "and": [ { "not": { "u_has_mission": "MISSION_BR1_OVERRUN_ROSTER" } }, { "math": [ "u_br1_roster_done != 1" ] } ]
