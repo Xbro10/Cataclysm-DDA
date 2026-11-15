@@ -51,8 +51,17 @@
           "x": [ 0, 18 ],
           "y": [ 0, 18 ],
           "repeat": [ 0, 3 ]
-        }
-      ],
+        },
+        { "chunks": [ "br0_light_grid" ], "x": 0, "y": 0 }
+      ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_light_grid",
+    "//": "The ceiling-light grid. It must be a nested chunk listed after the rooms: transforms placed directly in a mapgen run before its nested chunks, so the rooms would paint over them.",
+    "object": {
+      "mapgensize": [ 24, 24 ],
       "place_ter_furn_transforms": [
         { "transform": "br0_ceiling_light", "x": 2, "y": 2 },
         { "transform": "br0_ceiling_light", "x": 6, "y": 2 },
