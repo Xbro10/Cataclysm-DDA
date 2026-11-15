@@ -9,3 +9,6 @@
 /_swap/
 /Launcher/settings.json
 /Launcher/*.bak
+
+# The starter exe is built from src/ and committed on purpose (the repo ignores *.exe elsewhere).
+!/CDDA Fork Launcher.exe

@@ -20,7 +20,7 @@
     The game is started with --userdir pointing at UserData, so updates can
     never overwrite saves, settings or mods.
 
-    Start it with "Start CDDA Launcher.bat" in the root folder.
+    Start it with "CDDA Fork Launcher.exe" in the root folder (or the older "Start CDDA Launcher.bat").
 #>
 param(
     [switch]$SelfTest,          # run non-GUI checks and print results
@@ -48,10 +48,12 @@ $script:UserModsDir = Join-Path $UserDir 'mods'
 $script:DownloadDir = Join-Path $Root 'Downloads'
 $script:BackupDir   = Join-Path $Root 'Backups'
 $script:SettingsFile = if ($RootOverride) { Join-Path $Root 'settings.json' } else { Join-Path $LauncherDir 'settings.json' }
-$script:LauncherVersion = '2026-11-15.2'
+$script:LauncherVersion = '2026-11-15.3'
 # Where a newer launcher is published (the testing branch is what testers get).
 $script:LauncherUpdateUrl = 'https://raw.githubusercontent.com/Xbro10/Cataclysm-DDA/testing/tools/launcher/Launcher/cdda-launcher.ps1'
-$script:LauncherAssets = @('launcher.ico', 'launcher-icon.png')
+$script:LauncherExeName = 'CDDA Fork Launcher.exe'
+$script:LauncherHome = Split-Path $PSScriptRoot -Parent
+$script:LauncherAssets = @('Launcher/launcher.ico', 'Launcher/launcher-icon.png', $LauncherExeName)
 
 # Colour themes. Accent is the PLAY button and the selected page; Gold matches the icon.
 $script:Themes = [ordered]@{
@@ -158,13 +160,17 @@ function Install-LauncherUpdate([string]$text) {
     [System.IO.File]::WriteAllText($self, $text.TrimStart([char]0xFEFF), (New-Object System.Text.UTF8Encoding($true)))
 }
 
-# Files that travel with the script (the icon). Self-update fetches them too, so a new icon reaches everyone.
+# Files that travel with the script (the icon and the .exe). Self-update fetches them too, so they reach everyone.
+# Names are relative to the launcher's home folder (the one holding the .exe and the Launcher folder).
+function Get-AssetPath([string]$name) { return (Join-Path $LauncherHome ($name -replace '/', '\')) }
 function Save-LauncherAssets($assets) {
     foreach ($a in @($assets)) {
-        if ($a -and $a.Bytes -and $a.Bytes.Length -gt 0) { [System.IO.File]::WriteAllBytes((Join-Path $LauncherDir $a.Name), $a.Bytes) }
+        if ($a -and $a.Bytes -and $a.Bytes.Length -gt 0) {
+            try { [System.IO.File]::WriteAllBytes((Get-AssetPath $a.Name), $a.Bytes) } catch { }   # a locked file just waits for next time
+        }
     }
 }
-function Get-MissingAssets { return @($LauncherAssets | Where-Object { -not (Test-Path -LiteralPath (Join-Path $LauncherDir $_)) }) }
+function Get-MissingAssets { return @($LauncherAssets | Where-Object { -not (Test-Path -LiteralPath (Get-AssetPath $_)) }) }
 
 function Format-Size($bytes) {
     if (-not $bytes) { return '-' }
@@ -378,10 +384,12 @@ $script:LauncherCheckWork = {
     $newer = [string]::CompareOrdinal($remote, $p.Current) -gt 0
     $want = if ($newer) { @($p.Assets) } else { @($p.Missing) }
     if (-not $newer -and $want.Count -eq 0) { return $null }
-    $base = $p.Url.Substring(0, $p.Url.LastIndexOf('/') + 1)
+    # Asset names are relative to tools/launcher/ (the folder above Launcher/).
+    $base = $p.Url.Substring(0, $p.Url.LastIndexOf('/Launcher/') + 1)
     $assets = foreach ($n in $want) {
         try {
-            $r = Invoke-WebRequest -UseBasicParsing -Uri ($base + $n) -Headers $hdr -TimeoutSec 30
+            $rel = (($n -split '/') | ForEach-Object { [uri]::EscapeDataString($_) }) -join '/'
+            $r = Invoke-WebRequest -UseBasicParsing -Uri ($base + $rel) -Headers $hdr -TimeoutSec 30
             $bytes = if ($r.Content -is [byte[]]) { $r.Content } else { $r.RawContentStream.ToArray() }
             [pscustomobject]@{ Name = $n; Bytes = $bytes }
         } catch { }
@@ -1554,17 +1562,17 @@ function Restore-Previous {
 }
 
 function New-DesktopShortcut {
-    $bat = Join-Path $Root 'Start CDDA Launcher.bat'
+    # Prefer the .exe (it carries the icon); older folders may only have the .bat.
+    $target = Join-Path $LauncherHome $LauncherExeName
+    if (-not (Test-Path -LiteralPath $target)) { $target = Join-Path $LauncherHome 'Start CDDA Launcher.bat' }
     $lnk = Join-Path ([Environment]::GetFolderPath('Desktop')) 'CDDA Fork Launcher.lnk'
     $sh = New-Object -ComObject WScript.Shell
     $s = $sh.CreateShortcut($lnk)
-    $s.TargetPath = $bat
-    $s.WorkingDirectory = $Root
-    $s.WindowStyle = 7
+    $s.TargetPath = $target
+    $s.WorkingDirectory = $LauncherHome
     $s.Description = 'CDDA Fork Launcher'
     $ico = Join-Path $LauncherDir 'launcher.ico'
-    $exe = Join-Path $GameDir $ExeName
-    if (Test-Path -LiteralPath $ico) { $s.IconLocation = "$ico,0" } elseif (Test-Path -LiteralPath $exe) { $s.IconLocation = "$exe,0" }
+    if ($target -like '*.exe') { $s.IconLocation = "$target,0" } elseif (Test-Path -LiteralPath $ico) { $s.IconLocation = "$ico,0" }
     $s.Save()
     $lblStatus.Text = "Shortcut created: $lnk"
 }
