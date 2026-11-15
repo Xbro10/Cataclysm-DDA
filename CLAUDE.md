@@ -45,7 +45,10 @@ every change adds a line at the top of its "New entries" as well as to its mod's
 - **`testing`** is the branch outside testers build from (created 2026-11-13). It only moves when the user asks
   ("push to testing"): merge the latest `npc-autonomy` (which already holds `dev`) into it, then push it. Never commit straight to it,
   except `TESTER-GUIDE.md` (the testers' guide), which lives only on `testing`; keep its "What's in this build" current when testing moves.
-  The user's own team guide is `D:\dev\TEAM-MANAGEMENT-GUIDE.txt`, outside git on purpose.
+  The user's own files live outside git on purpose, in `D:\dev\Important Files\`: `TEAM-MANAGEMENT-GUIDE.txt`,
+  `GABRIEL-SUMMARY.txt`, a read-only copy of `TESTER-GUIDE.md` (refresh it when testing's guide changes), and the in-game
+  checklists `TESTING-CHECKLIST-BACKROOMS.md` (levels work) and `TESTING-CHECKLIST-NPCS.md` (NPC brain and Survivor Minds).
+  Add each finished step's test items to the matching checklist.
 - **Tester releases** (first: `testing-build-2026-11-14`): when testing moves and the user wants a build, make sure
   `src/` matches `origin/testing` and build; stage `git archive origin/testing data gfx doc README.md LICENSE*.txt TESTER-GUIDE.md`,
   plus the compiled `data/shaders/*.dxil|*.spv`, `gfx/UltimateCataclysm`, `gfx/MSX++UnDeadPeopleEdition` (git-ignored here),
