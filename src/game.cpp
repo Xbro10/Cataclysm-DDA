@@ -9822,7 +9822,15 @@ bool game::travel_to_dimension( dimension_id dimension_destination,
                 ( *it )->on_unload();
                 it = critter_tracker->active_npc.erase( it );
             } else {
-                if( const npc_ptr ptr = old_om.erase_npc( ( *it++ )->getID() ) ) {
+                const character_id id = ( *it++ )->getID();
+                npc_ptr ptr = old_om.erase_npc( id );
+                if( !ptr ) {
+                    // Xbro10 fork: a traveller can still be filed under a neighbouring overmap (one
+                    // that followed you across an overmap edge, or was recruited far away). Upstream
+                    // only looked in the player's overmap and left such an NPC behind.
+                    ptr = overmap_buffer.remove_npc( id );
+                }
+                if( ptr ) {
                     moving_npcs.push_back( ptr );
                 }
             }

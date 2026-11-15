@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-15, Game options and fixes: [C++] **Followers no longer get left behind when changing levels or dimensions**: a follower busy with a chore (eating, picking something up) now drops it and comes along, and one still filed under a neighbouring overmap is found.
 - 2026-11-15, Levels: [BE] **Level 0 lights** sit in neat rows every 4 tiles (a few dead) instead of being scattered at random.
 - 2026-11-15, Levels: [BE] The **Breakroom** is no longer marked on your map when you reach Level 1; you find it by exploring.
 - 2026-11-15, Levels: [BE] **Survival Difficulty Classes**: each level has a class from the Backrooms Wiki (Level 0 and 1 Class 1, Level 2 Class 3), shown in every scenario description, on a card when you first arrive and in a new field guide. The class means something: Level 2 has about twice the monsters, much less food and bursting steam pipes; Level 0 gets a few rare Backrooms entities.

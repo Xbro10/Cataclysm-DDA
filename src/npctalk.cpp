@@ -8431,6 +8431,18 @@ talk_effect_fun_t::func f_travel_to_dimension( const JsonObject &jo, std::string
                 std::vector<npc *> travellers;
                 std::string filter = npc_travel_filter.evaluate( d );
                 int radius = npc_travel_radius.evaluate( d );
+                if( radius > 0 && filter == "follower" ) {
+                    // Xbro10 fork: a follower busy with a chore (eating, picking something up) has the
+                    // attitude NPCATT_ACTIVITY, not "following", and used to be left behind. Drop the
+                    // chore so they come along like the others.
+                    for( npc &guy : g->all_npcs() ) {
+                        if( guy.get_attitude() == NPCATT_ACTIVITY &&
+                            guy.get_previous_attitude() == NPCATT_FOLLOW &&
+                            rl_dist( guy.pos_abs(), teleporter->pos_abs() ) <= radius ) {
+                            guy.revert_after_activity();
+                        }
+                    }
+                }
                 if( radius > 0 ) {
                     travellers = g->get_npcs_if( [teleporter, filter, radius]( const npc & guy ) {
                         int distance_to_player = rl_dist( guy.pos_abs(), teleporter->pos_abs() );
