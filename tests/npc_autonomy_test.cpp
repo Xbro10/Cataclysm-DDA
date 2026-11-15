@@ -8,6 +8,8 @@
 #include "calendar.h"
 #include "cata_catch.h"
 #include "coordinates.h"
+#include "dialogue.h"
+#include "effect_on_condition.h"
 #include "flexbuffer_json.h"
 #include "item.h"
 #include "json.h"
@@ -21,6 +23,7 @@
 #include "options_helpers.h"
 #include "player_helpers.h"
 #include "point.h"
+#include "talker.h"
 #include "type_id.h"
 
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
@@ -32,6 +35,10 @@ static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_bottle_plastic( "bottle_plastic" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
 static const itype_id itype_water_clean( "water_clean" );
+
+static const effect_on_condition_id effect_on_condition_EOC_AUTONOMY_DEBUG_LONELY( "EOC_AUTONOMY_DEBUG_LONELY" );
+static const effect_on_condition_id
+effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY( "EOC_AUTONOMY_DEBUG_NOT_LONELY" );
 
 static const furn_str_id furn_f_water_heater( "f_water_heater" );
 
@@ -364,6 +371,18 @@ TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
         }
     }
     CHECK( guy.get_thirst() < 100 );
+}
+
+TEST_CASE( "npc_autonomy_debug_lonely", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 3, 0 ) );
+    dialogue d( get_talker_for( get_avatar() ), nullptr );
+    effect_on_condition_EOC_AUTONOMY_DEBUG_LONELY->activate( d );
+    CHECK( stored( guy, "autonomy_need_social" ) == Approx( 100.0 ) );
+    effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY->activate( d );
+    CHECK( stored( guy, "autonomy_need_social" ) == Approx( 0.0 ) );
 }
 
 TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )

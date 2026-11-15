@@ -27,6 +27,34 @@
     "score_argument": "0.45"
   },
   {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_LONELY",
+    "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): every NPC within 30 tiles gets Social 100 and may chat right away.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_AUTONOMY_DEBUG_LONELY_ONE" ], "local": true, "npc_range": 30 },
+      { "u_message": "NPC autonomy debug: nearby NPCs now have Social 100 and can chat right away." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_LONELY_ONE",
+    "effect": [ { "math": [ "u_autonomy_need_social = 100" ] }, { "math": [ "u_autonomy_last_chat = -1000000" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_NOT_LONELY",
+    "//": "Xbro10 fork, NPC autonomy debug: every NPC within 30 tiles gets Social 0.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_AUTONOMY_DEBUG_NOT_LONELY_ONE" ], "local": true, "npc_range": 30 },
+      { "u_message": "NPC autonomy debug: nearby NPCs now have Social 0." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_NOT_LONELY_ONE",
+    "effect": [ { "math": [ "u_autonomy_need_social = 0" ] } ]
+  },
+  {
     "type": "snippet",
     "category": "npc_autonomy_breakfast",
     "//": "%1$s is the NPC.",
