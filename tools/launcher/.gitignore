@@ -1,0 +1,11 @@
+# Folders the launcher creates next to itself when it runs (see Launcher/README.md).
+/Game/
+/Game_previous/
+/UserData/
+/Downloads/
+/Backups/
+/_staging/
+/_modstaging/
+/_swap/
+/Launcher/settings.json
+/Launcher/*.bak
