@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-15, Developer tools: [Launcher] **New look:** a sidebar with the new infinity-hexagon icon, Game / Mods / Saves & backups / Settings pages, and **Black**, **Dark blue** and **Light** themes. The new **Settings** page holds the theme, download type, close-on-play, start-up update checks, mod folder and desktop shortcut. The icon is used for the window, taskbar and shortcut, and self-update now brings icon files along.
 - 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher** is now in the fork (`tools/launcher/`). It installs and updates **Xbro10 tester builds** (the `testing-build-*` releases) by default, says when a new one is out, and updates itself from the `testing` branch. Official CDDA experimental builds are still one click away.
 - 2026-11-14, NPC brain: [C++] **Step 3.4a, getting water:** very thirsty NPCs (Water 50+) walk to water they can see up to 20 tiles away, drink, and fill an empty bottle at clean water. They say "goes to get water", the look-around panel shows the plan, and after 3 failed tries they give up for an hour.
 - 2026-11-14, NPCs and factions: [SM] **Gabriel is never Timid:** his personality is fixed instead of rolled (Freedom fighter, Brave and Hero), to fit "I don't run".
