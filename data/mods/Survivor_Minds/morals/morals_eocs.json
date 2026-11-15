@@ -5,8 +5,12 @@
     "//": "u is an NPC. JSON cannot read an NPC's real personality (aggression, altruism...), so Survivor Minds rolls its own once and keeps it: kindness and ruthlessness, each -5..5. Phase 3 can swap in the real values.",
     "condition": { "not": { "math": [ "has_var(u_sm_kindness)" ] } },
     "effect": [
-      { "math": [ "u_sm_kindness = floor(rng(-5, 5.99))" ] },
-      { "math": [ "u_sm_ruthless = floor(rng(-5, 5.99))" ] },
+      {
+        "if": { "u_has_trait": "SM_GABRIEL" },
+        "//": "Gabriel's conscience is fixed: decent (hates bullies) and not afraid to finish a fight.",
+        "then": [ { "math": [ "u_sm_kindness = 3" ] }, { "math": [ "u_sm_ruthless = 2" ] } ],
+        "else": [ { "math": [ "u_sm_kindness = floor(rng(-5, 5.99))" ] }, { "math": [ "u_sm_ruthless = floor(rng(-5, 5.99))" ] } ]
+      },
       { "math": [ "u_sm_disapproval = 0" ] }
     ]
   },

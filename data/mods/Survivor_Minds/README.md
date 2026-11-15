@@ -6,7 +6,11 @@ markings, daily routines, personality-driven reactions and shared knowledge.
 Pure JSON / effect_on_condition, so it runs on official experimental builds.
 It works with or without the Backrooms.
 
-**Status:** skeleton, no features yet. See `CHANGELOG.md`.
+**Status:** in development. Features so far (journals, wall marks, routines,
+moral reactions, danger warnings, gossip) are listed in `CHANGELOG.md`.
+
+It also adds **Gabriel**, a unique NPC: a veteran brawler with a morningstar,
+short on words, who hates anyone who gangs up on people and never snitches.
 
 ## Install
 

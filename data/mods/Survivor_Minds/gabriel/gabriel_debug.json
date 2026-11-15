@@ -1,0 +1,11 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_SPAWN_GABRIEL",
+    "//": "Developer shortcut (Debug menu > Activate EOC).  Spawns Gabriel next to you.  Doesn't check for an existing Gabriel; his real spawn point comes later.",
+    "effect": [
+      { "u_spawn_npc": "sm_gabriel", "real_count": 1, "min_radius": 1, "max_radius": 2 },
+      { "u_message": "Survivor Minds debug: Gabriel spawned nearby.", "type": "info" }
+    ]
+  }
+]

@@ -1,0 +1,118 @@
+[
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_MEET",
+    "//": "First stop when Gabriel isn't your follower yet.  He talks in short bursts, so lines are split with newlines.",
+    "dynamic_line": [
+      "Hm.\nYou're alive.\nCrazy.",
+      "Yo.\nYou're not one of those things.\nGood.",
+      "Uhhhh.\nHi.\nDon't try anything.",
+      "Oh.\nA person.\nHaven't seen one of those in a bit."
+    ],
+    "responses": [
+      { "text": "Who are you?", "topic": "TALK_SM_GABRIEL_WHO" },
+      { "text": "Nice morningstar.", "topic": "TALK_SM_GABRIEL_WEAPON" },
+      { "text": "What do you make of the dead walking around?", "topic": "TALK_SM_GABRIEL_ZOMBIES" },
+      { "text": "Want to team up?", "topic": "TALK_SM_GABRIEL_TEAM" },
+      { "text": "See you around.", "topic": "TALK_SM_GABRIEL_BYE" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_WHO",
+    "dynamic_line": "Gabriel.\nBeen fighting since…\nUhhhh.\nBefore all this, honestly.  Long time.",
+    "responses": [
+      { "text": "Fighting what, before all this?", "topic": "TALK_SM_GABRIEL_WHO_2" },
+      { "text": "Let's talk about something else.", "topic": "TALK_SM_GABRIEL_MEET" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_WHO_2",
+    "dynamic_line": "People who ganged up on people.\nI will always hate teamers.\nThat's it.  That's the whole story.",
+    "responses": [ { "text": "Fair enough.", "topic": "TALK_SM_GABRIEL_MEET" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_WEAPON",
+    "dynamic_line": "Indeed.\nSwords are for people who want to look cool.\nMorningstar is for people who want to win.\nAlso it's spiky.  XD",
+    "responses": [
+      { "text": "And the hatchet on your belt?", "topic": "TALK_SM_GABRIEL_WEAPON_2" },
+      { "text": "Let's talk about something else.", "topic": "TALK_SM_GABRIEL_MEET" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_WEAPON_2",
+    "dynamic_line": "Backup.\nAlso firewood.\nMostly firewood.",
+    "responses": [ { "text": "Right.", "topic": "TALK_SM_GABRIEL_MEET" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_ZOMBIES",
+    "dynamic_line": "Buns.\nAll of them.\nThey only win cause they come in a crowd.  One on one?  No chance.",
+    "responses": [ { "text": "Can't argue with that.", "topic": "TALK_SM_GABRIEL_MEET" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_TEAM",
+    "dynamic_line": "Team up?\nI hate teamers.\n…\nWait.  Two people isn't a team.  That's a duo.\nHold up though.\nYou trust me?",
+    "responses": [
+      { "text": "Yeah.  I trust you.", "topic": "TALK_SM_GABRIEL_TEAM_YES" },
+      { "text": "Why should I?", "topic": "TALK_SM_GABRIEL_TEAM_WHY" },
+      { "text": "Not really.", "topic": "TALK_SM_GABRIEL_TEAM_NO" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_TEAM_WHY",
+    "dynamic_line": "Cause I'm no snitcher.\nAnd I don't run.\nThat's about it.\nSo.  You trust me?",
+    "responses": [
+      { "text": "Yeah.  I trust you.", "topic": "TALK_SM_GABRIEL_TEAM_YES" },
+      { "text": "Not yet.", "topic": "TALK_SM_GABRIEL_TEAM_NO" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_TEAM_YES",
+    "dynamic_line": "Aight.\nThen I trust you too.\nDon't make me regret it.  XD",
+    "responses": [ { "text": "Let's go.", "effect": "follow", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_TEAM_NO",
+    "dynamic_line": "Fair.\nCome back when you do.",
+    "responses": [ { "text": "Later.", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_BYE",
+    "dynamic_line": [ "Aight.", "Sure bet.", "Later." ],
+    "responses": [ { "text": "…", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_FRIEND",
+    "//": "Adds a Gabriel-only option to the vanilla follower menu (topics with the same id merge).  Don't set talk_friend on his template: TALK_FRIEND would then point back at his own topic.",
+    "responses": [
+      { "text": "Gabriel, what's on your mind?", "condition": { "npc_has_trait": "SM_GABRIEL" }, "topic": "TALK_SM_GABRIEL_CHAT" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_GABRIEL_CHAT",
+    "dynamic_line": [
+      "Nothing.\nJust thinking.\nEverything out here is buns.  Except us.  We're cool.",
+      "I don't like snitchers.\nJust saying.\nYou're good though.",
+      "Those things only ever come in packs.\nCowards.\nI'd fight any of them one on one.",
+      "Uhhhh.\nNo idea.\nAsk me later.",
+      "Honestly?\nI could use a good fight.\nAnd a nap.\nIn that order.",
+      "Cold out, huh.\nI like it.\nWinter and suffering.  Best combo.  XD",
+      "Dude.\nI think this happened before.\nThis exact moment.\n…\nMight just be déjà vu.  XD"
+    ],
+    "responses": [
+      { "text": "Fair enough.", "topic": "TALK_FRIEND" },
+      { "text": "Aight, later.", "topic": "TALK_DONE" }
+    ]
+  }
+]
