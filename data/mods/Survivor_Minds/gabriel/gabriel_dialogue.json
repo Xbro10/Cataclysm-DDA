@@ -92,8 +92,8 @@
   },
   {
     "type": "talk_topic",
-    "id": "TALK_FRIEND",
-    "//": "Adds a Gabriel-only option to the vanilla follower menu (topics with the same id merge).  Don't set talk_friend on his template: TALK_FRIEND would then point back at his own topic.",
+    "id": "TALK_SM_FOLLOWER",
+    "//": "Adds a Gabriel-only option to the Survivor Minds follower menu (\"Got a minute?\", talk/follower_menu.json; topics with the same id merge).  Don't set talk_friend on his template: TALK_FRIEND would then point back at his own topic.",
     "responses": [
       { "text": "Gabriel, what's on your mind?", "condition": { "npc_has_trait": "SM_GABRIEL" }, "topic": "TALK_SM_GABRIEL_CHAT" }
     ]
@@ -111,7 +111,7 @@
       "Dude.\nI think this happened before.\nThis exact moment.\n…\nMight just be déjà vu.  XD"
     ],
     "responses": [
-      { "text": "Fair enough.", "topic": "TALK_FRIEND" },
+      { "text": "Fair enough.", "topic": "TALK_SM_FOLLOWER" },
       { "text": "Aight, later.", "topic": "TALK_DONE" }
     ]
   }

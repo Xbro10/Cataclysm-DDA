@@ -1,7 +1,7 @@
 [
   {
     "type": "talk_topic",
-    "id": "TALK_FRIEND",
+    "id": "TALK_SM_FOLLOWER",
     "//": "Adds two options to the vanilla follower menu (topics with the same id merge).",
     "responses": [
       {
@@ -37,7 +37,7 @@
       "yes": "<sm_m_shared_thanks>",
       "no": "Keep it, then.  Maybe later."
     },
-    "responses": [ { "text": "Something else.", "topic": "TALK_FRIEND" }, { "text": "That's all.", "topic": "TALK_DONE" } ]
+    "responses": [ { "text": "Something else.", "topic": "TALK_SM_FOLLOWER" }, { "text": "That's all.", "topic": "TALK_DONE" } ]
   },
   {
     "type": "talk_topic",
@@ -51,6 +51,6 @@
         "no": "I trust you.  That's not a small thing, these days."
       }
     },
-    "responses": [ { "text": "Something else.", "topic": "TALK_FRIEND" }, { "text": "That's all.", "topic": "TALK_DONE" } ]
+    "responses": [ { "text": "Something else.", "topic": "TALK_SM_FOLLOWER" }, { "text": "That's all.", "topic": "TALK_DONE" } ]
   }
 ]

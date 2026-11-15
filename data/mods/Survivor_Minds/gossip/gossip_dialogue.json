@@ -1,7 +1,7 @@
 [
   {
     "type": "talk_topic",
-    "id": "TALK_FRIEND",
+    "id": "TALK_SM_FOLLOWER",
     "//": "Adds one option to the vanilla follower menu (topics with the same id merge).",
     "responses": [ { "text": "Seen anything around here?", "effect": { "run_eocs": "EOC_SM_GOSSIP", "alpha_talker": "npc" }, "topic": "TALK_SM_GOSSIP" } ]
   },
@@ -9,6 +9,6 @@
     "type": "talk_topic",
     "id": "TALK_SM_GOSSIP",
     "dynamic_line": "<global_val:sm_gossip>",
-    "responses": [ { "text": "Good to know.  Something else.", "topic": "TALK_FRIEND" }, { "text": "Thanks.", "topic": "TALK_DONE" } ]
+    "responses": [ { "text": "Good to know.  Something else.", "topic": "TALK_SM_FOLLOWER" }, { "text": "Thanks.", "topic": "TALK_DONE" } ]
   }
 ]

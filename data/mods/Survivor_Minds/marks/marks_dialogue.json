@@ -1,7 +1,7 @@
 [
   {
     "type": "talk_topic",
-    "id": "TALK_FRIEND",
+    "id": "TALK_SM_FOLLOWER",
     "//": "Adds one option to the vanilla follower menu (topics with the same id merge).",
     "responses": [
       {
@@ -23,6 +23,6 @@
         "no": "Not here, there's something in the way.  Let me move to a clear spot first."
       }
     },
-    "responses": [ { "text": "Good.  Something else.", "topic": "TALK_FRIEND" }, { "text": "Good.", "topic": "TALK_DONE" } ]
+    "responses": [ { "text": "Good.  Something else.", "topic": "TALK_SM_FOLLOWER" }, { "text": "Good.", "topic": "TALK_DONE" } ]
   }
 ]

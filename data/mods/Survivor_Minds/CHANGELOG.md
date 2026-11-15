@@ -30,6 +30,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- The follower menu has one Survivor Minds entry, "Got a minute?", instead of six: it opens a submenu with "Gabriel, what's on your mind?" (Gabriel only), "Seen anything around here?", "Can I read your journal?", "Mark this place as looted.", "Here, have some of my food." and "How do you feel about me?". "Something else" in each of them goes back to that submenu.
 - The survivor's journal now shows a book sprite in UltiCa instead of the placeholder.
 - Panicked people are a quarter as common in city civilian spawns and come in smaller crowds.
 
