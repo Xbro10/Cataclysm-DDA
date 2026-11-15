@@ -1,0 +1,42 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Gabriel's blue scarf for UltiCa: its wool scarf sprites (CC-BY-SA 3.0) recoloured blue by tools/survivor_minds/draw_gabriel_scarf.ps1.  Sprite numbers run on across this object's sheets.",
+    "compatibility": [ "UltimateCataclysm" ],
+    "tiles-new": [
+      {
+        "file": "gfx/gabriel_ultica_body.png",
+        "sprite_width": 32,
+        "sprite_height": 36,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": -8,
+        "tiles": [ { "id": "overlay_male_worn_sm_scarf_blue", "fg": 0 }, { "id": "overlay_female_worn_sm_scarf_blue", "fg": 1 } ]
+      },
+      {
+        "file": "gfx/gabriel_ultica_item.png",
+        "sprite_width": 20,
+        "sprite_height": 20,
+        "sprite_offset_x": 6,
+        "sprite_offset_y": 0,
+        "tiles": [ { "id": "sm_scarf_blue", "fg": 2 } ]
+      }
+    ]
+  },
+  {
+    "type": "mod_tileset",
+    "//": "Gabriel's blue scarf for UndeadPeople: its wool scarf sprites (CC-BY-SA 3.0) recoloured blue by tools/survivor_minds/draw_gabriel_scarf.ps1.",
+    "compatibility": [ "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/gabriel_udp.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "tiles": [
+          { "id": "sm_scarf_blue", "fg": 0 },
+          { "id": "overlay_male_worn_sm_scarf_blue", "fg": 1 },
+          { "id": "overlay_worn_sm_scarf_blue", "fg": 2 }
+        ]
+      }
+    ]
+  }
+]

@@ -27,7 +27,15 @@
     "name": { "str": "Brawler" },
     "job_description": "I fight.  Mostly things that team up on people.",
     "common": false,
-    "traits": [ { "group": "Appearance_demographics" }, { "trait": "SM_GABRIEL" }, { "trait": "TOUGH" }, { "trait": "FASTLEARNER" } ],
+    "//2": "His look was picked by the person he's based on: black hair, green eyes, cyan hoodie, blue scarf.  Skin tone still rolls like any NPC's.",
+    "traits": [
+      { "group": "Skin_Any" },
+      { "trait": "hair_short", "variant": "black" },
+      { "trait": "eye_color", "variant": "green" },
+      { "trait": "SM_GABRIEL" },
+      { "trait": "TOUGH" },
+      { "trait": "FASTLEARNER" }
+    ],
     "bonus_str": { "constant": 2 },
     "bonus_dex": { "constant": 1 },
     "bonus_per": { "constant": 1 },
@@ -54,6 +62,17 @@
     "carry_override": "NC_SM_GABRIEL_carry"
   },
   {
+    "id": "sm_scarf_blue",
+    "type": "ITEM",
+    "copy-from": "scarf",
+    "//": "Gabriel's scarf.  No vanilla scarf comes in blue; gfx/gabriel_tileset.json draws it for UltiCa and UndeadPeople, other tilesets show the plain wool scarf.  It can't be loosened, so it stays blue.",
+    "looks_like": "scarf",
+    "color": "blue",
+    "name": { "str": "blue wool scarf", "str_pl": "blue wool scarves" },
+    "description": "A long blue wool scarf, worn over the mouth for warmth.",
+    "use_action": [  ]
+  },
+  {
     "type": "item_group",
     "id": "NC_SM_GABRIEL_weapon",
     "subtype": "collection",
@@ -68,12 +87,12 @@
       { "item": "boxer_briefs" },
       { "item": "socks" },
       { "item": "tshirt" },
-      { "item": "hoodie" },
+      { "item": "hoodie", "variant": "hoodie_cyan" },
       { "item": "jeans" },
       { "item": "boots_combat" },
       { "item": "gloves_leather" },
       { "item": "hat_knit" },
-      { "item": "scarf" },
+      { "item": "sm_scarf_blue" },
       { "item": "backpack" }
     ]
   },

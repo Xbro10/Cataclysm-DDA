@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-14, NPCs and factions: [SM] **Gabriel's look:** black hair, green eyes, a cyan hoodie and a blue wool scarf (its own sprite in UltiCa and UndeadPeople).
 - 2026-11-14, Developer tools: [SM] **Watch Gabriel:** `EOC_SM_DEBUG_WATCH_GABRIEL` spawns an unrecruited Gabriel nearby and hides you completely (invisible, silent, no scent, no damage, sees through walls) so you can watch him on his own; `EOC_SM_DEBUG_WATCH_STOP` ends it.
 - 2026-11-14, NPCs and factions: [SM] **Gabriel**, a unique recruitable NPC (class Brawler): a veteran fighter with a morningstar and a hatchet, short on words, hates teamers, never snitches. Ask "Want to team up?" and tell him you trust him. Debug spawn `EOC_SM_DEBUG_SPAWN_GABRIEL` (his real spawn point comes later).
 - 2026-11-14, Levels: [BE] **Level 1 lights**: lane lights flicker and slowly fail for good, and lobbies sometimes black out for up to an hour (a Smiler may come).
