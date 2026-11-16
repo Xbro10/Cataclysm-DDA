@@ -3,7 +3,6 @@
 #define CATA_SRC_WOUND_H
 
 #include <climits>
-#include <map>
 #include <optional>
 #include <set>
 #include <string>
@@ -219,6 +218,8 @@ class wound
         // update the wound healing progress
         wound_update_ret update_wound( const Character *who, time_duration time_passed );
 
+        bool treatable_by( const Character &c ) const;
+
         float get_wound_healing_modifier( const Character *who ) const;
 
         wound &operator+=( const wound &wd ) {
@@ -253,6 +254,15 @@ class wound
         friend class medical_ui;
 };
 
+struct wound_skill {
+    skill_id skill;
+    int level;
+    float time_save = 1.f;
+    bool is_mandatory = false;
+
+    void deserialize( const JsonObject &jo );
+};
+
 struct wound_proficiency {
     proficiency_id prof;
     float time_save = 1.f;
@@ -271,7 +281,7 @@ class wound_fix
         time_duration time = 0_seconds;
         // amount of hp that will be added to limb once the wound is fixes. Mainly for bionic
         int mod_hp = 0;
-        std::map<skill_id, int> skills; // map of skill_id to required level
+        std::vector<wound_skill> skills; // skills necessary for using this wound fix
         // this profs make stuff faster, TODO safer?, and may be mandatory to perform the treatment
         std::vector<wound_proficiency> proficiencies;
         std::set<wound_type_id> wounds_removed; // which wounds are removed on applying
@@ -282,6 +292,9 @@ class wound_fix
         bool was_loaded = false; // used by generic_factory
         static void load_wound_fixes( const JsonObject &jo, const std::string &src );
 
+        // first is if it is doable at all, second is time multiplier due to skill, etc)
+        // If first is false, the second won't necessarily be accurate.
+        std::pair<bool, float> doable_by( const Character &c ) const;
 
         std::string get_name() const;
         std::string get_description() const;
