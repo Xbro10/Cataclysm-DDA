@@ -1,6 +1,7 @@
 // Xbro10 fork: tests for "NPC autonomy (experimental)" (src/npc_autonomy.*).
 
 #include <algorithm>
+#include <optional>
 #include <sstream>
 #include <string>
 
@@ -83,6 +84,18 @@ static npc &spawn_follower( const point_bub_ms &where )
     return guy;
 }
 
+// Tests run earlier can leave the weather cold: behavior_test's tree_tick_full_returns_score forces
+// -30 C and never undoes it. That froze the water and food these tests put down, so they failed
+// whenever they ran after it. Each test here starts at a mild 20 C and puts the weather back after.
+struct mild_weather {
+    restore_on_out_of_scope<std::optional<units::temperature>> forced{ get_weather().forced_temperature };
+    restore_on_out_of_scope<units::temperature> air{ get_weather().temperature };
+    mild_weather() {
+        get_weather().forced_temperature.reset();
+        get_weather().temperature = units::from_celsius( 20 );
+    }
+};
+
 static double stored( const npc &guy, const std::string &key )
 {
     const diag_value *val = guy.maybe_get_value( key );
@@ -92,6 +105,7 @@ static double stored( const npc &guy, const std::string &key )
 
 TEST_CASE( "npc_autonomy_needs_off_by_default", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -105,6 +119,7 @@ TEST_CASE( "npc_autonomy_needs_off_by_default", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_social_need", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -144,6 +159,7 @@ TEST_CASE( "npc_autonomy_social_need", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_felt_needs", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option autonomy( "NPC_AUTONOMY", "true" );
@@ -204,6 +220,7 @@ TEST_CASE( "npc_autonomy_felt_needs", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_mealtimes", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -246,6 +263,7 @@ TEST_CASE( "npc_autonomy_mealtimes", "[npc][autonomy]" )
 // every item in a pocket got a new uid on load ("UID not found in container contents").
 TEST_CASE( "npc_autonomy_meals_on_post_and_when_left_behind", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -280,6 +298,7 @@ TEST_CASE( "npc_autonomy_meals_on_post_and_when_left_behind", "[npc][autonomy]" 
 
 TEST_CASE( "npc_autonomy_rule_leave_food_and_water_to_me", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -303,6 +322,7 @@ TEST_CASE( "npc_autonomy_rule_leave_food_and_water_to_me", "[npc][autonomy]" )
 // player, stood eating, never followed, and didn't fight a zombie next to them.
 TEST_CASE( "npc_autonomy_starving_follower_left_behind", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -358,6 +378,7 @@ TEST_CASE( "npc_autonomy_starving_follower_left_behind", "[npc][autonomy]" )
 
 TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -397,6 +418,7 @@ TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -430,6 +452,7 @@ TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_get_water", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -476,6 +499,7 @@ TEST_CASE( "npc_autonomy_get_water", "[npc][autonomy]" )
 // water cooler (keg furniture, water held on its tile as in the Backrooms' f_watercooler).
 TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -512,6 +536,7 @@ TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_debug_lonely", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 3, 0 ) );
@@ -524,6 +549,7 @@ TEST_CASE( "npc_autonomy_debug_lonely", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_debug_owned_area", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     map &here = get_map();
@@ -537,6 +563,7 @@ TEST_CASE( "npc_autonomy_debug_owned_area", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -554,6 +581,7 @@ TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_get_food", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -627,6 +655,7 @@ TEST_CASE( "npc_autonomy_get_food", "[npc][autonomy]" )
 // Reported 2026-11-16: a hungry NPC walked into spiked pits to reach food in the middle.
 TEST_CASE( "npc_autonomy_food_behind_traps", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -673,6 +702,7 @@ TEST_CASE( "npc_autonomy_food_behind_traps", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -857,6 +887,7 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
 // they are, ours a flat 0.45), so a Very cold NPC lit no fires and kept none going.
 TEST_CASE( "npc_autonomy_get_warm_wins_when_very_cold", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -889,6 +920,7 @@ TEST_CASE( "npc_autonomy_get_warm_wins_when_very_cold", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_dress_for_the_cold", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
@@ -921,6 +953,7 @@ TEST_CASE( "npc_autonomy_dress_for_the_cold", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_stale_plan_is_dropped", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -946,6 +979,7 @@ TEST_CASE( "npc_autonomy_stale_plan_is_dropped", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
@@ -972,6 +1006,7 @@ TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_safety_need", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option autonomy( "NPC_AUTONOMY", "true" );
@@ -996,6 +1031,7 @@ TEST_CASE( "npc_autonomy_safety_need", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_safety_hostile_close_by", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );

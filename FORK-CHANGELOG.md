@@ -65,6 +65,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [BE] **Level 2 tunnels** no longer show a mapgen error when a ceiling light lands on a junk pile.
 - [BE] **Breakroom runners' deaths** are recorded again (the game refused to run their death script).
 
+### For developers
+- [C++] **Synced with upstream CDDA** (30 commits: faults, wounds, factions linked to monster factions). No
+  conflicts; every fork change is intact.
+- [C++] The NPC autonomy tests now start each case at 20 C. Upstream's `tree_tick_full_returns_score` forces
+  -30 C and never undoes it, so the water and food in later tests froze and 3 of them failed in a full test run.
+
 ---
 
 ## November 15, 2026
