@@ -144,7 +144,7 @@ TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
         manual_mapgen( omt, manual_nested_mapgen, nested_mapgen_id( l.id ) );
         const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
         CHECK( here.furn( corner + l.board_at ) == board );
-        CHECK( here.furn( corner + point( 17, 10 ) ) == locker );
+        CHECK( here.furn( corner + point( 16, 10 ) ) == locker );
         CHECK( here.ter( corner + l.front_at ) == ter_str_id( l.front_ter ) );
         int guards = 0;
         for( const npc &guy : g->all_npcs() ) {
@@ -153,5 +153,34 @@ TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
             }
         }
         CHECK( guards >= 1 );
+        // Larder: food on the kitchen counters, drinks in the fridge.
+        CHECK( !here.i_at( corner + point( 3, 10 ) ).empty() );
+        CHECK( !here.i_at( corner + point( 4, 10 ) ).empty() );
+        CHECK( !here.i_at( corner + point( 6, 10 ) ).empty() );
+    }
+}
+
+// A runner coming home restocks the larder, owned by the Breakroom.
+TEST_CASE( "breakroom_larder_restock", "[.][backrooms_runner]" )
+{
+    const update_mapgen_id restock( "br1_breakroom_restock" );
+    if( !restock.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    map &here = get_map();
+    const tripoint_abs_omt omt = get_avatar().pos_abs_omt();
+    manual_mapgen( omt, manual_update_mapgen, restock );
+    const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
+    const faction_id breakroom( "br_breakroom" );
+    for( const point &p : { point( 3, 10 ), point( 4, 10 ), point( 6, 10 ) } ) {
+        CAPTURE( p );
+        map_stack items = here.i_at( corner + p );
+        REQUIRE( !items.empty() );
+        for( const item &it : items ) {
+            CHECK( it.get_owner() == breakroom );
+        }
     }
 }
