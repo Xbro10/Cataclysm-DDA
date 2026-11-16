@@ -11,7 +11,7 @@ as "(old, 2026-11-12)"). Map every request to a playbook prompt.
 As of 2026-11-16. Update this each time a prompt is finished.
 - Phases 0, 1 and 2: finished (Prompts 0.1 to 2.6). Don't redo, re-plan or re-verify them.
 - Phase 3: 3.1, 3.2, 3.3 finished (3.3 tested in game 2026-11-16). **3.4 in progress**: 3.4a (get water) and 3.4b
-  (get food) built and mostly tested; next
+  (get food) built and tested in game (2026-11-16); next
   3.4c (get warm). The planned "stocking up" step became Prompt 7.0 (stock count) in the new playbook.
 - Fixes already made ahead of Phase 5: part of 5.3 (a follower drops a meal when left behind, guards eat
   on their post, water trips use upstream's follow and guard reach). Still open in 5.3: chats.
