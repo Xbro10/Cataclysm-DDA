@@ -1,5 +1,6 @@
 // Xbro10 fork: tests for "NPC autonomy (experimental)" (src/npc_autonomy.*).
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 
@@ -45,6 +46,8 @@ static const furn_str_id furn_f_cupboard( "f_cupboard" );
 static const furn_str_id furn_f_water_heater( "f_water_heater" );
 
 static const ter_str_id ter_t_water_sh( "t_water_sh" );
+
+static const trap_str_id tr_spike_pit( "tr_spike_pit" );
 
 static const faction_id faction_no_faction( "no_faction" );
 static const faction_id faction_your_followers( "your_followers" );
@@ -585,6 +588,53 @@ TEST_CASE( "npc_autonomy_get_food", "[npc][autonomy]" )
         here.add_item_or_charges( spot, item( itype_sandwich_cheese_grilled ) );
         guy.rules.set_flag( ally_rule::no_self_care );
         CHECK_FALSE( npc_autonomy::wants_food( guy ) );
+    }
+}
+
+// Reported 2026-11-16: a hungry NPC walked into spiked pits to reach food in the middle.
+TEST_CASE( "npc_autonomy_food_behind_traps", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    guy.stomach.empty();
+    guy.add_effect( effect_hunger_very_hungry, 1_days );
+    const tripoint_bub_ms food_spot( player_pos + point( 10, 0 ), 0 );
+    here.add_item_or_charges( food_spot, item( itype_sandwich_cheese_grilled ) );
+    std::vector<tripoint_bub_ms> pits;
+    for( const tripoint_bub_ms &p : here.points_in_radius( food_spot, 1 ) ) {
+        if( p != food_spot ) {
+            here.trap_set( p, tr_spike_pit.id() );
+            pits.push_back( p );
+        }
+    }
+    here.build_map_cache( 0 );
+    const int hp_before = guy.get_hp();
+
+    SECTION( "autonomy on: they never step into the pits" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        for( int turn = 0; turn < 120; ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            if( guy.activity ) {
+                guy.activity.do_turn( guy );
+            } else {
+                npc_autonomy::run_goal( guy, "autonomy_get_food" );
+            }
+            CHECK( std::find( pits.begin(), pits.end(), guy.pos_bub() ) == pits.end() );
+        }
+        CHECK( guy.get_hp() == hp_before );
+        CHECK_FALSE( here.i_at( food_spot ).empty() );
+        CHECK( npc_autonomy::avoids_trap( guy, pits.front() ) );
+    }
+    SECTION( "autonomy off: pits are only costly (the game's own rule)" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK_FALSE( npc_autonomy::avoids_trap( guy, pits.front() ) );
     }
 }
 

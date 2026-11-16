@@ -33,6 +33,7 @@
 #include "text_snippets.h"
 #include "translation.h"
 #include "translations.h"
+#include "trap.h"
 #include "type_id.h"
 #include "viewer.h"
 
@@ -725,6 +726,21 @@ bool refill_bottle( npc &guy, const itype_id &liquid )
         }
     }
     return false;
+}
+
+bool avoids_trap( const npc &guy, const tripoint_bub_ms &p )
+{
+    if( !enabled() ) {
+        return false;
+    }
+    const map &here = get_map();
+    const trap &tr = here.tr_at( p );
+    if( tr.is_null() || tr.is_benign() || tr.is_always_invisible() ) {
+        return false;
+    }
+    // Known to them, or in plain sight (pits, spikes: nothing hides them) where they can see.
+    // Hidden traps (a buried landmine) only count once known.
+    return tr.can_see( p, guy ) || ( tr.is_trivial_to_spot() && guy.sees( here, p ) );
 }
 
 void drop_stale_plans( npc &guy )

@@ -9,6 +9,7 @@
 #include <string>
 
 #include "calendar.h"
+#include "coords_fwd.h"
 #include "type_id.h"
 
 class Character;
@@ -109,6 +110,12 @@ bool hungry_enough_for_a_trip( const npc &guy );
 int food_search_radius();
 /** Fill one empty watertight container in the NPC's pack with `liquid`. True if one was filled. */
 bool refill_bottle( npc &guy, const itype_id &liquid );
+/**
+ * With autonomy on, an NPC never steps onto a harmful trap it can see or knows about (a pit,
+ * spikes, a bear trap): it's a wall for their pathing. The game only made such tiles costly,
+ * so a hungry NPC walked through spiked pits to food on the far side.
+ */
+bool avoids_trap( const npc &guy, const tripoint_bub_ms &p );
 /** "Plan: ..." line for the look-around panel, or "" when there's no plan being pursued. */
 std::string plan_text( const npc &guy );
 /** Once a minute: forget water and food plans the NPC isn't pursuing any more (they moved on). */
