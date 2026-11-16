@@ -14,6 +14,8 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-15, Levels: [BE] The **Breakroom** is bigger, in one of two layouts (Checkpoint: lit fenced yard; Bunker: airlock and sandbag line), with a door guard and a **runner board** showing when Jonah and Rosa leave each day.
+- 2026-11-15, Bug fixes: [BE] **Breakroom runners** never left on a run (their destination roll never matched, and their travel target pointed at their own spot); the "Find the runner" job marked the wrong place.
 - 2026-11-15, Levels: [BE] **Level 0 lights** sit in neat rows every 4 tiles (a few dead) instead of being scattered at random.
 - 2026-11-15, Levels: [BE] The **Breakroom** is no longer marked on your map when you reach Level 1; you find it by exploring.
 - 2026-11-15, Levels: [BE] **Survival Difficulty Classes**: each level has a class from the Backrooms Wiki (Level 0 and 1 Class 1, Level 2 Class 3), shown in every scenario description, on a card when you first arrive and in a new field guide. The class means something: Level 2 has about twice the monsters, much less food and bursting steam pipes; Level 0 gets a few rare Backrooms entities.

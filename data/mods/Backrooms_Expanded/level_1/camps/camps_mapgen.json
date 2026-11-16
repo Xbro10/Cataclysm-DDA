@@ -24,7 +24,14 @@
       "1": [ "t_thconc_floor" ],
       "2": [ "t_thconc_floor" ],
       "T": [ "t_br1_tap" ],
-      "w": [ "t_br1_drip_pool" ]
+      "w": [ "t_br1_drip_pool" ],
+      "o": [ "t_window_bars" ],
+      "|": [ "t_chainfence" ],
+      "G": [ "t_chaingate_c" ],
+      "^": [ "t_fence_barbed" ],
+      "W": [ "t_thconc_floor" ],
+      "k": [ "t_thconc_floor" ],
+      "D": [ "t_thconc_floor" ]
     },
     "furniture": {
       "V": "f_vending_o",
@@ -38,7 +45,9 @@
       "B": "f_makeshift_bed",
       "L": "f_locker",
       "X": "f_crate_c",
-      "=": "f_sandbag_half"
+      "=": "f_sandbag_half",
+      "W": "f_sandbag_wall",
+      "k": "f_workbench"
     },
     "items": {
       "X": { "item": "br1_camp_stores", "chance": 60 },
@@ -46,10 +55,7 @@
       "c": { "item": "br1_camp_food", "chance": 25 },
       "t": { "item": "br1_camp_food", "chance": 10 }
     },
-    "nested": {
-      "n": { "chunks": [ [ "br1_squatter_npc", 50 ], [ "null", 50 ] ] },
-      "N": { "chunks": [ "br1_squatter_npc" ] }
-    }
+    "nested": { "n": { "chunks": [ [ "br1_squatter_npc", 50 ], [ "null", 50 ] ] }, "N": { "chunks": [ "br1_squatter_npc" ] } }
   },
   {
     "type": "mapgen",
@@ -60,18 +66,18 @@
   {
     "type": "mapgen",
     "om_terrain": "br1_breakroom",
-    "//": "The hub camp: a walled breakroom built into the garage. Garage keeps going around it; cars are cleared from the camp and its approach.",
+    "//": "The hub camp: a walled breakroom built into the garage, in one of two layouts (A: Checkpoint, a lit fenced yard; B: Bunker, an airlock and a sandbag line). Garage keeps going around it; cars are cleared from the whole square.",
     "object": {
       "predecessor_mapgen": "br1_garage",
-      "remove_vehicles": [ { "x": [ 0, 23 ], "y": [ 0, 17 ] } ],
-      "faction_owner": [ { "id": "br_breakroom", "x": [ 2, 21 ], "y": [ 1, 11 ] } ],
-      "place_nested": [ { "chunks": [ "br1_breakroom_core" ], "x": 0, "y": 0 } ]
+      "remove_vehicles": [ { "x": [ 0, 23 ], "y": [ 0, 23 ] } ],
+      "faction_owner": [ { "id": "br_breakroom", "x": [ 2, 21 ], "y": [ 1, 19 ] } ],
+      "place_nested": [ { "chunks": [ [ "br1_breakroom_checkpoint", 1 ], [ "br1_breakroom_bunker", 1 ] ], "x": 0, "y": 0 } ]
     }
   },
   {
     "type": "mapgen",
-    "nested_mapgen_id": "br1_breakroom_core",
-    "//": "Left: the breakroom (Foreman at '1'). Top right: bunks. Bottom right: camp stores (Cartographer at '2'). Spaces leave the garage underneath.",
+    "nested_mapgen_id": "br1_breakroom_checkpoint",
+    "//": "Layout A, Checkpoint. Top: the breakroom (Foreman at '1'), bunks, camp stores (Cartographer at '2'). New wing: guard room with the runner board and lockers, infirmary. Front: barred windows either side of the door, a lit chain-link yard with sandbag nests, and a gate off to the side so visitors cross the light. Spaces leave the garage underneath.",
     "object": {
       "mapgensize": [ 24, 24 ],
       "rows": [
@@ -86,27 +92,75 @@
         "  #....1....#..2...XX#  ",
         "  #.ht..ht..#T..!..XX#  ",
         "  #ccTR...n.#LLLL..XX#  ",
-        "  #####..#############  ",
-        "                        ",
-        "     ====               ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
+        "  #####..#######+#####  ",
+        "  #.D.......#B......B#  ",
+        "  #....!....+...!....#  ",
+        "  #.h.LL..h.#B..S...B#  ",
+        "  ###o#+#o############  ",
+        "  |..!.........!.....|  ",
+        "  |=................=|  ",
+        "  |==.....!..!.....==|  ",
+        "  |||||||||||||G||||||  ",
         "                        ",
         "                        ",
         "                        ",
         "                        "
       ],
       "palettes": [ "br1_camp_palette" ],
-      "place_npcs": [ { "class": "BR1_foreman", "x": 7, "y": 8 }, { "class": "BR1_cartographer", "x": 15, "y": 8 },
+      "place_npcs": [
+        { "class": "BR1_foreman", "x": 7, "y": 8 },
+        { "class": "BR1_cartographer", "x": 15, "y": 8 },
         { "class": "BR1_runner_jonah", "x": 4, "y": 5 },
-        { "class": "BR1_runner_rosa", "x": 9, "y": 5 }
+        { "class": "BR1_runner_rosa", "x": 9, "y": 5 },
+        { "class": "BR1_gate_guard", "x": 4, "y": 14 }
       ],
-      "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 17, "y": 10 } ],
-      "place_signs": [ { "x": 5, "y": 12, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
+      "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 17, "y": 10 }, { "furn": "f_br1_runner_board", "x": 4, "y": 12 } ],
+      "place_signs": [ { "x": 16, "y": 20, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_breakroom_bunker",
+    "//": "Layout B, Bunker. Top as in the Checkpoint. New wing: workshop, extra bunks. Front: an airlock (runner board, guard post, barred side windows) between two doors, then a sandbag wall and barbed wire with one gap, so everything comes in single file. Spaces leave the garage underneath.",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rows": [
+        "                        ",
+        "  ####################  ",
+        "  #VVV.K....#BB.L..BB#  ",
+        "  #....!....#...!....#  ",
+        "  #.ht..ht..+...n....#  ",
+        "  #.........#BB.L..BB#  ",
+        "  #....F....##########  ",
+        "  #.ht..ht..+......XX#  ",
+        "  #....1....#..2...XX#  ",
+        "  #.ht..ht..#T..!..XX#  ",
+        "  #ccTR...n.#LLLL..XX#  ",
+        "  #####..#######+#####  ",
+        "  #kk..!..kk#BB..!.BB#  ",
+        "  #.........#........#  ",
+        "  #XX.....XX#BB....BB#  ",
+        "  ######+#############  ",
+        "     #D...h#            ",
+        "     o..!..o            ",
+        "     ###+###            ",
+        "    WWWW.WWWW           ",
+        "    ^^^^.^^^^           ",
+        "        .               ",
+        "                        ",
+        "                        "
+      ],
+      "palettes": [ "br1_camp_palette" ],
+      "place_npcs": [
+        { "class": "BR1_foreman", "x": 7, "y": 8 },
+        { "class": "BR1_cartographer", "x": 15, "y": 8 },
+        { "class": "BR1_runner_jonah", "x": 4, "y": 5 },
+        { "class": "BR1_runner_rosa", "x": 9, "y": 5 },
+        { "class": "BR1_gate_guard", "x": 10, "y": 16 }
+      ],
+      "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 17, "y": 10 }, { "furn": "f_br1_runner_board", "x": 6, "y": 16 } ],
+      "place_signs": [ { "x": 9, "y": 21, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
