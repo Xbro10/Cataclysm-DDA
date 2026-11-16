@@ -1,0 +1,298 @@
+[
+  {
+    "type": "faction",
+    "id": "br1_diner",
+    "name": "The All-Nite",
+    "likes_u": 10,
+    "respects_u": 0,
+    "known_by_u": false,
+    "size": 4,
+    "power": 5,
+    "fac_food_supply": [ [ 0, { "calories": 172800, "vitamins": {  } } ] ],
+    "wealth": 800,
+    "price_rules": [ { "item": "almond_water", "price": 2000 }, { "category": "food", "premium": 1.2 } ],
+    "relations": {
+      "br1_diner": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": true,
+        "guard your stuff": true,
+        "lets you in": true,
+        "defends your space": true,
+        "knows your voice": true
+      },
+      "br_lost": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": true
+      },
+      "br_breakroom": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": true
+      },
+      "br1_exchange": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": true
+      }
+    },
+    "description": "A cook and a server who found a diner standing in the middle of a parking deck, with the grill still warm, and decided to keep it open.  Everyone on Level 1 ends up at the All-Nite sooner or later: to eat, to rest in the light, and to hear who's still alive."
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_diner",
+    "//": "The All-Nite diner (level_1/diner.json).",
+    "name": "the All-Nite diner",
+    "sym": "D",
+    "looks_like": "s_restaurant",
+    "color": "light_red",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE", "SOURCE_PEOPLE", "SOURCE_FOOD" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br1_diner",
+    "//": "One or two diners per Level 1 map, placed like the squatter camps (BACKROOMS_L1).",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_diner" } ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 2 ],
+    "flags": [ "BACKROOMS_L1", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_diner",
+    "//": "A diner standing in the garage. Garage keeps going around it.",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 0, 23 ], "y": [ 0, 13 ] } ],
+      "faction_owner": [ { "id": "br1_diner", "x": [ 2, 21 ], "y": [ 1, 10 ] } ],
+      "place_nested": [ { "chunks": [ "br1_diner_core" ], "x": 0, "y": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_diner_core",
+    "//": "Kitchen along the back (K cupboard, O oven, R fridge, S sink, T tap, x bin) behind a counter with a gate (g); stools (s) along the counter; four booths (b bench, t table); windows (\") and a door in front, back door at (12,1). Cook at (6,3), server at (12,3); regulars (lost survivors) sometimes sit at the counter and in the booths. Spaces leave the garage underneath.",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rows": [
+        "                        ",
+        "  ##########+#########  ",
+        "  #KOOK..RR..ST..KK.x#  ",
+        "  #..!.........!.....#  ",
+        "  #ccccccccgccccccccc#  ",
+        "  #.s.s.s.s...s.s.s..#  ",
+        "  #..................#  ",
+        "  #.!......!......!..#  ",
+        "  #btb..btb..btb..btb#  ",
+        "  #..................#  ",
+        "  #\"\"\"#\"\"\"#+#\"\"\"#\"\"\"\"#  ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        "
+      ],
+      "terrain": {
+        "#": "t_wall_w",
+        ".": "t_linoleum_white",
+        "!": "t_strconc_floor_olight",
+        "+": "t_door_c",
+        "\"": "t_window_domestic",
+        "K": "t_linoleum_white",
+        "O": "t_linoleum_white",
+        "R": "t_linoleum_white",
+        "S": "t_linoleum_white",
+        "T": "t_br1_tap",
+        "x": "t_linoleum_white",
+        "c": "t_linoleum_white",
+        "g": "t_linoleum_white",
+        "s": "t_linoleum_white",
+        "b": "t_linoleum_white",
+        "t": "t_linoleum_white"
+      },
+      "furniture": {
+        "K": "f_cupboard",
+        "O": "f_oven",
+        "R": "f_fridge",
+        "S": "f_sink",
+        "x": "f_trashcan",
+        "c": "f_counter",
+        "g": "f_counter_gate_c",
+        "s": "f_stool",
+        "b": "f_bench",
+        "t": "f_table"
+      },
+      "items": {
+        "K": { "item": "br1_breakroom_larder", "chance": 100, "repeat": [ 3, 5 ] },
+        "R": [
+          { "item": "br1_breakroom_fridge", "chance": 100, "repeat": [ 3, 5 ] },
+          { "item": "br1_diner_menu", "chance": 60, "repeat": [ 1, 3 ] }
+        ]
+      },
+      "place_npcs": [ { "class": "BR1_diner_cook", "x": 6, "y": 3 }, { "class": "BR1_diner_server", "x": 12, "y": 3 } ],
+      "place_nested": [
+        { "chunks": [ [ "br1_squatter_npc", 60 ], [ "null", 40 ] ], "x": 6, "y": 5 },
+        { "chunks": [ [ "br1_squatter_npc", 50 ], [ "null", 50 ] ], "x": 16, "y": 5 },
+        { "chunks": [ [ "br1_squatter_npc", 50 ], [ "null", 50 ] ], "x": 5, "y": 8 },
+        { "chunks": [ [ "br1_squatter_npc", 40 ], [ "null", 60 ] ], "x": 15, "y": 8 }
+      ],
+      "place_signs": [ { "x": 15, "y": 11, "signage": "ALL-NITE DINER.  OPEN.  ALWAYS.  (WE DON'T KNOW HOW TO CLOSE.)" } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "item_group",
+    "id": "br1_diner_menu",
+    "subtype": "distribution",
+    "//": "What the All-Nite's grill turns out. The cook's shop stock and a little in the fridge.",
+    "items": [
+      { "item": "hamburger", "prob": 15 },
+      { "item": "sandwich_cheese_grilled", "prob": 15 },
+      { "item": "pancakes", "prob": 10 },
+      { "item": "waffles", "prob": 8 },
+      { "item": "fries", "prob": 10 },
+      { "item": "chili", "prob": 8 },
+      { "item": "soup_veggy", "prob": 8 },
+      { "item": "soup_meat", "prob": 8 },
+      { "item": "toast", "prob": 8 },
+      { "item": "hotdogs_cooked", "prob": 8 },
+      { "item": "coffee", "prob": 12 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_diner_stock",
+    "subtype": "collection",
+    "//": "The cook's shop stock: a full menu plus drinks. Restocks every day.",
+    "entries": [ { "group": "br1_diner_menu", "count": [ 8, 12 ] }, { "group": "almond_water_sealed", "count": [ 2, 4 ] } ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_DINER_COOK",
+    "name": { "str": "Cook" },
+    "job_description": "I run the grill.  Don't ask where the meat comes from; I don't ask where you come from.",
+    "common": false,
+    "worn_override": "NC_BR1_FOREMAN_worn",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "shopkeeper_item_group": [ { "group": "br1_diner_stock" } ],
+    "restock_interval": "1 days",
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "cooking", "bonus": { "rng": [ 4, 6 ] } },
+      { "skill": "speech", "bonus": { "rng": [ 1, 3 ] } }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_DINER_SERVER",
+    "name": { "str": "Server" },
+    "job_description": "I pour the coffee and I hear everything.  Everything.",
+    "common": false,
+    "worn_override": "NC_BR1_RUNNER_worn",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "speech", "bonus": { "rng": [ 3, 5 ] } }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "BR1_diner_cook",
+    "//": "All-Nite cook: sells hot meals (SHOPKEEP, behind the counter).",
+    "class": "NC_BR1_DINER_COOK",
+    "attitude": 0,
+    "mission": "SHOPKEEP",
+    "chat": "TALK_BR1_DINER_COOK",
+    "faction": "br1_diner"
+  },
+  {
+    "type": "npc",
+    "id": "BR1_diner_server",
+    "//": "All-Nite server: the gossip (GUARD, behind the counter).",
+    "class": "NC_BR1_DINER_SERVER",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_DINER_SERVER",
+    "faction": "br1_diner"
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_DINER_COOK",
+    "dynamic_line": [
+      "Grill's hot.  What'll it be?",
+      "Burger, pancakes, chili.  Same as yesterday.  Same as tomorrow.  You get used to it.",
+      "Sit anywhere.  The booth by the window's lucky, if you believe in that sort of thing."
+    ],
+    "responses": [
+      { "text": "Let me see the menu.", "effect": "start_trade", "topic": "TALK_BR1_DINER_COOK" },
+      { "text": "How is this place even here?", "topic": "TALK_BR1_DINER_ABOUT" },
+      { "text": "Maybe later.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_DINER_ABOUT",
+    "dynamic_line": "Walked in through a fire door that wasn't there the day before.  Grill was warm, fridge was full, nobody home.  Fridge fills itself back up some mornings.  I don't ask.  I cook.  People need somewhere with a door and a light and a hot plate, and this is it.",
+    "responses": [ { "text": "Fair enough.", "topic": "TALK_BR1_DINER_COOK" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_DINER_SERVER",
+    "dynamic_line": [
+      "Coffee?  It's not good, but it's hot.",
+      "Sit down, love, you look like the parking deck chewed you up.",
+      "You want to know something, you ask me.  I hear everything at that counter."
+    ],
+    "responses": [
+      { "text": "What's the news?", "topic": "TALK_BR1_DINER_NEWS" },
+      { "text": "Who comes in here?", "topic": "TALK_BR1_DINER_REGULARS" },
+      { "text": "Just passing through.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_DINER_NEWS",
+    "dynamic_line": [
+      "The Exchange put their almond water prices up again.  Bunch of crooks.  Lovely people, but crooks.",
+      "One of the Breakroom runners came in last week, ate two plates and slept in the booth.  Said she'd outrun a whole pack.  I believe her.",
+      "Fella at the counter swears he found a little room on the level above, dry walls, food in the cupboard, like someone left it for him.  Nobody believed him.  I did.",
+      "Lights went out over by the lobbies for an hour.  Someone came in after, white as a sheet, wouldn't say what was grinning at them in the dark.",
+      "There's tunnel folk under the garage.  Pipe people.  One of them came up for pancakes, smelled like a boiler, tipped well.",
+      "Hounds were at the back door two nights ago.  Cook threw a pan.  They left.  I think they were more scared of him than he was of them."
+    ],
+    "responses": [
+      { "text": "Anything else?", "topic": "TALK_BR1_DINER_NEWS" },
+      { "text": "Thanks.", "topic": "TALK_BR1_DINER_SERVER" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_DINER_REGULARS",
+    "dynamic_line": "Everyone, sooner or later.  Squatters from the camps, Breakroom people when they can spare the time, traders from the Exchange counting their almond water at the counter.  Folk who've been down here a year and folk who fell in this morning.  Nobody fights in here.  That's the only rule, and the cook enforces it with a frying pan.",
+    "responses": [ { "text": "Good rule.", "topic": "TALK_BR1_DINER_SERVER" } ]
+  }
+]
