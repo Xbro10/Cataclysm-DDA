@@ -6,7 +6,7 @@
     "name": "manila wall",
     "description": "Wallpaper the colour of an old manila folder, dry and clean, without a single water stain.  After the endless damp yellow outside, it looks almost kind.",
     "color": "brown",
-    "looks_like": "t_wall_b"
+    "looks_like": "t_wall_w"
   },
   {
     "type": "item_group",
