@@ -105,10 +105,11 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_RUNNER_SCHEDULE",
-    "//": "Once a day (first tick or board read after midnight), Dot chalks up each runner's departure hour for the day: 6 AM to 5 PM, never the same hour for both. br1_sched_day is that day's midnight. br1_depart_N_h / _ap are the hour in 12-hour form for the board.",
-    "condition": { "math": [ "br1_sched_day != time('now') - time_since('midnight')" ] },
+    "//": "Once a day (first tick or board read after midnight), Dot chalks up each runner's departure hour for the day: 6 AM to 5 PM, never the same hour for both. br1_sched_day is the day number counted from 1 (so it never matches an unset 0); br1_sched_midnight is that day's midnight. br1_depart_N_h / _ap are the hour in 12-hour form for the board.",
+    "condition": { "math": [ "br1_sched_day != (time('now') - time_since('midnight')) / 86400 + 1" ] },
     "effect": [
-      { "math": [ "br1_sched_day = time('now') - time_since('midnight')" ] },
+      { "math": [ "br1_sched_midnight = time('now') - time_since('midnight')" ] },
+      { "math": [ "br1_sched_day = br1_sched_midnight / 86400 + 1" ] },
       { "math": [ "br1_depart_1 = rand(11) + 6" ] },
       { "math": [ "br1_depart_2 = rand(11) + 6" ] },
       {
@@ -596,7 +597,7 @@
                     ],
                     "else": [
                       {
-                        "if": { "math": [ "br1_bl_next > br1_sched_day + br1_bl_depart * 3600" ] },
+                        "if": { "math": [ "br1_bl_next > br1_sched_midnight + br1_bl_depart * 3600" ] },
                         "then": [
                           {
                             "set_string_var": "<global_val:br1_bl_name>: in.  Resting.  No run today.",
