@@ -1,0 +1,303 @@
+[
+  {
+    "type": "faction",
+    "id": "br1_exchange",
+    "name": "The Exchange",
+    "likes_u": 5,
+    "respects_u": 0,
+    "known_by_u": false,
+    "size": 8,
+    "power": 15,
+    "fac_food_supply": [ [ 0, { "calories": 57600, "vitamins": {  } } ] ],
+    "wealth": 3000,
+    "price_rules": [
+      { "item": "almond_water", "price": 2500 },
+      { "item": "bottle_almond_water", "price": 50 },
+      { "category": "food", "premium": 1.5 },
+      { "category": "drugs", "premium": 1.3 }
+    ],
+    "relations": {
+      "br1_exchange": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": true,
+        "guard your stuff": true,
+        "lets you in": true,
+        "defends your space": true,
+        "knows your voice": true
+      },
+      "br_breakroom": {
+        "kill on sight": false,
+        "watch your back": true,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": true
+      },
+      "br_lost": {
+        "kill on sight": false,
+        "watch your back": false,
+        "share my stuff": false,
+        "guard your stuff": false,
+        "lets you in": true,
+        "defends your space": false,
+        "knows your voice": false
+      }
+    },
+    "description": "Traders who decided the Backrooms needed a market more than it needed another camp.  They hold a fenced corner of Level 1 they call the Exchange, buy whatever survivors drag in and sell it on, and value almond water above everything."
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_exchange",
+    "//": "The Exchange: a fenced market in the garage (level_1/exchange.json).",
+    "name": "the Exchange",
+    "sym": "$",
+    "looks_like": "s_garage",
+    "color": "yellow",
+    "see_cost": "full_high",
+    "flags": [ "NO_ROTATE", "SOURCE_PEOPLE", "SOURCE_FOOD" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br1_exchange",
+    "//": "One or two markets per Level 1 map, placed like the squatter camps (BACKROOMS_L1).",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_exchange" } ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 2 ],
+    "flags": [ "BACKROOMS_L1", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_exchange",
+    "//": "Three trader booths behind counters (crates of stock behind each trader), a locked storeroom, a lit aisle with a rest corner, all inside a chain-link fence with one gate and a guard. Garage keeps going around it.",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 0, 23 ], "y": [ 0, 13 ] } ],
+      "faction_owner": [ { "id": "br1_exchange", "x": [ 2, 21 ], "y": [ 1, 10 ] } ],
+      "place_nested": [ { "chunks": [ "br1_exchange_core" ], "x": 0, "y": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_exchange_core",
+    "//": "Booths at x 3-6, 8-11, 13-16 (traders at y 3), storeroom at x 18-20 behind a locked door, aisle and rest corner below, gate at (10,10). Spaces leave the garage underneath.",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rows": [
+        "                        ",
+        "  ####################  ",
+        "  #XXXX#XXXX#XXXX#XXX#  ",
+        "  #.!..#..!.#.!..#k..#  ",
+        "  #cccc#cccc#cccc##+##  ",
+        "  |..................|  ",
+        "  |..!.....!.....!...|  ",
+        "  |..................|  ",
+        "  |.tht......tht.....|  ",
+        "  |..................|  ",
+        "  ||||||||G|||||||||||  ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        "
+      ],
+      "palettes": [ "br1_camp_palette" ],
+      "items": { "X": { "item": "br1_camp_stores", "chance": 90, "repeat": [ 1, 2 ] } },
+      "place_terrain": [ { "ter": "t_door_metal_locked", "x": 19, "y": 4 } ],
+      "place_npcs": [
+        { "class": "BR1_trader_supplies", "x": 5, "y": 3 },
+        { "class": "BR1_trader_gear", "x": 9, "y": 3 },
+        { "class": "BR1_trader_curios", "x": 15, "y": 3 },
+        { "class": "BR1_exchange_guard", "x": 11, "y": 9 }
+      ],
+      "place_signs": [ { "x": 12, "y": 11, "signage": "THE EXCHANGE.  FAIR TRADES.  NO FIGHTING INSIDE THE WIRE.  WE BUY ALMOND WATER." } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "item_group",
+    "id": "br1_exchange_supplies",
+    "subtype": "collection",
+    "//": "Stock of the supplies trader: food, water, medicine. Restocks every 3 days.",
+    "entries": [
+      { "group": "almond_water_sealed", "count": [ 3, 6 ] },
+      { "group": "br1_breakroom_larder", "count": [ 6, 10 ] },
+      { "group": "br_cat_food", "count": [ 2, 4 ] },
+      { "group": "br_cat_snacks", "count": [ 2, 4 ] },
+      { "group": "br_cat_medical", "count": [ 3, 5 ] }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_exchange_gear",
+    "subtype": "collection",
+    "//": "Stock of the gear trader: tools, hardware, lights, batteries, car parts.",
+    "entries": [
+      { "group": "br_cat_tools", "count": [ 3, 5 ] },
+      { "group": "br_cat_hardware", "count": [ 3, 5 ] },
+      { "group": "br_cat_light", "count": [ 2, 4 ] },
+      { "group": "br_cat_power", "count": [ 3, 5 ] },
+      { "group": "br_cat_car", "count": [ 1, 3 ] }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_exchange_curios",
+    "subtype": "collection",
+    "//": "Stock of the oddities trader: maps, notes and guides people found, plus a little of everything.",
+    "entries": [
+      { "item": "survivormap", "count": [ 1, 2 ] },
+      { "item": "br_level_guide", "prob": 60 },
+      { "item": "br1_note_generator", "prob": 40 },
+      { "item": "permanent_marker", "count": [ 1, 2 ] },
+      { "group": "br_cat_light", "count": [ 1, 2 ] },
+      { "group": "br_cat_medical", "count": [ 1, 2 ] },
+      { "group": "almond_water_sealed", "count": [ 1, 2 ] }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_TRADER_SUPPLIES",
+    "name": { "str": "Supplies Trader" },
+    "job_description": "Food, water, bandages.  The things that keep you alive till tomorrow.",
+    "common": false,
+    "worn_override": "NC_BR1_RUNNER_worn",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_int": { "rng": [ 0, 2 ] },
+    "shopkeeper_item_group": [ { "group": "br1_exchange_supplies" } ],
+    "restock_interval": "3 days",
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "speech", "bonus": { "rng": [ 3, 5 ] } }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_TRADER_GEAR",
+    "name": { "str": "Gear Trader" },
+    "job_description": "Tools, wire, batteries, anything with a use.  If it's heavy and it works, I'll take it.",
+    "common": false,
+    "worn_override": "NC_BR1_FOREMAN_worn",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_str": { "rng": [ 0, 2 ] },
+    "shopkeeper_item_group": [ { "group": "br1_exchange_gear" } ],
+    "restock_interval": "3 days",
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "speech", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "mechanics", "bonus": { "rng": [ 2, 4 ] } }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_TRADER_CURIOS",
+    "name": { "str": "Oddities Trader" },
+    "job_description": "Maps, notes, things people found and didn't understand.  I buy stories.  Some of them are true.",
+    "common": false,
+    "worn_override": "NC_BR1_RUNNER_worn",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_per": { "rng": [ 0, 2 ] },
+    "shopkeeper_item_group": [ { "group": "br1_exchange_curios" } ],
+    "restock_interval": "4 days",
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "speech", "bonus": { "rng": [ 3, 6 ] } }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "BR1_trader_supplies",
+    "//": "Exchange trader (food, water, medicine). Stays in the booth (SHOPKEEP).",
+    "class": "NC_BR1_TRADER_SUPPLIES",
+    "attitude": 0,
+    "mission": "SHOPKEEP",
+    "chat": "TALK_BR1_TRADER",
+    "faction": "br1_exchange"
+  },
+  {
+    "type": "npc",
+    "id": "BR1_trader_gear",
+    "//": "Exchange trader (tools, hardware, lights, batteries).",
+    "class": "NC_BR1_TRADER_GEAR",
+    "attitude": 0,
+    "mission": "SHOPKEEP",
+    "chat": "TALK_BR1_TRADER",
+    "faction": "br1_exchange"
+  },
+  {
+    "type": "npc",
+    "id": "BR1_trader_curios",
+    "//": "Exchange trader (maps, notes, guides, oddities).",
+    "class": "NC_BR1_TRADER_CURIOS",
+    "attitude": 0,
+    "mission": "SHOPKEEP",
+    "chat": "TALK_BR1_TRADER",
+    "faction": "br1_exchange"
+  },
+  {
+    "type": "npc",
+    "id": "BR1_exchange_guard",
+    "//": "Exchange guard by the gate. Reuses the Breakroom door guard's class.",
+    "class": "NC_BR1_GATE_GUARD",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_EXCHANGE_GUARD",
+    "faction": "br1_exchange"
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_TRADER",
+    "dynamic_line": [
+      "Welcome to the Exchange.  Look all you like; touch and you've bought it.",
+      "Got almond water?  Then we're friends.  Got anything else, we can still talk.",
+      "Prices are fair.  Fair down here, anyway.",
+      "Buying, selling, or just enjoying the light?  It's the brightest corner on the level, I'll give you that."
+    ],
+    "responses": [
+      { "text": "Let's trade.", "effect": "start_trade", "topic": "TALK_BR1_TRADER" },
+      { "text": "What is this place?", "topic": "TALK_BR1_EXCHANGE_ABOUT" },
+      { "text": "Heard anything worth knowing?", "topic": "TALK_BR1_EXCHANGE_NEWS" },
+      { "text": "Just looking.  Bye.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_EXCHANGE_ABOUT",
+    "dynamic_line": "The Exchange.  People fall in here with their pockets full and no idea what anything's worth.  We fix that.  You bring what you found, we give you what you need, and nobody gets stabbed over a can of beans.  Almond water's the closest thing to money down here: it never goes off, and everyone needs it.",
+    "responses": [ { "text": "Got it.", "topic": "TALK_BR1_TRADER" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_EXCHANGE_NEWS",
+    "dynamic_line": [
+      "The Breakroom people trade with us when they can spare a runner.  Decent folk.  Bad hagglers.",
+      "Somebody swore a stairwell near the far ramps goes down instead of up.  Came back two days later smelling of hot pipes and wouldn't say more.",
+      "Lights are dying faster near the old lobbies.  Buy batteries while I've got them.",
+      "A squatter tried to pay me in wallpaper last week.  Peeled it off a wall on Level 0, he said.  I took it.  It's still damp.",
+      "Hounds have been sniffing round the fence at night.  The guard says it's fine.  The guard says that a lot.",
+      "If a lift opens on a dark lobby, don't get out.  That's free advice.  The rest costs."
+    ],
+    "responses": [ { "text": "Thanks.", "topic": "TALK_BR1_TRADER" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_EXCHANGE_GUARD",
+    "dynamic_line": [
+      "Weapons stay put away inside the wire.  Trade's that way.",
+      "No fights, no theft, no running.  Break one and you're out, and the Hounds can have you.",
+      "The gate's open till something tries to come through it."
+    ],
+    "responses": [ { "text": "Understood.", "topic": "TALK_DONE" } ]
+  }
+]
