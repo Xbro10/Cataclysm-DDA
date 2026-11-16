@@ -298,6 +298,18 @@ void on_npc_turn( npc &guy )
     }
     update_needs( guy, elapsed );
     drop_stale_plans( guy );
+    dress_for_the_cold( guy );
+}
+
+void dress_for_the_cold( npc &guy )
+{
+    // Cold (Warmth 25+): put on warmer clothes they carry. The game itself waits for Very cold,
+    // so a cold NPC walked around with a hoodie in their pack.
+    if( !enabled() || guy.in_sleep_state() || guy.activity || current_needs( guy ).warmth < 25 ||
+        safety_need( guy ) >= 0.5f ) {
+        return;
+    }
+    guy.wear_warmest_item();
 }
 
 std::string needs_text( const npc &guy )
@@ -724,14 +736,23 @@ bool burning( const map &here, const tripoint_bub_ms &p )
 }
 
 // Firewood still lying on a hearth, waiting to burn.
-bool fuel_on( const tripoint_bub_ms &p )
+int fuel_on( const tripoint_bub_ms &p )
 {
+    int pieces = 0;
     for( const item &it : get_map().i_at( p ) ) {
         if( it.has_flag( flag_FIREWOOD ) ) {
-            return true;
+            pieces += it.count();
         }
     }
-    return false;
+    return pieces;
+}
+
+// Pieces of firewood to keep on the fire: the colder they are, the bigger the fire.
+// A bit cold (under 34): 1; Cold (34-66): 2; Very cold (67+): 3.
+int fuel_wanted( const npc &guy )
+{
+    const int warmth = current_needs( guy ).warmth;
+    return warmth >= 67 ? 3 : warmth >= 34 ? 2 : 1;
 }
 
 bool carries_firewood( const npc &guy )
@@ -811,8 +832,8 @@ std::optional<warm_plan> next_warm_step( const npc &guy )
     const map &here = get_map();
     for( const tripoint_bub_ms &adj : here.points_in_radius( guy.pos_bub(), 1 ) ) {
         if( adj != guy.pos_bub() && burning( here, adj ) && is_hearth( here, adj ) ) {
-            // Keep it going: no wood left on it, so put some on, or fetch some first.
-            if( !fuel_on( adj ) ) {
+            // Keep it going, bigger the colder they are: put wood on, or fetch some first.
+            if( fuel_on( adj ) < fuel_wanted( guy ) ) {
                 if( carries_firewood( guy ) ) {
                     return warm_plan{ warm_step::feed_fire, adj };
                 }

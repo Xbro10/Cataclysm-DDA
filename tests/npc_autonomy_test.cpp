@@ -38,8 +38,11 @@ static const itype_id itype_2x4( "2x4" );
 static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_bottle_plastic( "bottle_plastic" );
 static const itype_id itype_butane( "butane" );
+static const itype_id itype_hoodie( "hoodie" );
 static const itype_id itype_lighter( "lighter" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
+static const itype_id itype_splinter( "splinter" );
+static const itype_id itype_tshirt( "tshirt" );
 static const itype_id itype_water_clean( "water_clean" );
 
 static const effect_on_condition_id effect_on_condition_EOC_AUTONOMY_DEBUG_LONELY( "EOC_AUTONOMY_DEBUG_LONELY" );
@@ -710,14 +713,17 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         guy.setpos( here, hearth + tripoint( -1, 0, 0 ) );
         here.add_field( hearth, field_fd_fire, 1 );
         guy.wear_item( item( itype_backpack ), false );
-        guy.i_add( item( itype_2x4 ) );
-        REQUIRE( npc_autonomy::wants_warmth( guy ) );
-        run( 5 );
-        bool wood_on_fire = false;
-        for( const item &it : here.i_at( hearth ) ) {
-            wood_on_fire = wood_on_fire || it.typeId() == itype_2x4;
+        for( int i = 0; i < 4; ++i ) {
+            guy.i_add( item( itype_splinter ) );
         }
-        CHECK( wood_on_fire );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 10 );
+        int planks_on_fire = 0;
+        for( const item &it : here.i_at( hearth ) ) {
+            planks_on_fire += it.typeId() == itype_splinter ? 1 : 0;
+        }
+        // Very cold: a bigger fire, three pieces, and the fourth stays in the pack.
+        CHECK( planks_on_fire == 3 );
     }
     SECTION( "the look-around panel says why they can't warm up" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
@@ -742,6 +748,38 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         override_option autonomy( "NPC_AUTONOMY", "true" );
         here.add_field( hearth, field_fd_fire, 1 );
         CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+}
+
+TEST_CASE( "npc_autonomy_dress_for_the_cold", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
+    guy.wear_item( item( itype_tshirt ), false );
+    guy.wear_item( item( itype_backpack ), false );
+    guy.i_add( item( itype_hoodie ) );
+    const auto wears_hoodie = [&guy]() {
+        return guy.is_wearing( itype_hoodie );
+    };
+
+    SECTION( "cold: they put on the hoodie from their pack, even over the backpack" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_all_parts_temp_conv( BODYTEMP_COLD ); // Warmth about 33
+        npc_autonomy::dress_for_the_cold( guy );
+        CHECK( wears_hoodie() );
+    }
+    SECTION( "warm: they leave it in the pack" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_all_parts_temp_conv( BODYTEMP_NORM );
+        npc_autonomy::dress_for_the_cold( guy );
+        CHECK_FALSE( wears_hoodie() );
+    }
+    SECTION( "option off: the game's own rule (only once Very cold)" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        guy.set_all_parts_temp_conv( BODYTEMP_COLD );
+        npc_autonomy::dress_for_the_cold( guy );
+        CHECK_FALSE( wears_hoodie() );
     }
 }
 

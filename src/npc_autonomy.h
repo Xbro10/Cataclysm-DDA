@@ -44,6 +44,8 @@ struct needs_t {
 
 /** Per-turn hook (npc::npc_update_body). Updates needs once a game minute when enabled. */
 void on_npc_turn( npc &guy );
+/** Once a minute: a Cold NPC (Warmth 25+) puts on the warmest clothes it carries. */
+void dress_for_the_cold( npc &guy );
 /** Advance the social need by `elapsed` and store all six needs on the NPC. */
 void update_needs( npc &guy, const time_duration &elapsed );
 /** Current needs, computed live (social is read from the stored var). */
