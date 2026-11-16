@@ -8,6 +8,7 @@
 #include "avatar.h"
 #include "calendar.h"
 #include "cata_catch.h"
+#include "cata_scope_helpers.h"
 #include "coordinates.h"
 #include "dialogue.h"
 #include "effect_on_condition.h"
@@ -724,6 +725,26 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         }
         // Very cold: a bigger fire, three pieces, and the fourth stays in the pack.
         CHECK( planks_on_fire == 3 );
+    }
+    SECTION( "a freezing day: a big fire even when they're only a bit cold" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        restore_on_out_of_scope restore_air( get_weather().temperature );
+        get_weather().temperature = units::from_celsius( -10 );
+        guy.set_all_parts_temp_conv( units::from_celsius( 34.5 ) ); // Warmth about 28
+        guy.setpos( here, hearth + tripoint( -1, 0, 0 ) );
+        here.add_field( hearth, field_fd_fire, 1 );
+        guy.wear_item( item( itype_backpack ), false );
+        for( int i = 0; i < 4; ++i ) {
+            guy.i_add( item( itype_splinter ) );
+        }
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 10 );
+        int pieces = 0;
+        for( const item &it : here.i_at( hearth ) ) {
+            pieces += it.typeId() == itype_splinter ? 1 : 0;
+        }
+        CHECK( pieces == 3 );
     }
     SECTION( "the look-around panel says why they can't warm up" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );

@@ -40,6 +40,7 @@
 #include "trap.h"
 #include "type_id.h"
 #include "viewer.h"
+#include "weather.h"
 
 
 static const efftype_id effect_hunger_famished( "hunger_famished" );
@@ -315,16 +316,17 @@ void dress_for_the_cold( npc &guy )
 std::string needs_text( const npc &guy )
 {
     const needs_t needs = current_needs( guy );
-    std::string plan = plan_text( guy );
-    if( plan.empty() ) {
-        plan = warm_blocker( guy );
-    }
-    return string_format( "%s %s  %s  %s  %s  %s  %s%s", _( "Needs:" ),
+    return string_format( "%s %s  %s  %s  %s  %s  %s", _( "Needs:" ),
                           needs.eats ? need_part( _( "Food" ), needs.food ) : untracked_part( _( "Food" ) ),
                           needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
                           need_part( _( "Sleep" ), needs.sleep ), need_part( _( "Warmth" ), needs.warmth ),
-                          need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ),
-                          plan.empty() ? std::string() : "  <color_light_cyan>" + plan + "</color>" );
+                          need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ) );
+}
+
+std::string plan_line( const npc &guy )
+{
+    const std::string plan = plan_text( guy );
+    return plan.empty() ? warm_blocker( guy ) : plan;
 }
 
 // ---- Daily life ----
@@ -710,6 +712,8 @@ constexpr const char *var_warm_fails = "autonomy_warm_fails";
 constexpr const char *var_warm_gave_up = "autonomy_warm_gave_up_until";
 // What they're doing and where, "step:x,y,z": shown in the look-around panel and said once.
 constexpr const char *var_warm_plan = "autonomy_warm_plan";
+// The fire they last said they were warming up by.
+constexpr const char *var_warm_fire = "autonomy_warm_fire";
 
 enum class warm_step { by_fire, to_fire, to_wood, to_hearth, feed_fire };
 
@@ -747,12 +751,17 @@ int fuel_on( const tripoint_bub_ms &p )
     return pieces;
 }
 
-// Pieces of firewood to keep on the fire: the colder they are, the bigger the fire.
-// A bit cold (under 34): 1; Cold (34-66): 2; Very cold (67+): 3.
+// Pieces of firewood to keep on the fire: the colder it is, the bigger the fire. Mostly the
+// air around them (the area's natural temperature, without the fire's own heat, so the fire
+// doesn't shrink itself): 10 C or warmer 1, 0-10 C 2, freezing 3. If their body is colder
+// than that suggests (Warmth 34+ / 67+), that wins.
 int fuel_wanted( const npc &guy )
 {
+    const double air_c = units::to_celsius( get_weather().get_area_temperature( guy.pos_abs_omt() ) );
+    const int for_air = air_c < 0.0 ? 3 : air_c < 10.0 ? 2 : 1;
     const int warmth = current_needs( guy ).warmth;
-    return warmth >= 67 ? 3 : warmth >= 34 ? 2 : 1;
+    const int for_body = warmth >= 67 ? 3 : warmth >= 34 ? 2 : 1;
+    return std::max( for_air, for_body );
 }
 
 bool carries_firewood( const npc &guy )
@@ -913,8 +922,16 @@ void announce_warm_step( npc &guy, const warm_plan &plan )
             add_msg( m_neutral, _( "%s carries the wood to the fireplace." ), guy.get_name() );
             break;
         case warm_step::by_fire:
-        case warm_step::feed_fire:
+        case warm_step::feed_fire: {
+            // Once per fire, not each time they add wood.
+            const std::string fire = target_key( get_map().get_abs( plan.where ) );
+            const diag_value *said_fire = guy.maybe_get_value( var_warm_fire );
+            if( said_fire == nullptr || !said_fire->is_str() || said_fire->str() != fire ) {
+                guy.set_value( var_warm_fire, fire );
+                add_msg( m_neutral, _( "%s warms up by the fire." ), guy.get_name() );
+            }
             break;
+        }
     }
 }
 
@@ -1170,6 +1187,7 @@ void drop_stale_plans( npc &guy )
     }
     if( guy.get_committed_goal() != goal_get_warm ) {
         guy.remove_value( var_warm_plan );
+        guy.remove_value( var_warm_fire );
     }
 }
 

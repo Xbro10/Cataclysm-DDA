@@ -3128,6 +3128,11 @@ int npc::print_info( const catacurses::window &w, int line, int vLines, int colu
     if( npc_autonomy::enabled() && line < last_line ) {
         line += fold_and_print( w, point( column, line ), iWidth, c_light_gray,
                                 npc_autonomy::needs_text( *this ) );
+        // What they're doing about it (or why they can't), on its own line.
+        const std::string plan = npc_autonomy::plan_line( *this );
+        if( !plan.empty() && line < last_line ) {
+            line += fold_and_print( w, point( column, line ), iWidth, c_light_cyan, plan );
+        }
     }
 
     // Print what item the NPC is holding if any on the fourth line.
