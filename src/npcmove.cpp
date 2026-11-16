@@ -1911,6 +1911,16 @@ void npc::move()
                     }
                 }
             }
+            // Xbro10 fork: with NPC autonomy on, a follower the player has walked away from
+            // follows first and eats or drinks once close again, instead of standing there
+            // (even a hungry or underweight one; only Food or Water 100 still eats on the spot).
+            if( npc_autonomy::should_catch_up( *this, new_goal ) ) {
+                if( const std::optional<need_goal_id> gid = goal_id_for( new_goal ) ) {
+                    end_need_pursuit( *gid );
+                }
+                ai_cache.intention = {};
+                new_goal = "follow_player";
+            }
             // adopted on every path, including a completion or interrupt this turn
             adopt_goal( new_goal );
 

@@ -18,6 +18,7 @@
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
 #include "math_parser_diag_value.h"
+#include "monster.h"
 #include "npc.h"
 #include "npc_autonomy.h"
 #include "options_helpers.h"
@@ -275,6 +276,63 @@ TEST_CASE( "npc_autonomy_rule_leave_food_and_water_to_me", "[npc][autonomy]" )
     CHECK_FALSE( npc_autonomy::wants_water( guy ) );
 }
 
+// Reported 2026-11-15: a starving follower with food in their pack, left behind by the
+// player, stood eating, never followed, and didn't fight a zombie next to them.
+TEST_CASE( "npc_autonomy_starving_follower_left_behind", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    set_time( calendar::turn_zero + 12_hours );
+    avatar &you = get_avatar();
+    const tripoint_bub_ms start = you.pos_bub();
+    npc &guy = spawn_follower( start.xy() + point( 2, 0 ) );
+    guy.set_stored_kcal( guy.get_healthy_kcal() / 5 ); // badly underweight: Food 75+
+    for( int i = 0; i < 3; ++i ) {
+        guy.i_add( item( itype_sandwich_cheese_grilled ) );
+    }
+    const auto run = [&guy]( int turns ) {
+        std::string trace;
+        for( int t = 0; t < turns; ++t ) {
+            guy.set_moves( guy.get_speed() );
+            guy.move();
+            if( t % 5 == 0 ) {
+                trace += string_format( " t%d:d%d act=%s goal=%s", t,
+                                        rl_dist( guy.pos_abs(), get_avatar().pos_abs() ),
+                                        guy.activity.id().str(), guy.get_committed_goal() );
+            }
+        }
+        return trace;
+    };
+
+    SECTION( "autonomy on, the player walks 12 tiles away: they come along" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        run( 5 );
+        you.setpos( get_map(), start + tripoint( -12, 0, 0 ) );
+        const std::string trace = run( 40 );
+        INFO( trace );
+        CHECK( rl_dist( guy.pos_abs(), you.pos_abs() ) <= 8 );
+    }
+    SECTION( "autonomy on, a zombie next to them: they stop eating and fight" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        run( 3 );
+        monster &zed = spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 1, 0 ) );
+        const std::string trace = run( 3 );
+        INFO( trace );
+        // As upstream's own NPC combat tests check: the target, and no meal in the way.
+        CHECK( guy.current_target() == &zed );
+        CHECK( guy.get_committed_goal() == "fight" );
+        CHECK_FALSE( guy.is_eating() );
+    }
+    SECTION( "autonomy off: the game's own behaviour, they keep eating where they are" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        run( 5 );
+        you.setpos( get_map(), start + tripoint( -12, 0, 0 ) );
+        run( 20 );
+        CHECK( rl_dist( guy.pos_abs(), you.pos_abs() ) > 8 );
+    }
+}
+
 TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
 {
     clear_map_without_vision();
@@ -530,6 +588,31 @@ TEST_CASE( "npc_autonomy_get_food", "[npc][autonomy]" )
     }
 }
 
+TEST_CASE( "npc_autonomy_stale_plan_is_dropped", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    here.add_item_or_charges( tripoint_bub_ms( get_avatar().pos_bub().xy() + point( 12, 0 ), 0 ),
+                              item( itype_sandwich_cheese_grilled ) );
+    guy.stomach.empty();
+    guy.add_effect( effect_hunger_very_hungry, 1_days );
+    guy.set_moves( guy.get_speed() );
+    npc_autonomy::run_goal( guy, "autonomy_get_food" );
+    REQUIRE( guy.get_food_plan().active() );
+    // They've moved on to something else (no food goal committed): no plan line, and the
+    // once-a-minute tidy forgets it.
+    CHECK( npc_autonomy::plan_text( guy ).empty() );
+    npc_autonomy::drop_stale_plans( guy );
+    CHECK_FALSE( guy.get_food_plan().active() );
+}
+
 TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
 {
     clear_map_without_vision();
@@ -578,4 +661,20 @@ TEST_CASE( "npc_autonomy_safety_need", "[npc][autonomy]" )
         guy.mem_combat.assess_ally = 5.0f;
         CHECK( npc_autonomy::current_needs( guy ).safety == 100 );
     }
+}
+
+TEST_CASE( "npc_autonomy_safety_hostile_close_by", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 10, 0 ) );
+    // The game rates a lone zombie as no threat at all.
+    guy.mem_combat.assess_enemy = 0.0f;
+    guy.mem_combat.assess_ally = 5.0f;
+    REQUIRE( npc_autonomy::current_needs( guy ).safety == 0 );
+    spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 2, 0 ) );
+    get_map().build_map_cache( 0 );
+    CHECK( npc_autonomy::current_needs( guy ).safety >= 50 );
 }

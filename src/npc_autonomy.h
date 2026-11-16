@@ -66,6 +66,12 @@ bool wants_meal( const npc &guy );
 bool wants_meal_at_post( const npc &guy );
 /** A follower eating while the player has walked beyond their follow distance: drop the meal and follow. */
 bool should_leave_meal( const npc &guy );
+/**
+ * The behavior tree picked an eat or drink goal (the game's own or ours) for a follower
+ * the player has walked away from: follow instead, and eat once close again. Not when
+ * Food or Water is 100 (starving, Parched).
+ */
+bool should_catch_up( const npc &guy, const std::string &goal );
 /** Social 50+, safe, awake, not chatted in the last 30 minutes, someone to talk to nearby. */
 bool wants_company( const npc &guy );
 /** Nearest friendly, awake person within 15 tiles the NPC can see (nullptr if none). */
@@ -103,8 +109,10 @@ bool hungry_enough_for_a_trip( const npc &guy );
 int food_search_radius();
 /** Fill one empty watertight container in the NPC's pack with `liquid`. True if one was filled. */
 bool refill_bottle( npc &guy, const itype_id &liquid );
-/** "Plan: ..." line for the look-around panel, or "" when there's no plan. */
+/** "Plan: ..." line for the look-around panel, or "" when there's no plan being pursued. */
 std::string plan_text( const npc &guy );
+/** Once a minute: forget water and food plans the NPC isn't pursuing any more (they moved on). */
+void drop_stale_plans( npc &guy );
 
 // ---- Quests (step 3.1) ----
 

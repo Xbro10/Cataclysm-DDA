@@ -54,6 +54,8 @@ namespace
 constexpr double social_rise_per_minute = 100.0 / ( 24.0 * 60.0 );
 constexpr double social_fall_per_minute = 100.0 / ( 2.0 * 60.0 );
 constexpr int company_range = 3;
+// A hostile the NPC can see this close makes Safety at least 50.
+constexpr int close_hostile_range = 3;
 // A longer gap since the last update means the NPC was unloaded: no catch-up.
 constexpr time_duration max_catch_up = 5_minutes;
 
@@ -226,6 +228,11 @@ float safety_need( const npc &guy )
         // Evenly matched reads as about 67; outmatched 1.5 to 1 or worse is 100.
         threat = enemy / std::max( guy.mem_combat.assess_ally, 1.0f ) / 1.5f;
     }
+    // Anything hostile they can see close by is a danger, however weak the game rates it
+    // (a lone zombie at arm's length read as Safety 2).
+    if( guy.sees_hostile_within( close_hostile_range ) ) {
+        threat = std::max( threat, 0.5f );
+    }
     const float injury = 1.0f - guy.hp_percentage() / 100.0f;
     return std::clamp( std::max( threat, 0.6f * injury ), 0.0f, 1.0f );
 }
@@ -284,6 +291,7 @@ void on_npc_turn( npc &guy )
         elapsed = 1_minutes;
     }
     update_needs( guy, elapsed );
+    drop_stale_plans( guy );
 }
 
 std::string needs_text( const npc &guy )
@@ -463,6 +471,9 @@ constexpr int recheck_turns = 5;
 // One kind of trip: which of the game's planners runs it, where its state is kept, what's said.
 struct trip_kind {
     npc::need_goal_id need;
+    // The game's own goal for this need, and ours.
+    const char *upstream_goal;
+    const char *our_goal;
     // Targets in a row that came to nothing.
     const char *fails_var;
     // Turns since the start of the game until which the NPC has given up.
@@ -476,7 +487,7 @@ struct trip_kind {
 };
 
 const trip_kind water_trip{
-    npc::need_goal_id::drink_water,
+    npc::need_goal_id::drink_water, "drink_water", goal_get_water,
     "autonomy_water_fails", "autonomy_water_gave_up_until", "autonomy_water_target",
     translate_marker( "%s goes to get water." ),
     translate_marker( "%s gives up looking for water." ),
@@ -485,7 +496,7 @@ const trip_kind water_trip{
 };
 
 const trip_kind food_trip{
-    npc::need_goal_id::eat_food,
+    npc::need_goal_id::eat_food, "eat_food", goal_get_food,
     "autonomy_food_fails", "autonomy_food_gave_up_until", "autonomy_food_target",
     translate_marker( "%s goes to get food." ),
     translate_marker( "%s gives up looking for food." ),
@@ -647,10 +658,18 @@ bool wants_trip( const npc &guy, const trip_kind &kind, const int need )
     return found;
 }
 
+// The NPC is on this trip right now (the game's own goal for the need, or ours).
+bool pursuing( const npc &guy, const trip_kind &kind )
+{
+    const std::string &goal = guy.get_committed_goal();
+    return goal == kind.upstream_goal || goal == kind.our_goal;
+}
+
 std::string trip_plan_text( const npc &guy, const trip_kind &kind )
 {
     const npc::need_plan &plan = guy.plan_for( kind.need );
-    if( !plan.active() ) {
+    // A plan left over after they moved on (following you, say) isn't shown.
+    if( !plan.active() || !pursuing( guy, kind ) ) {
         return std::string();
     }
     const int dist = rl_dist( guy.pos_abs(), plan.target );
@@ -708,6 +727,19 @@ bool refill_bottle( npc &guy, const itype_id &liquid )
     return false;
 }
 
+void drop_stale_plans( npc &guy )
+{
+    for( const trip_kind *kind : {
+             &water_trip, &food_trip
+         } ) {
+        npc::need_plan &plan = guy.plan_for( kind->need );
+        if( plan.active() && !pursuing( guy, *kind ) ) {
+            plan.clear();
+            guy.remove_value( kind->target_var );
+        }
+    }
+}
+
 std::string plan_text( const npc &guy )
 {
     if( !enabled() ) {
@@ -749,6 +781,23 @@ bool should_leave_meal( const npc &guy )
         spacing = guy.rules.has_flag( ally_rule::follow_distance_2 ) ? 2 : 4;
     }
     return rl_dist( guy.pos_abs(), get_avatar().pos_abs() ) > spacing + 2;
+}
+
+bool should_catch_up( const npc &guy, const std::string &goal )
+{
+    static const std::array<std::string, 5> eat_or_drink{ {
+            "eat_food", "drink_water", goal_meal, goal_get_food, goal_get_water
+        }
+    };
+    if( std::find( eat_or_drink.begin(), eat_or_drink.end(), goal ) == eat_or_drink.end() ) {
+        return false;
+    }
+    if( !should_leave_meal( guy ) ) {
+        return false;
+    }
+    // A real emergency still comes first.
+    const needs_t needs = current_needs( guy );
+    return needs.food < 100 && needs.water < 100;
 }
 
 Character *chat_partner( const npc &guy )

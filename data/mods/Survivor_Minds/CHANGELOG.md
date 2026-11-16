@@ -31,6 +31,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- Followers only chalk LOOTED on their own when you took things there: you spent 15+ minutes in the square and left it at least 0.5 kg heavier. Before, any square you lingered in got marked, even with its loot untouched.
 - The follower menu has one Survivor Minds entry, "Got a minute?", instead of six: it opens a submenu with "Gabriel, what's on your mind?" (Gabriel only), "Seen anything around here?", "Can I read your journal?", "Mark this place as looted.", "Here, have some of my food." and "How do you feel about me?". "Something else" in each of them goes back to that submenu.
 - The survivor's journal now shows a book sprite in UltiCa instead of the placeholder.
 - Panicked people are a quarter as common in city civilian spawns and come in smaller crowds.
