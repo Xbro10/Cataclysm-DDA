@@ -25,7 +25,7 @@
     "type": "mapgen",
     "om_terrain": [ "backfloorchamber" ],
     "weight": 100000,
-    "//": "Copy of the upstream Level 0 mapgen (data/mods/Backrooms/overmap_terrain.json, TGWeaver's Backrooms mod) with two additions: the Manila Room (br0_manila_room, level_0/rooms.json) in the small-room list, and the ceiling-light grid, a light every 4 tiles in rows and columns (x and y 2, 6, 10, 14, 18, 22), placed after the rooms so it lands on whatever floor they left. The high weight means this is used instead of upstream's (about 99 squares in 100). If upstream changes its version, copy the change here.",
+    "//": "Copy of the upstream Level 0 mapgen (data/mods/Backrooms/overmap_terrain.json, TGWeaver's Backrooms mod) with additions: the Manila Room (br0_manila_room) in the small-room list, archway rooms and blackout zones (br0_archway_room, br0_blackout_room) in the big-room list (all in level_0/rooms.json), and the ceiling-light grid, a light every 4 tiles in rows and columns (x and y 2, 6, 10, 14, 18, 22), placed after the rooms so it lands on whatever floor they left. The high weight means this is used instead of upstream's (about 99 squares in 100). If upstream changes its version, copy the change here.",
     "object": {
       "fill_ter": "t_carpet_backrooms",
       "place_nested": [
@@ -38,7 +38,9 @@
             [ "mx_backroom_big_common", 100 ],
             [ "mx_backroom_big_storage", 25 ],
             [ "mx_backroom_big_breakroom", 25 ],
-            [ "mx_backroom_big_bathroom", 20 ]
+            [ "mx_backroom_big_bathroom", 20 ],
+            [ "br0_archway_room", 30 ],
+            [ "br0_blackout_room", 15 ]
           ],
           "x": [ 0, 13 ],
           "y": [ 0, 13 ],
