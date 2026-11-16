@@ -19,6 +19,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 16, 2026
 
 ### Backrooms
+- [BE] **The All-Nite diner:** a diner on Level 1 with a cook who sells hot meals, a server full of gossip,
+  regulars in the booths, and a stocked kitchen where NPCs come to eat.
 - [BE] **The Exchange:** a fenced market on Level 1 with three traders (supplies, gear, oddities), a guard and
   a locked storeroom. Stock refreshes every few days, and almond water is the best thing to pay with.
 - [BE] **Level 0 room variety:** archway rooms (rings of arches over deep, slow carpet), blackout zones (unlit rooms

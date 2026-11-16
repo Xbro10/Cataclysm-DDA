@@ -313,3 +313,39 @@ TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
     CHECK( traders == 3 );
     CHECK( guards == 1 );
 }
+
+// Level 1's All-Nite diner builds with a cook who sells meals, a server, a stocked fridge and cupboards.
+TEST_CASE( "diner_generates", "[.][backrooms_runner]" )
+{
+    const nested_mapgen_id diner( "br1_diner_core" );
+    if( !diner.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    map &here = get_map();
+    const tripoint_abs_omt omt = get_avatar().pos_abs_omt();
+    manual_mapgen( omt, manual_nested_mapgen, diner );
+    const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
+    CHECK( here.furn( corner + point( 9, 2 ) ) == furn_str_id( "f_fridge" ) );
+    CHECK( !here.i_at( corner + point( 9, 2 ) ).empty() );
+    CHECK( !here.i_at( corner + point( 3, 2 ) ).empty() );
+    CHECK( here.ter( corner + point( 14, 2 ) ) == ter_str_id( "t_br1_tap" ) );
+    int cooks = 0;
+    int servers = 0;
+    for( npc &guy : g->all_npcs() ) {
+        if( guy.get_fac_id() != faction_id( "br1_diner" ) ) {
+            continue;
+        }
+        if( guy.mission == NPC_MISSION_SHOPKEEP ) {
+            cooks++;
+            guy.shop_restock();
+            CHECK( guy.inv_dump().size() > 5 );
+        } else {
+            servers++;
+        }
+    }
+    CHECK( cooks == 1 );
+    CHECK( servers == 1 );
+}
