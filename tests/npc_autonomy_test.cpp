@@ -1,5 +1,6 @@
 // Xbro10 fork: tests for "NPC autonomy (experimental)" (src/npc_autonomy.*).
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 
@@ -18,6 +19,7 @@
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
 #include "math_parser_diag_value.h"
+#include "monster.h"
 #include "npc.h"
 #include "npc_autonomy.h"
 #include "options_helpers.h"
@@ -25,15 +27,22 @@
 #include "point.h"
 #include "talker.h"
 #include "type_id.h"
+#include "weather.h"
 
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
 
 static const activity_id ACT_CONSUME( "ACT_CONSUME" );
 
+static const itype_id itype_2x4( "2x4" );
 static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_bottle_plastic( "bottle_plastic" );
+static const itype_id itype_butane( "butane" );
+static const itype_id itype_hoodie( "hoodie" );
+static const itype_id itype_lighter( "lighter" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
+static const itype_id itype_splinter( "splinter" );
+static const itype_id itype_tshirt( "tshirt" );
 static const itype_id itype_water_clean( "water_clean" );
 
 static const effect_on_condition_id effect_on_condition_EOC_AUTONOMY_DEBUG_LONELY( "EOC_AUTONOMY_DEBUG_LONELY" );
@@ -41,9 +50,14 @@ static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY( "EOC_AUTONOMY_DEBUG_NOT_LONELY" );
 
 static const furn_str_id furn_f_cupboard( "f_cupboard" );
+static const furn_str_id furn_f_fireplace( "f_fireplace" );
+
+static const field_type_str_id field_fd_fire( "fd_fire" );
 static const furn_str_id furn_f_water_heater( "f_water_heater" );
 
 static const ter_str_id ter_t_water_sh( "t_water_sh" );
+
+static const trap_str_id tr_spike_pit( "tr_spike_pit" );
 
 static const faction_id faction_no_faction( "no_faction" );
 static const faction_id faction_your_followers( "your_followers" );
@@ -273,6 +287,63 @@ TEST_CASE( "npc_autonomy_rule_leave_food_and_water_to_me", "[npc][autonomy]" )
     CHECK_FALSE( npc_autonomy::wants_meal( guy ) );
     guy.set_thirst( 100 );
     CHECK_FALSE( npc_autonomy::wants_water( guy ) );
+}
+
+// Reported 2026-11-15: a starving follower with food in their pack, left behind by the
+// player, stood eating, never followed, and didn't fight a zombie next to them.
+TEST_CASE( "npc_autonomy_starving_follower_left_behind", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    set_time( calendar::turn_zero + 12_hours );
+    avatar &you = get_avatar();
+    const tripoint_bub_ms start = you.pos_bub();
+    npc &guy = spawn_follower( start.xy() + point( 2, 0 ) );
+    guy.set_stored_kcal( guy.get_healthy_kcal() / 5 ); // badly underweight: Food 75+
+    for( int i = 0; i < 3; ++i ) {
+        guy.i_add( item( itype_sandwich_cheese_grilled ) );
+    }
+    const auto run = [&guy]( int turns ) {
+        std::string trace;
+        for( int t = 0; t < turns; ++t ) {
+            guy.set_moves( guy.get_speed() );
+            guy.move();
+            if( t % 5 == 0 ) {
+                trace += string_format( " t%d:d%d act=%s goal=%s", t,
+                                        rl_dist( guy.pos_abs(), get_avatar().pos_abs() ),
+                                        guy.activity.id().str(), guy.get_committed_goal() );
+            }
+        }
+        return trace;
+    };
+
+    SECTION( "autonomy on, the player walks 12 tiles away: they come along" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        run( 5 );
+        you.setpos( get_map(), start + tripoint( -12, 0, 0 ) );
+        const std::string trace = run( 40 );
+        INFO( trace );
+        CHECK( rl_dist( guy.pos_abs(), you.pos_abs() ) <= 8 );
+    }
+    SECTION( "autonomy on, a zombie next to them: they stop eating and fight" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        run( 3 );
+        monster &zed = spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 1, 0 ) );
+        const std::string trace = run( 3 );
+        INFO( trace );
+        // As upstream's own NPC combat tests check: the target, and no meal in the way.
+        CHECK( guy.current_target() == &zed );
+        CHECK( guy.get_committed_goal() == "fight" );
+        CHECK_FALSE( guy.is_eating() );
+    }
+    SECTION( "autonomy off: the game's own behaviour, they keep eating where they are" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        run( 5 );
+        you.setpos( get_map(), start + tripoint( -12, 0, 0 ) );
+        run( 20 );
+        CHECK( rl_dist( guy.pos_abs(), you.pos_abs() ) > 8 );
+    }
 }
 
 TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
@@ -530,6 +601,213 @@ TEST_CASE( "npc_autonomy_get_food", "[npc][autonomy]" )
     }
 }
 
+// Reported 2026-11-16: a hungry NPC walked into spiked pits to reach food in the middle.
+TEST_CASE( "npc_autonomy_food_behind_traps", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    guy.stomach.empty();
+    guy.add_effect( effect_hunger_very_hungry, 1_days );
+    const tripoint_bub_ms food_spot( player_pos + point( 10, 0 ), 0 );
+    here.add_item_or_charges( food_spot, item( itype_sandwich_cheese_grilled ) );
+    std::vector<tripoint_bub_ms> pits;
+    for( const tripoint_bub_ms &p : here.points_in_radius( food_spot, 1 ) ) {
+        if( p != food_spot ) {
+            here.trap_set( p, tr_spike_pit.id() );
+            pits.push_back( p );
+        }
+    }
+    here.build_map_cache( 0 );
+    const int hp_before = guy.get_hp();
+
+    SECTION( "autonomy on: they never step into the pits" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        for( int turn = 0; turn < 120; ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            if( guy.activity ) {
+                guy.activity.do_turn( guy );
+            } else {
+                npc_autonomy::run_goal( guy, "autonomy_get_food" );
+            }
+            CHECK( std::find( pits.begin(), pits.end(), guy.pos_bub() ) == pits.end() );
+        }
+        CHECK( guy.get_hp() == hp_before );
+        CHECK_FALSE( here.i_at( food_spot ).empty() );
+        CHECK( npc_autonomy::avoids_trap( guy, pits.front() ) );
+    }
+    SECTION( "autonomy off: pits are only costly (the game's own rule)" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK_FALSE( npc_autonomy::avoids_trap( guy, pits.front() ) );
+    }
+}
+
+TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    guy.set_all_parts_temp_conv( BODYTEMP_VERY_COLD ); // Warmth about 67
+    const tripoint_bub_ms hearth( player_pos + point( 10, 0 ), 0 );
+    here.furn_set( hearth, furn_f_fireplace );
+    const auto on_their_own = [&guy]() {
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_no_faction );
+    };
+    const auto run = [&guy]( int turns ) {
+        for( int turn = 0; turn < turns; ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            if( guy.activity ) {
+                guy.activity.do_turn( guy );
+            } else {
+                npc_autonomy::run_goal( guy, "autonomy_get_warm" );
+            }
+        }
+    };
+
+    SECTION( "option off: never" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+    SECTION( "warm enough: nothing to do" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_all_parts_temp_conv( BODYTEMP_NORM );
+        CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+    SECTION( "a fire in the fireplace: they walk over and stay by it" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        here.add_field( hearth, field_fd_fire, 1 );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 40 );
+        CHECK( square_dist( guy.pos_bub(), hearth ) <= 1 );
+        CHECK( npc_autonomy::wants_warmth( guy ) );
+    }
+    SECTION( "an unlit fireplace, wood nearby and a lighter: they gather the wood and light it" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.wear_item( item( itype_backpack ), false );
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        REQUIRE( guy.autonomy_has_firestarter() );
+        run( 300 );
+        CHECK( here.get_field( hearth, field_fd_fire ) != nullptr );
+        // The fire is only ever in the hearth.
+        CHECK_FALSE( here.get_field( guy.pos_bub(), field_fd_fire ) );
+    }
+    SECTION( "beside a fire with no wood left on it: they add wood from their pack" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.setpos( here, hearth + tripoint( -1, 0, 0 ) );
+        here.add_field( hearth, field_fd_fire, 1 );
+        guy.wear_item( item( itype_backpack ), false );
+        for( int i = 0; i < 4; ++i ) {
+            guy.i_add( item( itype_splinter ) );
+        }
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 10 );
+        int planks_on_fire = 0;
+        for( const item &it : here.i_at( hearth ) ) {
+            planks_on_fire += it.typeId() == itype_splinter ? 1 : 0;
+        }
+        // Very cold: a bigger fire, three pieces, and the fourth stays in the pack.
+        CHECK( planks_on_fire == 3 );
+    }
+    SECTION( "the look-around panel says why they can't warm up" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
+        // No lighter.
+        CHECK( npc_autonomy::warm_blocker( guy ).find( "light one" ) != std::string::npos );
+        // A lighter, but no bag for the plank.
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        REQUIRE( guy.autonomy_has_firestarter() );
+        CHECK( npc_autonomy::warm_blocker( guy ).find( "no room" ) != std::string::npos );
+        // Room to carry it: no reason, there's a plan.
+        guy.wear_item( item( itype_backpack ), false );
+        CHECK( npc_autonomy::warm_blocker( guy ).empty() );
+        // Warm: nothing to say.
+        guy.set_all_parts_temp_conv( BODYTEMP_NORM );
+        CHECK( npc_autonomy::warm_blocker( guy ).empty() );
+    }
+    SECTION( "following the player: a fireplace far from them is out of reach" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        here.add_field( hearth, field_fd_fire, 1 );
+        CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+}
+
+TEST_CASE( "npc_autonomy_dress_for_the_cold", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
+    guy.wear_item( item( itype_tshirt ), false );
+    guy.wear_item( item( itype_backpack ), false );
+    guy.i_add( item( itype_hoodie ) );
+    const auto wears_hoodie = [&guy]() {
+        return guy.is_wearing( itype_hoodie );
+    };
+
+    SECTION( "cold: they put on the hoodie from their pack, even over the backpack" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_all_parts_temp_conv( BODYTEMP_COLD ); // Warmth about 33
+        npc_autonomy::dress_for_the_cold( guy );
+        CHECK( wears_hoodie() );
+    }
+    SECTION( "warm: they leave it in the pack" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_all_parts_temp_conv( BODYTEMP_NORM );
+        npc_autonomy::dress_for_the_cold( guy );
+        CHECK_FALSE( wears_hoodie() );
+    }
+    SECTION( "option off: the game's own rule (only once Very cold)" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        guy.set_all_parts_temp_conv( BODYTEMP_COLD );
+        npc_autonomy::dress_for_the_cold( guy );
+        CHECK_FALSE( wears_hoodie() );
+    }
+}
+
+TEST_CASE( "npc_autonomy_stale_plan_is_dropped", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    here.add_item_or_charges( tripoint_bub_ms( get_avatar().pos_bub().xy() + point( 12, 0 ), 0 ),
+                              item( itype_sandwich_cheese_grilled ) );
+    guy.stomach.empty();
+    guy.add_effect( effect_hunger_very_hungry, 1_days );
+    guy.set_moves( guy.get_speed() );
+    npc_autonomy::run_goal( guy, "autonomy_get_food" );
+    REQUIRE( guy.get_food_plan().active() );
+    // They've moved on to something else (no food goal committed): no plan line, and the
+    // once-a-minute tidy forgets it.
+    CHECK( npc_autonomy::plan_text( guy ).empty() );
+    npc_autonomy::drop_stale_plans( guy );
+    CHECK_FALSE( guy.get_food_plan().active() );
+}
+
 TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
 {
     clear_map_without_vision();
@@ -578,4 +856,20 @@ TEST_CASE( "npc_autonomy_safety_need", "[npc][autonomy]" )
         guy.mem_combat.assess_ally = 5.0f;
         CHECK( npc_autonomy::current_needs( guy ).safety == 100 );
     }
+}
+
+TEST_CASE( "npc_autonomy_safety_hostile_close_by", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 10, 0 ) );
+    // The game rates a lone zombie as no threat at all.
+    guy.mem_combat.assess_enemy = 0.0f;
+    guy.mem_combat.assess_ally = 5.0f;
+    REQUIRE( npc_autonomy::current_needs( guy ).safety == 0 );
+    spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 2, 0 ) );
+    get_map().build_map_cache( 0 );
+    CHECK( npc_autonomy::current_needs( guy ).safety >= 50 );
 }

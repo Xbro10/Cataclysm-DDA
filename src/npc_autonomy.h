@@ -9,6 +9,7 @@
 #include <string>
 
 #include "calendar.h"
+#include "coords_fwd.h"
 #include "type_id.h"
 
 class Character;
@@ -43,6 +44,8 @@ struct needs_t {
 
 /** Per-turn hook (npc::npc_update_body). Updates needs once a game minute when enabled. */
 void on_npc_turn( npc &guy );
+/** Once a minute: a Cold NPC (Warmth 25+) puts on the warmest clothes it carries. */
+void dress_for_the_cold( npc &guy );
 /** Advance the social need by `elapsed` and store all six needs on the NPC. */
 void update_needs( npc &guy, const time_duration &elapsed );
 /** Current needs, computed live (social is read from the stored var). */
@@ -66,6 +69,12 @@ bool wants_meal( const npc &guy );
 bool wants_meal_at_post( const npc &guy );
 /** A follower eating while the player has walked beyond their follow distance: drop the meal and follow. */
 bool should_leave_meal( const npc &guy );
+/**
+ * The behavior tree picked an eat or drink goal (the game's own or ours) for a follower
+ * the player has walked away from: follow instead, and eat once close again. Not when
+ * Food or Water is 100 (starving, Parched).
+ */
+bool should_catch_up( const npc &guy, const std::string &goal );
 /** Social 50+, safe, awake, not chatted in the last 30 minutes, someone to talk to nearby. */
 bool wants_company( const npc &guy );
 /** Nearest friendly, awake person within 15 tiles the NPC can see (nullptr if none). */
@@ -97,14 +106,36 @@ int water_search_radius();
 
 /** Food 50+, safe, awake, not given up, and food in the pack or in reach. */
 bool wants_food( const npc &guy );
+
+// Step 3.4c, goal "autonomy_get_warm": Warmth 50+ (between the game's Cold and Very cold).
+// Warmer clothes from the pack; else stand by a hearth fire they can see; else, with a
+// firestarter, take firewood (carried, or picked up nearby) to a fireplace, stove or fire
+// pit and light it; else the game's own planner (shelter, clothes nearby). Fires are only
+// ever lit in a hearth. Beside a fire they stay until Warmth is under 25.
+
+/** Warmth 50+ (or 25+ beside a fire), safe, awake, not given up, and a way to warm up. */
+bool wants_warmth( const npc &guy );
+/**
+ * For the look-around panel: why a cold NPC (Warmth 50+) can't warm up, e.g. "Cold: no room
+ * to carry the firewood"; "" when they aren't cold or have a way.
+ */
+std::string warm_blocker( const npc &guy );
 /** Food need 50+ with autonomy on: the game's "is eating worth it" check also says yes. */
 bool hungry_enough_for_a_trip( const npc &guy );
 /** How far NPCs look for food: 6 tiles (upstream) or, with autonomy on, 20. */
 int food_search_radius();
 /** Fill one empty watertight container in the NPC's pack with `liquid`. True if one was filled. */
 bool refill_bottle( npc &guy, const itype_id &liquid );
-/** "Plan: ..." line for the look-around panel, or "" when there's no plan. */
+/**
+ * With autonomy on, an NPC never steps onto a harmful trap it can see or knows about (a pit,
+ * spikes, a bear trap): it's a wall for their pathing. The game only made such tiles costly,
+ * so a hungry NPC walked through spiked pits to food on the far side.
+ */
+bool avoids_trap( const npc &guy, const tripoint_bub_ms &p );
+/** "Plan: ..." line for the look-around panel, or "" when there's no plan being pursued. */
 std::string plan_text( const npc &guy );
+/** Once a minute: forget water and food plans the NPC isn't pursuing any more (they moved on). */
+void drop_stale_plans( npc &guy );
 
 // ---- Quests (step 3.1) ----
 

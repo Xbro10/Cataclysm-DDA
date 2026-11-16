@@ -3867,6 +3867,10 @@ bool npc::path_avoids( const tripoint_bub_ms &p, const bool ignore_creatures ) c
     if( sees_dangerous_field( p ) ) {
         return true;
     }
+    // Xbro10 fork: with NPC autonomy on, a harmful trap they can see is a wall, not a cost.
+    if( npc_autonomy::avoids_trap( *this, p ) ) {
+        return true;
+    }
     // pathfinder prices bashing itself. guarding only movement functions would
     // repath into the same wall every turn.
     if( craft_reservation::bashing_would_break_reservation( here, *this, p ) ) {

@@ -37,15 +37,22 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_SM_TRACK_OMT",
-    "//": "Auto LOOTED marks. Each time you cross into a new map square, if you spent 15+ minutes in the one you left, your nearest indoor follower marks it LOOTED where they stand (usually near the way out). Then start timing the new square.",
+    "//": "Auto LOOTED marks. Each time you cross into a new map square, if you spent 15+ minutes in the one you left AND came out at least 0.5 kg heavier than you went in (you took things), your nearest indoor follower marks it LOOTED where they stand (usually near the way out). Then start timing and weighing for the new square. u_weight() is body plus everything worn and carried, in milligrams.",
     "eoc_type": "EVENT",
     "required_event": "avatar_enters_omt",
     "effect": [
       {
-        "if": { "and": [ { "math": [ "has_var(sm_omt_entered_at)" ] }, { "math": [ "time_since(sm_omt_entered_at) >= time('15 m')" ] } ] },
+        "if": {
+          "and": [
+            { "math": [ "has_var(sm_omt_entered_at)" ] },
+            { "math": [ "time_since(sm_omt_entered_at) >= time('15 m')" ] },
+            { "math": [ "u_weight() - sm_omt_weight_in >= 500000" ] }
+          ]
+        },
         "then": { "u_run_npc_eocs": [ "EOC_SM_AUTO_MARK_LOOTED" ], "local": true, "npc_range": 6 }
       },
       { "math": [ "sm_omt_entered_at = time('now')" ] },
+      { "math": [ "sm_omt_weight_in = u_weight()" ] },
       { "math": [ "sm_auto_marked_this_crossing = 0" ] }
     ]
   },

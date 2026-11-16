@@ -56,6 +56,7 @@ class character_oracle_t : public oracle_t
         status_t autonomy_wants_company( std::string_view ) const;
         status_t autonomy_wants_water( std::string_view ) const;
         status_t autonomy_wants_food( std::string_view ) const;
+        status_t autonomy_wants_warmth( std::string_view ) const;
         status_t autonomy_wants_meal_at_post( std::string_view ) const;
         /**
          * Score predicates for utility strategy (return 0-1 urgency).

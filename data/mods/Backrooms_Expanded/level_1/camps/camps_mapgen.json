@@ -91,11 +91,11 @@
         "  #.ht..ht..+......XX#  ",
         "  #....1....#..2...XX#  ",
         "  #.ht..ht..#T..!..XX#  ",
-        "  #ccTR...n.#LLLL..XX#  ",
-        "  #####..#######+#####  ",
+        "  #ccTR...n.#LLL...XX#  ",
+        "  #####..#########+###  ",
         "  #.D.......#B......B#  ",
-        "  #....!....+...!....#  ",
-        "  #.h.LL..h.#B..S...B#  ",
+        "  #L...!....+...!....#  ",
+        "  #Lh.....h.#B..S...B#  ",
         "  ###o#+#o############  ",
         "  |..!.........!.....|  ",
         "  |=................=|  ",
@@ -107,6 +107,15 @@
         "                        "
       ],
       "palettes": [ "br1_camp_palette" ],
+      "items": {
+        "X": { "item": "br1_camp_stores", "chance": 100, "repeat": [ 1, 2 ] },
+        "L": { "item": "br1_camp_lockers", "chance": 90 }
+      },
+      "place_items": [
+        { "item": "br1_breakroom_larder", "x": 3, "y": 10, "chance": 100, "repeat": [ 5, 6 ] },
+        { "item": "br1_breakroom_larder", "x": 4, "y": 10, "chance": 100, "repeat": [ 5, 6 ] },
+        { "item": "br1_breakroom_fridge", "x": 6, "y": 10, "chance": 100, "repeat": [ 8, 10 ] }
+      ],
       "place_npcs": [
         { "class": "BR1_foreman", "x": 7, "y": 8 },
         { "class": "BR1_cartographer", "x": 15, "y": 8 },
@@ -114,7 +123,7 @@
         { "class": "BR1_runner_rosa", "x": 9, "y": 5 },
         { "class": "BR1_gate_guard", "x": 4, "y": 14 }
       ],
-      "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 17, "y": 10 }, { "furn": "f_br1_runner_board", "x": 4, "y": 12 } ],
+      "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 16, "y": 10 }, { "furn": "f_br1_runner_board", "x": 4, "y": 12 } ],
       "place_signs": [ { "x": 16, "y": 20, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
@@ -136,8 +145,8 @@
         "  #.ht..ht..+......XX#  ",
         "  #....1....#..2...XX#  ",
         "  #.ht..ht..#T..!..XX#  ",
-        "  #ccTR...n.#LLLL..XX#  ",
-        "  #####..#######+#####  ",
+        "  #ccTR...n.#LLL...XX#  ",
+        "  #####..#########+###  ",
         "  #kk..!..kk#BB..!.BB#  ",
         "  #.........#........#  ",
         "  #XX.....XX#BB....BB#  ",
@@ -152,6 +161,15 @@
         "                        "
       ],
       "palettes": [ "br1_camp_palette" ],
+      "items": {
+        "X": { "item": "br1_camp_stores", "chance": 100, "repeat": [ 1, 2 ] },
+        "L": { "item": "br1_camp_lockers", "chance": 90 }
+      },
+      "place_items": [
+        { "item": "br1_breakroom_larder", "x": 3, "y": 10, "chance": 100, "repeat": [ 5, 6 ] },
+        { "item": "br1_breakroom_larder", "x": 4, "y": 10, "chance": 100, "repeat": [ 5, 6 ] },
+        { "item": "br1_breakroom_fridge", "x": 6, "y": 10, "chance": 100, "repeat": [ 8, 10 ] }
+      ],
       "place_npcs": [
         { "class": "BR1_foreman", "x": 7, "y": 8 },
         { "class": "BR1_cartographer", "x": 15, "y": 8 },
@@ -159,7 +177,7 @@
         { "class": "BR1_runner_rosa", "x": 9, "y": 5 },
         { "class": "BR1_gate_guard", "x": 10, "y": 16 }
       ],
-      "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 17, "y": 10 }, { "furn": "f_br1_runner_board", "x": 6, "y": 16 } ],
+      "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 16, "y": 10 }, { "furn": "f_br1_runner_board", "x": 6, "y": 16 } ],
       "place_signs": [ { "x": 9, "y": 21, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }

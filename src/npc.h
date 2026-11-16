@@ -1748,6 +1748,12 @@ class npc : public Character
             }
         };
         fire_spot_verdict check_fire_spot( const tripoint_bub_ms &p ) const;
+        // Xbro10 fork, NPC autonomy step 3.4c: the game's own fire-lighting pieces, for
+        // npc_autonomy's "build a fire" trip. Has a firestarter it can use right now.
+        bool autonomy_has_firestarter() const;
+        // Light the adjacent hearth p as the warmth planner does (its checks, own firewood
+        // put in, npc_start_fire). True if lighting started.
+        bool autonomy_light_hearth( const tripoint_bub_ms &p );
         std::optional<tripoint_bub_ms> find_fire_spot();
         bool has_adjacent_fire() const;
         const need_plan &get_food_plan() const {

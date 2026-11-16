@@ -1911,6 +1911,16 @@ void npc::move()
                     }
                 }
             }
+            // Xbro10 fork: with NPC autonomy on, a follower the player has walked away from
+            // follows first and eats or drinks once close again, instead of standing there
+            // (even a hungry or underweight one; only Food or Water 100 still eats on the spot).
+            if( npc_autonomy::should_catch_up( *this, new_goal ) ) {
+                if( const std::optional<need_goal_id> gid = goal_id_for( new_goal ) ) {
+                    end_need_pursuit( *gid );
+                }
+                ai_cache.intention = {};
+                new_goal = "follow_player";
+            }
             // adopted on every path, including a completion or interrupt this turn
             adopt_goal( new_goal );
 
@@ -7333,6 +7343,50 @@ npc::fire_spot_verdict npc::check_fire_spot( const tripoint_bub_ms &p ) const
         return { fire_spot_check::no_room, item_location() };
     }
     return { fire_spot_check::own_fuel, firewood };
+}
+
+// Xbro10 fork: see npc.h (NPC autonomy step 3.4c).
+bool npc::autonomy_has_firestarter() const
+{
+    bool found = false;
+    visit_items( [this, &found]( const item_location & it ) -> VisitResponse {
+        if( craft_reservation::usable_by_automation( *it ) && is_usable_npc_firestarter( *this, *it ) )
+        {
+            found = true;
+            return VisitResponse::ABORT;
+        }
+        return VisitResponse::NEXT;
+    } );
+    return found;
+}
+
+// Xbro10 fork: the fire_spot branch of execute_regulate_temperature, for a hearth the
+// autonomy trip walked the NPC to.
+bool npc::autonomy_light_hearth( const tripoint_bub_ms &p )
+{
+    item *fire_tool = nullptr;
+    const firestarter_actor *actor = nullptr;
+    visit_items( [this, &fire_tool, &actor]( item_location it ) -> VisitResponse {
+        if( !craft_reservation::usable_by_automation( *it ) || !is_usable_npc_firestarter( *this, *it ) )
+        {
+            return VisitResponse::NEXT;
+        }
+        const use_function *usef = it->type->get_use( "firestarter" );
+        fire_tool = it.get_item();
+        actor = dynamic_cast<const firestarter_actor *>( usef->get_actor_ptr() );
+        return VisitResponse::ABORT;
+    } );
+    if( !fire_tool || !actor ) {
+        return false;
+    }
+    const fire_spot_verdict spot = check_fire_spot( p );
+    if( !spot.usable() ) {
+        return false;
+    }
+    if( spot.check == fire_spot_check::own_fuel ) {
+        get_map().add_item_or_charges( p, i_rem( spot.firewood.get_item() ), false );
+    }
+    return actor->npc_start_fire( *this, *fire_tool, p );
 }
 
 std::optional<tripoint_bub_ms> npc::find_fire_spot()
