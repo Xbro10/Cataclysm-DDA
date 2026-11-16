@@ -704,6 +704,21 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         // The fire is only ever in the hearth.
         CHECK_FALSE( here.get_field( guy.pos_bub(), field_fd_fire ) );
     }
+    SECTION( "beside a fire with no wood left on it: they add wood from their pack" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.setpos( here, hearth + tripoint( -1, 0, 0 ) );
+        here.add_field( hearth, field_fd_fire, 1 );
+        guy.wear_item( item( itype_backpack ), false );
+        guy.i_add( item( itype_2x4 ) );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 5 );
+        bool wood_on_fire = false;
+        for( const item &it : here.i_at( hearth ) ) {
+            wood_on_fire = wood_on_fire || it.typeId() == itype_2x4;
+        }
+        CHECK( wood_on_fire );
+    }
     SECTION( "the look-around panel says why they can't warm up" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
         on_their_own();

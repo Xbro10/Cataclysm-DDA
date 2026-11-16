@@ -699,7 +699,7 @@ constexpr const char *var_warm_gave_up = "autonomy_warm_gave_up_until";
 // What they're doing and where, "step:x,y,z": shown in the look-around panel and said once.
 constexpr const char *var_warm_plan = "autonomy_warm_plan";
 
-enum class warm_step { by_fire, to_fire, to_wood, to_hearth };
+enum class warm_step { by_fire, to_fire, to_wood, to_hearth, feed_fire };
 
 struct warm_plan {
     warm_step step;
@@ -721,6 +721,17 @@ bool is_hearth( const map &here, const tripoint_bub_ms &p )
 bool burning( const map &here, const tripoint_bub_ms &p )
 {
     return here.get_field( p, fd_fire ) != nullptr;
+}
+
+// Firewood still lying on a hearth, waiting to burn.
+bool fuel_on( const tripoint_bub_ms &p )
+{
+    for( const item &it : get_map().i_at( p ) ) {
+        if( it.has_flag( flag_FIREWOOD ) ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool carries_firewood( const npc &guy )
@@ -800,6 +811,15 @@ std::optional<warm_plan> next_warm_step( const npc &guy )
     const map &here = get_map();
     for( const tripoint_bub_ms &adj : here.points_in_radius( guy.pos_bub(), 1 ) ) {
         if( adj != guy.pos_bub() && burning( here, adj ) && is_hearth( here, adj ) ) {
+            // Keep it going: no wood left on it, so put some on, or fetch some first.
+            if( !fuel_on( adj ) ) {
+                if( carries_firewood( guy ) ) {
+                    return warm_plan{ warm_step::feed_fire, adj };
+                }
+                if( const std::optional<tripoint_bub_ms> wood = nearest_firewood( guy ) ) {
+                    return warm_plan{ warm_step::to_wood, *wood };
+                }
+            }
             return warm_plan{ warm_step::by_fire, adj };
         }
     }
@@ -872,6 +892,7 @@ void announce_warm_step( npc &guy, const warm_plan &plan )
             add_msg( m_neutral, _( "%s carries the wood to the fireplace." ), guy.get_name() );
             break;
         case warm_step::by_fire:
+        case warm_step::feed_fire:
             break;
     }
 }
@@ -955,6 +976,27 @@ goal_result get_warm( npc &guy )
                 return goal_result::none;
             }
             break;
+        case warm_step::feed_fire: {
+            item_location wood;
+            const item *wielded = guy.get_wielded_item().get_item();
+            guy.visit_items( [&wood, wielded]( const item_location & it ) -> VisitResponse {
+                if( it.get_item() != wielded && it->has_flag( flag_FIREWOOD ) )
+                {
+                    wood = it;
+                    return VisitResponse::ABORT;
+                }
+                return VisitResponse::NEXT;
+            } );
+            if( !wood ) {
+                return goal_result::none;
+            }
+            get_map().add_item_or_charges( plan->where, guy.i_rem( wood.get_item() ), false );
+            guy.mod_moves( -to_moves<int>( 2_seconds ) );
+            if( player_sees( guy ) ) {
+                add_msg( m_neutral, _( "%s adds wood to the fire." ), guy.get_name() );
+            }
+            return goal_result::acted;
+        }
         case warm_step::to_fire:
             break;
     }
@@ -1129,6 +1171,8 @@ std::string warm_plan_text( const npc &guy )
     switch( static_cast<warm_step>( step ) ) {
         case warm_step::by_fire:
             return _( "Plan: get warm (by the fire)" );
+        case warm_step::feed_fire:
+            return _( "Plan: get warm (adding wood to the fire)" );
         case warm_step::to_fire:
             return dist <= 1 ? _( "Plan: get warm (by the fire)" ) :
                    string_format( _( "Plan: get warm (heading to a fire %d tiles away)" ), dist );
