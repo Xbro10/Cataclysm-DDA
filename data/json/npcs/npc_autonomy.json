@@ -36,6 +36,17 @@
     "score_argument": "0.45"
   },
   {
+    "type": "snippet",
+    "category": "<ally_rule_no_self_care_true_text>",
+    "//": "Xbro10 fork, follower rule no_self_care (NPC autonomy option).",
+    "text": "<mypronoun> will leave food and water to you (no water trips or mealtimes)."
+  },
+  {
+    "type": "snippet",
+    "category": "<ally_rule_no_self_care_false_text>",
+    "text": "<mypronoun> will fetch water and keep mealtimes unprompted (NPC autonomy)."
+  },
+  {
     "type": "effect_on_condition",
     "id": "EOC_AUTONOMY_DEBUG_LONELY",
     "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): every NPC within 30 tiles gets Social 100 and may chat right away.",

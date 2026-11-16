@@ -350,6 +350,13 @@ double meal_key( int meal )
     return to_days<int>( calendar::turn - calendar::turn_zero ) * 3.0 + meal;
 }
 
+// Follower rule "no_self_care" (Follower rules screen): followers who leave food and water
+// to the player skip mealtimes and water trips. NPCs who aren't your allies always look after themselves.
+bool looks_after_self( const npc &guy )
+{
+    return !guy.is_player_ally() || !guy.rules.has_flag( ally_rule::no_self_care );
+}
+
 bool is_safe( const npc &guy )
 {
     return safety_need( guy ) < unsafe;
@@ -576,7 +583,7 @@ bool is_goal( const std::string &goal )
 bool wants_water( const npc &guy )
 {
     if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ||
-        water_need( guy ) < water_need_to_act ) {
+        water_need( guy ) < water_need_to_act || !looks_after_self( guy ) ) {
         return false;
     }
     if( gave_up_on_water( guy ) ) {
@@ -641,7 +648,8 @@ std::string plan_text( const npc &guy )
 
 bool wants_meal( const npc &guy )
 {
-    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ) {
+    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ||
+        !looks_after_self( guy ) ) {
         return false;
     }
     const int meal = current_meal();

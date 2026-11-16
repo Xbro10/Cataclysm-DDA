@@ -253,6 +253,27 @@ TEST_CASE( "npc_autonomy_meals_on_post_and_when_left_behind", "[npc][autonomy]" 
     }
 }
 
+TEST_CASE( "npc_autonomy_rule_leave_food_and_water_to_me", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    set_time( calendar::turn_zero + 7_hours );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 3, 0 ) );
+    guy.stomach.empty();
+    guy.set_hunger( 50 );
+    guy.add_effect( effect_hunger_hungry, 1_days );
+    guy.i_add( item( itype_sandwich_cheese_grilled ) );
+    // Default (and old saves): they look after themselves.
+    REQUIRE_FALSE( guy.rules.has_flag( ally_rule::no_self_care ) );
+    CHECK( npc_autonomy::wants_meal( guy ) );
+    guy.rules.set_flag( ally_rule::no_self_care );
+    CHECK_FALSE( npc_autonomy::wants_meal( guy ) );
+    guy.set_thirst( 100 );
+    CHECK_FALSE( npc_autonomy::wants_water( guy ) );
+}
+
 TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
 {
     clear_map_without_vision();

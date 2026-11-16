@@ -52,8 +52,15 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_SM_AUTO_MARK_LOOTED",
-    "//": "u is an NPC within 6 tiles of the player. Only one follower marks per crossing, and only indoors (not fields or roads).",
-    "condition": { "and": [ "u_following", { "not": "u_is_outside" }, { "math": [ "sm_auto_marked_this_crossing != 1" ] } ] },
+    "//": "u is an NPC within 6 tiles of the player. Only one follower marks per crossing, and only indoors (not fields or roads). Followers told \"Stop marking places as looted on your own\" (u_sm_no_auto_marks = 1) skip it.",
+    "condition": {
+      "and": [
+        "u_following",
+        { "not": "u_is_outside" },
+        { "math": [ "sm_auto_marked_this_crossing != 1" ] },
+        { "math": [ "u_sm_no_auto_marks != 1" ] }
+      ]
+    },
     "effect": [
       { "run_eocs": "EOC_SM_NPC_MARK_LOOTED" },
       { "if": { "math": [ "u_sm_mark_result == 1" ] }, "then": { "math": [ "sm_auto_marked_this_crossing = 1" ] } }
