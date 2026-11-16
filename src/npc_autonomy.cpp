@@ -887,22 +887,29 @@ std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy, const bool need
 std::optional<warm_plan> next_warm_step( const npc &guy )
 {
     const map &here = get_map();
+    std::optional<tripoint_bub_ms> fire;
     for( const tripoint_bub_ms &adj : here.points_in_radius( guy.pos_bub(), 1 ) ) {
         if( adj != guy.pos_bub() && burning( here, adj ) && is_hearth( here, adj ) ) {
-            // Keep it going, bigger the colder they are: put wood on, or fetch some first.
-            if( fuel_on( adj ) < fuel_wanted( guy ) ) {
-                if( carries_firewood( guy ) ) {
-                    return warm_plan{ warm_step::feed_fire, adj };
-                }
-                if( const std::optional<tripoint_bub_ms> wood = nearest_firewood( guy ) ) {
-                    return warm_plan{ warm_step::to_wood, *wood };
-                }
-            }
-            return warm_plan{ warm_step::by_fire, adj };
+            fire = adj;
+            break;
         }
     }
-    if( const std::optional<tripoint_bub_ms> fire = nearest_fire( guy ) ) {
-        return warm_plan{ warm_step::to_fire, *fire };
+    const bool beside_fire = fire.has_value();
+    if( !fire ) {
+        fire = nearest_fire( guy );
+    }
+    if( fire ) {
+        // Keep it going, bigger the colder it is: put wood on, or fetch some first. Checked
+        // away from the fire too, so a trip for wood isn't undone by "go back to the fire".
+        if( fuel_on( *fire ) < fuel_wanted( guy ) ) {
+            if( carries_firewood( guy ) ) {
+                return warm_plan{ beside_fire ? warm_step::feed_fire : warm_step::to_fire, *fire };
+            }
+            if( const std::optional<tripoint_bub_ms> wood = nearest_firewood( guy ) ) {
+                return warm_plan{ warm_step::to_wood, *wood };
+            }
+        }
+        return warm_plan{ beside_fire ? warm_step::by_fire : warm_step::to_fire, *fire };
     }
     if( !guy.autonomy_has_firestarter() ) {
         return std::nullopt;

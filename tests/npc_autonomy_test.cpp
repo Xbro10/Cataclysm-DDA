@@ -710,6 +710,27 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         // The fire is only ever in the hearth.
         CHECK_FALSE( here.get_field( guy.pos_bub(), field_fd_fire ) );
     }
+    SECTION( "very cold, several planks: they light the fire and keep bringing wood until it's big" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.wear_item( item( itype_backpack ), false );
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        for( int i = 0; i < 4; ++i ) {
+            here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
+        }
+        REQUIRE( npc_autonomy::current_needs( guy ).warmth >= 67 );
+        run( 600 );
+        CHECK( here.get_field( hearth, field_fd_fire ) != nullptr );
+        int pieces = 0;
+        for( const item &it : here.i_at( hearth ) ) {
+            pieces += it.typeId() == itype_2x4 ? 1 : 0;
+        }
+        INFO( "Warmth " << npc_autonomy::current_needs( guy ).warmth << ", plan: " <<
+              npc_autonomy::plan_line( guy ) );
+        CHECK( pieces >= 3 );
+    }
     SECTION( "no bag for the plank: they carry it over in their hands and take their weapon back" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
         on_their_own();
