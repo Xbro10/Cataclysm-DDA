@@ -53,6 +53,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- Level 0 runs faster: its ceiling lights shine at brightness 40 instead of 120 (overriding the upstream Backrooms terrain). Light barely fades in open air, so each light reached about 92 tiles and the thousands of them took most of each turn's map update. The floor still reads as brightly lit everywhere, and lighting takes about 40% less time.
 - Level 0 ceiling lights are in order now: rows and columns of lights every 4 tiles across rooms and halls, with about 1 in 7 dead, instead of a random 1 in 20 floor tiles. Only newly generated areas change. (The first version of this placed the grid before the rooms, which painted over it and left Level 0 with no lights at all.)
 - The Breakroom is no longer marked on your map when you first reach Level 1 (and the "arrow on the pillar" message is gone). Find it by exploring, or from notes and people. Breakroom Hire still starts you there with it marked.
 - Level 2 is harder, as a Class 3 level: about twice as many monsters per tunnel square, about half of them the Backrooms' own entities (more Hounds and Smilers, Wretches from day 20, Skin-stealers from day 10), and canned food in junk heaps half as often.

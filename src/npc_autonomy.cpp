@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <map>
 #include <cmath>
 #include <optional>
 #include <string>
@@ -14,6 +15,7 @@
 #include "coordinates.h"
 #include "creature.h"
 #include "character.h"
+#include "character_id.h"
 #include "dialogue_chatbin.h"
 #include "game.h"
 #include "game_constants.h"
@@ -452,6 +454,8 @@ constexpr const char *var_water_fails = "autonomy_water_fails";
 constexpr const char *var_water_gave_up = "autonomy_water_gave_up_until";
 // The target last announced, so "goes to get water" shows once per trip.
 constexpr const char *var_water_target = "autonomy_water_target";
+// How long the "is there water in reach?" answer is reused, in turns.
+constexpr int water_recheck_turns = 5;
 
 bool carries_drink( const npc &guy )
 {
@@ -581,8 +585,25 @@ bool wants_water( const npc &guy )
     if( !guy.intake_useful( npc::need_goal_id::drink_water ) ) {
         return false;
     }
-    return carries_drink( guy ) ||
-           behavior::character_oracle_t( &guy ).can_obtain_water( "" ) == behavior::status_t::running;
+    if( carries_drink( guy ) ) {
+        return true;
+    }
+    // The source search scans 20 tiles around the NPC; the behavior tree asks every turn,
+    // so the answer is reused for a few turns (Level 0 performance, 2026-11-15).
+    struct water_check {
+        int turn = 0;
+        bool found = false;
+    };
+    static std::map<character_id, water_check> checks;
+    const int now = turns_since_start();
+    const auto known = checks.find( guy.getID() );
+    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < water_recheck_turns ) {
+        return known->second.found;
+    }
+    const bool found = behavior::character_oracle_t( &guy ).can_obtain_water( "" ) ==
+                       behavior::status_t::running;
+    checks[guy.getID()] = { now, found };
+    return found;
 }
 
 int water_search_radius()

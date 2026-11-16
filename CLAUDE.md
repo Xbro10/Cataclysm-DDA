@@ -94,6 +94,14 @@ visibility distance, 3D FOV range.
   into `UserData\mods`. It updates itself from `testing`: when the launcher changes, raise `$script:LauncherVersion` (a date).
   Never edit the copy in `D:\Games` by hand; change `tools/launcher` and copy it there.
 
+## Performance
+
+Level 0 timing benchmark (hidden test, needs the Backrooms mods):
+`./Cataclysm-test-vcpkg-static-Release-x64.exe --mods=backrooms,backrooms_expanded "[backrooms_perf]"`.
+It times the per-turn map cache rebuild for several ceiling-light layouts and prints the darkest floor
+light level (10 = "brightly lit"). Light barely fades in open air (`LIGHT_RANGE`: brightness 120 reaches
+about 92 tiles), so many bright static lights are the usual cost; Level 0's are overridden to 40.
+
 ## Checking mods
 
 Run from the repo root. Exit code 0 means it loaded clean:
