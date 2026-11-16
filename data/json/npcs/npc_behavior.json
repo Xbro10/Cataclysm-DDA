@@ -101,7 +101,11 @@
     "type": "behavior",
     "id": "npc_homeostasis",
     "strategy": "fallback",
-    "conditions": [ { "predicate": "npc_needs_temperature_regulation" } ],
+    "//": "Xbro10 fork: steps aside while NPC autonomy's own warming goal (npc_autonomy_get_warm) has a way to warm them; it scores at least as high.",
+    "conditions": [
+      { "predicate": "npc_needs_temperature_regulation" },
+      { "predicate": "npc_autonomy_wants_warmth", "invert_result": true }
+    ],
     "children": [ "npc_regulate_temperature", "npc_make_fire" ],
     "score": "npc_temperature_urgency"
   },

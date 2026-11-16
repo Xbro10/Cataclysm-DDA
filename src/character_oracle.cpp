@@ -658,6 +658,15 @@ float character_oracle_t::autonomy_weight( std::string_view weight ) const
     return std::clamp( value, 0.0f, 1.0f );
 }
 
+float character_oracle_t::autonomy_warmth_urgency( std::string_view weight ) const
+{
+    // The game's own warming branch steps aside while ours has a way (npc_behavior.json),
+    // so ours is at least as urgent as it would have been: a Very cold guard still leaves
+    // the post for a fire, as before.
+    const float base = autonomy_weight( weight );
+    return base > 0.0f ? std::max( base, temperature_urgency( "" ) ) : 0.0f;
+}
+
 float character_oracle_t::free_time_urgency( std::string_view ) const
 {
     const npc *n = dynamic_cast<const npc *>( subject );

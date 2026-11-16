@@ -37,8 +37,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   freezing), adding wood from their pack or fetching some first ("adds wood to the fire"), and say "warms up by
   the fire" once. Wood too big for their pack (planks) goes in their hands, one piece a trip, their weapon put
   away meanwhile and taken back out after; a plank they fight with is never burned. They keep fetching wood
-  until the fire is big enough (before, one step towards more wood turned them back to the fire). A cold NPC also puts on
+  until the fire is big enough (before, one step towards more wood turned them back to the fire), also when Very
+  cold (the game's own warming code used to take over then, which never adds wood and shows no plan). A cold NPC also puts on
   warmer clothes they carry, instead of waiting until Very cold.
+- [C++] **Debug: owned items:** `EOC_AUTONOMY_DEBUG_OWNED_AREA` (Debug → Game → Activate EOC) makes every item lying
+  in your map square belong to the Free Merchants, to check that NPCs leave owned food, water and wood alone.
 - [C++] **NPCs avoid traps:** they never step onto a harmful trap they can see (pits, spikes, bear traps), so a
   hungry NPC no longer walks through spiked pits to reach food.
 - [C++] **Getting food (step 3.4b):** very hungry NPCs (Food 50+) eat from their pack, or walk to food they can

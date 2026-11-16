@@ -1862,7 +1862,9 @@ void npc::move()
                             satisfied = !intake_useful( *gid );
                             break;
                         case need_goal_id::regulate_temperature:
-                            satisfied = oracle.needs_temperature_regulation( "" ) != behavior::status_t::running;
+                            satisfied = oracle.needs_temperature_regulation( "" ) != behavior::status_t::running ||
+                                        // Xbro10 fork: NPC autonomy's warming goal takes over (fires, firewood).
+                                        npc_autonomy::wants_warmth( *this );
                             break;
                         case need_goal_id::go_to_sleep:
                             // leaving for another goal goes through should_interrupt() below;

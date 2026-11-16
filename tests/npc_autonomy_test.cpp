@@ -6,7 +6,9 @@
 
 #include "activity_type.h"
 #include "avatar.h"
+#include "behavior.h"
 #include "calendar.h"
+#include "character_oracle.h"
 #include "cata_catch.h"
 #include "cata_scope_helpers.h"
 #include "coordinates.h"
@@ -51,6 +53,10 @@ static const itype_id itype_water_clean( "water_clean" );
 static const effect_on_condition_id effect_on_condition_EOC_AUTONOMY_DEBUG_LONELY( "EOC_AUTONOMY_DEBUG_LONELY" );
 static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY( "EOC_AUTONOMY_DEBUG_NOT_LONELY" );
+static const effect_on_condition_id
+effect_on_condition_EOC_AUTONOMY_DEBUG_OWNED_AREA( "EOC_AUTONOMY_DEBUG_OWNED_AREA" );
+
+static const string_id<behavior::node_t> behavior_node_t_npc_priorities( "npc_priorities" );
 
 static const furn_str_id furn_f_cupboard( "f_cupboard" );
 static const furn_str_id furn_f_fireplace( "f_fireplace" );
@@ -62,6 +68,7 @@ static const ter_str_id ter_t_water_sh( "t_water_sh" );
 
 static const trap_str_id tr_spike_pit( "tr_spike_pit" );
 
+static const faction_id faction_free_merchants( "free_merchants" );
 static const faction_id faction_no_faction( "no_faction" );
 static const faction_id faction_your_followers( "your_followers" );
 
@@ -515,6 +522,19 @@ TEST_CASE( "npc_autonomy_debug_lonely", "[npc][autonomy]" )
     CHECK( stored( guy, "autonomy_need_social" ) == Approx( 0.0 ) );
 }
 
+TEST_CASE( "npc_autonomy_debug_owned_area", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    map &here = get_map();
+    const tripoint_bub_ms spot = get_avatar().pos_bub();
+    here.add_item_or_charges( spot, item( itype_2x4 ) );
+    REQUIRE( here.i_at( spot ).begin()->get_owner().is_null() );
+    dialogue d( get_talker_for( get_avatar() ), nullptr );
+    effect_on_condition_EOC_AUTONOMY_DEBUG_OWNED_AREA->activate( d );
+    CHECK( here.i_at( spot ).begin()->get_owner() == faction_free_merchants );
+}
+
 TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )
 {
     clear_map_without_vision();
@@ -830,6 +850,40 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         override_option autonomy( "NPC_AUTONOMY", "true" );
         here.add_field( hearth, field_fd_fire, 1 );
         CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+}
+
+// The game's own warming goal used to win once an NPC was Very cold (it scores by how cold
+// they are, ours a flat 0.45), so a Very cold NPC lit no fires and kept none going.
+TEST_CASE( "npc_autonomy_get_warm_wins_when_very_cold", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    const tripoint_bub_ms hearth( guy.pos_bub() + point( 1, 0 ) );
+    here.furn_set( hearth, furn_f_fireplace );
+    here.add_field( hearth, field_fd_fire, 1 );
+    guy.set_all_parts_temp_conv( BODYTEMP_VERY_COLD - 1_C_delta ); // Warmth about 77
+    behavior::character_oracle_t oracle( &guy );
+    behavior::tree priorities;
+    priorities.add( &behavior_node_t_npc_priorities.obj() );
+    REQUIRE( oracle.needs_temperature_regulation( "" ) == behavior::status_t::running );
+
+    SECTION( "autonomy on: ours, as urgent as the game's own" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        const auto [goal, score] = priorities.tick_full( &oracle );
+        CHECK( goal == "autonomy_get_warm" );
+        CHECK( score >= oracle.temperature_urgency( "" ) );
+    }
+    SECTION( "autonomy off: the game's own" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK( priorities.tick( &oracle ) != "autonomy_get_warm" );
     }
 }
 
