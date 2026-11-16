@@ -135,3 +135,6 @@ doesn't trigger "stale game data" errors.
   A `"global": true` field on `u_message` does nothing.
 - Math has no `&&` / `||`: use `{ "and": [ … ] }` / `{ "or": [ … ] }` conditions.
 - A `mod_tileset`'s `"file"` is relative to the mod's root folder, not the JSON's folder (`gfx/br1_overmap.png`).
+- Math `rng(a, b)` returns a decimal: use `rand(n)` (a whole number 0..n) for picks you compare with `==`.
+- `u_set_goal` / `assign_mission_target` / `target_params` ignore `"var"` unless `"om_terrain"` is also set (any id; the var wins), and use your own square instead. `"search_range"` only works with `"random": true`.
+- A palette can't name furniture defined in a mod file that loads later ("invalid furniture id"); use `place_furniture` in the mapgen instead.

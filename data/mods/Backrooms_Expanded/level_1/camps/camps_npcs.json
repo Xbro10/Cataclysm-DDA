@@ -95,5 +95,69 @@
       { "skill": "survival", "bonus": { "rng": [ 0, 2 ] } },
       { "skill": "melee", "bonus": { "rng": [ 0, 2 ] } }
     ]
+  },
+  {
+    "type": "npc",
+    "id": "BR1_gate_guard",
+    "//": "Breakroom door guard (both Breakroom layouts). Stays at the post (GUARD, on shift all day).",
+    "class": "NC_BR1_GATE_GUARD",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_GATE_GUARD",
+    "faction": "br_breakroom"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_GATE_GUARD",
+    "name": { "str": "Door Guard" },
+    "job_description": "I watch the door.  Things come out of the dark, and I'm the first one they meet.",
+    "common": false,
+    "worn_override": "NC_BR1_GATE_GUARD_worn",
+    "weapon_override": "NC_BR1_GATE_GUARD_weapon",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_str": { "rng": [ 1, 3 ] },
+    "bonus_per": { "rng": [ 0, 2 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "melee", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "bashing", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "dodge", "bonus": { "rng": [ 1, 2 ] } }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_GATE_GUARD_worn",
+    "subtype": "collection",
+    "items": [ "jeans", "tshirt", "jacket_flannel", "socks", "boots", "gloves_work", "hat_hard" ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_GATE_GUARD_weapon",
+    "subtype": "distribution",
+    "items": [ [ "pipe", 50 ], [ "crowbar", 30 ], [ "hammer_sledge", 20 ] ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_GATE_GUARD",
+    "dynamic_line": [
+      "Hands where I can see them till you're through the door.  Nothing personal.  Things out there wear faces.",
+      "You're letting the dark in.  In or out, pick one.",
+      "Looking for Jonah or Rosa?  Board's by the door.  Dot chalks up who's going out and when.",
+      "Quiet shift.  I hate quiet shifts."
+    ],
+    "responses": [
+      { "text": "Seen anything out there?", "topic": "TALK_BR1_GATE_GUARD_NEWS" },
+      { "text": "Just passing through.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_GATE_GUARD_NEWS",
+    "dynamic_line": [
+      "Something stood at the edge of the light for an hour last night.  Grinning.  Didn't come closer.  The light's the only reason it didn't.",
+      "Hounds came sniffing round the sandbags two nights back.  They don't like the light either, but they're braver about it.",
+      "Nothing.  Which means it's out there somewhere else, being something to somebody else."
+    ],
+    "responses": [ { "text": "Thanks.", "topic": "TALK_BR1_GATE_GUARD" } ]
   }
 ]
