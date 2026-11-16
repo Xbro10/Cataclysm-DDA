@@ -70,6 +70,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   conflicts; every fork change is intact.
 - [C++] The NPC autonomy tests now start each case at 20 C. Upstream's `tree_tick_full_returns_score` forces
   -30 C and never undoes it, so the water and food in later tests froze and 3 of them failed in a full test run.
+- [C++] **Character creator sprite preview:** with a tileset on, the creator shows your character's sprite (hair,
+  facial hair, eye colour, skin, other traits with a sprite, and your profession's clothes), large on the TRAITS
+  tab and small at the right end of General Info on every tab. It changes as you pick traits, gender or outfit.
+  `cata_tiles::get_character_preview` plus `draw_character_sprite_preview` in `newcharacter.cpp`.
 
 ---
 

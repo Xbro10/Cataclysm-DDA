@@ -712,6 +712,19 @@ struct texture_draw_data {
     std::pair<float, float> uv1;
 };
 
+// Xbro10 fork: the stacked sprites of a character, for the character creator's preview
+struct character_preview_layer {
+    texture_draw_data data;
+    // in tileset pixels, from the top-left of the tile
+    point offset;
+    float pixelscale = 1.0f;
+};
+struct character_preview {
+    std::vector<character_preview_layer> layers;
+    // the tileset's tile size, in tileset pixels
+    point tile_size;
+};
+
 /** type used for color blocks overlays.
  * first: The SDL blend mode used for the color.
  * second:
@@ -769,6 +782,11 @@ class cata_tiles
                 TILE_CATEGORY category, const tripoint_bub_ms &p );
 
         std::unordered_set<std::string> get_all_portrait_tile_ids( bool male ) const;
+
+        // Xbro10 fork: base sprite plus every overlay this tileset has, in drawing order
+        // (overlays as from Character::get_overlay_ids; missing ones are skipped)
+        character_preview get_character_preview( bool male,
+                const std::vector<std::pair<std::string, std::string>> &overlays );
 
     protected:
         /** How many rows and columns of tiles fit into given dimensions, fully
