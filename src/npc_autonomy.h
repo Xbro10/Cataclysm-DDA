@@ -113,6 +113,11 @@ bool wants_food( const npc &guy );
 
 /** Warmth 50+ (or 25+ beside a fire), safe, awake, not given up, and a way to warm up. */
 bool wants_warmth( const npc &guy );
+/**
+ * For the look-around panel: why a cold NPC (Warmth 50+) can't warm up, e.g. "Cold: no room
+ * to carry the firewood"; "" when they aren't cold or have a way.
+ */
+std::string warm_blocker( const npc &guy );
 /** Food need 50+ with autonomy on: the game's "is eating worth it" check also says yes. */
 bool hungry_enough_for_a_trip( const npc &guy );
 /** How far NPCs look for food: 6 tiles (upstream) or, with autonomy on, 20. */

@@ -704,6 +704,25 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         // The fire is only ever in the hearth.
         CHECK_FALSE( here.get_field( guy.pos_bub(), field_fd_fire ) );
     }
+    SECTION( "the look-around panel says why they can't warm up" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
+        // No lighter.
+        CHECK( npc_autonomy::warm_blocker( guy ).find( "light one" ) != std::string::npos );
+        // A lighter, but no bag for the plank.
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        REQUIRE( guy.autonomy_has_firestarter() );
+        CHECK( npc_autonomy::warm_blocker( guy ).find( "no room" ) != std::string::npos );
+        // Room to carry it: no reason, there's a plan.
+        guy.wear_item( item( itype_backpack ), false );
+        CHECK( npc_autonomy::warm_blocker( guy ).empty() );
+        // Warm: nothing to say.
+        guy.set_all_parts_temp_conv( BODYTEMP_NORM );
+        CHECK( npc_autonomy::warm_blocker( guy ).empty() );
+    }
     SECTION( "following the player: a fireplace far from them is out of reach" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
         here.add_field( hearth, field_fd_fire, 1 );

@@ -303,7 +303,10 @@ void on_npc_turn( npc &guy )
 std::string needs_text( const npc &guy )
 {
     const needs_t needs = current_needs( guy );
-    const std::string plan = plan_text( guy );
+    std::string plan = plan_text( guy );
+    if( plan.empty() ) {
+        plan = warm_blocker( guy );
+    }
     return string_format( "%s %s  %s  %s  %s  %s  %s%s", _( "Needs:" ),
                           needs.eats ? need_part( _( "Food" ), needs.food ) : untracked_part( _( "Food" ) ),
                           needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
@@ -774,15 +777,16 @@ std::optional<tripoint_bub_ms> nearest_hearth( const npc &guy )
 }
 
 // Firewood (sticks, planks, logs...) lying where the NPC may take it.
-std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy )
+// need_room = false finds wood they may take but can't fit in their pack (to say why).
+std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy, const bool need_room = true )
 {
-    return nearest_seen( guy, [&guy]( const map & here, const tripoint_bub_ms & p ) {
+    return nearest_seen( guy, [&guy, need_room]( const map & here, const tripoint_bub_ms & p ) {
         if( !here.has_items( p ) || is_hearth( here, p ) ) {
             return false;
         }
         for( item &it : get_map().i_at( p ) ) {
             if( it.has_flag( flag_FIREWOOD ) && guy.may_take( item_location( map_cursor( p ), &it ) ) &&
-                const_cast<npc &>( guy ).can_stash( it ) ) {
+                ( !need_room || const_cast<npc &>( guy ).can_stash( it ) ) ) {
                 return true;
             }
         }
@@ -967,6 +971,35 @@ bool is_goal( const std::string &goal )
 {
     return goal == goal_meal || goal == goal_socialize || goal == goal_get_water ||
            goal == goal_get_food || goal == goal_get_warm;
+}
+
+std::string warm_blocker( const npc &guy )
+{
+    if( !enabled() || guy.in_sleep_state() || current_needs( guy ).warmth < need_to_act ) {
+        return std::string();
+    }
+    if( !is_safe( guy ) ) {
+        return _( "Cold, but not safe to deal with it" );
+    }
+    if( gave_up_on_warmth( guy ) ) {
+        return _( "Cold, gave up for now" );
+    }
+    if( next_warm_step( guy ) ) {
+        // There is a way: the plan line shows it once they're on it.
+        return std::string();
+    }
+    if( !guy.autonomy_has_firestarter() ) {
+        return _( "Cold: no fire in reach and nothing that works to light one" );
+    }
+    if( !nearest_hearth( guy ) ) {
+        return guy.is_walking_with() ?
+               _( "Cold: no fireplace, stove or fire pit close to you" ) :
+               _( "Cold: no fireplace, stove or fire pit in reach" );
+    }
+    if( nearest_firewood( guy, false ) ) {
+        return _( "Cold: no room to carry the firewood" );
+    }
+    return _( "Cold: no firewood in sight" );
 }
 
 bool wants_warmth( const npc &guy )
