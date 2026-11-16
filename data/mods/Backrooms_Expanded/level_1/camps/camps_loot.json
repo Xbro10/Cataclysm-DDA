@@ -44,5 +44,44 @@
       { "item": "br1_note_lost", "prob": 8 },
       { "item": "br1_note_generator", "prob": 4 }
     ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_breakroom_larder",
+    "subtype": "distribution",
+    "//": "The Breakroom's own dry food, on the kitchen counters: ready to eat, so NPCs with needs can eat it (they can't cook or open cans). Placed by the Breakroom layouts and topped up when a runner gets home (br1_breakroom_restock).",
+    "items": [
+      { "item": "crackers", "prob": 20 },
+      { "item": "granola", "prob": 20 },
+      { "item": "pretzels", "prob": 10 },
+      { "item": "jerky", "prob": 10 },
+      { "item": "dry_fruit", "prob": 10 },
+      { "item": "peanutbutter", "prob": 5 },
+      { "item": "protein_bar_evac", "prob": 15 },
+      { "item": "protein_bar_peanut", "prob": 10 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_breakroom_fridge",
+    "subtype": "distribution",
+    "//": "Drinks in the Breakroom fridge.",
+    "entries": [
+      { "item": "almond_water", "container-item": "bottle_almond_water", "prob": 50 },
+      { "item": "water_clean", "container-item": "bottle_plastic", "prob": 50 }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "update_mapgen_id": "br1_breakroom_restock",
+    "//": "Run when a runner gets home (EOC_BR1_RUNNER_TICK): a fresh batch for the larder counters and fridge, owned by the Breakroom. Same spots in every Breakroom layout, old and new. The game can't count what's left, so it adds a fixed batch, sized to be eaten between runs.",
+    "object": {
+      "place_items": [
+        { "item": "br1_breakroom_larder", "x": 3, "y": 10, "chance": 100, "repeat": [ 2, 3 ] },
+        { "item": "br1_breakroom_larder", "x": 4, "y": 10, "chance": 100, "repeat": [ 2, 3 ] },
+        { "item": "br1_breakroom_fridge", "x": 6, "y": 10, "chance": 100, "repeat": [ 3, 4 ] }
+      ],
+      "faction_owner": [ { "id": "br_breakroom", "x": [ 3, 6 ], "y": [ 10, 10 ] } ]
+    }
   }
 ]

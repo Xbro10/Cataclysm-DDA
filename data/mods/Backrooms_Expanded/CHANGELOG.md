@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- The Breakroom has a **larder** its people own: ready-to-eat food on the kitchen counters and almond water and bottled water in the fridge, enough for a few days. With NPC autonomy on, Dot, Marcus, the runners and the guard eat and drink from it; taking from it yourself counts as stealing. Each time a runner gets home, a fresh batch goes in (old Breakrooms too). The Breakroom's crates and lockers are also stocked far more often.
 - The **Breakroom** is bigger and comes in one of two layouts, picked when it is built: the **Checkpoint** (a guard room and an infirmary, then a lit, chain-link yard with sandbag nests and a gate off to the side, so visitors cross the light) or the **Bunker** (a workshop and extra bunks, then an airlock between two doors with barred side windows, a sandbag wall and barbed wire with one gap). Both have a **door guard** to talk to. Existing worlds keep the Breakroom they already have.
 - A **runner board** by the Breakroom door. Every midnight Dot chalks up when Jonah and Rosa leave that day (6 AM to 5 PM, different every day); read it to see who is in, who is out and where, who is overdue, and when the next one goes.
 - Survival Difficulty Classes for every level, using the Backrooms Wiki's 0-to-5 rating (our own wording). **Level 0** "the Lobby" and **Level 1** "the Parking Deck" are Class 1 (safe, secure); **Level 2** "the Pipe Tunnels" is Class 3 (unsafe, unstable, moderate entity count). The first time you reach each level a card pops up with its class and what to expect; later visits log a one-line reminder. Every scenario's description now ends with its level's class and what to expect.
@@ -55,6 +56,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- Breakroom lockers no longer crowd the doorways: the stores room has three lockers and Dot's supply locker, and its door to the back rooms moved two tiles over; the Checkpoint guard room's lockers moved to the side wall.
 - Level 0 ceiling lights are in order now: rows and columns of lights every 4 tiles across rooms and halls, with about 1 in 7 dead, instead of a random 1 in 20 floor tiles. Only newly generated areas change. (The first version of this placed the grid before the rooms, which painted over it and left Level 0 with no lights at all.)
 - The Breakroom is no longer marked on your map when you first reach Level 1 (and the "arrow on the pillar" message is gone). Find it by exploring, or from notes and people. Breakroom Hire still starts you there with it marked.
 - Level 2 is harder, as a Class 3 level: about twice as many monsters per tunnel square, about half of them the Backrooms' own entities (more Hounds and Smilers, Wretches from day 20, Skin-stealers from day 10), and canned food in junk heaps half as often.
