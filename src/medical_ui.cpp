@@ -2,7 +2,6 @@
 #include <imgui/imgui.h>
 #include <cstdlib>
 #include <functional>
-#include <map>
 #include <memory>
 #include <optional>
 #include <set>
@@ -24,14 +23,12 @@
 #include "display.h"
 #include "effect.h"
 #include "enum_conversions.h"
-#include "enums.h"
 #include "flag.h"
 #include "game.h"
 #include "game_constants.h"
 #include "item.h"
 #include "item_location.h"
 #include "math_parser_diag_value.h"
-#include "messages.h"
 #include "output.h"
 #include "proficiency.h"
 #include "requirements.h"
@@ -600,6 +597,41 @@ static bool optional_debug_modify_wounds( const Character &you, bodypart &bp )
     return true;
 }
 
+std::pair<bool, float> wound_fix::doable_by( const Character &c ) const
+{
+
+    float time_save = 1.0f;
+    for( const wound_skill &sk : skills ) {
+        const int current_skill = static_cast<int>( c.get_greater_skill_or_knowledge_level( sk.skill ) );
+        const bool skill_is_sufficient = current_skill >= sk.level;
+        if( sk.is_mandatory && !skill_is_sufficient ) {
+            return {false, 1.0f};
+        }
+
+        if( skill_is_sufficient ) {
+            time_save *= sk.time_save;
+        }
+    }
+
+    for( const wound_proficiency &w_prof : proficiencies ) {
+        const bool has_prof = c.has_proficiency( w_prof.prof );
+
+        if( w_prof.is_mandatory && !has_prof ) {
+            return {false, 1.0f};
+        }
+
+        if( has_prof ) {
+            time_save *= w_prof.time_save;
+        }
+    }
+
+    // Calling crafting_inventory a lot (e.g. if iterating over wounds and calling this
+    // Doesn't seem cheap...
+    bool doable = get_requirements().can_make_with_inventory( &c, c.crafting_inventory(),
+                  is_crafting_component );
+    return {doable, time_save};
+}
+
 bool Character::pick_wound_fix( const bodypart_id &bp_id )
 {
     bodypart *bp = get_part( bp_id );
@@ -614,29 +646,9 @@ bool Character::pick_wound_fix( const bodypart_id &bp_id )
     for( const wound &wd : bp->get_wounds() ) {
         for( const wound_fix_id &fix_id : wd.type->fixes ) {
             healing_option opt{wd.type, fix_id, true, fix_id->time};
-
-            for( const auto &[skill_id, level] : fix_id->skills ) {
-                if( get_greater_skill_or_knowledge_level( skill_id ) < level ) {
-                    opt.doable = false;
-                    break;
-                }
-            }
-
-            for( const wound_proficiency &w_prof : fix_id->proficiencies ) {
-
-                const bool has_prof = has_proficiency( w_prof.prof );
-
-                if( w_prof.is_mandatory && !has_prof ) {
-                    opt.doable = false;
-                }
-
-                if( has_prof ) {
-                    opt.time_to_apply *= w_prof.time_save;
-                }
-            }
-
-            opt.doable &= fix_id->get_requirements().can_make_with_inventory( this, inv,
-                          is_crafting_component );
+            std::pair<bool, float> doable = fix_id->doable_by( *this );
+            opt.doable = doable.first;
+            opt.time_to_apply *= doable.second;
 
             // check if equal healing option already exists in vector
             std::vector<healing_option>::iterator it = std::find_if( healing_options.begin(),
@@ -721,22 +733,29 @@ bool Character::pick_wound_fix( const bodypart_id &bp_id )
                                 to_string_approx( opt.time_to_apply ) );
 
         if( !fix.skills.empty() ) {
+
             descr += string_format( _( "Skills: %s\n" ), enumerate_as_string(
-            fix.skills.begin(), fix.skills.end(), [&]( const std::pair<skill_id, int> &sk ) {
-                if( get_greater_skill_or_knowledge_level( sk.first ) >= sk.second ) {
-                    return string_format( pgettext( "skill requirement",
-                                                    //~ %1$s: skill name, %2$s: current skill level, %3$s: required skill level
-                                                    "<color_cyan>%1$s</color> <color_green>(%2$d/%3$d)</color>" ),
-                                          sk.first->name(), static_cast<int>( get_greater_skill_or_knowledge_level( sk.first ) ), sk.second );
+            fix.skills.begin(), fix.skills.end(), [this]( const wound_skill & sk ) {
+
+                const int current_skill = static_cast<int>( get_greater_skill_or_knowledge_level( sk.skill ) );
+                const bool skill_is_sufficient = current_skill >= sk.level;
+
+                nc_color col;
+                if( skill_is_sufficient ) {
+                    col = c_green;
+                } else if( !skill_is_sufficient && !sk.is_mandatory ) {
+                    col = c_light_gray;
                 } else {
-                    return string_format( pgettext( "skill requirement",
-                                                    //~ %1$s: skill name, %2$s: current skill level, %3$s: required skill level
-                                                    "<color_cyan>%1$s</color> <color_red>(%2$d/%3$d)</color>" ),
-                                          sk.first->name(), static_cast<int>( get_greater_skill_or_knowledge_level( sk.first ) ), sk.second );
+                    col = c_red;
                 }
+
+                return string_format( pgettext( "skill requirement",
+                                                //~ %1$s: skill name, %2$s: current skill level / required skill level
+                                                "%1$s %2$s" ),
+                                      colorize( sk.skill->name(), c_cyan ),
+                                      colorize( string_format( "(%1$d/%2$d)", current_skill, sk.level ), col ) );
             } ) );
         }
-
 
         if( !fix.proficiencies.empty() ) {
             descr += string_format( _( "Proficiencies: %s\n" ), enumerate_as_string(
@@ -771,11 +790,6 @@ bool Character::pick_wound_fix( const bodypart_id &bp_id )
     }
 
     const healing_option &opt = healing_options[menu.ret];
-    if( !opt.doable ) {
-        add_msg( m_info, _( "You are currently unable to treat the %s this way." ),
-                 opt.wd->get_name() );
-        return false;
-    }
 
     assign_activity( fix_wound_activity_actor( opt.time_to_apply, bp_id, opt.wd, opt.fix,
                      opt.amount ) );
