@@ -6,19 +6,23 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
 ## What's in this build
 
 - **Backrooms Expanded** (mod): new Backrooms levels (the Parking Deck, Pipe Dreams), places, monsters, NPCs and jobs.
-  It builds on TGWeaver's Backrooms mod. New this time: every level has a **Survival Difficulty Class** (from the
-  Backrooms Wiki), shown in the scenario descriptions, on a card when you first arrive and in a field guide you
-  start with; the class changes how the level plays (Level 2, Class 3, has twice the monsters, almost no food and
-  bursting steam pipes). A hard new start, **Pipe Rat**, alone on Level 2. Level 0's ceiling lights sit in neat
-  rows, and a few Backrooms entities turn up there now. Exits and the Breakroom are no longer marked or explained:
-  find them yourself, or listen to the people down there.
+  It builds on TGWeaver's Backrooms mod. Every level has a **Survival Difficulty Class** (from the Backrooms Wiki),
+  shown in the scenario descriptions, on a card when you first arrive and in a field guide you start with; Level 2
+  (Class 3) has twice the monsters, almost no food and bursting steam pipes. A hard start, **Pipe Rat**, alone on
+  Level 2. Exits and the Breakroom aren't marked or explained: find them yourself, or listen to the people down there.
+  New this time: the **Breakroom** is bigger and comes in one of two layouts (a lit, fenced **Checkpoint** or a
+  sandbagged **Bunker**), with a door guard and a **runner board** that shows when Jonah and Rosa leave each day.
+  The runners now really go out on runs (they never left before). Level 0 runs faster (dimmer ceiling lights).
 - **Survivor Minds** (mod): NPCs with inner lives: journals, chalk wall marks, routines, reactions to what you do,
-  gossip and danger warnings, and **Gabriel**, a unique recruitable NPC.
-- **NPC autonomy** (built into the game, off by default): NPCs with needs who eat at mealtimes, seek company and
-  go and get water when they're very thirsty.
-- **Fixes in the game itself**, new this time: followers no longer get left behind when you change levels (one
-  that was eating or busy used to stay behind); saving while you or an NPC is eating or using an item in a bag no
-  longer loses the item on load; an NPC's Food need now drops when they eat.
+  gossip and danger warnings, and **Gabriel**, a unique recruitable NPC. Gossip no longer marks places on your map,
+  and you can tell a follower to stop marking places as looted ("Got a minute?").
+- **NPC autonomy** (built into the game, off by default): NPCs with needs who eat at mealtimes, seek company and go
+  and get water when they're very thirsty. New this time: very hungry NPCs eat from their pack or walk to food they
+  can see (up to 20 tiles, in cupboards and fridges too), water is found in bottles and coolers, guards eat at their
+  post, NPC turns are faster, and a follower rule **leave food and water to me** turns their own trips off.
+- **Fixes in the game itself**: followers no longer get left behind when you change levels; saving while you or an
+  NPC is eating or using an item in a bag no longer loses the item on load; NPCs with Mind Over Matter powers fight
+  instead of casting a harmless spell.
 - **The launcher** (`tools/launcher/`): installs this build, tells you when a new one is out, and keeps your saves.
 
 What changed is listed in each mod's `CHANGELOG.md` (`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
