@@ -10,16 +10,19 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
   shown in the scenario descriptions, on a card when you first arrive and in a field guide you start with; Level 2
   (Class 3) has twice the monsters, almost no food and bursting steam pipes. A hard start, **Pipe Rat**, alone on
   Level 2. Exits and the Breakroom aren't marked or explained: find them yourself, or listen to the people down there.
-  New this time: the **Breakroom** is bigger and comes in one of two layouts (a lit, fenced **Checkpoint** or a
-  sandbagged **Bunker**), with a door guard and a **runner board** that shows when Jonah and Rosa leave each day.
-  The runners now really go out on runs (they never left before). Level 0 runs faster (dimmer ceiling lights).
+  The **Breakroom** is bigger and comes in one of two layouts (a lit, fenced **Checkpoint** or a sandbagged
+  **Bunker**), with a door guard and a **runner board** that shows when Jonah and Rosa leave each day.
+  New this time: the Breakroom has its own **larder** (food on the kitchen counters, water in the fridge) that its
+  people eat from and that each returning runner restocks; taking from it is stealing. Its lockers no longer crowd
+  the doorways, and its crates and lockers are stocked far more often.
 - **Survivor Minds** (mod): NPCs with inner lives: journals, chalk wall marks, routines, reactions to what you do,
   gossip and danger warnings, and **Gabriel**, a unique recruitable NPC. Gossip no longer marks places on your map,
   and you can tell a follower to stop marking places as looted ("Got a minute?").
 - **NPC autonomy** (built into the game, off by default): NPCs with needs who eat at mealtimes, seek company and go
-  and get water when they're very thirsty. New this time: very hungry NPCs eat from their pack or walk to food they
-  can see (up to 20 tiles, in cupboards and fridges too), water is found in bottles and coolers, guards eat at their
-  post, NPC turns are faster, and a follower rule **leave food and water to me** turns their own trips off.
+  and get water or food when they're very thirsty or hungry (up to 20 tiles, in cupboards and fridges too). New this
+  time: **cold NPCs get warm**: they put on warmer clothes, sit by a burning fireplace or stove, or gather firewood
+  and light a fire in a hearth (never anywhere else), and keep it going. NPCs also never walk into a harmful trap
+  they can see. The follower rule **leave food and water to me** turns their own trips off.
 - **Fixes in the game itself**: followers no longer get left behind when you change levels; saving while you or an
   NPC is eating or using an item in a bag no longer loses the item on load; NPCs with Mind Over Matter powers fight
   instead of casting a harmless spell.
