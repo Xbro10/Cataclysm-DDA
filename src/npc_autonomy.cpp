@@ -40,6 +40,7 @@
 #include "trap.h"
 #include "type_id.h"
 #include "viewer.h"
+#include "weather.h"
 
 
 static const efftype_id effect_hunger_famished( "hunger_famished" );
@@ -315,16 +316,17 @@ void dress_for_the_cold( npc &guy )
 std::string needs_text( const npc &guy )
 {
     const needs_t needs = current_needs( guy );
-    std::string plan = plan_text( guy );
-    if( plan.empty() ) {
-        plan = warm_blocker( guy );
-    }
-    return string_format( "%s %s  %s  %s  %s  %s  %s%s", _( "Needs:" ),
+    return string_format( "%s %s  %s  %s  %s  %s  %s", _( "Needs:" ),
                           needs.eats ? need_part( _( "Food" ), needs.food ) : untracked_part( _( "Food" ) ),
                           needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
                           need_part( _( "Sleep" ), needs.sleep ), need_part( _( "Warmth" ), needs.warmth ),
-                          need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ),
-                          plan.empty() ? std::string() : "  <color_light_cyan>" + plan + "</color>" );
+                          need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ) );
+}
+
+std::string plan_line( const npc &guy )
+{
+    const std::string plan = plan_text( guy );
+    return plan.empty() ? warm_blocker( guy ) : plan;
 }
 
 // ---- Daily life ----
@@ -710,6 +712,11 @@ constexpr const char *var_warm_fails = "autonomy_warm_fails";
 constexpr const char *var_warm_gave_up = "autonomy_warm_gave_up_until";
 // What they're doing and where, "step:x,y,z": shown in the look-around panel and said once.
 constexpr const char *var_warm_plan = "autonomy_warm_plan";
+// The fire they last said they were warming up by.
+constexpr const char *var_warm_fire = "autonomy_warm_fire";
+// 1 while they hold a piece of firewood in their hands for the fire (it didn't fit the pack),
+// so a 2x4 they fight with is never mistaken for fuel.
+constexpr const char *var_wood_in_hands = "autonomy_wood_in_hands";
 
 enum class warm_step { by_fire, to_fire, to_wood, to_hearth, feed_fire };
 
@@ -747,19 +754,68 @@ int fuel_on( const tripoint_bub_ms &p )
     return pieces;
 }
 
-// Pieces of firewood to keep on the fire: the colder they are, the bigger the fire.
-// A bit cold (under 34): 1; Cold (34-66): 2; Very cold (67+): 3.
+// Pieces of firewood to keep on the fire: the colder it is, the bigger the fire. Mostly the
+// air around them (the area's natural temperature, without the fire's own heat, so the fire
+// doesn't shrink itself): 10 C or warmer 1, 0-10 C 2, freezing 3. If their body is colder
+// than that suggests (Warmth 34+ / 67+), that wins.
 int fuel_wanted( const npc &guy )
 {
+    const double air_c = units::to_celsius( get_weather().get_area_temperature( guy.pos_abs_omt() ) );
+    const int for_air = air_c < 0.0 ? 3 : air_c < 10.0 ? 2 : 1;
     const int warmth = current_needs( guy ).warmth;
-    return warmth >= 67 ? 3 : warmth >= 34 ? 2 : 1;
+    const int for_body = warmth >= 67 ? 3 : warmth >= 34 ? 2 : 1;
+    return std::max( for_air, for_body );
 }
 
+// Holding firewood they picked up for the fire (not their weapon).
+bool holds_wood_for_fire( const npc &guy )
+{
+    const item *held = guy.get_wielded_item().get_item();
+    return held != nullptr && held->has_flag( flag_FIREWOOD ) &&
+           get_num( guy, var_wood_in_hands, 0.0 ) > 0.0;
+}
+
+// Firewood in the pack, or in their hands for the fire. A wielded 2x4 they fight with doesn't count.
 bool carries_firewood( const npc &guy )
 {
-    return guy.has_item_with( []( const item & it ) {
-        return it.has_flag( flag_FIREWOOD );
+    if( holds_wood_for_fire( guy ) ) {
+        return true;
+    }
+    const item *held = guy.get_wielded_item().get_item();
+    return guy.has_item_with( [held]( const item & it ) {
+        return &it != held && it.has_flag( flag_FIREWOOD );
     } );
+}
+
+// Wood too big for the pack (a plank, a log) can still go in their hands, one piece a trip:
+// hands free, or a weapon that fits the pack while they carry it; light enough to lift.
+bool can_carry_in_hands( const npc &guy, const item &wood )
+{
+    if( guy.is_using_bionic_weapon() ) {
+        return false;
+    }
+    if( const item_location held = guy.get_wielded_item() ) {
+        if( holds_wood_for_fire( guy ) || !guy.can_unwield( *held ).success() ||
+            !const_cast<npc &>( guy ).can_stash( *held ) ) {
+            return false;
+        }
+    }
+    return guy.can_wield( wood ).success() && guy.can_pickWeight( wood, true );
+}
+
+// Put the wood in their hands on the hearth, then take their weapon back out.
+void put_held_wood_on( npc &guy, const tripoint_bub_ms &p )
+{
+    item_location held = guy.get_wielded_item();
+    guy.remove_value( var_wood_in_hands );
+    if( !held || !held->has_flag( flag_FIREWOOD ) ) {
+        return;
+    }
+    item wood = *held;
+    held.remove_item();
+    get_map().add_item_or_charges( p, wood, false );
+    guy.mod_moves( -to_moves<int>( 2_seconds ) );
+    guy.wield_better_weapon();
 }
 
 // How far this NPC may go for warmth: followers stay near the player, guards near their
@@ -809,7 +865,7 @@ std::optional<tripoint_bub_ms> nearest_hearth( const npc &guy )
 }
 
 // Firewood (sticks, planks, logs...) lying where the NPC may take it.
-// need_room = false finds wood they may take but can't fit in their pack (to say why).
+// need_room = false finds wood they may take but can't carry, in the pack or hands (to say why).
 std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy, const bool need_room = true )
 {
     return nearest_seen( guy, [&guy, need_room]( const map & here, const tripoint_bub_ms & p ) {
@@ -818,7 +874,8 @@ std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy, const bool need
         }
         for( item &it : get_map().i_at( p ) ) {
             if( it.has_flag( flag_FIREWOOD ) && guy.may_take( item_location( map_cursor( p ), &it ) ) &&
-                ( !need_room || const_cast<npc &>( guy ).can_stash( it ) ) ) {
+                ( !need_room || const_cast<npc &>( guy ).can_stash( it ) ||
+                  can_carry_in_hands( guy, it ) ) ) {
                 return true;
             }
         }
@@ -830,22 +887,29 @@ std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy, const bool need
 std::optional<warm_plan> next_warm_step( const npc &guy )
 {
     const map &here = get_map();
+    std::optional<tripoint_bub_ms> fire;
     for( const tripoint_bub_ms &adj : here.points_in_radius( guy.pos_bub(), 1 ) ) {
         if( adj != guy.pos_bub() && burning( here, adj ) && is_hearth( here, adj ) ) {
-            // Keep it going, bigger the colder they are: put wood on, or fetch some first.
-            if( fuel_on( adj ) < fuel_wanted( guy ) ) {
-                if( carries_firewood( guy ) ) {
-                    return warm_plan{ warm_step::feed_fire, adj };
-                }
-                if( const std::optional<tripoint_bub_ms> wood = nearest_firewood( guy ) ) {
-                    return warm_plan{ warm_step::to_wood, *wood };
-                }
-            }
-            return warm_plan{ warm_step::by_fire, adj };
+            fire = adj;
+            break;
         }
     }
-    if( const std::optional<tripoint_bub_ms> fire = nearest_fire( guy ) ) {
-        return warm_plan{ warm_step::to_fire, *fire };
+    const bool beside_fire = fire.has_value();
+    if( !fire ) {
+        fire = nearest_fire( guy );
+    }
+    if( fire ) {
+        // Keep it going, bigger the colder it is: put wood on, or fetch some first. Checked
+        // away from the fire too, so a trip for wood isn't undone by "go back to the fire".
+        if( fuel_on( *fire ) < fuel_wanted( guy ) ) {
+            if( carries_firewood( guy ) ) {
+                return warm_plan{ beside_fire ? warm_step::feed_fire : warm_step::to_fire, *fire };
+            }
+            if( const std::optional<tripoint_bub_ms> wood = nearest_firewood( guy ) ) {
+                return warm_plan{ warm_step::to_wood, *wood };
+            }
+        }
+        return warm_plan{ beside_fire ? warm_step::by_fire : warm_step::to_fire, *fire };
     }
     if( !guy.autonomy_has_firestarter() ) {
         return std::nullopt;
@@ -913,8 +977,16 @@ void announce_warm_step( npc &guy, const warm_plan &plan )
             add_msg( m_neutral, _( "%s carries the wood to the fireplace." ), guy.get_name() );
             break;
         case warm_step::by_fire:
-        case warm_step::feed_fire:
+        case warm_step::feed_fire: {
+            // Once per fire, not each time they add wood.
+            const std::string fire = target_key( get_map().get_abs( plan.where ) );
+            const diag_value *said_fire = guy.maybe_get_value( var_warm_fire );
+            if( said_fire == nullptr || !said_fire->is_str() || said_fire->str() != fire ) {
+                guy.set_value( var_warm_fire, fire );
+                add_msg( m_neutral, _( "%s warms up by the fire." ), guy.get_name() );
+            }
             break;
+        }
     }
 }
 
@@ -929,6 +1001,20 @@ bool take_firewood( npc &guy, const tripoint_bub_ms &p )
             guy.i_add( it );
             loc.remove_item();
             guy.mod_moves( -to_moves<int>( 2_seconds ) );
+            return true;
+        }
+    }
+    // Too big for the pack: one piece in their hands, their weapon put away meanwhile.
+    for( item &it : here.i_at( p ) ) {
+        item_location loc( map_cursor( p ), &it );
+        if( it.has_flag( flag_FIREWOOD ) && guy.may_take( loc ) && can_carry_in_hands( guy, it ) ) {
+            if( item_location held = guy.get_wielded_item() ) {
+                guy.stow_item( *held );
+            }
+            if( guy.get_wielded_item() || !guy.wield( loc ) ) {
+                return false;
+            }
+            guy.set_value( var_wood_in_hands, 1.0 );
             return true;
         }
     }
@@ -977,6 +1063,9 @@ goal_result get_warm( npc &guy )
             return goal_result::acted;
         case warm_step::to_hearth:
             if( adjacent ) {
+                if( holds_wood_for_fire( guy ) ) {
+                    put_held_wood_on( guy, plan->where );
+                }
                 if( guy.autonomy_light_hearth( plan->where ) ) {
                     guy.set_value( var_warm_fails, 0.0 );
                     if( player_sees( guy ) ) {
@@ -1008,11 +1097,14 @@ goal_result get_warm( npc &guy )
                 }
                 return VisitResponse::NEXT;
             } );
-            if( !wood ) {
+            if( wood ) {
+                get_map().add_item_or_charges( plan->where, guy.i_rem( wood.get_item() ), false );
+                guy.mod_moves( -to_moves<int>( 2_seconds ) );
+            } else if( holds_wood_for_fire( guy ) ) {
+                put_held_wood_on( guy, plan->where );
+            } else {
                 return goal_result::none;
             }
-            get_map().add_item_or_charges( plan->where, guy.i_rem( wood.get_item() ), false );
-            guy.mod_moves( -to_moves<int>( 2_seconds ) );
             if( player_sees( guy ) ) {
                 add_msg( m_neutral, _( "%s adds wood to the fire." ), guy.get_name() );
             }
@@ -1060,7 +1152,7 @@ std::string warm_blocker( const npc &guy )
                _( "Cold: no fireplace, stove or fire pit in reach" );
     }
     if( nearest_firewood( guy, false ) ) {
-        return _( "Cold: no room to carry the firewood" );
+        return _( "Cold: can't carry the firewood (no room in the pack, hands busy, or too heavy)" );
     }
     return _( "Cold: no firewood in sight" );
 }
@@ -1170,6 +1262,15 @@ void drop_stale_plans( npc &guy )
     }
     if( guy.get_committed_goal() != goal_get_warm ) {
         guy.remove_value( var_warm_plan );
+        guy.remove_value( var_warm_fire );
+        // Done with the fire (warm now, or called away) with a plank still in their hands:
+        // set it down and take their weapon back out. Not mid-fight: their combat code
+        // picks the weapon then.
+        if( holds_wood_for_fire( guy ) && is_safe( guy ) ) {
+            put_held_wood_on( guy, guy.pos_bub() );
+        } else if( !holds_wood_for_fire( guy ) ) {
+            guy.remove_value( var_wood_in_hands );
+        }
     }
 }
 

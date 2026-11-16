@@ -100,7 +100,16 @@
     "//": "An 8-tile piece of 3-wide east-west corridor.",
     "object": {
       "mapgensize": [ 8, 8 ],
-      "rows": [ "........", "........", "........", "        ", "        ", "        ", "        ", "        " ],
+      "rows": [
+        "........",
+        "........",
+        "........",
+        "        ",
+        "        ",
+        "        ",
+        "        ",
+        "        "
+      ],
       "terrain": { ".": "t_metal_floor" },
       "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
     }
@@ -111,7 +120,16 @@
     "//": "An 8-tile piece of 3-wide north-south corridor.",
     "object": {
       "mapgensize": [ 8, 8 ],
-      "rows": [ "...     ", "...     ", "...     ", "...     ", "...     ", "...     ", "...     ", "...     " ],
+      "rows": [
+        "...     ",
+        "...     ",
+        "...     ",
+        "...     ",
+        "...     ",
+        "...     ",
+        "...     ",
+        "...     "
+      ],
       "terrain": { ".": "t_metal_floor" },
       "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
     }
@@ -119,8 +137,14 @@
   {
     "type": "mapgen",
     "nested_mapgen_id": "br2_feature_light",
-    "object": { "mapgensize": [ 1, 1 ], "place_terrain": [ { "ter": "t_br2_light", "x": 0, "y": 0 } ], "place_monster": [ { "monster": "mon_br_deathmoth", "x": 0, "y": 0, "chance": 10 } ], "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ] }
-  },
+    "//": "A caged ceiling light. Placed after the junk piles, so it may land on their items: ALLOW_TERRAIN_UNDER_OTHER_DATA keeps them without a mapgen error.",
+    "object": {
+      "mapgensize": [ 1, 1 ],
+      "place_terrain": [ { "ter": "t_br2_light", "x": 0, "y": 0 } ],
+      "place_monster": [ { "monster": "mon_br_deathmoth", "x": 0, "y": 0, "chance": 10 } ],
+      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN", "ALLOW_TERRAIN_UNDER_OTHER_DATA" ]
+    }
+  },
   {
     "type": "emit",
     "id": "emit_br2_steam",
@@ -151,6 +175,10 @@
     "type": "mapgen",
     "nested_mapgen_id": "br2_feature_drip",
     "//": "Condensation drips into a pool on the decking: never runs dry, boil it first. Reuses Level 1's drip pool.",
-    "object": { "mapgensize": [ 1, 1 ], "place_terrain": [ { "ter": "t_br1_drip_pool", "x": 0, "y": 0 } ], "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ] }
+    "object": {
+      "mapgensize": [ 1, 1 ],
+      "place_terrain": [ { "ter": "t_br1_drip_pool", "x": 0, "y": 0 } ],
+      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+    }
   }
 ]

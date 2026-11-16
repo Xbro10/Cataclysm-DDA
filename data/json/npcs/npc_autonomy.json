@@ -47,10 +47,10 @@
   {
     "type": "behavior",
     "id": "npc_autonomy_get_warm",
-    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 3.4c. Warmth 50+ (between the game's Cold and Very cold; it waits for Very cold): warmer clothes from the pack, else stand by a hearth fire they can see, else with a firestarter take firewood (carried or picked up nearby, never owned) to a fireplace, wood stove or fire pit and light it, else the game's own planner (shelter, clothes nearby). Only ever lights hearths. Beside a fire they stay until Warmth is under 25. Followers stay near the player, guards near their post, others go up to 20 tiles; 3 failed tries and they give up for an hour.",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 3.4c. Warmth 50+ (between the game's Cold and Very cold; it waits for Very cold): warmer clothes from the pack, else stand by a hearth fire they can see, else with a firestarter take firewood (carried or picked up nearby, never owned) to a fireplace, wood stove or fire pit and light it, else the game's own planner (shelter, clothes nearby). Only ever lights hearths. Beside a fire they stay until Warmth is under 25. Followers stay near the player, guards near their post, others go up to 20 tiles; 3 failed tries and they give up for an hour. Scores 0.45, or the game's own temperature urgency when higher: the game's warming branch (npc_homeostasis) steps aside while this one wants warmth.",
     "conditions": [ { "predicate": "npc_autonomy_wants_warmth" } ],
     "goal": "autonomy_get_warm",
-    "score": "npc_autonomy_weight",
+    "score": "npc_autonomy_warmth_urgency",
     "score_argument": "0.45"
   },
   {
@@ -91,6 +91,23 @@
     "type": "effect_on_condition",
     "id": "EOC_AUTONOMY_DEBUG_NOT_LONELY_ONE",
     "effect": [ { "math": [ "u_autonomy_need_social = 0" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_OWNED_AREA",
+    "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): every item lying in your current map square (24x24 tiles) now belongs to the Free Merchants, to check that NPCs leave owned food, water and firewood alone. Picking those items up yourself counts as stealing. Items lying there later aren't affected.",
+    "effect": [
+      { "mapgen_update": "autonomy_debug_owned_area" },
+      {
+        "u_message": "NPC autonomy debug: every item lying in this map square (24x24 tiles) now belongs to the Free Merchants.  Taking it yourself counts as stealing."
+      }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "update_mapgen_id": "autonomy_debug_owned_area",
+    "//": "Xbro10 fork: used by EOC_AUTONOMY_DEBUG_OWNED_AREA.",
+    "object": { "faction_owner": [ { "id": "free_merchants", "x": [ 0, 23 ], "y": [ 0, 23 ] } ] }
   },
   {
     "type": "snippet",

@@ -1,0 +1,185 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br0_manila_wall",
+    "copy-from": "t_backroom_wall",
+    "name": "manila wall",
+    "description": "Wallpaper the colour of an old manila folder, dry and clean, without a single water stain.  After the endless damp yellow outside, it looks almost kind.",
+    "color": "brown",
+    "looks_like": "t_wall_w"
+  },
+  {
+    "type": "item_group",
+    "id": "br0_manila_supplies",
+    "subtype": "distribution",
+    "//": "The Manila Room's random finds, on top of its guaranteed food and water.",
+    "entries": [
+      { "group": "br_cat_medical", "prob": 25 },
+      { "group": "br_cat_light", "prob": 20 },
+      { "group": "br_cat_tools", "prob": 15 },
+      { "group": "br_cat_power", "prob": 15 },
+      { "group": "br_cat_snacks", "prob": 15 },
+      { "group": "br_cat_hardware", "prob": 10 }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_manila_room",
+    "//": "The Manila Room (Backrooms Wiki, Level 0): a rare, small, dry room. Always has food (cupboard) and almond water (table), plus a few random finds. Mixed into Level 0's small-room slot (level_0/lights.json). K cupboard, C sofa, B bedroll, T table, h chair, W manila wall; D door from backrooms_palette.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rotation": [ 0, 3 ],
+      "rows": [
+        "WWWWWW",
+        "WK  CW",
+        "W  . W",
+        "WhT  W",
+        "W   BW",
+        "WWDWWW"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": {
+        "W": "t_br0_manila_wall",
+        "K": "t_carpet_backrooms",
+        "C": "t_carpet_backrooms",
+        "B": "t_carpet_backrooms",
+        "T": "t_carpet_backrooms",
+        "h": "t_carpet_backrooms"
+      },
+      "furniture": { "K": "f_cupboard", "C": "f_sofa", "B": "f_makeshift_bed", "T": "f_table", "h": "f_chair" },
+      "items": {
+        "K": [
+          { "item": "br1_breakroom_larder", "chance": 100, "repeat": [ 3, 4 ] },
+          { "item": "br0_manila_supplies", "chance": 60, "repeat": [ 1, 2 ] }
+        ],
+        "T": { "item": "almond_water_sealed", "chance": 100, "repeat": [ 2, 3 ] },
+        "C": { "item": "br0_manila_supplies", "chance": 50 },
+        "B": { "item": "br0_manila_supplies", "chance": 40 }
+      },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "terrain",
+    "id": "t_br0_carpet_deep",
+    "copy-from": "t_carpet_backrooms",
+    "name": "deep carpet",
+    "description": "Carpet so thick and sodden that your feet sink into it up to the ankle.  It squelches with every step and is slow going.",
+    "looks_like": "t_carpet_backrooms",
+    "move_cost": 3
+  },
+  {
+    "type": "terrain",
+    "id": "t_br0_carpet_dark",
+    "copy-from": "t_carpet_backrooms",
+    "name": "dark soggy carpet",
+    "description": "Carpet in a part of the Lobby where the lights have died.  It is cold and wet, and the dark seems to sit on it.",
+    "looks_like": "t_carpet_backrooms"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br0_fluid",
+    "copy-from": "t_water_sh_underground",
+    "name": "pooled fluid",
+    "description": "An ankle-deep pool of something that is mostly water, soaked up out of the carpet and gathered in a low spot of the floor.  It smells of mildew and something chemical.  Drinking it untreated would be a mistake.",
+    "looks_like": "t_water_sh",
+    "move_cost": 4,
+    "delete": { "flags": [ "SWIMMABLE", "FISHABLE" ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_archway_room",
+    "//": "Archway room (Backrooms Wiki, Level 0): rings of archways and pillars over deep carpet (~), open on all four sides, with dead-end alcoves and one light in the middle. Deep carpet is not touched by the ceiling-light grid. Big-room slot of level_0/lights.json.",
+    "object": {
+      "mapgensize": [ 11, 11 ],
+      "rotation": [ 0, 3 ],
+      "rows": [
+        "----~~~----",
+        "-~~~~~~~~~-",
+        "-~---~---~-",
+        "-~-~~~~~-~-",
+        "~~-~-~-~-~~",
+        "~~~~~.~~~~~",
+        "~~-~-~-~-~~",
+        "-~-~~~~~-~-",
+        "-~---~---~-",
+        "-~~~~~~~~~-",
+        "----~~~----"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "~": "t_br0_carpet_deep", ".": "t_carpet_backrooms_light" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_blackout_room",
+    "//": "Blackout zone (Backrooms Wiki, Level 0): an unlit room of dark soggy carpet (,) the light grid skips, with ankle-deep pools of fluid (w). Smilers like it here. Big-room slot of level_0/lights.json.",
+    "object": {
+      "mapgensize": [ 11, 11 ],
+      "rotation": [ 0, 3 ],
+      "rows": [
+        "-----------",
+        "-,,,,,,,,,-",
+        "-,,ww,,,,,-",
+        "-,wwww,,,,-",
+        "-,,ww,,ww,-",
+        "d,,,,,wwww-",
+        "-,,,,,,ww,-",
+        "-,ww,,,,,,-",
+        "-,www,,,,,-",
+        "-,,,,,,,,,-",
+        "-----d-----"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { ",": "t_br0_carpet_dark", "w": "t_br0_fluid" },
+      "place_monster": [ { "monster": "mon_br_smiler", "x": [ 2, 8 ], "y": [ 2, 8 ], "chance": 20 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": [ "backfloorchamber" ],
+    "weight": 6000,
+    "//": "Pillar hall (Backrooms Wiki, Level 0): a whole Lobby square of open carpet with 2x2 pillars every 4 tiles, under the usual ceiling-light grid (pillars sit between the lights). About 1 square in 17 (weight 6000 against 100000 for the normal square in lights.json). Sometimes a small room.",
+    "object": {
+      "fill_ter": "t_carpet_backrooms",
+      "rows": [
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "    PP  PP  PP  PP  PP  ",
+        "    PP  PP  PP  PP  PP  ",
+        "                        ",
+        "                        ",
+        "    PP  PP  PP  PP  PP  ",
+        "    PP  PP  PP  PP  PP  ",
+        "                        ",
+        "                        ",
+        "    PP  PP  PP  PP  PP  ",
+        "    PP  PP  PP  PP  PP  ",
+        "                        ",
+        "                        ",
+        "    PP  PP  PP  PP  PP  ",
+        "    PP  PP  PP  PP  PP  ",
+        "                        ",
+        "                        ",
+        "    PP  PP  PP  PP  PP  ",
+        "    PP  PP  PP  PP  PP  ",
+        "                        ",
+        "                        "
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "P": "t_backroom_wall" },
+      "place_nested": [
+        {
+          "chunks": [ [ "null", 300 ], [ "mx_backroom_small_empty", 50 ], [ "mx_backroom_small_common", 50 ], [ "br0_manila_room", 5 ] ],
+          "x": [ 0, 18 ],
+          "y": [ 0, 18 ]
+        },
+        { "chunks": [ "br0_light_grid" ], "x": 0, "y": 0 }
+      ]
+    }
+  }
+]

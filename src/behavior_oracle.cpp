@@ -95,7 +95,8 @@ score_predicate_map = {{
         // Xbro10 fork: NPC autonomy needs.
         { "npc_safety_urgency", make_score_function( &character_oracle_t::safety_urgency ) },
         { "npc_social_urgency", make_score_function( &character_oracle_t::social_urgency ) },
-        { "npc_autonomy_weight", make_score_function( &character_oracle_t::autonomy_weight ) }
+        { "npc_autonomy_weight", make_score_function( &character_oracle_t::autonomy_weight ) },
+        { "npc_autonomy_warmth_urgency", make_score_function( &character_oracle_t::autonomy_warmth_urgency ) }
     }
 };
 

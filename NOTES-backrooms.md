@@ -350,3 +350,28 @@ Planned: **NPCs who remember exits.** An NPC who has actually used an exit (a fo
 a runner or camp member who went through one) remembers it and can tell you, locked behind dialogue and trust.
 Fits Survivor Minds' memory work (journals, gossip): an NPC var per exit seen, set by the travel EOCs for followers
 who come along, and a dialogue line that only appears when it's set. Keep new hints in-world like this.
+
+## 9. Roadmap: Level 3 "Electrical Station" and the Redeemer (planned 2026-11-16, not started)
+
+The Redeemer (`bosses/redeemer.json`) is our own boss, not a wiki entity: a car-sized, three-headed wolf with a
+live power pole in its back, inspired by Project Moon's Alleyway Watchdog (reference only, original art). It fits
+the Backrooms Wiki's **Level 3, "Electrical Station"** (Class 4, https://backrooms-wiki.wikidot.com/level-3):
+brick halls, dim fluorescents, walls of wiring, electrical boxes and humming machinery, toxic black sludge in the
+pipes, unbreakable metal bars, smarter entities in groups (Hounds, Facelings, Wretches, Deathmoths, Skin-stealers,
+Smilers, Clumps, Death Rats), the outpost Blue Salvation in an old generator room, the hostile Scylla Colony, and
+elevators on to Levels 4 and 5. Runner-up level for the Redeemer: Level 9, "The Suburbs" (power lines).
+
+Built like Levels 1 and 2: dimension `backrooms_level_3`, folder `level_3/`. Six steps, each testable and committed:
+
+| Step | What | Files |
+|---|---|---|
+| L3.1 Level | Wired brick walls, dim flickery lights, unbreakable bars, electrical boxes, machinery, sludge pipes; corridors, cramped passages, machine halls, generator rooms on a grid like Level 2; warm stuffy weather; Class 4 card and field guide page | `level_3/region.json`, `terrain.json`, `halls.json` |
+| L3.2 In and out | In: a rare barricaded door with warning signs in Level 2's tunnels (pry or smash it), followers within 20 tiles come along, not marked, hinted by Level 2's workers. Out (pick): a broken freight elevator that runs only while its generator room is powered, up to Level 2 for now, Level 4 later. Alternative: a second barricaded door back. | `level_3/travel.json`, hook in `level_2/tunnels.json` |
+| L3.3 Hazards, loot | Sludge field (burns, short "fogged" effect: confusion, -Int); electrical boxes arc now and then (worse near the Redeemer); electronics, batteries, wire, tools; very little food | `level_3/hazards.json`, `loot_and_monsters.json` |
+| L3.4 Entities | Existing entities spawn in groups at Class 4 density; new Death Rats (small, fast swarms) and Clumps (slow fused bodies) with sprites | `level_3/monsters.json`, `gfx/` |
+| L3.5 Blue Salvation | Friendly outpost in a generator room: 3-5 NPCs, Jerry art, door guard, trade, a job or two, a larder; they talk about the Redeemer and the elevator. Scylla Colony later. | `level_3/blue_salvation.json` |
+| L3.6 The Redeemer | Unique substation hall (transformers, electrical boxes). It steps into the wiring and comes out of the box nearest you (monster spell -> EOC: find the box, teleport, sparks; no C++). Badly hurt: the hall blacks out (Smilers). Tuned stats, electric resistance, entry warning. Reward (pick): its death resets the substation and powers the elevator out, plus a drop (insulators). Alternative: plain loot boss. | `bosses/redeemer.json`, `level_3/substation.json` |
+
+What JSON can't do: real monster teamwork (group spawns stand in), the hum masking sounds (a message stands in),
+maybe crawl-only tiles (check the game; else 1-tile passages). Everything else is JSON/EOC.
+Open choices for the user: the way out (elevator or door) and the Redeemer's role (gate to the exit or loot).

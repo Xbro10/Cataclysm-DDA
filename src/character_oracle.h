@@ -77,6 +77,8 @@ class character_oracle_t : public oracle_t
         float social_urgency( std::string_view ) const;
         // Xbro10 fork: a fixed weight from the node's "score_argument" (0 when the option is off).
         float autonomy_weight( std::string_view weight ) const;
+        /** Xbro10 fork: autonomy_weight, raised to the game's own temperature urgency when colder (it replaces it). */
+        float autonomy_warmth_urgency( std::string_view weight ) const;
     private:
         const Character *subject;
 };

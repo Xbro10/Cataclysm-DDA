@@ -19,6 +19,14 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 16, 2026
 
 ### Backrooms
+- [BE] **The All-Nite diner:** a diner on Level 1 with a cook who sells hot meals, a server full of gossip,
+  regulars in the booths, and a stocked kitchen where NPCs come to eat.
+- [BE] **The Exchange:** a fenced market on Level 1 with three traders (supplies, gear, oddities), a guard and
+  a locked storeroom. Stock refreshes every few days, and almond water is the best thing to pay with.
+- [BE] **Level 0 room variety:** archway rooms (rings of arches over deep, slow carpet), blackout zones (unlit rooms
+  with ankle-deep pools, where Smilers wait) and pillar halls (whole squares of open floor and pillars).
+- [BE] **The Manila Room:** a rare, small, dry room on Level 0 with manila walls. It always has food in the cupboard
+  and almond water on the table, plus a few random finds.
 - [BE] **Breakroom larder:** the Breakroom keeps its own food on the kitchen counters and water in the fridge, enough
   for a few days. With NPC autonomy on, its people eat from it; taking from it yourself is stealing. Each runner who
   gets home brings a fresh batch. Its crates and lockers are stocked far more often too.
@@ -30,9 +38,16 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   anything owned), carry it to an unlit hearth and light it. They only ever light fires in a hearth. They say
   "goes to gather wood", "carries the wood to the fireplace" and "lights a fire", and give up after 3 failed tries.
   When a cold NPC can't warm up, the look-around panel says why (nothing to light a fire with, no fireplace close
-  enough, no firewood in sight, or no room to carry it). While warming up they keep the fire going, bigger the
-  colder they are (1 to 3 pieces of wood on it), adding wood from their pack or fetching some first ("adds wood
-  to the fire"). A cold NPC also puts on warmer clothes they carry, instead of waiting until Very cold.
+  enough, no firewood in sight, or no room to carry it), on its own line under their needs. While warming up
+  they keep the fire going, bigger the colder the day (1 to 3 pieces of wood on it: 10 °C or warmer, 0-10 °C,
+  freezing), adding wood from their pack or fetching some first ("adds wood to the fire"), and say "warms up by
+  the fire" once. Wood too big for their pack (planks) goes in their hands, one piece a trip, their weapon put
+  away meanwhile and taken back out after; a plank they fight with is never burned. They keep fetching wood
+  until the fire is big enough (before, one step towards more wood turned them back to the fire), also when Very
+  cold (the game's own warming code used to take over then, which never adds wood and shows no plan). A cold NPC also puts on
+  warmer clothes they carry, instead of waiting until Very cold.
+- [C++] **Debug: owned items:** `EOC_AUTONOMY_DEBUG_OWNED_AREA` (Debug → Game → Activate EOC) makes every item lying
+  in your map square belong to the Free Merchants, to check that NPCs leave owned food, water and wood alone.
 - [C++] **NPCs avoid traps:** they never step onto a harmful trap they can see (pits, spikes, bear traps), so a
   hungry NPC no longer walks through spiked pits to reach food.
 - [C++] **Getting food (step 3.4b):** very hungry NPCs (Food 50+) eat from their pack, or walk to food they can
@@ -45,6 +60,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **No stale plans:** food and water trips they've given up on are dropped, so the look-around panel only
   shows what they're really doing.
 - [SM] Followers only chalk **LOOTED** after you've taken something from the square (0.5 kg or more).
+
+### Bug fixes
+- [BE] **Level 2 tunnels** no longer show a mapgen error when a ceiling light lands on a junk pile.
+- [BE] **Breakroom runners' deaths** are recorded again (the game refused to run their death script).
 
 ---
 

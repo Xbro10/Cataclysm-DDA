@@ -20,6 +20,8 @@
 #include "map.h"
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
+#include "debug.h"
+#include "mapbuffer.h"
 #include "mapdata.h"
 #include "mapgen_helpers.h"
 #include "npc_class.h"
@@ -183,4 +185,167 @@ TEST_CASE( "breakroom_larder_restock", "[.][backrooms_runner]" )
             CHECK( it.get_owner() == breakroom );
         }
     }
+}
+
+// Level 0's Manila Room always has food in the cupboard and almond water on the table.
+TEST_CASE( "manila_room_has_food_and_water", "[.][backrooms_runner]" )
+{
+    const nested_mapgen_id manila( "br0_manila_room" );
+    if( !manila.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    const furn_str_id cupboard( "f_cupboard" );
+    const furn_str_id table( "f_table" );
+    const itype_id almond_water( "almond_water" );
+    map &here = get_map();
+    for( int i = 0; i < 4; ++i ) {
+        clear_map_without_vision();
+        clear_avatar();
+        const tripoint_abs_omt omt = get_avatar().pos_abs_omt();
+        manual_mapgen( omt, manual_nested_mapgen, manila );
+        const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
+        bool food = false;
+        bool water = false;
+        for( int x = 0; x < 6; ++x ) {
+            for( int y = 0; y < 6; ++y ) {
+                const tripoint_bub_ms p = corner + point( x, y );
+                if( here.furn( p ) == cupboard ) {
+                    for( const item &it : here.i_at( p ) ) {
+                        food = food || it.is_food() || it.is_food_container();
+                    }
+                }
+                if( here.furn( p ) == table ) {
+                    for( const item &it : here.i_at( p ) ) {
+                        water = water || it.typeId() == almond_water ||
+                                ( !it.empty() && it.only_item().typeId() == almond_water );
+                    }
+                }
+            }
+        }
+        CHECK( food );
+        CHECK( water );
+    }
+}
+
+// Level 2 tunnels generate without mapgen errors (a light used to land on a junk pile's items).
+// Any debug message fails the test.
+TEST_CASE( "level2_tunnels_generate_cleanly", "[.][backrooms_runner]" )
+{
+    const oter_str_id tunnels( "br2_tunnels" );
+    if( !tunnels.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    const tripoint_abs_omt pos( 50, 50, 0 );
+    std::string errors;
+    for( int i = 0; i < 400; ++i ) {
+        overmap_buffer.ter_set( pos, tunnels.id() );
+        MAPBUFFER.clear_outside_reality_bubble();
+        errors += capture_debugmsg_during( [&pos]() {
+            smallmap tm;
+            tm.generate( pos, calendar::turn, false, true );
+            tm.delete_unmerged_submaps();
+        } );
+    }
+    CHECK( errors.empty() );
+}
+
+// Level 0 squares (with the Manila Room, archway rooms, blackout zones and pillar halls mixed in)
+// generate without mapgen errors. Any debug message fails the test.
+TEST_CASE( "level0_generates_cleanly", "[.][backrooms_runner]" )
+{
+    const oter_str_id lobby( "backfloorchamber" );
+    const ter_str_id deep( "t_br0_carpet_deep" );
+    if( !lobby.is_valid() || !deep.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    const tripoint_abs_omt pos( 50, 50, 0 );
+    std::string errors;
+    for( int i = 0; i < 400; ++i ) {
+        overmap_buffer.ter_set( pos, lobby.id() );
+        MAPBUFFER.clear_outside_reality_bubble();
+        errors += capture_debugmsg_during( [&pos]() {
+            smallmap tm;
+            tm.generate( pos, calendar::turn, false, true );
+            tm.delete_unmerged_submaps();
+        } );
+    }
+    CHECK( errors.empty() );
+}
+
+// Level 1's Exchange builds with three traders and a guard, a locked storeroom, and traders who stock up.
+TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
+{
+    const nested_mapgen_id exchange( "br1_exchange_core" );
+    if( !exchange.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    map &here = get_map();
+    const tripoint_abs_omt omt = get_avatar().pos_abs_omt();
+    manual_mapgen( omt, manual_nested_mapgen, exchange );
+    const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
+    CHECK( here.ter( corner + point( 19, 4 ) ) == ter_str_id( "t_door_metal_locked" ) );
+    CHECK( here.ter( corner + point( 10, 10 ) ) == ter_str_id( "t_chaingate_c" ) );
+    int traders = 0;
+    int guards = 0;
+    for( npc &guy : g->all_npcs() ) {
+        if( guy.get_fac_id() != faction_id( "br1_exchange" ) ) {
+            continue;
+        }
+        if( guy.mission == NPC_MISSION_SHOPKEEP ) {
+            traders++;
+            guy.shop_restock();
+            CAPTURE( guy.myclass.str() );
+            CHECK( guy.inv_dump().size() > 5 );
+        } else {
+            guards++;
+        }
+    }
+    CHECK( traders == 3 );
+    CHECK( guards == 1 );
+}
+
+// Level 1's All-Nite diner builds with a cook who sells meals, a server, a stocked fridge and cupboards.
+TEST_CASE( "diner_generates", "[.][backrooms_runner]" )
+{
+    const nested_mapgen_id diner( "br1_diner_core" );
+    if( !diner.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    map &here = get_map();
+    const tripoint_abs_omt omt = get_avatar().pos_abs_omt();
+    manual_mapgen( omt, manual_nested_mapgen, diner );
+    const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
+    CHECK( here.furn( corner + point( 9, 2 ) ) == furn_str_id( "f_fridge" ) );
+    CHECK( !here.i_at( corner + point( 9, 2 ) ).empty() );
+    CHECK( !here.i_at( corner + point( 3, 2 ) ).empty() );
+    CHECK( here.ter( corner + point( 14, 2 ) ) == ter_str_id( "t_br1_tap" ) );
+    int cooks = 0;
+    int servers = 0;
+    for( npc &guy : g->all_npcs() ) {
+        if( guy.get_fac_id() != faction_id( "br1_diner" ) ) {
+            continue;
+        }
+        if( guy.mission == NPC_MISSION_SHOPKEEP ) {
+            cooks++;
+            guy.shop_restock();
+            CHECK( guy.inv_dump().size() > 5 );
+        } else {
+            servers++;
+        }
+    }
+    CHECK( cooks == 1 );
+    CHECK( servers == 1 );
 }

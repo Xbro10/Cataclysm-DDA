@@ -6,8 +6,11 @@
 
 #include "activity_type.h"
 #include "avatar.h"
+#include "behavior.h"
 #include "calendar.h"
+#include "character_oracle.h"
 #include "cata_catch.h"
+#include "cata_scope_helpers.h"
 #include "coordinates.h"
 #include "dialogue.h"
 #include "effect_on_condition.h"
@@ -39,7 +42,9 @@ static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_bottle_plastic( "bottle_plastic" );
 static const itype_id itype_butane( "butane" );
 static const itype_id itype_hoodie( "hoodie" );
+static const itype_id itype_jeans( "jeans" );
 static const itype_id itype_lighter( "lighter" );
+static const itype_id itype_rock( "rock" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
 static const itype_id itype_splinter( "splinter" );
 static const itype_id itype_tshirt( "tshirt" );
@@ -48,6 +53,10 @@ static const itype_id itype_water_clean( "water_clean" );
 static const effect_on_condition_id effect_on_condition_EOC_AUTONOMY_DEBUG_LONELY( "EOC_AUTONOMY_DEBUG_LONELY" );
 static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY( "EOC_AUTONOMY_DEBUG_NOT_LONELY" );
+static const effect_on_condition_id
+effect_on_condition_EOC_AUTONOMY_DEBUG_OWNED_AREA( "EOC_AUTONOMY_DEBUG_OWNED_AREA" );
+
+static const string_id<behavior::node_t> behavior_node_t_npc_priorities( "npc_priorities" );
 
 static const furn_str_id furn_f_cupboard( "f_cupboard" );
 static const furn_str_id furn_f_fireplace( "f_fireplace" );
@@ -59,6 +68,7 @@ static const ter_str_id ter_t_water_sh( "t_water_sh" );
 
 static const trap_str_id tr_spike_pit( "tr_spike_pit" );
 
+static const faction_id faction_free_merchants( "free_merchants" );
 static const faction_id faction_no_faction( "no_faction" );
 static const faction_id faction_your_followers( "your_followers" );
 
@@ -512,6 +522,19 @@ TEST_CASE( "npc_autonomy_debug_lonely", "[npc][autonomy]" )
     CHECK( stored( guy, "autonomy_need_social" ) == Approx( 0.0 ) );
 }
 
+TEST_CASE( "npc_autonomy_debug_owned_area", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    map &here = get_map();
+    const tripoint_bub_ms spot = get_avatar().pos_bub();
+    here.add_item_or_charges( spot, item( itype_2x4 ) );
+    REQUIRE( here.i_at( spot ).begin()->get_owner().is_null() );
+    dialogue d( get_talker_for( get_avatar() ), nullptr );
+    effect_on_condition_EOC_AUTONOMY_DEBUG_OWNED_AREA->activate( d );
+    CHECK( here.i_at( spot ).begin()->get_owner() == faction_free_merchants );
+}
+
 TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )
 {
     clear_map_without_vision();
@@ -707,6 +730,59 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         // The fire is only ever in the hearth.
         CHECK_FALSE( here.get_field( guy.pos_bub(), field_fd_fire ) );
     }
+    SECTION( "very cold, several planks: they light the fire and keep bringing wood until it's big" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.wear_item( item( itype_backpack ), false );
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        for( int i = 0; i < 4; ++i ) {
+            here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
+        }
+        REQUIRE( npc_autonomy::current_needs( guy ).warmth >= 67 );
+        run( 600 );
+        CHECK( here.get_field( hearth, field_fd_fire ) != nullptr );
+        int pieces = 0;
+        for( const item &it : here.i_at( hearth ) ) {
+            pieces += it.typeId() == itype_2x4 ? 1 : 0;
+        }
+        INFO( "Warmth " << npc_autonomy::current_needs( guy ).warmth << ", plan: " <<
+              npc_autonomy::plan_line( guy ) );
+        CHECK( pieces >= 3 );
+    }
+    SECTION( "no bag for the plank: they carry it over in their hands and take their weapon back" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.wear_item( item( itype_jeans ), false ); // pockets, but no room for a plank
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        item rock( itype_rock );
+        REQUIRE( guy.can_stash( rock ) );
+        guy.wield( rock );
+        here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
+        REQUIRE_FALSE( guy.can_stash( item( itype_2x4 ) ) );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 300 );
+        CHECK( here.get_field( hearth, field_fd_fire ) != nullptr );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_rock );
+    }
+    SECTION( "a 2x4 they fight with is not firewood" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.wear_item( item( itype_jeans ), false );
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        item plank( itype_2x4 );
+        guy.wield( plank );
+        run( 50 );
+        CHECK_FALSE( here.get_field( hearth, field_fd_fire ) );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_2x4 );
+    }
     SECTION( "beside a fire with no wood left on it: they add wood from their pack" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
         on_their_own();
@@ -725,9 +801,30 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         // Very cold: a bigger fire, three pieces, and the fourth stays in the pack.
         CHECK( planks_on_fire == 3 );
     }
+    SECTION( "a freezing day: a big fire even when they're only a bit cold" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        restore_on_out_of_scope restore_air( get_weather().temperature );
+        get_weather().temperature = units::from_celsius( -10 );
+        guy.set_all_parts_temp_conv( units::from_celsius( 34.5 ) ); // Warmth about 28
+        guy.setpos( here, hearth + tripoint( -1, 0, 0 ) );
+        here.add_field( hearth, field_fd_fire, 1 );
+        guy.wear_item( item( itype_backpack ), false );
+        for( int i = 0; i < 4; ++i ) {
+            guy.i_add( item( itype_splinter ) );
+        }
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 10 );
+        int pieces = 0;
+        for( const item &it : here.i_at( hearth ) ) {
+            pieces += it.typeId() == itype_splinter ? 1 : 0;
+        }
+        CHECK( pieces == 3 );
+    }
     SECTION( "the look-around panel says why they can't warm up" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
         on_their_own();
+        guy.wear_item( item( itype_jeans ), false ); // pockets, but no room for a plank
         here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
         // No lighter.
         CHECK( npc_autonomy::warm_blocker( guy ).find( "light one" ) != std::string::npos );
@@ -736,8 +833,13 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         lighter.ammo_set( itype_butane, 100 );
         guy.i_add( lighter );
         REQUIRE( guy.autonomy_has_firestarter() );
-        CHECK( npc_autonomy::warm_blocker( guy ).find( "no room" ) != std::string::npos );
-        // Room to carry it: no reason, there's a plan.
+        // Hands free: they'll carry the plank in them, so there's a plan.
+        CHECK( npc_autonomy::warm_blocker( guy ).empty() );
+        // A plank in hand they fight with, no bag to put it in: no way to carry another.
+        item plank( itype_2x4 );
+        guy.wield( plank );
+        CHECK( npc_autonomy::warm_blocker( guy ).find( "carry" ) != std::string::npos );
+        // A backpack: room for the wood.
         guy.wear_item( item( itype_backpack ), false );
         CHECK( npc_autonomy::warm_blocker( guy ).empty() );
         // Warm: nothing to say.
@@ -748,6 +850,40 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         override_option autonomy( "NPC_AUTONOMY", "true" );
         here.add_field( hearth, field_fd_fire, 1 );
         CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+}
+
+// The game's own warming goal used to win once an NPC was Very cold (it scores by how cold
+// they are, ours a flat 0.45), so a Very cold NPC lit no fires and kept none going.
+TEST_CASE( "npc_autonomy_get_warm_wins_when_very_cold", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    const tripoint_bub_ms hearth( guy.pos_bub() + point( 1, 0 ) );
+    here.furn_set( hearth, furn_f_fireplace );
+    here.add_field( hearth, field_fd_fire, 1 );
+    guy.set_all_parts_temp_conv( BODYTEMP_VERY_COLD - 1_C_delta ); // Warmth about 77
+    behavior::character_oracle_t oracle( &guy );
+    behavior::tree priorities;
+    priorities.add( &behavior_node_t_npc_priorities.obj() );
+    REQUIRE( oracle.needs_temperature_regulation( "" ) == behavior::status_t::running );
+
+    SECTION( "autonomy on: ours, as urgent as the game's own" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        const auto [goal, score] = priorities.tick_full( &oracle );
+        CHECK( goal == "autonomy_get_warm" );
+        CHECK( score >= oracle.temperature_urgency( "" ) );
+    }
+    SECTION( "autonomy off: the game's own" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK( priorities.tick( &oracle ) != "autonomy_get_warm" );
     }
 }
 

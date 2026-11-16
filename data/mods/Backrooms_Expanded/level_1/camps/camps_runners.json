@@ -14,6 +14,7 @@
     "death_eocs": [
       {
         "id": "EOC_BR1_RUNNER_DIED_JONAH",
+        "eoc_type": "NPC_DEATH",
         "effect": [ { "math": [ "br1_runner_dead_1 = 1" ] }, { "run_eocs": "EOC_BR1_RUNNER_DIED" } ]
       }
     ]
@@ -33,6 +34,7 @@
     "death_eocs": [
       {
         "id": "EOC_BR1_RUNNER_DIED_ROSA",
+        "eoc_type": "NPC_DEATH",
         "effect": [ { "math": [ "br1_runner_dead_2 = 1" ] }, { "run_eocs": "EOC_BR1_RUNNER_DIED" } ]
       }
     ]
