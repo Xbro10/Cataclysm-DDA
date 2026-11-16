@@ -278,3 +278,38 @@ TEST_CASE( "level0_generates_cleanly", "[.][backrooms_runner]" )
     }
     CHECK( errors.empty() );
 }
+
+// Level 1's Exchange builds with three traders and a guard, a locked storeroom, and traders who stock up.
+TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
+{
+    const nested_mapgen_id exchange( "br1_exchange_core" );
+    if( !exchange.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    map &here = get_map();
+    const tripoint_abs_omt omt = get_avatar().pos_abs_omt();
+    manual_mapgen( omt, manual_nested_mapgen, exchange );
+    const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
+    CHECK( here.ter( corner + point( 19, 4 ) ) == ter_str_id( "t_door_metal_locked" ) );
+    CHECK( here.ter( corner + point( 10, 10 ) ) == ter_str_id( "t_chaingate_c" ) );
+    int traders = 0;
+    int guards = 0;
+    for( npc &guy : g->all_npcs() ) {
+        if( guy.get_fac_id() != faction_id( "br1_exchange" ) ) {
+            continue;
+        }
+        if( guy.mission == NPC_MISSION_SHOPKEEP ) {
+            traders++;
+            guy.shop_restock();
+            CAPTURE( guy.myclass.str() );
+            CHECK( guy.inv_dump().size() > 5 );
+        } else {
+            guards++;
+        }
+    }
+    CHECK( traders == 3 );
+    CHECK( guards == 1 );
+}

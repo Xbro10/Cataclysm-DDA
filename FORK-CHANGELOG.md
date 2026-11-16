@@ -19,6 +19,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 16, 2026
 
 ### Backrooms
+- [BE] **The Exchange:** a fenced market on Level 1 with three traders (supplies, gear, oddities), a guard and
+  a locked storeroom. Stock refreshes every few days, and almond water is the best thing to pay with.
 - [BE] **Level 0 room variety:** archway rooms (rings of arches over deep, slow carpet), blackout zones (unlit rooms
   with ankle-deep pools, where Smilers wait) and pillar halls (whole squares of open floor and pillars).
 - [BE] **The Manila Room:** a rare, small, dry room on Level 0 with manila walls. It always has food in the cupboard
