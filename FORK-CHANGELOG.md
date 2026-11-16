@@ -52,6 +52,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   shows what they're really doing.
 - [SM] Followers only chalk **LOOTED** after you've taken something from the square (0.5 kg or more).
 
+### Bug fixes
+- [BE] **Level 2 tunnels** no longer show a mapgen error when a ceiling light lands on a junk pile.
+
 ---
 
 ## November 15, 2026

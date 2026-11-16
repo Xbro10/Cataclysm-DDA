@@ -20,6 +20,8 @@
 #include "map.h"
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
+#include "debug.h"
+#include "mapbuffer.h"
 #include "mapdata.h"
 #include "mapgen_helpers.h"
 #include "npc_class.h"
@@ -224,4 +226,29 @@ TEST_CASE( "manila_room_has_food_and_water", "[.][backrooms_runner]" )
         CHECK( food );
         CHECK( water );
     }
+}
+
+// Level 2 tunnels generate without mapgen errors (a light used to land on a junk pile's items).
+// Any debug message fails the test.
+TEST_CASE( "level2_tunnels_generate_cleanly", "[.][backrooms_runner]" )
+{
+    const oter_str_id tunnels( "br2_tunnels" );
+    if( !tunnels.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    const tripoint_abs_omt pos( 50, 50, 0 );
+    std::string errors;
+    for( int i = 0; i < 400; ++i ) {
+        overmap_buffer.ter_set( pos, tunnels.id() );
+        MAPBUFFER.clear_outside_reality_bubble();
+        errors += capture_debugmsg_during( [&pos]() {
+            smallmap tm;
+            tm.generate( pos, calendar::turn, false, true );
+            tm.delete_unmerged_submaps();
+        } );
+    }
+    CHECK( errors.empty() );
 }
