@@ -39,3 +39,4 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - The "chalks a big X" message now appears when a follower marks a place LOOTED (scripted NPC messages were being dropped).
 
 ### Removed
+- The daily map tip from "Seen anything around here?" (a nearby shop, squatter camp or rippling-wall room marked on your map) is switched off for now: it found the nearest place at any distance, even for an NPC who had just appeared. It comes back once NPCs remember places they've really been. The rest of the gossip (danger, water, LOOTED marks) is unchanged.
