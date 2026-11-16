@@ -184,3 +184,44 @@ TEST_CASE( "breakroom_larder_restock", "[.][backrooms_runner]" )
         }
     }
 }
+
+// Level 0's Manila Room always has food in the cupboard and almond water on the table.
+TEST_CASE( "manila_room_has_food_and_water", "[.][backrooms_runner]" )
+{
+    const nested_mapgen_id manila( "br0_manila_room" );
+    if( !manila.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    const furn_str_id cupboard( "f_cupboard" );
+    const furn_str_id table( "f_table" );
+    const itype_id almond_water( "almond_water" );
+    map &here = get_map();
+    for( int i = 0; i < 4; ++i ) {
+        clear_map_without_vision();
+        clear_avatar();
+        const tripoint_abs_omt omt = get_avatar().pos_abs_omt();
+        manual_mapgen( omt, manual_nested_mapgen, manila );
+        const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
+        bool food = false;
+        bool water = false;
+        for( int x = 0; x < 6; ++x ) {
+            for( int y = 0; y < 6; ++y ) {
+                const tripoint_bub_ms p = corner + point( x, y );
+                if( here.furn( p ) == cupboard ) {
+                    for( const item &it : here.i_at( p ) ) {
+                        food = food || it.is_food() || it.is_food_container();
+                    }
+                }
+                if( here.furn( p ) == table ) {
+                    for( const item &it : here.i_at( p ) ) {
+                        water = water || it.typeId() == almond_water ||
+                                ( !it.empty() && it.only_item().typeId() == almond_water );
+                    }
+                }
+            }
+        }
+        CHECK( food );
+        CHECK( water );
+    }
+}

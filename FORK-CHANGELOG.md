@@ -19,6 +19,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 16, 2026
 
 ### Backrooms
+- [BE] **The Manila Room:** a rare, small, dry room on Level 0 with manila walls. It always has food in the cupboard
+  and almond water on the table, plus a few random finds.
 - [BE] **Breakroom larder:** the Breakroom keeps its own food on the kitchen counters and water in the fridge, enough
   for a few days. With NPC autonomy on, its people eat from it; taking from it yourself is stealing. Each runner who
   gets home brings a fresh batch. Its crates and lockers are stocked far more often too.
