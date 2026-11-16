@@ -19,6 +19,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 16, 2026
 
 ### Backrooms
+- [BE] **Level 0 room variety:** archway rooms (rings of arches over deep, slow carpet), blackout zones (unlit rooms
+  with ankle-deep pools, where Smilers wait) and pillar halls (whole squares of open floor and pillars).
 - [BE] **The Manila Room:** a rare, small, dry room on Level 0 with manila walls. It always has food in the cupboard
   and almond water on the table, plus a few random finds.
 - [BE] **Breakroom larder:** the Breakroom keeps its own food on the kitchen counters and water in the fridge, enough
@@ -57,6 +59,7 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ### Bug fixes
 - [BE] **Level 2 tunnels** no longer show a mapgen error when a ceiling light lands on a junk pile.
+- [BE] **Breakroom runners' deaths** are recorded again (the game refused to run their death script).
 
 ---
 

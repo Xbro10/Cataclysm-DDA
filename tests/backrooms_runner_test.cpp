@@ -252,3 +252,29 @@ TEST_CASE( "level2_tunnels_generate_cleanly", "[.][backrooms_runner]" )
     }
     CHECK( errors.empty() );
 }
+
+// Level 0 squares (with the Manila Room, archway rooms, blackout zones and pillar halls mixed in)
+// generate without mapgen errors. Any debug message fails the test.
+TEST_CASE( "level0_generates_cleanly", "[.][backrooms_runner]" )
+{
+    const oter_str_id lobby( "backfloorchamber" );
+    const ter_str_id deep( "t_br0_carpet_deep" );
+    if( !lobby.is_valid() || !deep.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    const tripoint_abs_omt pos( 50, 50, 0 );
+    std::string errors;
+    for( int i = 0; i < 400; ++i ) {
+        overmap_buffer.ter_set( pos, lobby.id() );
+        MAPBUFFER.clear_outside_reality_bubble();
+        errors += capture_debugmsg_during( [&pos]() {
+            smallmap tm;
+            tm.generate( pos, calendar::turn, false, true );
+            tm.delete_unmerged_submaps();
+        } );
+    }
+    CHECK( errors.empty() );
+}
