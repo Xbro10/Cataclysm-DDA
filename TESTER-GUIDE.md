@@ -11,18 +11,21 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
   (Class 3) has twice the monsters, almost no food and bursting steam pipes. A hard start, **Pipe Rat**, alone on
   Level 2. Exits and the Breakroom aren't marked or explained: find them yourself, or listen to the people down there.
   The **Breakroom** is bigger and comes in one of two layouts (a lit, fenced **Checkpoint** or a sandbagged
-  **Bunker**), with a door guard and a **runner board** that shows when Jonah and Rosa leave each day.
-  New this time: the Breakroom has its own **larder** (food on the kitchen counters, water in the fridge) that its
-  people eat from and that each returning runner restocks; taking from it is stealing. Its lockers no longer crowd
-  the doorways, and its crates and lockers are stocked far more often.
+  **Bunker**), with a door guard, a **runner board** and its own larder.
+  New this time: on **Level 0**, the rare **Manila Room** (a small dry room that always has food and almond water),
+  **archway rooms** over deep carpet, **blackout zones** (unlit, with ankle-deep pools; Smilers like them) and whole
+  **pillar halls**. On **Level 1**, **the Exchange** (a fenced market with three traders and a guard; almond water
+  is the best currency) and **the All-Nite diner** (a cook selling hot meals, a server full of gossip, regulars in
+  the booths). Fixed: a mapgen error when starting as Pipe Rat, and a dead Breakroom runner's death not counting.
 - **Survivor Minds** (mod): NPCs with inner lives: journals, chalk wall marks, routines, reactions to what you do,
   gossip and danger warnings, and **Gabriel**, a unique recruitable NPC. Gossip no longer marks places on your map,
   and you can tell a follower to stop marking places as looted ("Got a minute?").
 - **NPC autonomy** (built into the game, off by default): NPCs with needs who eat at mealtimes, seek company and go
-  and get water or food when they're very thirsty or hungry (up to 20 tiles, in cupboards and fridges too). New this
-  time: **cold NPCs get warm**: they put on warmer clothes, sit by a burning fireplace or stove, or gather firewood
-  and light a fire in a hearth (never anywhere else), and keep it going. NPCs also never walk into a harmful trap
-  they can see. The follower rule **leave food and water to me** turns their own trips off.
+  and get water or food when they're very thirsty or hungry (up to 20 tiles, in cupboards and fridges too). Cold NPCs
+  get warm: warmer clothes, a burning fireplace or stove, or firewood gathered (carried by hand if it won't fit the
+  pack) for a hearth fire sized to the day's cold, kept going. They never walk into a harmful trap they can see. The
+  follower rule **leave food and water to me** turns their own trips off.
+- **The base game** is updated to the latest CDDA experimental (bone setting and wound fixes, crafting faults, and more).
 - **Fixes in the game itself**: followers no longer get left behind when you change levels; saving while you or an
   NPC is eating or using an item in a bag no longer loses the item on load; NPCs with Mind Over Matter powers fight
   instead of casting a harmless spell.
