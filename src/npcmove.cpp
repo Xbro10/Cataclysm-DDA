@@ -5741,7 +5741,9 @@ bool npc::intake_useful( const need_goal_id id ) const
             // adjusted thirst already subtracts water waiting in the stomach
             return get_thirst() > npc_thirst_act_level;
         case need_goal_id::eat_food:
-            return get_hunger() > NPC_HUNGER_CONSUME || calories_short( *this );
+            // Xbro10 fork: with NPC autonomy on, Very hungry is worth eating too (step 3.4b).
+            return get_hunger() > NPC_HUNGER_CONSUME || calories_short( *this ) ||
+                   npc_autonomy::hungry_enough_for_a_trip( *this );
         case need_goal_id::regulate_temperature:
         case need_goal_id::go_to_sleep:
             break;
@@ -6691,11 +6693,15 @@ std::vector<npc::scored_item> npc::find_nearby_food( consume_filter filter )
         return w > 0.0f && will_eat( it ).success();
     };
 
-    // Xbro10 fork: with NPC autonomy on, drinks are looked for as far as water terrain is
-    // (step 3.4), inside containers on the ground (a bottle of water) and in keg furniture,
-    // whose sealed contents aren't "seen" (a water cooler).
+    // Xbro10 fork: with NPC autonomy on, drinks and food are looked for up to 20 tiles away
+    // (step 3.4), inside containers on the ground (a bottle of water, a bag of chips) and in
+    // furniture whose closed contents aren't "seen": kegs for drinks (a water cooler),
+    // cupboards, fridges and other storage furniture for food.
     const bool autonomy_drinks = npc_autonomy::enabled() && filter == consume_filter::drink_only;
-    const int search_radius = autonomy_drinks ? npc_autonomy::water_search_radius() : 6;
+    const bool autonomy_food = npc_autonomy::enabled() && filter == consume_filter::food_only;
+    const bool autonomy_search = autonomy_drinks || autonomy_food;
+    const int search_radius = autonomy_drinks ? npc_autonomy::water_search_radius() :
+                              autonomy_food ? npc_autonomy::food_search_radius() : 6;
     for( const tripoint_bub_ms &p : closest_points_first( pos_bub(), search_radius ) ) {
         // Xbro10 fork: skip tiles with nothing on them before the costly checks below
         // (line of sight and zones for every tile in reach).
@@ -6714,12 +6720,13 @@ std::vector<npc::scored_item> npc::find_nearby_food( consume_filter filter )
         }
         // Ground items (need sees_some_items for visibility gate).
         const bool keg = autonomy_drinks && here.has_flag_furn( ter_furn_flag::TFLAG_LIQUIDCONT, p );
-        if( keg || here.sees_some_items( p, *this ) ) {
+        const bool storage = autonomy_food && here.has_flag_furn( ter_furn_flag::TFLAG_CONTAINER, p );
+        if( keg || storage || here.sees_some_items( p, *this ) ) {
             for( item &it : here.i_at( p ) ) {
                 item_location loc( map_cursor( p ), &it );
                 if( score_item( loc ) ) {
                     results.push_back( { loc, rate_food( *this, it, want_hunger, want_quench ) } );
-                } else if( autonomy_drinks ) {
+                } else if( autonomy_search ) {
                     for( item *inner : it.all_items_top( pocket_type::CONTAINER ) ) {
                         item_location inner_loc( loc, inner );
                         if( score_item( inner_loc ) ) {

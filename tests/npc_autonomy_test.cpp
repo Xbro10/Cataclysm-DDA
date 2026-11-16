@@ -40,6 +40,7 @@ static const effect_on_condition_id effect_on_condition_EOC_AUTONOMY_DEBUG_LONEL
 static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY( "EOC_AUTONOMY_DEBUG_NOT_LONELY" );
 
+static const furn_str_id furn_f_cupboard( "f_cupboard" );
 static const furn_str_id furn_f_water_heater( "f_water_heater" );
 
 static const ter_str_id ter_t_water_sh( "t_water_sh" );
@@ -455,6 +456,78 @@ TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )
     }
     // Nothing to find isn't a target that failed: no giving up, no message.
     CHECK( guy.maybe_get_value( "autonomy_water_gave_up_until" ) == nullptr );
+}
+
+TEST_CASE( "npc_autonomy_get_food", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    // Past the game's own 6-tile search, inside ours.
+    const tripoint_bub_ms spot( player_pos + point( 12, 0 ), 0 );
+    guy.stomach.empty();
+    guy.add_effect( effect_hunger_very_hungry, 1_days ); // Food 50
+    const auto eaten = [&guy, &here]() {
+        const tripoint_bub_ms where( get_avatar().pos_bub().xy() + point( 12, 0 ), 0 );
+        // A 10-tile walk, then a meal, which takes real time (an activity).
+        for( int turn = 0; turn < 600 && !here.i_at( where ).empty(); ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            if( guy.activity ) {
+                guy.activity.do_turn( guy );
+            } else {
+                npc_autonomy::run_goal( guy, "autonomy_get_food" );
+            }
+        }
+        CAPTURE( rl_dist( guy.pos_bub(), where ) );
+        return here.i_at( where ).empty();
+    };
+
+    SECTION( "option off: never, and the search stays at 6 tiles" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        here.add_item_or_charges( spot, item( itype_sandwich_cheese_grilled ) );
+        CHECK( npc_autonomy::food_search_radius() == 6 );
+        CHECK_FALSE( npc_autonomy::wants_food( guy ) );
+    }
+    SECTION( "only Hungry: no trip" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        here.add_item_or_charges( spot, item( itype_sandwich_cheese_grilled ) );
+        guy.remove_effect( effect_hunger_very_hungry );
+        guy.add_effect( effect_hunger_hungry, 1_days ); // Food 25
+        CHECK_FALSE( npc_autonomy::wants_food( guy ) );
+    }
+    SECTION( "following a player on the move: the game's leash keeps them from far food" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        here.add_item_or_charges( spot, item( itype_sandwich_cheese_grilled ) );
+        CHECK_FALSE( npc_autonomy::wants_food( guy ) );
+    }
+    SECTION( "on their own: walks to food 10 tiles off and eats it" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        here.add_item_or_charges( spot, item( itype_sandwich_cheese_grilled ) );
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_no_faction );
+        REQUIRE( npc_autonomy::wants_food( guy ) );
+        CHECK( eaten() );
+        CHECK( rl_dist( guy.pos_bub(), spot ) <= 1 );
+    }
+    SECTION( "on their own: finds food in a cupboard" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        here.furn_set( spot, furn_f_cupboard );
+        here.add_item_or_charges( spot, item( itype_sandwich_cheese_grilled ) );
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_no_faction );
+        REQUIRE( npc_autonomy::wants_food( guy ) );
+        CHECK( eaten() );
+    }
+    SECTION( "the 'leave food and water to me' rule stops it" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        here.add_item_or_charges( spot, item( itype_sandwich_cheese_grilled ) );
+        guy.rules.set_flag( ally_rule::no_self_care );
+        CHECK_FALSE( npc_autonomy::wants_food( guy ) );
+    }
 }
 
 TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )

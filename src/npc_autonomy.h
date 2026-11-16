@@ -78,7 +78,7 @@ enum class goal_result {
 };
 goal_result run_goal( npc &guy, const std::string &goal );
 
-// ---- Getting things (step 3.4): behavior-tree goal "autonomy_get_water" ----
+// ---- Getting things (step 3.4): behavior-tree goals "autonomy_get_water", "autonomy_get_food" ----
 // Drives the game's own drink-water planner (npc::execute_drink_water: pick a target,
 // walk, drink, cross off failed targets) from Water 50 instead of Parched, over a
 // longer range, then refills a bottle at clean water. 3 failed targets in a row and
@@ -90,6 +90,17 @@ constexpr int thirst_worth_a_trip = 80;
 bool wants_water( const npc &guy );
 /** How far NPCs look for water terrain: 6 tiles (upstream) or, with autonomy on, 20. */
 int water_search_radius();
+
+// Step 3.4b, goal "autonomy_get_food": the same for food, driving npc::execute_eat_food from
+// Food 50 (Very hungry) instead of starving: eat from the pack, else walk up to 20 tiles to
+// food the NPC can see (cupboards and containers too, nothing owned) and eat it there.
+
+/** Food 50+, safe, awake, not given up, and food in the pack or in reach. */
+bool wants_food( const npc &guy );
+/** Food need 50+ with autonomy on: the game's "is eating worth it" check also says yes. */
+bool hungry_enough_for_a_trip( const npc &guy );
+/** How far NPCs look for food: 6 tiles (upstream) or, with autonomy on, 20. */
+int food_search_radius();
 /** Fill one empty watertight container in the NPC's pack with `liquid`. True if one was filled. */
 bool refill_bottle( npc &guy, const itype_id &liquid );
 /** "Plan: ..." line for the look-around panel, or "" when there's no plan. */

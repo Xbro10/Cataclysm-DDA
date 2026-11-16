@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-16, NPC brain: [C++] **Step 3.4b, getting food:** very hungry NPCs (Food 50+) eat from their pack, or walk to food they can see up to 20 tiles away (in containers, cupboards and fridges too, never anything owned) and eat it there. They say "goes to get food", the look-around panel shows the plan, and after 3 failed tries they give up for an hour.
 - 2026-11-15, Levels: [BE] The **Breakroom** is bigger, in one of two layouts (Checkpoint: lit fenced yard; Bunker: airlock and sandbag line), with a door guard and a **runner board** showing when Jonah and Rosa leave each day.
 - 2026-11-15, Bug fixes: [BE] **Breakroom runners** never left on a run (their destination roll never matched, and their travel target pointed at their own spot); the "Find the runner" job marked the wrong place.
 - 2026-11-15, NPC behaviour: [C++] New follower rule (Follower rules screen): **leave food and water to me** stops a follower's own water trips and mealtimes; off by default. [SM] "Got a minute?" can turn a follower's automatic LOOTED marks off and on.
