@@ -3,7 +3,22 @@
 This is Xbro10's fork of Cataclysm: Dark Days Ahead (CDDA). The project plan is the
 playbook PDF at
 `C:\Users\xande\Documents\CDDA documents for modding\CDDA Backrooms + Autonomous NPCs — Claude Code Playbook.pdf`
-(Phases 0–4 plus testing/publishing prompts). Map every request to a playbook prompt.
+(Phases 0–7 plus testing/publishing prompts; the 2026-11-16 version, the older one is kept beside it
+as "(old, 2026-11-12)"). Map every request to a playbook prompt.
+
+## Playbook progress
+
+As of 2026-11-16. Update this each time a prompt is finished.
+- Phases 0, 1 and 2: finished (Prompts 0.1 to 2.6). Don't redo, re-plan or re-verify them.
+- Phase 3: 3.1, 3.2, 3.3 finished. **3.4 in progress**: 3.4a (get water) done; next 3.4b (get food),
+  then 3.4d (get warm). The planned "stocking up" step is Prompt 7.0 (stock count) in the new playbook.
+- Fixes already made ahead of Phase 5: part of 5.3 (a follower drops a meal when left behind, guards eat
+  on their post, water trips use upstream's follow and guard reach). Still open in 5.3: chats.
+- Next after 3.4: Phase 5 in order (5.1 first), then Phase 6 (6.0 first), then 3.6, then Phase 7.
+  Skip 3.5 and 4.1 (covered by 5.6), 4.5 (5.8 step B), 3.7 and 4.7 (Phase 7). 6.6 starts 4.6 (scouts).
+- The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
+- Phase 6 rule: stance, anchor, leash, wants and trips are saved NPC variables, not new enum entries.
+  The follower rule `ally_rule::no_self_care` (added 2026-11-15) predates this rule.
 
 **If you're not Xbro10** (a tester or contributor), read `FORK-CONTRIBUTING.md` first: the paths,
 playbook and launcher below are on Xbro10's PC. `FORK-CHANGELOG.md` lists everything made so far;
