@@ -38,7 +38,7 @@ Cataclysm: Dark Days Ahead plus three pieces of our own:
 3. **Check it loads** (see below).
 4. **Write the changelog lines:**
    - one in that mod's `CHANGELOG.md`, under `## Unreleased` (Added / Changed / Fixed / Removed)
-   - one short line at the top of "New entries" in `FORK-CHANGELOG.md`, with the date, category and tag ([BE], [SM] or [C++]).
+   - one short line in `FORK-CHANGELOG.md` under today's date, in the right section, with the tag ([BE], [SM], [C++] or [Launcher]); see "How to add an entry" at the end of that file.
 5. **Open a pull request** into `dev` (or `npc-autonomy` for C++). Say what it does and give a short in-game test checklist.
 6. Xbro10 reviews and merges. Changes reach `testing` when Xbro10 updates it.
 

@@ -22,7 +22,8 @@ As of 2026-11-16. Update this each time a prompt is finished.
 
 **If you're not Xbro10** (a tester or contributor), read `FORK-CONTRIBUTING.md` first: the paths,
 playbook and launcher below are on Xbro10's PC. `FORK-CHANGELOG.md` lists everything made so far;
-every change adds a line at the top of its "New entries" as well as to its mod's `CHANGELOG.md`.
+every change adds a line under today's date there, in the right section (Backrooms, NPCs, Launcher, Bug fixes,
+For developers; see "How to add an entry" at its end), as well as to its mod's `CHANGELOG.md`.
 
 ## The project's parts
 

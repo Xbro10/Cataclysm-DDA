@@ -1,139 +1,236 @@
 # Fork changelog
 
-Everything this fork adds to Cataclysm: Dark Days Ahead, sorted by kind.
-Tags: **[BE]** Backrooms Expanded mod, **[SM]** Survivor Minds mod, **[C++]** a change to the game itself, **[Launcher]** the launcher in `tools/launcher/`.
-The full detail for each mod is in its own `CHANGELOG.md` (`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
-Backrooms Expanded builds on TGWeaver's Backrooms mod.
+Everything Xbro10's fork adds to Cataclysm: Dark Days Ahead, newest first. Backrooms Expanded builds on
+TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
+(`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
 
-**Adding entries:** put each new change at the top of "New entries" with the date and the right category and tag,
-and add the detailed line to that mod's `CHANGELOG.md` too.
+| Tag | Part of the fork |
+|---|---|
+| **[BE]** | Backrooms Expanded mod: levels, places, monsters, items, jobs |
+| **[SM]** | Survivor Minds mod: NPC journals, wall marks, routines, gossip |
+| **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
+| **[Launcher]** | The launcher in `tools/launcher/` |
 
----
-
-## New entries
-
-*(newest first)*
-
-- 2026-11-16, NPC brain: [C++] A follower you walk away from now follows first and eats once close again, even when hungry or underweight (before, a starving follower stood eating while you left; only Food or Water 100 still eats on the spot). A hostile within 3 tiles now counts toward Safety (a lone zombie next to them read as Safety 2). Food and water plans they've moved on from are dropped, so the look-around panel no longer shows a trip they aren't making. [SM] Followers only chalk LOOTED after you took things from the square (0.5 kg or more).
-- 2026-11-16, NPC brain: [C++] **Step 3.4b, getting food:** very hungry NPCs (Food 50+) eat from their pack, or walk to food they can see up to 20 tiles away (in containers, cupboards and fridges too, never anything owned) and eat it there. They say "goes to get food", the look-around panel shows the plan, and after 3 failed tries they give up for an hour.
-- 2026-11-15, Levels: [BE] The **Breakroom** is bigger, in one of two layouts (Checkpoint: lit fenced yard; Bunker: airlock and sandbag line), with a door guard and a **runner board** showing when Jonah and Rosa leave each day.
-- 2026-11-15, Bug fixes: [BE] **Breakroom runners** never left on a run (their destination roll never matched, and their travel target pointed at their own spot); the "Find the runner" job marked the wrong place.
-- 2026-11-15, NPC behaviour: [C++] New follower rule (Follower rules screen): **leave food and water to me** stops a follower's own water trips and mealtimes; off by default. [SM] "Got a minute?" can turn a follower's automatic LOOTED marks off and on.
-- 2026-11-15, NPC brain: [C++] **NPC turns are faster:** the searches for water and food check the tile itself before line of sight (the water search was most of a thirsty NPC's turn: about 3 ms down to 0.06 ms; the game's own food search gets about 15 times faster too). A follower stops eating and follows once you walk past their follow distance, and a guard on their post eats at mealtimes from their pack.
-- 2026-11-15, Levels: [BE] **Level 0 runs faster:** its ceiling lights are dimmer (40 instead of 120), still brightly lit everywhere, and lighting takes about 40% less time. A thirsty NPC's water search also runs at most every 5 turns. Benchmark: `tests/backrooms_perf_test.cpp`.
-- 2026-11-15, NPC behaviour: [SM] Gossip no longer marks a place on your map (it knew far-off places even for brand-new NPCs); it returns with NPC memory (step 3.5).
-- 2026-11-15, Game options and fixes: [C++] NPCs no longer rate a harmless spell field as an attack, so NPCs with Mind Over Matter powers fight with their weapon instead of casting Clairvoyance over and over.
-- 2026-11-15, Developer tools: [C++] `EOC_AUTONOMY_DEBUG_LONELY` / `EOC_AUTONOMY_DEBUG_NOT_LONELY` set Social to 100 / 0 for NPCs within 30 tiles, to test chatting.
-- 2026-11-15, NPC brain: [C++] **Getting water** now finds drinks in a bottle or other container on the floor and in water coolers, water heaters and tanks (up to 20 tiles), and "gives up looking for water" only counts water that turned out unreachable.
-- 2026-11-15, Game options and fixes: [C++] **Followers no longer get left behind when changing levels or dimensions**: a follower busy with a chore (eating, picking something up) now drops it and comes along, and one still filed under a neighbouring overmap is found.
-- 2026-11-15, Levels: [BE] **Level 0 lights** sit in neat rows every 4 tiles (a few dead) instead of being scattered at random.
-- 2026-11-15, Levels: [BE] The **Breakroom** is no longer marked on your map when you reach Level 1; you find it by exploring.
-- 2026-11-15, Levels: [BE] **Survival Difficulty Classes**: each level has a class from the Backrooms Wiki (Level 0 and 1 Class 1, Level 2 Class 3), shown in every scenario description, on a card when you first arrive and in a new field guide. The class means something: Level 2 has about twice the monsters, much less food and bursting steam pipes; Level 0 gets a few rare Backrooms entities.
-- 2026-11-15, Scenarios: [BE] **Pipe Rat**: a hard start alone on Level 2 with almost nothing.
-- 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher.exe** replaces `Start CDDA Launcher.bat`: a small .exe with the launcher icon as its file icon that opens the launcher with no console window. Desktop shortcuts now point at it, and launcher updates add it to older folders.
-- 2026-11-15, Developer tools: [Launcher] **New look:** a sidebar with the new infinity-hexagon icon, Game / Mods / Saves & backups / Settings pages, and **Black**, **Dark blue** and **Light** themes. The new **Settings** page holds the theme, download type, close-on-play, start-up update checks, mod folder and desktop shortcut. The icon is used for the window, taskbar and shortcut, and self-update now brings icon files along.
-- 2026-11-15, Developer tools: [Launcher] **CDDA Fork Launcher** is now in the fork (`tools/launcher/`). It installs and updates **Xbro10 tester builds** (the `testing-build-*` releases) by default, says when a new one is out, and updates itself from the `testing` branch. Official CDDA experimental builds are still one click away.
-- 2026-11-14, NPC brain: [C++] **Step 3.4a, getting water:** very thirsty NPCs (Water 50+) walk to water they can see up to 20 tiles away, drink, and fill an empty bottle at clean water. They say "goes to get water", the look-around panel shows the plan, and after 3 failed tries they give up for an hour.
-- 2026-11-14, NPCs and factions: [SM] **Gabriel is never Timid:** his personality is fixed instead of rolled (Freedom fighter, Brave and Hero), to fit "I don't run".
-- 2026-11-14, NPC behaviour: [SM] The follower menu has one **"Got a minute?"** entry for all Survivor Minds options (journal, gossip, marks, food, feelings, Gabriel's chat) instead of six.
-- 2026-11-14, Game options and fixes: [C++] Saving in the middle of eating (or any action on an item in a bag) no longer loses the item on load: NPCs are found while they load, and items in pockets keep their identity across a save (no more "item_location" error pop-ups).
-- 2026-11-14, NPC brain: [C++] The **Food** need now only counts body weight once an NPC is underweight, so it drops as soon as they eat (a normal-weight NPC read about 46 and never went down).
-- 2026-11-14, NPCs and factions: [SM] **Gabriel's look:** light skin, long blond hair, green eyes, a cyan hoodie and a blue wool scarf (its own sprite in UltiCa and UndeadPeople).
-- 2026-11-14, Developer tools: [SM] **Watch Gabriel:** `EOC_SM_DEBUG_WATCH_GABRIEL` spawns an unrecruited Gabriel nearby and hides you completely (invisible, silent, no scent, no damage, sees through walls) so you can watch him on his own; `EOC_SM_DEBUG_WATCH_STOP` ends it.
-- 2026-11-14, NPCs and factions: [SM] **Gabriel**, a unique recruitable NPC (class Brawler): a veteran fighter with a morningstar and a hatchet, short on words, hates teamers, never snitches. Ask "Want to team up?" and tell him you trust him. Debug spawn `EOC_SM_DEBUG_SPAWN_GABRIEL` (his real spawn point comes later).
-- 2026-11-14, NPCs: [BE] **Breakroom runners**: two named runners really travel Level 1 on errands for Dot, bring back extra for the supply locker, and sometimes go missing, which opens a "Find the runner" job.
-- 2026-11-14, Levels: [BE] **Level 1 lights**: lane lights flicker and slowly fail for good, and lobbies sometimes black out for up to an hour (a Smiler may come).
-- 2026-11-14, Monsters: [BE] **Faceling, Skin-stealer and Partygoer**: a harmless blank-faced wanderer, a skin-wearing mimic that calls for help, and a very rare, very fast grinning partygoer, each with its own sprite.
-- 2026-11-14, Monsters: [BE] **The Redeemer** (boss, not placed yet; debug spawn `mon_br_redeemer`): a car-sized three-headed beast with power poles on its back, shock storms and an electric bite, with its own large 128x96 sprite.
-- 2026-11-14, Missions and jobs: [BE] **Breakroom standing.** 3 jobs earn Dot's supply key (a weekly ration locker in the Breakroom); 6 jobs earn Marcus's hand-drawn map and extra almond water. Ask Dot "Where do I stand with you lot?". Job rewards now fit each job.
-- 2026-11-14, Structures and places: [BE] The Level 1 **security office** has a gun safe (about 2 in 5 hold a sidearm and a little ammo).
-- 2026-11-14, Items and resources: [BE] **Oil-stained notes:** activate one on Level 1 to mark a generator room 3-8 squares away on your map.
-- 2026-11-14, Items and resources: [BE] **Loot is a themed handful:** every crate, locker, heap and shelf holds 3-6 items of one kind instead of whole stores.
+**Jump to:** [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
+[Nov 12–14, the first version](#november-1214-2026-the-first-version) · [How to add an entry](#how-to-add-an-entry)
 
 ---
 
-## Everything so far (Nov 12–14, 2026)
+## November 16, 2026
 
-### Levels and dimensions
-- [BE] **Level 1, the Parking Deck:** an endless concrete parking garage. Pillars, bay lines, ceiling lights that may be dead.
+### NPCs
+- [C++] **Getting food (step 3.4b):** very hungry NPCs (Food 50+) eat from their pack, or walk to food they can
+  see up to 20 tiles away (in containers, cupboards and fridges too, never anything owned) and eat it there.
+  They say "goes to get food", and after 3 failed tries they give up for an hour.
+- [C++] **Followers keep up:** a follower you walk away from follows first and eats once close again, even when
+  hungry or underweight. Only Food or Water 100 still makes them eat on the spot.
+- [C++] **Safety notices close danger:** a hostile within 3 tiles now raises Safety (a lone zombie right next to
+  them used to read as Safety 2).
+- [C++] **No stale plans:** food and water trips they've given up on are dropped, so the look-around panel only
+  shows what they're really doing.
+- [SM] Followers only chalk **LOOTED** after you've taken something from the square (0.5 kg or more).
+
+---
+
+## November 15, 2026
+
+### Backrooms
+- [BE] **Survival Difficulty Classes** from the Backrooms Wiki: Level 0 and 1 are Class 1, Level 2 is Class 3.
+  You see the class in scenario descriptions, on a card when you first arrive and in a new field guide.
+- [BE] **The class means something:** Level 2 has about twice the monsters, much less food and bursting steam
+  pipes. Level 0 gets a few rare Backrooms entities.
+- [BE] **Pipe Rat**, a new scenario: a hard start alone on Level 2 with almost nothing.
+- [BE] **A bigger Breakroom** in one of two layouts (Checkpoint: a lit, fenced yard; Bunker: an airlock and a
+  sandbag line), with a door guard and a **runner board** showing when Jonah and Rosa leave each day.
+- [BE] The Breakroom is **no longer marked on your map** when you reach Level 1. You find it by exploring.
+- [BE] **Level 0 lights** sit in neat rows every 4 tiles (a few dead) instead of being scattered at random.
+- [BE] **Level 0 runs faster:** its ceiling lights are dimmer but it's still brightly lit everywhere, and lighting
+  takes about 40% less time.
+
+### NPCs
+- [C++] **Getting water finds more:** drinks in a bottle or other container on the floor, and water coolers,
+  heaters and tanks (up to 20 tiles). "Gives up looking for water" only counts water they couldn't reach.
+- [C++] **Faster NPC turns:** searching for water and food is far cheaper, which matters with many NPCs around.
+- [C++] **Followers don't stand eating while you leave:** past their follow distance they stop and follow.
+- [C++] **Guards eat on their post** at mealtimes, from their pack.
+- [C++] **New follower rule "leave food and water to me"** (Follower rules screen): no water trips or mealtimes
+  of their own. Off by default.
+- [SM] **"Got a minute?"** can turn a follower's automatic LOOTED marks off and on.
+- [SM] **Gossip no longer marks places on your map** (it knew far-off places even for brand-new NPCs). It comes
+  back with NPC memory.
+
+### Launcher
+- [Launcher] **The CDDA Fork Launcher is in the fork** (`tools/launcher/`). It installs and updates Xbro10 tester
+  builds, says when a new one is out, and updates itself. Official CDDA experimental builds are one click away.
+- [Launcher] **New look:** a sidebar with the infinity-hexagon icon, Game / Mods / Saves & backups / Settings
+  pages, and Black, Dark blue and Light themes.
+- [Launcher] **CDDA Fork Launcher.exe** replaces `Start CDDA Launcher.bat`: it carries the icon and opens the
+  launcher with no console window.
+
+### Bug fixes
+- [C++] **Followers no longer get left behind** when changing levels or dimensions: one busy with a chore (eating,
+  picking something up) drops it and comes along, and one filed under a neighbouring overmap is found.
+- [C++] **NPCs fight instead of casting harmless spells:** NPCs with Mind Over Matter powers used to cast
+  Clairvoyance over and over instead of using their weapon.
+- [BE] **Breakroom runners** never left on a run, and the "Find the runner" job marked the wrong place.
+
+### For developers
+- [C++] `EOC_AUTONOMY_DEBUG_LONELY` / `EOC_AUTONOMY_DEBUG_NOT_LONELY` set Social to 100 / 0 for NPCs within
+  30 tiles, to test chatting.
+- [C++] The water and food searches check the tile before line of sight: a thirsty NPC's water search went from
+  about 3 ms to 0.06 ms, and the game's own food search is about 15 times faster. The water search also runs at
+  most every 5 turns.
+- [BE] Level 0's ceiling lights are brightness 40 instead of 120. Benchmark: `tests/backrooms_perf_test.cpp`.
+
+---
+
+## November 14, 2026
+
+### Backrooms
+- [BE] **Level 1 lights:** lane lights flicker and slowly fail for good, and lobbies sometimes black out for up to
+  an hour (a Smiler may come).
+- [BE] **Breakroom runners:** two named runners travel Level 1 on errands for Dot, bring back extra for the
+  supply locker, and sometimes go missing, which opens a "Find the runner" job.
+- [BE] **Faceling, Skin-stealer and Partygoer:** a harmless blank-faced wanderer, a skin-wearing mimic that calls
+  for help, and a very rare, very fast grinning partygoer, each with its own sprite.
+- [BE] **The Redeemer** (a boss, not placed in the world yet): a car-sized three-headed beast with power poles on
+  its back, shock storms and an electric bite, with its own large sprite.
+- [BE] **Breakroom standing:** 3 jobs earn Dot's supply key (a weekly ration locker), 6 jobs earn Marcus's
+  hand-drawn map and extra almond water. Ask Dot "Where do I stand with you lot?". Job rewards now fit each job.
+- [BE] The Level 1 **security office** has a gun safe (about 2 in 5 hold a sidearm and a little ammo).
+- [BE] **Oil-stained notes:** activate one on Level 1 to mark a generator room 3–8 squares away on your map.
+- [BE] **Loot is a themed handful:** every crate, locker, heap and shelf holds 3–6 items of one kind instead of
+  whole stores.
+
+### NPCs
+- [SM] **Gabriel**, a unique recruitable NPC (class Brawler): a veteran fighter with a morningstar and a hatchet,
+  short on words, hates teamers, never snitches. Ask "Want to team up?" and tell him you trust him.
+- [SM] **Gabriel's look:** light skin, long blond hair, green eyes, a cyan hoodie and a blue wool scarf, with his
+  own sprite in UltiCa and UndeadPeople.
+- [SM] **Gabriel is never Timid:** his personality is fixed (Freedom fighter, Brave and Hero), to fit "I don't run".
+- [SM] The follower menu has **one "Got a minute?" entry** for all Survivor Minds options (journal, gossip, marks,
+  food, feelings, Gabriel's chat) instead of six.
+- [C++] **Getting water (step 3.4a):** very thirsty NPCs (Water 50+) walk to water they can see up to 20 tiles
+  away, drink, and fill an empty bottle at clean water. After 3 failed tries they give up for an hour.
+- [C++] The **Food** need only counts body weight once an NPC is underweight, so it drops as soon as they eat.
+
+### Bug fixes
+- [C++] **Saving mid-meal no longer loses the food:** saving while anyone is using an item in a bag kept it on
+  load, with no more "item_location" error pop-ups.
+
+### For developers
+- [SM] `EOC_SM_DEBUG_SPAWN_GABRIEL` spawns Gabriel (his real spawn point comes later).
+- [SM] `EOC_SM_DEBUG_WATCH_GABRIEL` spawns an unrecruited Gabriel and hides you completely (invisible, silent,
+  no scent, no damage, sees through walls) so you can watch him; `EOC_SM_DEBUG_WATCH_STOP` ends it.
+- [BE] Debug spawn for the Redeemer: `mon_br_redeemer` (its sprite is 128x96).
+
+---
+
+## November 12–14, 2026: the first version
+
+### Backrooms levels and travel
+- [BE] **Level 1, the Parking Deck:** an endless concrete parking garage, with pillars, bay lines and ceiling
+  lights that may be dead.
 - [BE] **Level 2, Pipe Dreams:** hot, narrow maintenance tunnels laid out as a maze, lit by the odd caged bulb.
-- [BE] **Level 0 → 1:** rare rippling walls you step through. You land at the nearest rippling wall, or a new alcove forms. Followers come along.
-- [BE] **Level 1 → 2:** about 1 stairwell in 4 is open, and it collapses behind you. **2 → 1:** rare service ladders up to a floor hatch.
+- [BE] **Level 0 → 1:** rare rippling walls you step through. You land at the nearest rippling wall, or a new
+  alcove forms. Followers come along.
+- [BE] **Level 1 → 2:** about 1 stairwell in 4 is open, and it collapses behind you. **2 → 1:** rare service
+  ladders up to a floor hatch.
 - [BE] **Level 1 → 0:** only a rare elevator ride (about 1 in 50).
-- [BE] **Level 2 climate:** about 30 C all year, with humid air, sweating, thirst and heat stroke. Steam leaks make it hotter still.
+- [BE] **Level 2 climate:** about 30 °C all year, with humid air, sweating, thirst and heat stroke. Steam leaks
+  make it hotter still.
 
-### Structures and places
+### Backrooms places
 - [BE] Level 1 arrival alcoves (sealed behind you), with a torn note from someone who came before.
-- [BE] The **Breakroom**: a walled survivor hub, one per world, marked on your map.
+- [BE] **The Breakroom:** a walled survivor hub, one per world, marked on your map (unmarked since Nov 15).
 - [BE] **Squatter camps** (4–8 per map) and **overrun camps** (blood, a body, gear, a last note).
 - [BE] **Dead zones:** 2x2 patches where every light has died. More danger, better stashes.
-- [BE] **Elevator lobbies** (3–6 per map): safe, lit, with a lost-and-found bin. The panel goes to **any floor**, **back** or **home**, and rides can go wrong in 6 ways.
-- [BE] **Security office**, **generator rooms** (2 L of gas lights the area for a week), padlocked **storage cages**.
-- [BE] **Vending alcoves**, attendant booths, maintenance and electrical rooms, junk piles, leaking pipes, sealed stairwells, wrecked and parked cars.
+- [BE] **Elevator lobbies** (3–6 per map): safe, lit, with a lost-and-found bin. The panel goes to any floor,
+  back or home, and rides can go wrong in 6 ways.
+- [BE] A **security office**, **generator rooms** (2 L of gas lights the area for a week) and padlocked
+  **storage cages**.
+- [BE] Vending alcoves, attendant booths, maintenance and electrical rooms, junk piles, leaking pipes, sealed
+  stairwells, and wrecked and parked cars.
 - [BE] "The exit ramp that isn't" (up into a brick wall), and graffiti with arrows and warnings.
-- [BE] Level 2 **boiler rooms** (hot, with tool lockers), in variants: normal, cold, and pump room.
-- [BE] Level 2 **valve junctions** (turn the BLEED wheel to shut steam leaks for 2 days), in variants: burst main and control closet.
-- [BE] Level 2 **flooded dips** (knee-deep warm water), in variants: drowned traveller and draining.
+- [BE] Level 2 **boiler rooms** (hot, with tool lockers): normal, cold and pump room.
+- [BE] Level 2 **valve junctions** (turn the BLEED wheel to shut steam leaks for 2 days): burst main and control
+  closet.
+- [BE] Level 2 **flooded dips** (knee-deep warm water): drowned traveller and draining.
 - [BE] Level 2 **Tunnel Crew camps** in old pump rooms.
 
-### Monsters
+### Backrooms monsters
 - [BE] **Smiler:** a grin in the dark that avoids bright light.
 - [BE] **Hound:** packs of 2–3 that hunt by sound.
 - [BE] **Deathmoth:** swarms that gather at working lights.
 - [BE] **Wretch** (day 30+): a survivor who stayed too long.
-- [BE] Level 1 and 2 spawn lists: rats, Hound packs, Smilers in the dark, Deathmoths at bulbs, a few zombies; later cockroaches and Wretches.
-- [C++] New monster flags `AVOIDS_LIGHT` and `SEEKS_LIGHT`, used by the Smiler and the Deathmoth.
+- [BE] Level 1 and 2 spawns: rats, Hound packs, Smilers in the dark, Deathmoths at bulbs and a few zombies; later
+  cockroaches and Wretches.
 
-### Items and resources
-- [BE] Almond water on Level 1 (rare). It now also gives a calm mood boost.
-- [BE] Water: drip pools (boil before drinking) and clean taps in the Breakroom. NPCs drink from them on their own.
-- [BE] Siphonable cars: about 1 in 4 still has a few litres of fuel.
-- [BE] Notes: arrival notes, crumpled notes, sweat-stained Level 2 notes (not all true).
-- [BE] Loot tables for Level 1 (tools, car parts, batteries; rare food) and Level 2 (pipe, scrap, tools; even less food).
-- [SM] **Stick of chalk** (craftable from limestone or quicklime).
-- [SM] **Survivor's journal** (every NPC carries one; it can be read, traded or found on a body).
+### Backrooms items, people and jobs
+- [BE] **Almond water** on Level 1 (rare). It also gives a calm mood boost.
+- [BE] **Water:** drip pools (boil before drinking) and clean taps in the Breakroom. NPCs drink from them on
+  their own.
+- [BE] **Siphonable cars:** about 1 in 4 still has a few litres of fuel.
+- [BE] **Notes:** arrival notes, crumpled notes and sweat-stained Level 2 notes (not all true).
+- [BE] **Loot** for Level 1 (tools, car parts, batteries; rare food) and Level 2 (pipe, scrap, tools; even less
+  food).
+- [BE] **Factions:** The Breakroom, The Lost and the Tunnel Crew. Their stores count as stealing.
+- [BE] **Dot Kowalczyk** ("the Foreman") and **Marcus "Mile Marker" Reyes** run the Breakroom.
+- [BE] **Lost survivors** in camps, with their own fall-through stories. They can be recruited and traded with.
+- [BE] **Tunnel Crew** (2–4 per camp): they talk, trade, can be recruited, and know rumours of a way further down.
+- [BE] **Jobs from Dot:** Fuel run, Thin the Hounds, The Hound den, Who they were.
+- [BE] **Jobs from Marcus:** Supply drop, Ride the lifts. Rewards are supplies, almond water and standing.
+- [BE] **Scenarios:** Wrong Exit, Breakroom Hire and One of the Lost, all starting on Level 1.
 
-### NPCs and factions
-- [BE] Factions: **The Breakroom**, **The Lost** and the **Tunnel Crew**. Their stores count as stealing.
-- [BE] **Dot Kowalczyk** ("the Foreman") and **Marcus "Mile Marker" Reyes** in the Breakroom.
-- [BE] Random lost survivors in camps, with their own fall-through stories. They can be recruited and traded with.
-- [BE] Tunnel Crew (2–4 per camp): they talk, trade, can be recruited, and know rumours of a way further down.
-
-### Missions and jobs
-- [BE] **Dot:** Fuel run, Thin the Hounds, The Hound den, Who they were.
-- [BE] **Marcus:** Supply drop, Ride the lifts. Rewards are supplies, almond water and standing.
-
-### NPC behaviour (Survivor Minds, JSON)
-- [SM] **Journals:** a morning entry about sleep, food, water and mood, plus event entries (fights, kills, rescues, deaths).
-- [SM] **Wall marks:** chalk LOOTED / CAMP / DANGER / WATER (with an arrow). Followers mark looted places on their own.
-- [SM] **Routines:** bedtime between 10 PM and 4 AM, a morning food check, and idle mood lines (extra ones at night and in the Backrooms).
-- [SM] **Morals:** followers react to killing someone helpless or to cannibalism. Disapproval builds up; at 10 they leave you.
+### NPC behaviour (Survivor Minds)
+- [SM] **Journals:** every NPC carries one, with a morning entry about sleep, food, water and mood, plus entries
+  for fights, kills, rescues and deaths. It can be read, traded or found on a body.
+- [SM] **Wall marks:** a craftable stick of chalk writes LOOTED, CAMP, DANGER or WATER (with an arrow).
+  Followers mark looted places on their own.
+- [SM] **Routines:** bedtime between 10 PM and 4 AM, a morning food check, and idle mood lines (extra ones at
+  night and in the Backrooms).
+- [SM] **Morals:** followers react to killing someone helpless or to cannibalism. Disapproval builds up, and at
+  10 they leave you.
 - [SM] **Sharing food** builds trust. New option "How do you feel about me?".
-- [SM] **Gossip:** "Seen anything around here?" covers hostiles, water and looted marks, plus a daily map tip.
+- [SM] **Gossip:** "Seen anything around here?" covers hostiles, water and looted marks, plus a daily map tip
+  (switched off on Nov 15).
 - [SM] **Danger warnings:** followers call out threats with a verdict, by voice or over the radio.
 - [SM] Panicked civilians are a quarter as common.
 
-### NPC brain (C++, branch `npc-autonomy`; option "NPC autonomy (experimental)", off by default)
-- [C++] **3.1:** the game option, the behavior-tree gate, and quests are cancelled when a follower leaves.
-- [C++] **3.2:** needs from 0 to 100 (food, water, sleep, warmth, safety, social), shown when you look at an NPC.
-- [C++] **3.3:** NPCs eat at breakfast, lunch and dinner; lonely NPCs walk over to chat.
+### NPC brain (option "NPC autonomy (experimental)", off by default)
+- [C++] **Step 3.1:** the game option, and quests are cancelled when a follower leaves.
+- [C++] **Step 3.2:** needs from 0 to 100 (food, water, sleep, warmth, safety, social), shown when you look at
+  an NPC.
+- [C++] **Step 3.3:** NPCs eat at breakfast, lunch and dinner, and lonely NPCs walk over to chat.
 
-### Scenarios
-- [BE] **Wrong Exit**, **Breakroom Hire** and **One of the Lost**, all starting on Level 1.
-
-### Sprites and tilesets
-- [BE] Overmap sprites for Level 1 and 2 places, redrawn in UndeadPeople style. They show in UltiCa and UndeadPeople.
+### Look (sprites)
+- [BE] Overmap sprites for Level 1 and 2 places, redrawn in UndeadPeople style. They show in UltiCa and
+  UndeadPeople.
 - [BE] Level 0 walls and floors: yellow wallpaper, damp carpet, light panels.
-- [BE] Entity sprites for the Smiler, Hound, Deathmoth and Wretch.
+- [BE] Sprites for the Smiler, Hound, Deathmoth and Wretch.
 - [SM] A journal book sprite.
 
 ### Game options and fixes
-- [C++] Legacy sandbox world options restored (game world, monsters, world time, character options).
-- [C++] City size, city spacing and NPC spawn time are back as % world options.
+- [C++] **Sandbox world options are back** (game world, monsters, world time, character options).
+- [C++] **City size, city spacing and NPC spawn time** are back as % world options.
 - [C++] Fixed a crash when opening character creation.
 - [C++] Debug "Spawn NPC follower" now adds the NPC to your follower list.
-- [BE] Followers come along through Backrooms portals. Cars no longer block arrival alcoves.
+- [BE] Followers come along through Backrooms portals, and cars no longer block arrival alcoves.
 
-### Developer tools
-- [SM] Debug EOCs: `EOC_SM_DEBUG_DANGER`, `EOC_SM_DEBUG_GOSSIP_RESET`, `EOC_SM_DEBUG_MORALS_*`, `EOC_SM_DEBUG_ROUTINE`, `EOC_SM_DEBUG_MARK_LOOTED`.
+### For developers
+- [C++] New monster flags `AVOIDS_LIGHT` and `SEEKS_LIGHT`, used by the Smiler and the Deathmoth.
 - [C++] Unit tests for NPC autonomy (`tests/npc_autonomy_test.cpp`).
+- [SM] Debug EOCs: `EOC_SM_DEBUG_DANGER`, `EOC_SM_DEBUG_GOSSIP_RESET`, `EOC_SM_DEBUG_MORALS_*`,
+  `EOC_SM_DEBUG_ROUTINE`, `EOC_SM_DEBUG_MARK_LOOTED`.
+
+---
+
+## How to add an entry
+
+1. Find today's date heading (`## Month D, YYYY`) at the top. If there isn't one yet, add it above the newest day,
+   with a `---` line between days, and add it to "Jump to".
+2. Put the line under the right section, in this order: **Backrooms**, **NPCs**, **Launcher**, **Bug fixes**,
+   **For developers**. Add the section if the day doesn't have it yet.
+3. Write it for a player: the tag, a **bold name**, then a sentence or two. One change per line. Debug ids,
+   timings and file paths go under "For developers".
+4. Also add the detailed line to that mod's `CHANGELOG.md` under `## Unreleased`.
