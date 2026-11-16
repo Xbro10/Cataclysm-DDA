@@ -50,13 +50,12 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_SM_GOSSIP",
-    "//": "u is the follower answering 'Seen anything around here?'. Builds global sm_gossip from what is really around right now: danger, water, a LOOTED mark, and once a day a place marked on the player's map.",
+    "//": "u is the follower answering 'Seen anything around here?'. Builds global sm_gossip from what is really around right now: danger, water and a LOOTED mark. The daily map tip (EOC_SM_GOSSIP_MAP_TIP) is switched off until NPCs remember places they've really been (NPC brain step 3.5): it marked the nearest such place at any distance, even for an NPC who had just appeared.",
     "effect": [
       { "set_string_var": "", "target_var": { "global_val": "sm_gossip" } },
       { "run_eocs": "EOC_SM_GOSSIP_DANGER" },
       { "run_eocs": "EOC_SM_GOSSIP_WATER" },
-      { "run_eocs": "EOC_SM_GOSSIP_LOOTED" },
-      { "run_eocs": "EOC_SM_GOSSIP_MAP_TIP" }
+      { "run_eocs": "EOC_SM_GOSSIP_LOOTED" }
     ]
   },
   {

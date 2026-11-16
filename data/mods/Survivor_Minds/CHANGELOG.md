@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- "Got a minute?" has "Stop marking places as looted on your own." / "You can mark places as looted on your own again.": turns a follower's automatic LOOTED marks off or back on. Asking them to mark a place still works.
 - Gabriel's look, picked by the person he's based on: light skin, long blond hair, green eyes, a cyan hoodie and a blue wool scarf (new item `sm_scarf_blue`, with recoloured UltiCa and UndeadPeople sprites).
 - Developer shortcut `EOC_SM_DEBUG_WATCH_GABRIEL` (watch mode): spawns an unrecruited Gabriel 6-10 tiles away and makes you invisible, silent, scentless, unhurtable and able to see through walls, so you can watch him act on his own. `EOC_SM_DEBUG_WATCH_STOP` turns it off.
 - Gabriel, a unique NPC with his own class (Brawler): a veteran fighter with a morningstar (Mace Mastery, high bashing and melee), a hatchet as backup (axe proficiencies), Tough and Fast Learner, dressed for the cold. He has his own first-meeting dialogue in his short, blunt voice; to recruit him you have to tell him you trust him. As a follower he gets "Gabriel, what's on your mind?" in the follower menu. His kindness and ruthlessness are fixed (3 and 2) instead of rolled, and so is his personality (aggression 5, bravery 6, altruism 3: Freedom fighter, Brave and Hero), so he never comes out Timid.
@@ -39,3 +40,4 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - The "chalks a big X" message now appears when a follower marks a place LOOTED (scripted NPC messages were being dropped).
 
 ### Removed
+- The daily map tip from "Seen anything around here?" (a nearby shop, squatter camp or rippling-wall room marked on your map) is switched off for now: it found the nearest place at any distance, even for an NPC who had just appeared. It comes back once NPCs remember places they've really been. The rest of the gossip (danger, water, LOOTED marks) is unchanged.

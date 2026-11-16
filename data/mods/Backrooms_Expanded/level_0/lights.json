@@ -101,5 +101,19 @@
         { "transform": "br0_ceiling_light", "x": 22, "y": 22 }
       ]
     }
+  },
+  {
+    "type": "terrain",
+    "id": "t_carpet_backrooms_light",
+    "copy-from": "t_carpet_backrooms_light",
+    "//": "Overrides the upstream Level 0 ceiling light (TGWeaver's Backrooms mod): brightness 40 instead of 120. Light barely fades in open air, so each 120 light reached about 92 tiles and Level 0's thousands of them cost most of a turn's map update. At 40 the dimmest spot between lights is still about twice the game's 'brightly lit' level, so it looks the same, and lighting takes roughly 40% less time (benchmark: tests/backrooms_perf_test.cpp).",
+    "light_emitted": 40
+  },
+  {
+    "type": "terrain",
+    "id": "t_tile_backrooms_light",
+    "copy-from": "t_tile_backrooms_light",
+    "//": "Same as t_carpet_backrooms_light above, for the tiled floor.",
+    "light_emitted": 40
   }
 ]

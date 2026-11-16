@@ -11,7 +11,12 @@
     "mission": "GUARD",
     "chat": "TALK_BR1_RUNNER",
     "faction": "br_breakroom",
-    "death_eocs": [ { "id": "EOC_BR1_RUNNER_DIED_JONAH", "effect": [ { "math": [ "br1_runner_dead_1 = 1" ] }, { "run_eocs": "EOC_BR1_RUNNER_DIED" } ] } ]
+    "death_eocs": [
+      {
+        "id": "EOC_BR1_RUNNER_DIED_JONAH",
+        "effect": [ { "math": [ "br1_runner_dead_1 = 1" ] }, { "run_eocs": "EOC_BR1_RUNNER_DIED" } ]
+      }
+    ]
   },
   {
     "type": "npc",
@@ -25,7 +30,12 @@
     "mission": "GUARD",
     "chat": "TALK_BR1_RUNNER",
     "faction": "br_breakroom",
-    "death_eocs": [ { "id": "EOC_BR1_RUNNER_DIED_ROSA", "effect": [ { "math": [ "br1_runner_dead_2 = 1" ] }, { "run_eocs": "EOC_BR1_RUNNER_DIED" } ] } ]
+    "death_eocs": [
+      {
+        "id": "EOC_BR1_RUNNER_DIED_ROSA",
+        "effect": [ { "math": [ "br1_runner_dead_2 = 1" ] }, { "run_eocs": "EOC_BR1_RUNNER_DIED" } ]
+      }
+    ]
   },
   {
     "type": "npc_class",
@@ -55,7 +65,10 @@
     "type": "item_group",
     "id": "NC_BR1_RUNNER_carry",
     "subtype": "collection",
-    "entries": [ { "item": "flashlight", "charges": [ 50, 100 ] }, { "item": "almond_water", "container-item": "bottle_almond_water" } ]
+    "entries": [
+      { "item": "flashlight", "charges": [ 50, 100 ] },
+      { "item": "almond_water", "container-item": "bottle_almond_water" }
+    ]
   },
   {
     "type": "effect_on_condition",
@@ -66,17 +79,54 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_RUNNERS_TICK",
-    "//": "Every 30 minutes while the player is on Level 1, each living runner takes one step of its errand (EOC_BR1_RUNNER_TICK, run as the runner). Runners in a level the player isn't on don't move, so this only runs on Level 1.",
+    "//": "Every 30 minutes while the player is on Level 1, each living runner takes one step of its errand (EOC_BR1_RUNNER_TICK, run as the runner). Runners in a level the player isn't on don't move, so this only runs on Level 1. br1_tick_depart is that runner's departure hour today (EOC_BR1_RUNNER_SCHEDULE).",
     "recurrence": [ "30 minutes", "30 minutes" ],
     "condition": { "current_dimension": "backrooms_level_1" },
     "effect": [
+      { "run_eocs": "EOC_BR1_RUNNER_SCHEDULE" },
       {
         "if": { "math": [ "br1_runner_dead_1 != 1" ] },
-        "then": [ { "math": [ "br1_tick_who = 1" ] }, { "u_run_npc_eocs": [ "EOC_BR1_RUNNER_TICK" ], "unique_ids": [ "BR1_runner_jonah" ] } ]
+        "then": [
+          { "math": [ "br1_tick_who = 1" ] },
+          { "math": [ "br1_tick_depart = br1_depart_1" ] },
+          { "u_run_npc_eocs": [ "EOC_BR1_RUNNER_TICK" ], "unique_ids": [ "BR1_runner_jonah" ] }
+        ]
       },
       {
         "if": { "math": [ "br1_runner_dead_2 != 1" ] },
-        "then": [ { "math": [ "br1_tick_who = 2" ] }, { "u_run_npc_eocs": [ "EOC_BR1_RUNNER_TICK" ], "unique_ids": [ "BR1_runner_rosa" ] } ]
+        "then": [
+          { "math": [ "br1_tick_who = 2" ] },
+          { "math": [ "br1_tick_depart = br1_depart_2" ] },
+          { "u_run_npc_eocs": [ "EOC_BR1_RUNNER_TICK" ], "unique_ids": [ "BR1_runner_rosa" ] }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_SCHEDULE",
+    "//": "Once a day (first tick or board read after midnight), Dot chalks up each runner's departure hour for the day: 6 AM to 5 PM, never the same hour for both. br1_sched_day is the day number counted from 1 (so it never matches an unset 0); br1_sched_midnight is that day's midnight. br1_depart_N_h / _ap are the hour in 12-hour form for the board.",
+    "condition": { "math": [ "br1_sched_day != (time('now') - time_since('midnight')) / 86400 + 1" ] },
+    "effect": [
+      { "math": [ "br1_sched_midnight = time('now') - time_since('midnight')" ] },
+      { "math": [ "br1_sched_day = br1_sched_midnight / 86400 + 1" ] },
+      { "math": [ "br1_depart_1 = rand(11) + 6" ] },
+      { "math": [ "br1_depart_2 = rand(11) + 6" ] },
+      {
+        "if": { "math": [ "abs(br1_depart_1 - br1_depart_2) < 2" ] },
+        "then": [ { "math": [ "br1_depart_2 = br1_depart_1 >= 12 ? br1_depart_1 - 4 : br1_depart_1 + 4" ] } ]
+      },
+      { "math": [ "br1_depart_1_h = br1_depart_1 > 12 ? br1_depart_1 - 12 : br1_depart_1" ] },
+      { "math": [ "br1_depart_2_h = br1_depart_2 > 12 ? br1_depart_2 - 12 : br1_depart_2" ] },
+      {
+        "if": { "math": [ "br1_depart_1 >= 12" ] },
+        "then": [ { "set_string_var": "PM", "target_var": { "global_val": "br1_depart_1_ap" } } ],
+        "else": [ { "set_string_var": "AM", "target_var": { "global_val": "br1_depart_1_ap" } } ]
+      },
+      {
+        "if": { "math": [ "br1_depart_2 >= 12" ] },
+        "then": [ { "set_string_var": "PM", "target_var": { "global_val": "br1_depart_2_ap" } } ],
+        "else": [ { "set_string_var": "AM", "target_var": { "global_val": "br1_depart_2_ap" } } ]
       }
     ]
   },
@@ -90,7 +140,7 @@
         "then": [
           {
             "if": { "math": [ "distance('u', br1_missing_point) > 24" ] },
-            "then": [ { "u_set_goal": { "var": { "global_val": "br1_missing_point" } } } ]
+            "then": [ { "u_set_goal": { "om_terrain": "br1_garage", "var": { "global_val": "br1_missing_point" } } } ]
           }
         ]
       },
@@ -101,12 +151,12 @@
             "if": { "math": [ "distance('u', u_br1_home) <= 24" ] },
             "then": [
               { "math": [ "u_br1_run_state = 0" ] },
-              { "math": [ "u_br1_run_next = time('now') + time('1 d') + rand(172800)" ] },
+              { "math": [ "u_br1_run_next = time('now') + time('12 h')" ] },
               { "math": [ "br1_runner_out = 0" ] },
               { "math": [ "br1_runs_done += 1" ] },
               { "math": [ "br1_stores_bonus = min(br1_stores_bonus + 1, 3)" ] }
             ],
-            "else": [ { "u_set_goal": { "var": { "u_val": "br1_home" } } } ]
+            "else": [ { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } } ]
           }
         ]
       },
@@ -115,7 +165,7 @@
         "then": [
           {
             "if": { "math": [ "distance('u', u_br1_dest) > 24" ] },
-            "then": [ { "u_set_goal": { "var": { "u_val": "br1_dest" } } } ],
+            "then": [ { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_dest" } } } ],
             "else": [
               {
                 "if": { "math": [ "time('now') >= u_br1_run_turn" ] },
@@ -129,7 +179,10 @@
                       { "math": [ "br1_missing_who = br1_tick_who" ] },
                       { "u_location_variable": { "global_val": "br1_missing_point" } }
                     ],
-                    "else": [ { "math": [ "u_br1_run_state = 2" ] }, { "u_set_goal": { "var": { "u_val": "br1_home" } } } ]
+                    "else": [
+                      { "math": [ "u_br1_run_state = 2" ] },
+                      { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } }
+                    ]
                   }
                 ]
               }
@@ -149,10 +202,17 @@
             "then": [
               {
                 "if": { "math": [ "distance('u', u_br1_home) > 24" ] },
-                "then": [ { "u_set_goal": { "var": { "u_val": "br1_home" } } } ],
+                "then": [ { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } } ],
                 "else": [
                   {
-                    "if": { "and": [ { "math": [ "br1_runner_out == 0" ] }, { "math": [ "time('now') >= u_br1_run_next" ] } ] },
+                    "if": {
+                      "and": [
+                        { "math": [ "br1_runner_out == 0" ] },
+                        { "math": [ "time('now') >= u_br1_run_next" ] },
+                        { "math": [ "u_br1_left_day != br1_sched_day" ] },
+                        { "math": [ "time_since('midnight') >= br1_tick_depart * 3600" ] }
+                      ]
+                    },
                     "then": [ { "run_eocs": "EOC_BR1_RUNNER_SEND" } ]
                   }
                 ]
@@ -160,15 +220,31 @@
             ]
           }
         ]
+      },
+      {
+        "//": "Copy this runner's errand state to globals for the runner board, which the player reads.",
+        "if": { "math": [ "br1_tick_who == 1" ] },
+        "then": [
+          { "math": [ "br1_rs_1 = u_br1_run_state" ] },
+          { "math": [ "br1_rn_1 = u_br1_run_next" ] },
+          { "math": [ "br1_ld_1 = u_br1_left_day" ] },
+          { "math": [ "br1_rd_1 = u_br1_run_dest" ] }
+        ],
+        "else": [
+          { "math": [ "br1_rs_2 = u_br1_run_state" ] },
+          { "math": [ "br1_rn_2 = u_br1_run_next" ] },
+          { "math": [ "br1_ld_2 = u_br1_left_day" ] },
+          { "math": [ "br1_rd_2 = u_br1_run_dest" ] }
+        ]
       }
     ]
   },
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_RUNNER_SEND",
-    "//": "Run as a runner at home: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-12 squares away and set off. u_br1_dest starts as the runner's own spot, so if the search finds nothing it stays close and the run is put off for 6 hours. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
+    "//": "Run as a runner at home at their departure hour: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-12 squares away (falling back to the other kinds) and set off. u_br1_dest starts as the runner's own spot, so if nothing is found it stays close and there is no run today (u_br1_left_day marks today either way). Goals and mission targets that use a var also name an om_terrain: the game ignores the var when om_terrain is empty and uses the NPC's own square. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
     "effect": [
-      { "math": [ "u_br1_run_dest = rng(1, 3)" ] },
+      { "math": [ "u_br1_run_dest = rand(2) + 1" ] },
       { "u_location_variable": { "u_val": "br1_dest" } },
       {
         "if": { "math": [ "u_br1_run_dest == 1" ] },
@@ -198,10 +274,42 @@
         ]
       },
       {
+        "//": "Nothing of the chosen kind nearby: try the other two kinds.",
         "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
-        "then": [ { "math": [ "u_br1_run_next = time('now') + time('6 h')" ] } ],
+        "then": [
+          { "math": [ "u_br1_run_dest = 1" ] },
+          {
+            "u_location_variable": { "u_val": "br1_dest" },
+            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
+        "then": [
+          { "math": [ "u_br1_run_dest = 2" ] },
+          {
+            "u_location_variable": { "u_val": "br1_dest" },
+            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+          }
+        ]
+      },
+      {
+        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
+        "then": [
+          { "math": [ "u_br1_run_dest = 3" ] },
+          {
+            "u_location_variable": { "u_val": "br1_dest" },
+            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+          }
+        ]
+      },
+      { "math": [ "u_br1_left_day = br1_sched_day" ] },
+      {
+        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
+        "then": [ { "math": [ "u_br1_run_dest = 0" ] } ],
         "else": [
-          { "u_set_goal": { "var": { "u_val": "br1_dest" } } },
+          { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_dest" } } },
           { "math": [ "u_br1_run_state = 1" ] },
           { "math": [ "u_br1_run_turn = time('now') + time('1 d') + rand(86400)" ] },
           { "math": [ "br1_runner_out = 1" ] },
@@ -244,7 +352,7 @@
         "effect": [
           { "math": [ "n_br1_run_state = 2" ] },
           { "math": [ "br1_runner_missing = 0" ] },
-          { "npc_set_goal": { "var": { "npc_val": "br1_home" } } },
+          { "npc_set_goal": { "om_terrain": "br1_garage", "var": { "npc_val": "br1_home" } } },
           {
             "if": { "x_in_y_chance": { "x": 1, "y": 2 } },
             "then": [
@@ -317,7 +425,11 @@
     "id": "TALK_BR1_JOB_RUNNER",
     "dynamic_line": "My runner's overdue.  I've marked where they were headed.  Go and find them, and if they're alive, get them walking home.  Please.",
     "responses": [
-      { "text": "I'll find them.", "effect": { "assign_mission": "MISSION_BR1_FIND_RUNNER" }, "topic": "TALK_BR1_JOB_TAKEN_DOT" },
+      {
+        "text": "I'll find them.",
+        "effect": { "assign_mission": "MISSION_BR1_FIND_RUNNER" },
+        "topic": "TALK_BR1_JOB_TAKEN_DOT"
+      },
       { "text": "Not right now.", "topic": "TALK_BR1_FOREMAN_WORK" }
     ]
   },
@@ -332,7 +444,9 @@
     "value": 0,
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
-    "start": { "assign_mission_target": { "var": { "global_val": "br1_missing_point" }, "reveal_radius": 1 } },
+    "start": {
+      "assign_mission_target": { "om_terrain": "br1_garage", "var": { "global_val": "br1_missing_point" }, "reveal_radius": 1 }
+    },
     "end": {
       "effect": [
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "count": 2 },
@@ -352,5 +466,185 @@
       "success_lie": "Don't tell me that unless it's true.",
       "failure": "Right.  Thank you for looking."
     }
+  },
+  {
+    "type": "furniture",
+    "id": "f_br1_runner_board",
+    "copy-from": "f_sign",
+    "looks_like": "f_sign",
+    "name": "runner board",
+    "description": "A whiteboard screwed to a post, with the runners' names down one side in Dot's square capitals.  Dot rubs it clean every midnight and chalks up the day's departures.",
+    "delete": { "flags": [ "SIGN", "SIGN_ALWAYS" ] },
+    "examine_action": { "type": "effect_on_condition", "effect_on_conditions": [ "EOC_BR1_RUNNER_BOARD_READ" ] }
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_BOARD_READ",
+    "//": "Examining the runner board: one line per runner from the globals EOC_BR1_RUNNER_TICK keeps (br1_rs_N state, br1_rn_N next allowed run, br1_ld_N day of last departure, br1_rd_N destination).",
+    "effect": [
+      { "run_eocs": "EOC_BR1_RUNNER_SCHEDULE" },
+      { "set_string_var": "JONAH", "target_var": { "global_val": "br1_bl_name" } },
+      { "math": [ "br1_bl_dead = br1_runner_dead_1" ] },
+      { "math": [ "br1_bl_state = br1_rs_1" ] },
+      { "math": [ "br1_bl_next = br1_rn_1" ] },
+      { "math": [ "br1_bl_left = br1_ld_1" ] },
+      { "math": [ "br1_bl_dest = br1_rd_1" ] },
+      { "math": [ "br1_bl_depart = br1_depart_1" ] },
+      { "math": [ "br1_bl_h = br1_depart_1_h" ] },
+      {
+        "set_string_var": "<global_val:br1_depart_1_ap>",
+        "target_var": { "global_val": "br1_bl_ap" },
+        "parse_tags": true
+      },
+      { "run_eocs": "EOC_BR1_RUNNER_BOARD_LINE" },
+      {
+        "set_string_var": "<global_val:br1_bl_line>",
+        "target_var": { "global_val": "br1_board_1" },
+        "parse_tags": true
+      },
+      { "set_string_var": "ROSA", "target_var": { "global_val": "br1_bl_name" } },
+      { "math": [ "br1_bl_dead = br1_runner_dead_2" ] },
+      { "math": [ "br1_bl_state = br1_rs_2" ] },
+      { "math": [ "br1_bl_next = br1_rn_2" ] },
+      { "math": [ "br1_bl_left = br1_ld_2" ] },
+      { "math": [ "br1_bl_dest = br1_rd_2" ] },
+      { "math": [ "br1_bl_depart = br1_depart_2" ] },
+      { "math": [ "br1_bl_h = br1_depart_2_h" ] },
+      {
+        "set_string_var": "<global_val:br1_depart_2_ap>",
+        "target_var": { "global_val": "br1_bl_ap" },
+        "parse_tags": true
+      },
+      { "run_eocs": "EOC_BR1_RUNNER_BOARD_LINE" },
+      {
+        "set_string_var": "<global_val:br1_bl_line>",
+        "target_var": { "global_val": "br1_board_2" },
+        "parse_tags": true
+      },
+      {
+        "u_message": "The runner board, in Dot's square capitals:\n\nRUNNERS\n<global_val:br1_board_1>\n<global_val:br1_board_2>\n\nONE OUT AT A TIME.  NO EXCEPTIONS.",
+        "popup": true
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_BOARD_LINE",
+    "//": "Builds one board line (br1_bl_line) from the br1_bl_* globals EOC_BR1_RUNNER_BOARD_READ sets.",
+    "effect": [
+      {
+        "if": { "math": [ "br1_bl_dead == 1" ] },
+        "then": [
+          {
+            "set_string_var": "<global_val:br1_bl_name>: name crossed out.  Nobody has rubbed it off.",
+            "target_var": { "global_val": "br1_bl_line" },
+            "parse_tags": true
+          }
+        ],
+        "else": [
+          {
+            "if": { "math": [ "br1_bl_state == 3" ] },
+            "then": [
+              {
+                "set_string_var": "<global_val:br1_bl_name>: OVERDUE.",
+                "target_var": { "global_val": "br1_bl_line" },
+                "parse_tags": true
+              }
+            ],
+            "else": [
+              {
+                "if": { "or": [ { "math": [ "br1_bl_state == 1" ] }, { "math": [ "br1_bl_state == 2" ] } ] },
+                "then": [
+                  {
+                    "if": { "math": [ "br1_bl_dest == 1" ] },
+                    "then": [
+                      {
+                        "set_string_var": "<global_val:br1_bl_name>: OUT, to the squatter camps.  Back in a day or two.",
+                        "target_var": { "global_val": "br1_bl_line" },
+                        "parse_tags": true
+                      }
+                    ],
+                    "else": [
+                      {
+                        "if": { "math": [ "br1_bl_dest == 2" ] },
+                        "then": [
+                          {
+                            "set_string_var": "<global_val:br1_bl_name>: OUT, to a lobby.  Back in a day or two.",
+                            "target_var": { "global_val": "br1_bl_line" },
+                            "parse_tags": true
+                          }
+                        ],
+                        "else": [
+                          {
+                            "set_string_var": "<global_val:br1_bl_name>: OUT, to a generator room.  Back in a day or two.",
+                            "target_var": { "global_val": "br1_bl_line" },
+                            "parse_tags": true
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "if": { "math": [ "br1_bl_left == br1_sched_day" ] },
+                    "then": [
+                      {
+                        "set_string_var": "<global_val:br1_bl_name>: in.  Done for today.",
+                        "target_var": { "global_val": "br1_bl_line" },
+                        "parse_tags": true
+                      }
+                    ],
+                    "else": [
+                      {
+                        "if": { "math": [ "br1_bl_next > br1_sched_midnight + br1_bl_depart * 3600" ] },
+                        "then": [
+                          {
+                            "set_string_var": "<global_val:br1_bl_name>: in.  Resting.  No run today.",
+                            "target_var": { "global_val": "br1_bl_line" },
+                            "parse_tags": true
+                          }
+                        ],
+                        "else": [
+                          {
+                            "if": { "math": [ "time_since('midnight') < br1_bl_depart * 3600" ] },
+                            "then": [
+                              {
+                                "set_string_var": "<global_val:br1_bl_name>: in.  Leaves at <global_val:br1_bl_h> <global_val:br1_bl_ap>.",
+                                "target_var": { "global_val": "br1_bl_line" },
+                                "parse_tags": true
+                              }
+                            ],
+                            "else": [
+                              {
+                                "if": { "math": [ "br1_runner_out == 1" ] },
+                                "then": [
+                                  {
+                                    "set_string_var": "<global_val:br1_bl_name>: in.  Was due out at <global_val:br1_bl_h> <global_val:br1_bl_ap>; waiting for the other runner to get back.",
+                                    "target_var": { "global_val": "br1_bl_line" },
+                                    "parse_tags": true
+                                  }
+                                ],
+                                "else": [
+                                  {
+                                    "set_string_var": "<global_val:br1_bl_name>: in.  Due out at <global_val:br1_bl_h> <global_val:br1_bl_ap>.  Any minute now.",
+                                    "target_var": { "global_val": "br1_bl_line" },
+                                    "parse_tags": true
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]

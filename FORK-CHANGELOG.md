@@ -14,6 +14,16 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-16, NPC brain: [C++] **Step 3.4b, getting food:** very hungry NPCs (Food 50+) eat from their pack, or walk to food they can see up to 20 tiles away (in containers, cupboards and fridges too, never anything owned) and eat it there. They say "goes to get food", the look-around panel shows the plan, and after 3 failed tries they give up for an hour.
+- 2026-11-15, Levels: [BE] The **Breakroom** is bigger, in one of two layouts (Checkpoint: lit fenced yard; Bunker: airlock and sandbag line), with a door guard and a **runner board** showing when Jonah and Rosa leave each day.
+- 2026-11-15, Bug fixes: [BE] **Breakroom runners** never left on a run (their destination roll never matched, and their travel target pointed at their own spot); the "Find the runner" job marked the wrong place.
+- 2026-11-15, NPC behaviour: [C++] New follower rule (Follower rules screen): **leave food and water to me** stops a follower's own water trips and mealtimes; off by default. [SM] "Got a minute?" can turn a follower's automatic LOOTED marks off and on.
+- 2026-11-15, NPC brain: [C++] **NPC turns are faster:** the searches for water and food check the tile itself before line of sight (the water search was most of a thirsty NPC's turn: about 3 ms down to 0.06 ms; the game's own food search gets about 15 times faster too). A follower stops eating and follows once you walk past their follow distance, and a guard on their post eats at mealtimes from their pack.
+- 2026-11-15, Levels: [BE] **Level 0 runs faster:** its ceiling lights are dimmer (40 instead of 120), still brightly lit everywhere, and lighting takes about 40% less time. A thirsty NPC's water search also runs at most every 5 turns. Benchmark: `tests/backrooms_perf_test.cpp`.
+- 2026-11-15, NPC behaviour: [SM] Gossip no longer marks a place on your map (it knew far-off places even for brand-new NPCs); it returns with NPC memory (step 3.5).
+- 2026-11-15, Game options and fixes: [C++] NPCs no longer rate a harmless spell field as an attack, so NPCs with Mind Over Matter powers fight with their weapon instead of casting Clairvoyance over and over.
+- 2026-11-15, Developer tools: [C++] `EOC_AUTONOMY_DEBUG_LONELY` / `EOC_AUTONOMY_DEBUG_NOT_LONELY` set Social to 100 / 0 for NPCs within 30 tiles, to test chatting.
+- 2026-11-15, NPC brain: [C++] **Getting water** now finds drinks in a bottle or other container on the floor and in water coolers, water heaters and tanks (up to 20 tiles), and "gives up looking for water" only counts water that turned out unreachable.
 - 2026-11-15, Game options and fixes: [C++] **Followers no longer get left behind when changing levels or dimensions**: a follower busy with a chore (eating, picking something up) now drops it and comes along, and one still filed under a neighbouring overmap is found.
 - 2026-11-15, Levels: [BE] **Level 0 lights** sit in neat rows every 4 tiles (a few dead) instead of being scattered at random.
 - 2026-11-15, Levels: [BE] The **Breakroom** is no longer marked on your map when you reach Level 1; you find it by exploring.

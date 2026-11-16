@@ -3,7 +3,22 @@
 This is Xbro10's fork of Cataclysm: Dark Days Ahead (CDDA). The project plan is the
 playbook PDF at
 `C:\Users\xande\Documents\CDDA documents for modding\CDDA Backrooms + Autonomous NPCs — Claude Code Playbook.pdf`
-(Phases 0–4 plus testing/publishing prompts). Map every request to a playbook prompt.
+(Phases 0–7 plus testing/publishing prompts; the 2026-11-16 version, the older one is kept beside it
+as "(old, 2026-11-12)"). Map every request to a playbook prompt.
+
+## Playbook progress
+
+As of 2026-11-16. Update this each time a prompt is finished.
+- Phases 0, 1 and 2: finished (Prompts 0.1 to 2.6). Don't redo, re-plan or re-verify them.
+- Phase 3: 3.1, 3.2, 3.3 finished. **3.4 in progress**: 3.4a (get water) and 3.4b (get food) built; next
+  3.4c (get warm). The planned "stocking up" step became Prompt 7.0 (stock count) in the new playbook.
+- Fixes already made ahead of Phase 5: part of 5.3 (a follower drops a meal when left behind, guards eat
+  on their post, water trips use upstream's follow and guard reach). Still open in 5.3: chats.
+- Next after 3.4: Phase 5 in order (5.1 first), then Phase 6 (6.0 first), then 3.6, then Phase 7.
+  Skip 3.5 and 4.1 (covered by 5.6), 4.5 (5.8 step B), 3.7 and 4.7 (Phase 7). 6.6 starts 4.6 (scouts).
+- The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
+- Phase 6 rule: stance, anchor, leash, wants and trips are saved NPC variables, not new enum entries.
+  The follower rule `ally_rule::no_self_care` (added 2026-11-15) predates this rule.
 
 **If you're not Xbro10** (a tester or contributor), read `FORK-CONTRIBUTING.md` first: the paths,
 playbook and launcher below are on Xbro10's PC. `FORK-CHANGELOG.md` lists everything made so far;
@@ -73,7 +88,8 @@ Search for `Xbro10 fork` in `src/` to find every C++ change.
 | Dimension travel keeps every nearby follower: busy followers (`NPCATT_ACTIVITY`, previously following) drop their chore and come; travellers filed under another overmap are found with `overmap_buffer.remove_npc` | `src/npctalk.cpp` (`f_travel_to_dimension`), `src/game.cpp` (`travel_to_dimension`) | Upstream bugs: a follower eating or picking something up, or one registered in a neighbouring overmap, was left behind (seen going through Level 0's rippling wall with 3 followers). |
 | Debug "Spawn NPC follower" adds the NPC to the follower list | `src/debug_menu.cpp` (`spawn_npc_follower`) | Upstream bug: spawned followers were missing from the faction screen and radio contact until a reload. |
 | NPCs saved mid-meal keep their food on load; items in pockets keep their uid across a load | `src/item_location.{h,cpp}` (`item_location_owner_scope`, `item_on_person::ensure_who_unpacked`), `src/savegame_json.cpp` (`Character::load` around `activity`/`backlog`; `item::deserialize` passes `keep_uids`), `src/item_contents.{h,cpp}` (`combine`, new `keep_uids`), `src/item.h` (`restore_uid`) | Two upstream bugs: an NPC is not registered with the game while it loads ("Failed to find item_location owner"), and loading copied every pocketed item, and a copied item gets a new uid ("UID not found in container contents"), so any saved activity on an item in a bag lost it, the player's too. Test `npc_meal_survives_save_and_load`. |
-| **NPC autonomy (Phase 3, branch `npc-autonomy`)**: game option `NPC_AUTONOMY` (General > NPC options, default off), behavior-tree predicate `npc_autonomy_on`, quests cancelled when a follower leaves, needs 0–100 (food, water, sleep, warmth, safety, social) stored as NPC vars `autonomy_need_*` and shown in the look-around panel, scores `npc_safety_urgency` / `npc_social_urgency`, mealtimes and socializing (goals `autonomy_meal` / `autonomy_socialize`), getting water (3.4a: goal `autonomy_get_water` drives upstream's `npc::execute_drink_water` from Water 50, search radius 20 via `npc_autonomy::water_search_radius()`, bottle refill at clean water, give up after 3 failed targets), weights in `data/json/npcs/npc_autonomy.json` | New `src/npc_autonomy.{h,cpp}`, `tests/npc_autonomy_test.cpp`, `data/json/npcs/npc_autonomy.json`; hooks in `src/options.cpp`, `src/behavior_oracle.cpp`, `src/character_oracle.{h,cpp}` (`autonomy_*`, `safety_urgency`, `social_urgency`), `src/npctalk_funcs.cpp` (`talk_function::leave`), `src/npc.cpp` (`npc_update_body`, `print_info`), `src/npcmove.cpp` (`npc::move` goal dispatch and commitment, `bt_goal_to_category`, radius in `find_nearby_water_sources`, Very-thirsty line in `npc::intake_useful`); `data/json/npcs/npc_behavior.json` (three children of `npc_priorities`) | Phase 3 logic lives in `npc_autonomy.*`; base files only get small hooks. With the option off, NPCs behave like upstream. |
+| NPC spell rating ignores harmless fields | `src/npc_attack.cpp` (`npc_attack_spell::evaluate_tripoint`) | Upstream bug: every empty tile in a spell's area scored for its field, harmful or not, so a wide harmless field (Mind Over Matter's Clairvoyance, `fd_clairvoyant`) out-rated melee and NPCs cast it instead of fighting. Now only fields with a dangerous intensity level count. |
+| **NPC autonomy (Phase 3, branch `npc-autonomy`)**: game option `NPC_AUTONOMY` (General > NPC options, default off), behavior-tree predicate `npc_autonomy_on`, quests cancelled when a follower leaves, needs 0–100 (food, water, sleep, warmth, safety, social) stored as NPC vars `autonomy_need_*` and shown in the look-around panel, scores `npc_safety_urgency` / `npc_social_urgency`, mealtimes and socializing (goals `autonomy_meal` / `autonomy_socialize`), guards eat at mealtimes on their post (`autonomy_post_meal`), follower rule `ally_rule::no_self_care` (set = no water trips or mealtimes; texts in `npc_autonomy.json`), getting water (3.4a: goal `autonomy_get_water` drives upstream's `npc::execute_drink_water` from Water 50, search radius 20 via `npc_autonomy::water_search_radius()`, bottle refill at clean water, give up after 3 failed targets), getting food (3.4b: goal `autonomy_get_food` drives `npc::execute_eat_food` from Food 50; water and food share `fetch()` / `wants_trip()` in `npc_autonomy.cpp`), weights in `data/json/npcs/npc_autonomy.json` | New `src/npc_autonomy.{h,cpp}`, `tests/npc_autonomy_test.cpp`, `data/json/npcs/npc_autonomy.json`; hooks in `src/options.cpp`, `src/npc.h` (`ally_rule::no_self_care` and its `ally_rule_strs` entry), `src/behavior_oracle.cpp`, `src/character_oracle.{h,cpp}` (`autonomy_*`, `safety_urgency`, `social_urgency`), `src/npctalk_funcs.cpp` (`talk_function::leave`), `src/npc.cpp` (`npc_update_body`, `print_info`), `src/npcmove.cpp` (`npc::move` goal dispatch and commitment, `bt_goal_to_category`, radius in `find_nearby_water_sources`; in `find_nearby_food`, drinks and food within that radius, inside ground containers, in LIQUIDCONT furniture (drinks) and CONTAINER furniture (food); Very-thirsty and Very-hungry lines in `npc::intake_useful`; cheap checks before line of sight in both searches; a follower left behind drops the meal near the top of `npc::move`); `data/json/npcs/npc_behavior.json` (five children of `npc_priorities`) | Phase 3 logic lives in `npc_autonomy.*`; base files only get small hooks. With the option off, NPCs behave like upstream. |
 
 Not restored on purpose: wandering hordes, character point pools, default region, initial
 visibility distance, 3D FOV range.
@@ -92,6 +108,16 @@ visibility distance, 3D FOV range.
   Its "Builds from" picks Xbro10 tester builds (default) or official experimental; "Sync my mods from my fork" copies our mods
   into `UserData\mods`. It updates itself from `testing`: when the launcher changes, raise `$script:LauncherVersion` (a date).
   Never edit the copy in `D:\Games` by hand; change `tools/launcher` and copy it there.
+
+## Performance
+
+Benchmarks (hidden tests): `[npc_perf]` times an NPC turn with autonomy off and on, plus each check and search
+(no mods needed). Real play: on quitting, `config/debug.log` gets a "Game Turn" timing tree (monmove,
+process_npc_turn, build_map_cache...); read it after a slow session. Level 0 lights (needs the Backrooms mods):
+`./Cataclysm-test-vcpkg-static-Release-x64.exe --mods=backrooms,backrooms_expanded "[backrooms_perf]"`.
+It times the per-turn map cache rebuild for several ceiling-light layouts and prints the darkest floor
+light level (10 = "brightly lit"). Light barely fades in open air (`LIGHT_RANGE`: brightness 120 reaches
+about 92 tiles), so many bright static lights are the usual cost; Level 0's are overridden to 40.
 
 ## Checking mods
 
@@ -124,3 +150,6 @@ doesn't trigger "stale game data" errors.
   A `"global": true` field on `u_message` does nothing.
 - Math has no `&&` / `||`: use `{ "and": [ … ] }` / `{ "or": [ … ] }` conditions.
 - A `mod_tileset`'s `"file"` is relative to the mod's root folder, not the JSON's folder (`gfx/br1_overmap.png`).
+- Math `rng(a, b)` returns a decimal: use `rand(n)` (a whole number 0..n) for picks you compare with `==`.
+- `u_set_goal` / `assign_mission_target` / `target_params` ignore `"var"` unless `"om_terrain"` is also set (any id; the var wins), and use your own square instead. `"search_range"` only works with `"random": true`.
+- A palette can't name furniture defined in a mod file that loads later ("invalid furniture id"); use `place_furniture` in the mapgen instead.

@@ -10,6 +10,15 @@
   },
   {
     "type": "behavior",
+    "id": "npc_autonomy_post_meal",
+    "//": "Xbro10 fork, NPC autonomy. A guard on their post during their shift still takes mealtimes, from their pack and without leaving the post (the meal goal never walks). Weight 0.5 beats holding the post (0.45); the plain meal (0.35) doesn't.",
+    "conditions": [ { "predicate": "npc_autonomy_wants_meal_at_post" } ],
+    "goal": "autonomy_meal",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.5"
+  },
+  {
+    "type": "behavior",
     "id": "npc_autonomy_socialize",
     "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). Social 50+: walk over to a friendly person within 15 tiles and chat (at most every 30 minutes). score_argument is the weight (0-1).",
     "conditions": [ { "predicate": "npc_autonomy_wants_company" } ],
@@ -25,6 +34,54 @@
     "goal": "autonomy_get_water",
     "score": "npc_autonomy_weight",
     "score_argument": "0.45"
+  },
+  {
+    "type": "behavior",
+    "id": "npc_autonomy_get_food",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 3.4b. Food 50+ (Very hungry): eat from the pack, or walk up to 20 tiles to food the NPC can see (in containers, cupboards and fridges too; never anything owned) and eat it there. 3 failed targets in a row and they give up for an hour. Uses the game's own eat-food planner, which otherwise waits until starving and looks 6 tiles. Same weight as water; the follow and guard limits and the 'leave food and water to me' rule apply.",
+    "conditions": [ { "predicate": "npc_autonomy_wants_food" } ],
+    "goal": "autonomy_get_food",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.45"
+  },
+  {
+    "type": "snippet",
+    "category": "<ally_rule_no_self_care_true_text>",
+    "//": "Xbro10 fork, follower rule no_self_care (NPC autonomy option).",
+    "text": "<mypronoun> will leave food and water to you (no water trips or mealtimes)."
+  },
+  {
+    "type": "snippet",
+    "category": "<ally_rule_no_self_care_false_text>",
+    "text": "<mypronoun> will fetch water and keep mealtimes unprompted (NPC autonomy)."
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_LONELY",
+    "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): every NPC within 30 tiles gets Social 100 and may chat right away.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_AUTONOMY_DEBUG_LONELY_ONE" ], "local": true, "npc_range": 30 },
+      { "u_message": "NPC autonomy debug: nearby NPCs now have Social 100 and can chat right away." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_LONELY_ONE",
+    "effect": [ { "math": [ "u_autonomy_need_social = 100" ] }, { "math": [ "u_autonomy_last_chat = -1000000" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_NOT_LONELY",
+    "//": "Xbro10 fork, NPC autonomy debug: every NPC within 30 tiles gets Social 0.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_AUTONOMY_DEBUG_NOT_LONELY_ONE" ], "local": true, "npc_range": 30 },
+      { "u_message": "NPC autonomy debug: nearby NPCs now have Social 0." }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_AUTONOMY_DEBUG_NOT_LONELY_ONE",
+    "effect": [ { "math": [ "u_autonomy_need_social = 0" ] } ]
   },
   {
     "type": "snippet",

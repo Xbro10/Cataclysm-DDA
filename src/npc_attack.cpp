@@ -204,7 +204,10 @@ npc_attack_rating npc_attack_spell::evaluate_tripoint(
 
         if( !critter ) {
             // no critter? no damage! however, we assume fields are worth something
-            if( attack_spell_id->field ) {
+            // Xbro10 fork: only harmful ones. A harmless field (Mind Over Matter's clairvoyance
+            // covers a blast up to 50 tiles wide) scored on every empty tile, so NPCs cast it
+            // in place of fighting.
+            if( attack_spell_id->field && attack_spell_id->field->obj().is_dangerous() ) {
                 const_dialogue d( get_const_talker_for( source ), nullptr );
                 total_potential += static_cast<double>( attack_spell.field_intensity( source ) ) /
                                    static_cast<double>( attack_spell_id->field_chance.evaluate( d ) ) / 2.0;

@@ -334,7 +334,11 @@ enum class ally_rule : int {
     forbid_engage = 16384,
     follow_distance_2 = 32768,
     lock_doors = 65536,
-    avoid_locks = 131072
+    avoid_locks = 131072,
+    // Xbro10 fork: NPC autonomy. Set = the follower leaves food and water to the player (no
+    // trips or mealtimes of their own). Stored this way round so old saves, which lack it, keep
+    // the default (looking after themselves).
+    no_self_care = 262144
 };
 // NOLINTEND(optin.core.EnumCastOutOfRange)
 
@@ -441,6 +445,13 @@ const std::unordered_map<std::string, ally_rule_data> ally_rule_strs = { {
                 ally_rule::avoid_locks,
                 "<ally_rule_avoid_locks_true_text>",
                 "<ally_rule_avoid_locks_false_text>"
+            }
+        },
+        {
+            "no_self_care", {
+                ally_rule::no_self_care,
+                "<ally_rule_no_self_care_true_text>",
+                "<ally_rule_no_self_care_false_text>"
             }
         },
         {

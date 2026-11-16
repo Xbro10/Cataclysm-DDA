@@ -2,7 +2,7 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_SM_DEBUG_GOSSIP_RESET",
-    "//": "Developer shortcut: Debug menu > Activate EOC. Lets every follower give their once-a-day map tip again. Remove before release.",
+    "//": "Developer shortcut: Debug menu > Activate EOC. Lets every follower give their once-a-day map tip again (the map tip is switched off until NPC brain step 3.5). Remove before release.",
     "effect": [ { "u_run_npc_eocs": [ "EOC_SM_DEBUG_GOSSIP_RESET_ONE" ], "local": true }, { "u_message": "Survivor Minds debug: followers can give a map tip again." } ]
   },
   {

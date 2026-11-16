@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <map>
 #include <cmath>
 #include <optional>
 #include <string>
@@ -14,6 +15,7 @@
 #include "coordinates.h"
 #include "creature.h"
 #include "character.h"
+#include "character_id.h"
 #include "dialogue_chatbin.h"
 #include "game.h"
 #include "game_constants.h"
@@ -348,6 +350,13 @@ double meal_key( int meal )
     return to_days<int>( calendar::turn - calendar::turn_zero ) * 3.0 + meal;
 }
 
+// Follower rule "no_self_care" (Follower rules screen): followers who leave food and water
+// to the player skip mealtimes and water trips. NPCs who aren't your allies always look after themselves.
+bool looks_after_self( const npc &guy )
+{
+    return !guy.is_player_ally() || !guy.rules.has_flag( ally_rule::no_self_care );
+}
+
 bool is_safe( const npc &guy )
 {
     return safety_need( guy ) < unsafe;
@@ -438,30 +447,62 @@ goal_result socialize( npc &guy )
     return goal_result::none;
 }
 
-// ---- Getting water (step 3.4) ----
+// ---- Getting water and food (step 3.4) ----
 
 constexpr const char *goal_get_water = "autonomy_get_water";
-// Very thirsty; the game's own planner waits for Parched (100).
-constexpr int water_need_to_act = 50;
-constexpr int water_radius = 20;
+constexpr const char *goal_get_food = "autonomy_get_food";
+// Very thirsty / Very hungry. The game's own planners wait for Parched / starving.
+constexpr int need_to_act = 50;
+constexpr int trip_radius = 20;
 // Targets in a row that came to nothing (unreachable, no progress) before giving up.
 constexpr int max_failed_targets = 3;
 constexpr time_duration give_up_for = 1_hours;
-constexpr const char *var_water_fails = "autonomy_water_fails";
-// Turns since the start of the game until which the NPC has given up.
-constexpr const char *var_water_gave_up = "autonomy_water_gave_up_until";
-// The target last announced, so "goes to get water" shows once per trip.
-constexpr const char *var_water_target = "autonomy_water_target";
+// How long the "is there any in reach?" answer is reused, in turns.
+constexpr int recheck_turns = 5;
 
-bool carries_drink( const npc &guy )
+// One kind of trip: which of the game's planners runs it, where its state is kept, what's said.
+struct trip_kind {
+    npc::need_goal_id need;
+    // Targets in a row that came to nothing.
+    const char *fails_var;
+    // Turns since the start of the game until which the NPC has given up.
+    const char *gave_up_var;
+    // The target last announced, so "goes to get ..." shows once per trip.
+    const char *target_var;
+    const char *going_msg;
+    const char *give_up_msg;
+    const char *plan_here;
+    const char *plan_away;
+};
+
+const trip_kind water_trip{
+    npc::need_goal_id::drink_water,
+    "autonomy_water_fails", "autonomy_water_gave_up_until", "autonomy_water_target",
+    translate_marker( "%s goes to get water." ),
+    translate_marker( "%s gives up looking for water." ),
+    translate_marker( "Plan: get water (drinking)" ),
+    translate_marker( "Plan: get water (heading to water %d tiles away)" )
+};
+
+const trip_kind food_trip{
+    npc::need_goal_id::eat_food,
+    "autonomy_food_fails", "autonomy_food_gave_up_until", "autonomy_food_target",
+    translate_marker( "%s goes to get food." ),
+    translate_marker( "%s gives up looking for food." ),
+    translate_marker( "Plan: get food (eating)" ),
+    translate_marker( "Plan: get food (heading to food %d tiles away)" )
+};
+
+// Something in the pack that meets this need, and room to take it.
+bool carries_for( const npc &guy, const npc::need_goal_id need )
 {
-    if( !guy.intake_fits( npc::need_goal_id::drink_water ) ) {
+    if( !guy.intake_fits( need ) ) {
         return false;
     }
-    for( const item *drink : guy.items_with( []( const item & it ) {
-    return it.is_food();
+    for( const item *it : guy.items_with( []( const item & i ) {
+    return i.is_food();
     } ) ) {
-        if( guy.can_satisfy( *drink, npc::need_goal_id::drink_water ) ) {
+        if( guy.can_satisfy( *it, need ) ) {
             return true;
         }
     }
@@ -486,44 +527,66 @@ itype_id adjacent_water( const npc &guy )
     return itype_id::NULL_ID();
 }
 
-void count_failed_target( npc &guy )
+bool gave_up( const npc &guy, const trip_kind &kind )
 {
-    const int fails = static_cast<int>( get_num( guy, var_water_fails, 0.0 ) ) + 1;
+    return turns_since_start() < get_num( guy, kind.gave_up_var, -1.0 );
+}
+
+void count_failed_target( npc &guy, const trip_kind &kind )
+{
+    const int fails = static_cast<int>( get_num( guy, kind.fails_var, 0.0 ) ) + 1;
     if( fails < max_failed_targets ) {
-        guy.set_value( var_water_fails, static_cast<double>( fails ) );
+        guy.set_value( kind.fails_var, static_cast<double>( fails ) );
         return;
     }
-    guy.set_value( var_water_fails, 0.0 );
-    guy.set_value( var_water_gave_up,
+    guy.set_value( kind.fails_var, 0.0 );
+    guy.set_value( kind.gave_up_var,
                    static_cast<double>( turns_since_start() + to_turns<int>( give_up_for ) ) );
-    guy.remove_value( var_water_target );
+    guy.remove_value( kind.target_var );
     if( player_sees( guy ) ) {
-        add_msg( m_neutral, _( "%s gives up looking for water." ), guy.get_name() );
+        add_msg( m_neutral, _( kind.give_up_msg ), guy.get_name() );
     }
 }
 
-goal_result get_water( npc &guy )
+npc::need_result run_planner( npc &guy, const trip_kind &kind )
 {
-    const npc::need_result result = guy.execute_drink_water();
-    const npc::need_plan &plan = guy.get_water_plan();
+    return kind.need == npc::need_goal_id::drink_water ? guy.execute_drink_water() :
+           guy.execute_eat_food();
+}
 
-    // Off to a new source: say so once.
+// Drives the game's own planner for this need (pick a target, walk, eat or drink there,
+// cross off targets that fail) and adds what it lacks: saying where they're off to,
+// giving up after a few failed targets, and for water, refilling a bottle.
+goal_result fetch( npc &guy, const trip_kind &kind )
+{
+    if( gave_up( guy, kind ) ) {
+        return goal_result::none;
+    }
+    // Only a target that turned out unreachable counts toward giving up, not "found nothing".
+    const bool had_target = guy.plan_for( kind.need ).active();
+    const npc::need_result result = run_planner( guy, kind );
+    const npc::need_plan &plan = guy.plan_for( kind.need );
+
+    // Off to a new target: say so once.
     if( plan.active() && rl_dist( guy.pos_abs(), plan.target ) > 1 ) {
         const std::string key = target_key( plan.target );
-        const diag_value *announced = guy.maybe_get_value( var_water_target );
+        const diag_value *announced = guy.maybe_get_value( kind.target_var );
         if( announced == nullptr || !announced->is_str() || announced->str() != key ) {
-            guy.set_value( var_water_target, key );
+            guy.set_value( kind.target_var, key );
             if( player_sees( guy ) ) {
-                add_msg( m_neutral, _( "%s goes to get water." ), guy.get_name() );
+                add_msg( m_neutral, _( kind.going_msg ), guy.get_name() );
             }
         }
     }
 
     switch( result ) {
         case npc::need_result::satisfied: {
-            guy.set_value( var_water_fails, 0.0 );
-            guy.remove_value( var_water_target );
-            // Last step: top up a bottle for later, at clean water only.
+            guy.set_value( kind.fails_var, 0.0 );
+            guy.remove_value( kind.target_var );
+            if( kind.need != npc::need_goal_id::drink_water ) {
+                return goal_result::acted;
+            }
+            // Last step for water: top up a bottle for later, at clean water only.
             const itype_id liquid = adjacent_water( guy );
             if( liquid.is_valid() && !liquid.is_null() && liquid->comestible &&
                 liquid->comestible->parasites == 0 && liquid->comestible->contamination.empty() &&
@@ -535,8 +598,10 @@ goal_result get_water( npc &guy )
         case npc::need_result::progressed:
             return guy.activity ? goal_result::activity : goal_result::acted;
         case npc::need_result::impossible:
-            guy.plan_for( npc::need_goal_id::drink_water ).clear();
-            count_failed_target( guy );
+            guy.plan_for( kind.need ).clear();
+            if( had_target ) {
+                count_failed_target( guy, kind );
+            }
             return goal_result::none;
         case npc::need_result::holding:
         case npc::need_result::blocked:
@@ -550,32 +615,82 @@ goal_result get_water( npc &guy )
     return goal_result::none;
 }
 
+// Need at 50+, safe, awake, allowed by the follower rules, not given up, the game agrees
+// it's worth it, and something in the pack or in reach.
+bool wants_trip( const npc &guy, const trip_kind &kind, const int need )
+{
+    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ||
+        need < need_to_act || !looks_after_self( guy ) || gave_up( guy, kind ) ||
+        !guy.intake_useful( kind.need ) ) {
+        return false;
+    }
+    if( carries_for( guy, kind.need ) ) {
+        return true;
+    }
+    // The search scans 20 tiles around the NPC; the behavior tree asks every turn,
+    // so the answer is reused for a few turns (performance, 2026-11-15).
+    struct check {
+        int turn = 0;
+        bool found = false;
+    };
+    static std::map<std::pair<character_id, int>, check> checks;
+    const std::pair<character_id, int> key{ guy.getID(), static_cast<int>( kind.need ) };
+    const int now = turns_since_start();
+    const auto known = checks.find( key );
+    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < recheck_turns ) {
+        return known->second.found;
+    }
+    const behavior::character_oracle_t oracle( &guy );
+    const bool found = ( kind.need == npc::need_goal_id::drink_water ? oracle.can_obtain_water( "" ) :
+                         oracle.can_obtain_food( "" ) ) == behavior::status_t::running;
+    checks[key] = { now, found };
+    return found;
+}
+
+std::string trip_plan_text( const npc &guy, const trip_kind &kind )
+{
+    const npc::need_plan &plan = guy.plan_for( kind.need );
+    if( !plan.active() ) {
+        return std::string();
+    }
+    const int dist = rl_dist( guy.pos_abs(), plan.target );
+    if( dist <= 1 ) {
+        return _( kind.plan_here );
+    }
+    return string_format( _( kind.plan_away ), dist );
+}
+
 } // namespace
 
 bool is_goal( const std::string &goal )
 {
-    return goal == goal_meal || goal == goal_socialize || goal == goal_get_water;
+    return goal == goal_meal || goal == goal_socialize || goal == goal_get_water ||
+           goal == goal_get_food;
 }
 
 bool wants_water( const npc &guy )
 {
-    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ||
-        water_need( guy ) < water_need_to_act ) {
-        return false;
-    }
-    if( turns_since_start() < get_num( guy, var_water_gave_up, -1.0 ) ) {
-        return false;
-    }
-    if( !guy.intake_useful( npc::need_goal_id::drink_water ) ) {
-        return false;
-    }
-    return carries_drink( guy ) ||
-           behavior::character_oracle_t( &guy ).can_obtain_water( "" ) == behavior::status_t::running;
+    return wants_trip( guy, water_trip, enabled() ? water_need( guy ) : 0 );
+}
+
+bool wants_food( const npc &guy )
+{
+    return wants_trip( guy, food_trip, enabled() ? food_need( guy ) : 0 );
+}
+
+bool hungry_enough_for_a_trip( const npc &guy )
+{
+    return enabled() && guy.needs_food() && food_need( guy ) >= need_to_act;
 }
 
 int water_search_radius()
 {
-    return enabled() ? water_radius : 6;
+    return enabled() ? trip_radius : 6;
+}
+
+int food_search_radius()
+{
+    return enabled() ? trip_radius : 6;
 }
 
 bool refill_bottle( npc &guy, const itype_id &liquid )
@@ -595,20 +710,17 @@ bool refill_bottle( npc &guy, const itype_id &liquid )
 
 std::string plan_text( const npc &guy )
 {
-    const npc::need_plan &plan = guy.get_water_plan();
-    if( !enabled() || !plan.active() ) {
+    if( !enabled() ) {
         return std::string();
     }
-    const int dist = rl_dist( guy.pos_abs(), plan.target );
-    if( dist <= 1 ) {
-        return _( "Plan: get water (drinking)" );
-    }
-    return string_format( _( "Plan: get water (heading to water %d tiles away)" ), dist );
+    const std::string water = trip_plan_text( guy, water_trip );
+    return water.empty() ? trip_plan_text( guy, food_trip ) : water;
 }
 
 bool wants_meal( const npc &guy )
 {
-    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ) {
+    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ||
+        !looks_after_self( guy ) ) {
         return false;
     }
     const int meal = current_meal();
@@ -617,6 +729,26 @@ bool wants_meal( const npc &guy )
         return false;
     }
     return carries_meal( guy );
+}
+
+bool wants_meal_at_post( const npc &guy )
+{
+    const std::optional<tripoint_abs_ms> post = guy.get_guard_post();
+    return post && guy.is_on_shift() && guy.pos_abs() == *post && wants_meal( guy );
+}
+
+bool should_leave_meal( const npc &guy )
+{
+    if( !enabled() || !guy.is_walking_with() ) {
+        return false;
+    }
+    // The follow distance from the follower rules (as in npc_arbitration's follow_spacing),
+    // plus a little slack so a step or two doesn't end the meal.
+    int spacing = 6;
+    if( guy.rules.has_flag( ally_rule::follow_close ) ) {
+        spacing = guy.rules.has_flag( ally_rule::follow_distance_2 ) ? 2 : 4;
+    }
+    return rl_dist( guy.pos_abs(), get_avatar().pos_abs() ) > spacing + 2;
 }
 
 Character *chat_partner( const npc &guy )
@@ -665,7 +797,10 @@ goal_result run_goal( npc &guy, const std::string &goal )
         return socialize( guy );
     }
     if( goal == goal_get_water ) {
-        return get_water( guy );
+        return fetch( guy, water_trip );
+    }
+    if( goal == goal_get_food ) {
+        return fetch( guy, food_trip );
     }
     return goal_result::none;
 }

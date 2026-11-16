@@ -8,8 +8,41 @@
         "text": "Mark this place as looted.",
         "effect": { "run_eocs": "EOC_SM_NPC_MARK_LOOTED", "alpha_talker": "npc" },
         "topic": "TALK_SM_MARK_LOOTED_DONE"
+      },
+      {
+        "text": "Stop marking places as looted on your own.",
+        "condition": { "math": [ "n_sm_no_auto_marks != 1" ] },
+        "effect": { "math": [ "n_sm_no_auto_marks = 1" ] },
+        "topic": "TALK_SM_AUTO_MARKS_OFF"
+      },
+      {
+        "text": "You can mark places as looted on your own again.",
+        "condition": { "math": [ "n_sm_no_auto_marks == 1" ] },
+        "effect": { "math": [ "n_sm_no_auto_marks = 0" ] },
+        "topic": "TALK_SM_AUTO_MARKS_ON"
       }
     ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_AUTO_MARKS_OFF",
+    "//": "Follower toggle: no automatic LOOTED marks when leaving a square (asking still works).",
+    "dynamic_line": {
+      "npc_has_trait": "SM_GABRIEL",
+      "yes": "Aight.  No more X's.",
+      "no": "Sure.  I'll leave the walls alone unless you ask."
+    },
+    "responses": [ { "text": "Thanks.  Something else.", "topic": "TALK_SM_FOLLOWER" }, { "text": "Thanks.", "topic": "TALK_DONE" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_SM_AUTO_MARKS_ON",
+    "dynamic_line": {
+      "npc_has_trait": "SM_GABRIEL",
+      "yes": "Sure bet.  Chalk's back on.",
+      "no": "Got it.  I'll mark the places we clear out."
+    },
+    "responses": [ { "text": "Thanks.  Something else.", "topic": "TALK_SM_FOLLOWER" }, { "text": "Thanks.", "topic": "TALK_DONE" } ]
   },
   {
     "type": "talk_topic",
