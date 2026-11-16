@@ -19,6 +19,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 16, 2026
 
 ### NPCs
+- [C++] **Getting warm (step 3.4c):** cold NPCs (Warmth 50+) put on warmer clothes, walk to a fire burning in a
+  fireplace, wood stove or fire pit and stay until warm, or, with a lighter or matches, gather firewood (never
+  anything owned), carry it to an unlit hearth and light it. They only ever light fires in a hearth. They say
+  "goes to gather wood", "carries the wood to the fireplace" and "lights a fire", and give up after 3 failed tries.
+- [C++] **NPCs avoid traps:** they never step onto a harmful trap they can see (pits, spikes, bear traps), so a
+  hungry NPC no longer walks through spiked pits to reach food.
 - [C++] **Getting food (step 3.4b):** very hungry NPCs (Food 50+) eat from their pack, or walk to food they can
   see up to 20 tiles away (in containers, cupboards and fridges too, never anything owned) and eat it there.
   They say "goes to get food", and after 3 failed tries they give up for an hour.

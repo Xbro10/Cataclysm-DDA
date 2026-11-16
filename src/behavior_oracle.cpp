@@ -69,6 +69,7 @@ predicate_map = {{
         { "npc_autonomy_wants_company", make_function( &character_oracle_t::autonomy_wants_company ) },
         { "npc_autonomy_wants_water", make_function( &character_oracle_t::autonomy_wants_water ) },
         { "npc_autonomy_wants_food", make_function( &character_oracle_t::autonomy_wants_food ) },
+        { "npc_autonomy_wants_warmth", make_function( &character_oracle_t::autonomy_wants_warmth ) },
         { "npc_autonomy_wants_meal_at_post", make_function( &character_oracle_t::autonomy_wants_meal_at_post ) },
         { "monster_not_hallucination", make_function( &monster_oracle_t::not_hallucination ) },
         { "monster_items_available", make_function( &monster_oracle_t::items_available ) },

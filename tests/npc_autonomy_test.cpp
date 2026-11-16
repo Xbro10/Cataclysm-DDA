@@ -27,14 +27,18 @@
 #include "point.h"
 #include "talker.h"
 #include "type_id.h"
+#include "weather.h"
 
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
 
 static const activity_id ACT_CONSUME( "ACT_CONSUME" );
 
+static const itype_id itype_2x4( "2x4" );
 static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_bottle_plastic( "bottle_plastic" );
+static const itype_id itype_butane( "butane" );
+static const itype_id itype_lighter( "lighter" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
 static const itype_id itype_water_clean( "water_clean" );
 
@@ -43,6 +47,9 @@ static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY( "EOC_AUTONOMY_DEBUG_NOT_LONELY" );
 
 static const furn_str_id furn_f_cupboard( "f_cupboard" );
+static const furn_str_id furn_f_fireplace( "f_fireplace" );
+
+static const field_type_str_id field_fd_fire( "fd_fire" );
 static const furn_str_id furn_f_water_heater( "f_water_heater" );
 
 static const ter_str_id ter_t_water_sh( "t_water_sh" );
@@ -635,6 +642,72 @@ TEST_CASE( "npc_autonomy_food_behind_traps", "[npc][autonomy]" )
     SECTION( "autonomy off: pits are only costly (the game's own rule)" ) {
         override_option autonomy( "NPC_AUTONOMY", "false" );
         CHECK_FALSE( npc_autonomy::avoids_trap( guy, pits.front() ) );
+    }
+}
+
+TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    guy.set_all_parts_temp_conv( BODYTEMP_VERY_COLD ); // Warmth about 67
+    const tripoint_bub_ms hearth( player_pos + point( 10, 0 ), 0 );
+    here.furn_set( hearth, furn_f_fireplace );
+    const auto on_their_own = [&guy]() {
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_no_faction );
+    };
+    const auto run = [&guy]( int turns ) {
+        for( int turn = 0; turn < turns; ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            if( guy.activity ) {
+                guy.activity.do_turn( guy );
+            } else {
+                npc_autonomy::run_goal( guy, "autonomy_get_warm" );
+            }
+        }
+    };
+
+    SECTION( "option off: never" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+    SECTION( "warm enough: nothing to do" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        guy.set_all_parts_temp_conv( BODYTEMP_NORM );
+        CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+    SECTION( "a fire in the fireplace: they walk over and stay by it" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        here.add_field( hearth, field_fd_fire, 1 );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 40 );
+        CHECK( square_dist( guy.pos_bub(), hearth ) <= 1 );
+        CHECK( npc_autonomy::wants_warmth( guy ) );
+    }
+    SECTION( "an unlit fireplace, wood nearby and a lighter: they gather the wood and light it" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.wear_item( item( itype_backpack ), false );
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        REQUIRE( guy.autonomy_has_firestarter() );
+        run( 300 );
+        CHECK( here.get_field( hearth, field_fd_fire ) != nullptr );
+        // The fire is only ever in the hearth.
+        CHECK_FALSE( here.get_field( guy.pos_bub(), field_fd_fire ) );
+    }
+    SECTION( "following the player: a fireplace far from them is out of reach" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        here.add_field( hearth, field_fd_fire, 1 );
+        CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
     }
 }
 

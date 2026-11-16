@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdio>
 #include <map>
 #include <cmath>
 #include <optional>
@@ -17,8 +18,11 @@
 #include "character.h"
 #include "character_id.h"
 #include "dialogue_chatbin.h"
+#include "field_type.h"
+#include "flag.h"
 #include "game.h"
 #include "game_constants.h"
+#include "iexamine.h"
 #include "item.h"
 #include "itype.h"
 #include "map.h"
@@ -36,6 +40,7 @@
 #include "trap.h"
 #include "type_id.h"
 #include "viewer.h"
+
 
 static const efftype_id effect_hunger_famished( "hunger_famished" );
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
@@ -680,12 +685,325 @@ std::string trip_plan_text( const npc &guy, const trip_kind &kind )
     return string_format( _( kind.plan_away ), dist );
 }
 
+
+// ---- Getting warm (step 3.4c) ----
+
+constexpr const char *goal_get_warm = "autonomy_get_warm";
+// By a fire, they stay until Warmth is below this (no longer cold).
+constexpr int warm_enough = 25;
+constexpr const char *var_warm_fails = "autonomy_warm_fails";
+constexpr const char *var_warm_gave_up = "autonomy_warm_gave_up_until";
+// What they're doing and where, "step:x,y,z": shown in the look-around panel and said once.
+constexpr const char *var_warm_plan = "autonomy_warm_plan";
+
+enum class warm_step { by_fire, to_fire, to_wood, to_hearth };
+
+struct warm_plan {
+    warm_step step;
+    tripoint_bub_ms where;
+};
+
+// A fireplace, wood stove, fire pit or the like (what the game lets NPCs light).
+bool is_hearth( const map &here, const tripoint_bub_ms &p )
+{
+    if( !here.has_flag_ter_or_furn( ter_furn_flag::TFLAG_FIRE_CONTAINER, p ) ) {
+        return false;
+    }
+    const map_data_common_t &top = here.has_furn( p ) ?
+                                   static_cast<const map_data_common_t &>( here.furn( p ).obj() ) :
+                                   static_cast<const map_data_common_t &>( here.ter( p ).obj() );
+    return top.has_examine( iexamine::fireplace );
+}
+
+bool burning( const map &here, const tripoint_bub_ms &p )
+{
+    return here.get_field( p, fd_fire ) != nullptr;
+}
+
+bool carries_firewood( const npc &guy )
+{
+    return guy.has_item_with( []( const item & it ) {
+        return it.has_flag( flag_FIREWOOD );
+    } );
+}
+
+// How far this NPC may go for warmth: followers stay near the player, guards near their
+// post (as the game's own reach rules), anyone else 20 tiles.
+bool warm_spot_in_reach( const npc &guy, const tripoint_bub_ms &p )
+{
+    const map &here = get_map();
+    if( guy.is_walking_with() ) {
+        int spacing = 6;
+        if( guy.rules.has_flag( ally_rule::follow_close ) ) {
+            spacing = guy.rules.has_flag( ally_rule::follow_distance_2 ) ? 2 : 4;
+        }
+        return rl_dist( here.get_abs( p ), get_avatar().pos_abs() ) <= spacing + 2;
+    }
+    if( const std::optional<tripoint_abs_ms> post = guy.get_guard_post(); post && guy.is_on_shift() ) {
+        return rl_dist( here.get_abs( p ), *post ) <= 6;
+    }
+    return rl_dist( guy.pos_bub(), p ) <= trip_radius;
+}
+
+// Nearest tile within 20 that the NPC can see, may go to, and that passes `wanted`.
+// The cheap test runs first; line of sight only for tiles that pass it.
+template<typename Wanted>
+std::optional<tripoint_bub_ms> nearest_seen( const npc &guy, Wanted wanted )
+{
+    const map &here = get_map();
+    for( const tripoint_bub_ms &p : closest_points_first( guy.pos_bub(), trip_radius ) ) {
+        if( wanted( here, p ) && warm_spot_in_reach( guy, p ) && guy.sees( here, p ) ) {
+            return p;
+        }
+    }
+    return std::nullopt;
+}
+
+std::optional<tripoint_bub_ms> nearest_fire( const npc &guy )
+{
+    return nearest_seen( guy, []( const map & here, const tripoint_bub_ms & p ) {
+        return is_hearth( here, p ) && burning( here, p );
+    } );
+}
+
+std::optional<tripoint_bub_ms> nearest_hearth( const npc &guy )
+{
+    return nearest_seen( guy, [&guy]( const map & here, const tripoint_bub_ms & p ) {
+        return is_hearth( here, p ) && !burning( here, p ) && !guy.is_no_go_position( here.get_abs( p ) );
+    } );
+}
+
+// Firewood (sticks, planks, logs...) lying where the NPC may take it.
+std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy )
+{
+    return nearest_seen( guy, [&guy]( const map & here, const tripoint_bub_ms & p ) {
+        if( !here.has_items( p ) || is_hearth( here, p ) ) {
+            return false;
+        }
+        for( item &it : get_map().i_at( p ) ) {
+            if( it.has_flag( flag_FIREWOOD ) && guy.may_take( item_location( map_cursor( p ), &it ) ) &&
+                const_cast<npc &>( guy ).can_stash( it ) ) {
+                return true;
+            }
+        }
+        return false;
+    } );
+}
+
+// The next step of the plan: by a fire, to a fire, to the hearth with wood, or for wood.
+std::optional<warm_plan> next_warm_step( const npc &guy )
+{
+    const map &here = get_map();
+    for( const tripoint_bub_ms &adj : here.points_in_radius( guy.pos_bub(), 1 ) ) {
+        if( adj != guy.pos_bub() && burning( here, adj ) && is_hearth( here, adj ) ) {
+            return warm_plan{ warm_step::by_fire, adj };
+        }
+    }
+    if( const std::optional<tripoint_bub_ms> fire = nearest_fire( guy ) ) {
+        return warm_plan{ warm_step::to_fire, *fire };
+    }
+    if( !guy.autonomy_has_firestarter() ) {
+        return std::nullopt;
+    }
+    const std::optional<tripoint_bub_ms> hearth = nearest_hearth( guy );
+    if( !hearth ) {
+        return std::nullopt;
+    }
+    if( carries_firewood( guy ) ) {
+        return warm_plan{ warm_step::to_hearth, *hearth };
+    }
+    if( const std::optional<tripoint_bub_ms> wood = nearest_firewood( guy ) ) {
+        return warm_plan{ warm_step::to_wood, *wood };
+    }
+    return std::nullopt;
+}
+
+std::string warm_plan_key( const warm_plan &plan )
+{
+    const tripoint_abs_ms p = get_map().get_abs( plan.where );
+    return string_format( "%d:%d,%d,%d", static_cast<int>( plan.step ), p.x(), p.y(), p.z() );
+}
+
+bool gave_up_on_warmth( const npc &guy )
+{
+    return turns_since_start() < get_num( guy, var_warm_gave_up, -1.0 );
+}
+
+void count_failed_warm_step( npc &guy )
+{
+    const int fails = static_cast<int>( get_num( guy, var_warm_fails, 0.0 ) ) + 1;
+    guy.remove_value( var_warm_plan );
+    if( fails < max_failed_targets ) {
+        guy.set_value( var_warm_fails, static_cast<double>( fails ) );
+        return;
+    }
+    guy.set_value( var_warm_fails, 0.0 );
+    guy.set_value( var_warm_gave_up,
+                   static_cast<double>( turns_since_start() + to_turns<int>( give_up_for ) ) );
+    if( player_sees( guy ) ) {
+        add_msg( m_neutral, _( "%s gives up trying to get warm." ), guy.get_name() );
+    }
+}
+
+// Say what they're off to do, once per step and place.
+void announce_warm_step( npc &guy, const warm_plan &plan )
+{
+    const std::string key = warm_plan_key( plan );
+    const diag_value *said = guy.maybe_get_value( var_warm_plan );
+    if( said != nullptr && said->is_str() && said->str() == key ) {
+        return;
+    }
+    guy.set_value( var_warm_plan, key );
+    if( !player_sees( guy ) ) {
+        return;
+    }
+    switch( plan.step ) {
+        case warm_step::to_fire:
+            add_msg( m_neutral, _( "%s goes to warm up by the fire." ), guy.get_name() );
+            break;
+        case warm_step::to_wood:
+            add_msg( m_neutral, _( "%s goes to gather wood." ), guy.get_name() );
+            break;
+        case warm_step::to_hearth:
+            add_msg( m_neutral, _( "%s carries the wood to the fireplace." ), guy.get_name() );
+            break;
+        case warm_step::by_fire:
+            break;
+    }
+}
+
+// Pick up the firewood on an adjacent tile.
+bool take_firewood( npc &guy, const tripoint_bub_ms &p )
+{
+    map &here = get_map();
+    for( item &it : here.i_at( p ) ) {
+        item_location loc( map_cursor( p ), &it );
+        // Only wood they have room for: anything else would just be dropped again.
+        if( it.has_flag( flag_FIREWOOD ) && guy.may_take( loc ) && guy.can_stash( it ) ) {
+            guy.i_add( it );
+            loc.remove_item();
+            guy.mod_moves( -to_moves<int>( 2_seconds ) );
+            return true;
+        }
+    }
+    return false;
+}
+
+goal_result get_warm( npc &guy )
+{
+    if( gave_up_on_warmth( guy ) ) {
+        return goal_result::none;
+    }
+    // Warmer clothes from the pack, first and anywhere.
+    if( guy.wear_warmest_item() ) {
+        return goal_result::acted;
+    }
+    const std::optional<warm_plan> plan = next_warm_step( guy );
+    if( !plan ) {
+        // Nothing of ours to do: the game's own warmth planner (shelter, clothes nearby).
+        guy.remove_value( var_warm_plan );
+        switch( guy.execute_regulate_temperature() ) {
+            case npc::need_result::progressed:
+                return guy.activity ? goal_result::activity : goal_result::acted;
+            case npc::need_result::satisfied:
+            case npc::need_result::holding:
+            case npc::need_result::blocked:
+            case npc::need_result::deferred:
+                guy.mod_moves( -guy.get_speed() );
+                return goal_result::acted;
+            case npc::need_result::impossible:
+            case npc::need_result::idle:
+                break;
+        }
+        return goal_result::none;
+    }
+    announce_warm_step( guy, *plan );
+    const bool adjacent = square_dist( guy.pos_bub(), plan->where ) <= 1;
+    switch( plan->step ) {
+        case warm_step::by_fire:
+            if( current_needs( guy ).warmth < warm_enough ) {
+                guy.set_value( var_warm_fails, 0.0 );
+                guy.remove_value( var_warm_plan );
+                return goal_result::none;
+            }
+            // Stay and warm up.
+            guy.mod_moves( -guy.get_speed() );
+            return goal_result::acted;
+        case warm_step::to_hearth:
+            if( adjacent ) {
+                if( guy.autonomy_light_hearth( plan->where ) ) {
+                    guy.set_value( var_warm_fails, 0.0 );
+                    if( player_sees( guy ) ) {
+                        add_msg( m_neutral, _( "%s lights a fire." ), guy.get_name() );
+                    }
+                    return guy.activity ? goal_result::activity : goal_result::acted;
+                }
+                count_failed_warm_step( guy );
+                return goal_result::none;
+            }
+            break;
+        case warm_step::to_wood:
+            if( adjacent ) {
+                if( take_firewood( guy, plan->where ) ) {
+                    return goal_result::acted;
+                }
+                count_failed_warm_step( guy );
+                return goal_result::none;
+            }
+            break;
+        case warm_step::to_fire:
+            break;
+    }
+    // Walk there (next to it: a hearth or a fire isn't a tile to stand on).
+    if( guy.move_to_and_verify( npc_trip_spec::within_range( plan->where, 1, false ) ) ) {
+        return goal_result::acted;
+    }
+    count_failed_warm_step( guy );
+    return goal_result::none;
+}
 } // namespace
 
 bool is_goal( const std::string &goal )
 {
     return goal == goal_meal || goal == goal_socialize || goal == goal_get_water ||
-           goal == goal_get_food;
+           goal == goal_get_food || goal == goal_get_warm;
+}
+
+bool wants_warmth( const npc &guy )
+{
+    if( !enabled() || guy.in_sleep_state() || !is_safe( guy ) || gave_up_on_warmth( guy ) ) {
+        return false;
+    }
+    const int warmth = current_needs( guy ).warmth;
+    if( warmth < warm_enough ) {
+        return false;
+    }
+    // Already beside a fire: stay until no longer cold, not just until 49.
+    const map &here = get_map();
+    for( const tripoint_bub_ms &adj : here.points_in_radius( guy.pos_bub(), 1 ) ) {
+        if( adj != guy.pos_bub() && burning( here, adj ) && is_hearth( here, adj ) ) {
+            return true;
+        }
+    }
+    if( warmth < need_to_act ) {
+        return false;
+    }
+    // The searches scan 20 tiles; the behavior tree asks every turn, so reuse the answer.
+    struct check {
+        int turn = 0;
+        bool found = false;
+    };
+    static std::map<character_id, check> checks;
+    const int now = turns_since_start();
+    const auto known = checks.find( guy.getID() );
+    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < recheck_turns ) {
+        return known->second.found;
+    }
+    const bool found = next_warm_step( guy ).has_value() ||
+                       behavior::character_oracle_t( &guy ).can_regulate_temperature( "" ) ==
+                       behavior::status_t::running;
+    checks[guy.getID()] = { now, found };
+    return found;
 }
 
 bool wants_water( const npc &guy )
@@ -754,7 +1072,42 @@ void drop_stale_plans( npc &guy )
             guy.remove_value( kind->target_var );
         }
     }
+    if( guy.get_committed_goal() != goal_get_warm ) {
+        guy.remove_value( var_warm_plan );
+    }
 }
+
+namespace
+{
+
+std::string warm_plan_text( const npc &guy )
+{
+    const diag_value *plan = guy.maybe_get_value( var_warm_plan );
+    if( plan == nullptr || !plan->is_str() || guy.get_committed_goal() != goal_get_warm ) {
+        return std::string();
+    }
+    int step = 0;
+    tripoint_abs_ms where;
+    if( std::sscanf( plan->str().c_str(), "%d:%d,%d,%d", &step, &where.x(), &where.y(),
+                     &where.z() ) != 4 ) {
+        return std::string();
+    }
+    const int dist = rl_dist( guy.pos_abs(), where );
+    switch( static_cast<warm_step>( step ) ) {
+        case warm_step::by_fire:
+            return _( "Plan: get warm (by the fire)" );
+        case warm_step::to_fire:
+            return dist <= 1 ? _( "Plan: get warm (by the fire)" ) :
+                   string_format( _( "Plan: get warm (heading to a fire %d tiles away)" ), dist );
+        case warm_step::to_wood:
+            return string_format( _( "Plan: get warm (gathering wood %d tiles away)" ), dist );
+        case warm_step::to_hearth:
+            return string_format( _( "Plan: get warm (taking wood to a fireplace %d tiles away)" ), dist );
+    }
+    return std::string();
+}
+
+} // namespace
 
 std::string plan_text( const npc &guy )
 {
@@ -762,7 +1115,11 @@ std::string plan_text( const npc &guy )
         return std::string();
     }
     const std::string water = trip_plan_text( guy, water_trip );
-    return water.empty() ? trip_plan_text( guy, food_trip ) : water;
+    if( !water.empty() ) {
+        return water;
+    }
+    const std::string food = trip_plan_text( guy, food_trip );
+    return food.empty() ? warm_plan_text( guy ) : food;
 }
 
 bool wants_meal( const npc &guy )
@@ -801,8 +1158,8 @@ bool should_leave_meal( const npc &guy )
 
 bool should_catch_up( const npc &guy, const std::string &goal )
 {
-    static const std::array<std::string, 5> eat_or_drink{ {
-            "eat_food", "drink_water", goal_meal, goal_get_food, goal_get_water
+    static const std::array<std::string, 6> eat_or_drink{ {
+            "eat_food", "drink_water", goal_meal, goal_get_food, goal_get_water, goal_get_warm
         }
     };
     if( std::find( eat_or_drink.begin(), eat_or_drink.end(), goal ) == eat_or_drink.end() ) {
@@ -863,6 +1220,9 @@ goal_result run_goal( npc &guy, const std::string &goal )
     }
     if( goal == goal_get_water ) {
         return fetch( guy, water_trip );
+    }
+    if( goal == goal_get_warm ) {
+        return get_warm( guy );
     }
     if( goal == goal_get_food ) {
         return fetch( guy, food_trip );

@@ -45,6 +45,15 @@
     "score_argument": "0.45"
   },
   {
+    "type": "behavior",
+    "id": "npc_autonomy_get_warm",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 3.4c. Warmth 50+ (between the game's Cold and Very cold; it waits for Very cold): warmer clothes from the pack, else stand by a hearth fire they can see, else with a firestarter take firewood (carried or picked up nearby, never owned) to a fireplace, wood stove or fire pit and light it, else the game's own planner (shelter, clothes nearby). Only ever lights hearths. Beside a fire they stay until Warmth is under 25. Followers stay near the player, guards near their post, others go up to 20 tiles; 3 failed tries and they give up for an hour.",
+    "conditions": [ { "predicate": "npc_autonomy_wants_warmth" } ],
+    "goal": "autonomy_get_warm",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.45"
+  },
+  {
     "type": "snippet",
     "category": "<ally_rule_no_self_care_true_text>",
     "//": "Xbro10 fork, follower rule no_self_care (NPC autonomy option).",

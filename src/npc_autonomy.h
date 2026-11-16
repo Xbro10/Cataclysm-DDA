@@ -104,6 +104,15 @@ int water_search_radius();
 
 /** Food 50+, safe, awake, not given up, and food in the pack or in reach. */
 bool wants_food( const npc &guy );
+
+// Step 3.4c, goal "autonomy_get_warm": Warmth 50+ (between the game's Cold and Very cold).
+// Warmer clothes from the pack; else stand by a hearth fire they can see; else, with a
+// firestarter, take firewood (carried, or picked up nearby) to a fireplace, stove or fire
+// pit and light it; else the game's own planner (shelter, clothes nearby). Fires are only
+// ever lit in a hearth. Beside a fire they stay until Warmth is under 25.
+
+/** Warmth 50+ (or 25+ beside a fire), safe, awake, not given up, and a way to warm up. */
+bool wants_warmth( const npc &guy );
 /** Food need 50+ with autonomy on: the game's "is eating worth it" check also says yes. */
 bool hungry_enough_for_a_trip( const npc &guy );
 /** How far NPCs look for food: 6 tiles (upstream) or, with autonomy on, 20. */
