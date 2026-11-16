@@ -652,6 +652,26 @@ bool wants_meal( const npc &guy )
     return carries_meal( guy );
 }
 
+bool wants_meal_at_post( const npc &guy )
+{
+    const std::optional<tripoint_abs_ms> post = guy.get_guard_post();
+    return post && guy.is_on_shift() && guy.pos_abs() == *post && wants_meal( guy );
+}
+
+bool should_leave_meal( const npc &guy )
+{
+    if( !enabled() || !guy.is_walking_with() ) {
+        return false;
+    }
+    // The follow distance from the follower rules (as in npc_arbitration's follow_spacing),
+    // plus a little slack so a step or two doesn't end the meal.
+    int spacing = 6;
+    if( guy.rules.has_flag( ally_rule::follow_close ) ) {
+        spacing = guy.rules.has_flag( ally_rule::follow_distance_2 ) ? 2 : 4;
+    }
+    return rl_dist( guy.pos_abs(), get_avatar().pos_abs() ) > spacing + 2;
+}
+
 Character *chat_partner( const npc &guy )
 {
     const map &here = get_map();

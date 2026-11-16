@@ -10,6 +10,15 @@
   },
   {
     "type": "behavior",
+    "id": "npc_autonomy_post_meal",
+    "//": "Xbro10 fork, NPC autonomy. A guard on their post during their shift still takes mealtimes, from their pack and without leaving the post (the meal goal never walks). Weight 0.5 beats holding the post (0.45); the plain meal (0.35) doesn't.",
+    "conditions": [ { "predicate": "npc_autonomy_wants_meal_at_post" } ],
+    "goal": "autonomy_meal",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.5"
+  },
+  {
+    "type": "behavior",
     "id": "npc_autonomy_socialize",
     "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). Social 50+: walk over to a friendly person within 15 tiles and chat (at most every 30 minutes). score_argument is the weight (0-1).",
     "conditions": [ { "predicate": "npc_autonomy_wants_company" } ],

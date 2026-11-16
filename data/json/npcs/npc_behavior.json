@@ -44,6 +44,7 @@
       "npc_return_to_camp",
       "npc_free_time",
       "npc_autonomy_meal",
+      "npc_autonomy_post_meal",
       "npc_autonomy_socialize",
       "npc_autonomy_get_water"
     ]

@@ -624,6 +624,12 @@ status_t character_oracle_t::autonomy_wants_company( std::string_view ) const
     return n && npc_autonomy::wants_company( *n ) ? status_t::running : status_t::failure;
 }
 
+status_t character_oracle_t::autonomy_wants_meal_at_post( std::string_view ) const
+{
+    const npc *n = dynamic_cast<const npc *>( subject );
+    return n && npc_autonomy::wants_meal_at_post( *n ) ? status_t::running : status_t::failure;
+}
+
 status_t character_oracle_t::autonomy_wants_water( std::string_view ) const
 {
     const npc *n = dynamic_cast<const npc *>( subject );

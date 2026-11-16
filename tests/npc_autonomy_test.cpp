@@ -219,6 +219,40 @@ TEST_CASE( "npc_autonomy_mealtimes", "[npc][autonomy]" )
 // Xbro10 fork fixes: an NPC saved mid-meal used to lose its food on load. It isn't
 // registered with the game while it loads ("Failed to find item_location owner"), and
 // every item in a pocket got a new uid on load ("UID not found in container contents").
+TEST_CASE( "npc_autonomy_meals_on_post_and_when_left_behind", "[npc][autonomy]" )
+{
+    clear_map_without_vision();
+    clear_avatar();
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    set_time( calendar::turn_zero + 7_hours );
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 3, 0 ) );
+    guy.stomach.empty();
+    guy.set_hunger( 50 );
+    guy.add_effect( effect_hunger_hungry, 1_days );
+    guy.i_add( item( itype_sandwich_cheese_grilled ) );
+
+    SECTION( "a guard on their post eats from their pack there" ) {
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_guard_pos( guy.pos_abs() );
+        REQUIRE( guy.is_on_shift() );
+        CHECK( npc_autonomy::wants_meal_at_post( guy ) );
+        // Off the post: not this rule (the plain mealtime rule still applies).
+        guy.setpos( get_map(), guy.pos_bub() + point( 1, 0 ) );
+        CHECK_FALSE( npc_autonomy::wants_meal_at_post( guy ) );
+    }
+    SECTION( "a follower near the player keeps eating" ) {
+        CHECK_FALSE( npc_autonomy::should_leave_meal( guy ) );
+    }
+    SECTION( "a follower left behind drops the meal" ) {
+        guy.setpos( get_map(), tripoint_bub_ms( player_pos + point( 12, 0 ), 0 ) );
+        CHECK( npc_autonomy::should_leave_meal( guy ) );
+        override_option off( "NPC_AUTONOMY", "false" );
+        CHECK_FALSE( npc_autonomy::should_leave_meal( guy ) );
+    }
+}
+
 TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
 {
     clear_map_without_vision();

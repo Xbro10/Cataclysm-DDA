@@ -14,6 +14,7 @@ and add the detailed line to that mod's `CHANGELOG.md` too.
 
 *(newest first)*
 
+- 2026-11-15, NPC brain: [C++] **NPC turns are faster:** the searches for water and food check the tile itself before line of sight (the water search was most of a thirsty NPC's turn: about 3 ms down to 0.06 ms; the game's own food search gets about 15 times faster too). A follower stops eating and follows once you walk past their follow distance, and a guard on their post eats at mealtimes from their pack.
 - 2026-11-15, Levels: [BE] **Level 0 runs faster:** its ceiling lights are dimmer (40 instead of 120), still brightly lit everywhere, and lighting takes about 40% less time. A thirsty NPC's water search also runs at most every 5 turns. Benchmark: `tests/backrooms_perf_test.cpp`.
 - 2026-11-15, NPC behaviour: [SM] Gossip no longer marks a place on your map (it knew far-off places even for brand-new NPCs); it returns with NPC memory (step 3.5).
 - 2026-11-15, Game options and fixes: [C++] NPCs no longer rate a harmless spell field as an attack, so NPCs with Mind Over Matter powers fight with their weapon instead of casting Clairvoyance over and over.

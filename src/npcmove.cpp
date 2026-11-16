@@ -1636,6 +1636,10 @@ void npc::move()
         if( food_gone || ( source && !source.held_by( *this ) &&
                            rl_dist( pos_abs(), source.pos_abs() ) > 1 ) ) {
             abandon_activity();
+        } else if( npc_autonomy::should_leave_meal( *this ) ) {
+            // Xbro10 fork: with NPC autonomy on, a follower drops the meal once the player has
+            // walked off past their follow distance; uneaten food stays in the pack.
+            abandon_activity();
         }
     }
     if( is_self_care_activity() ) {
@@ -6636,13 +6640,15 @@ std::vector<npc::scored_water_source> npc::find_nearby_water_sources() const
     std::vector<scored_water_source> results;
     const map &here = get_map();
     for( const tripoint_bub_ms &p : closest_points_first( pos_bub(), npc_autonomy::water_search_radius() ) ) {
+        // Xbro10 fork: the cheap terrain check first. Line of sight came first and was
+        // most of an NPC turn (every tile in reach, about 3 ms at 20 tiles).
+        if( !is_allowed_water_source( here.ter( p ).obj() ) ) {
+            continue;
+        }
         if( is_no_go_position( here.get_abs( p ) ) ) {
             continue;
         }
         if( !sees( here, p ) ) {
-            continue;
-        }
-        if( !is_allowed_water_source( here.ter( p ).obj() ) ) {
             continue;
         }
         results.push_back( { p, rl_dist( pos_bub(), p ) } );
@@ -6691,6 +6697,11 @@ std::vector<npc::scored_item> npc::find_nearby_food( consume_filter filter )
     const bool autonomy_drinks = npc_autonomy::enabled() && filter == consume_filter::drink_only;
     const int search_radius = autonomy_drinks ? npc_autonomy::water_search_radius() : 6;
     for( const tripoint_bub_ms &p : closest_points_first( pos_bub(), search_radius ) ) {
+        // Xbro10 fork: skip tiles with nothing on them before the costly checks below
+        // (line of sight and zones for every tile in reach).
+        if( !here.has_items( p ) && !here.veh_at( p ) ) {
+            continue;
+        }
         if( is_no_go_position( here.get_abs( p ) ) ) {
             continue;
         }

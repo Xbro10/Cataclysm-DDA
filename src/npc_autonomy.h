@@ -62,6 +62,10 @@ std::string needs_text( const npc &guy );
 bool is_goal( const std::string &goal );
 /** Mealtime (breakfast, lunch, dinner), Peckish or worse, food in the pack, not yet eaten this meal, safe. */
 bool wants_meal( const npc &guy );
+/** wants_meal() for a guard standing on their post during their shift: they eat from their pack there. */
+bool wants_meal_at_post( const npc &guy );
+/** A follower eating while the player has walked beyond their follow distance: drop the meal and follow. */
+bool should_leave_meal( const npc &guy );
 /** Social 50+, safe, awake, not chatted in the last 30 minutes, someone to talk to nearby. */
 bool wants_company( const npc &guy );
 /** Nearest friendly, awake person within 15 tiles the NPC can see (nullptr if none). */
