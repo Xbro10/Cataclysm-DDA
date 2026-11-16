@@ -70,6 +70,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
 
 ### Fixed
+- Level 2 no longer shows a mapgen error ("setting terrain to t_br2_light ... when item ... existed") when a tunnel light lands on a junk pile.
 - Breakroom runners never left on a run: picking where to go always failed, so every run was put off 6 hours, forever. Their travel also always pointed at their own spot, and the "Find the runner" job marked your own position instead of the runner's. Runners now leave at the time on the runner board and walk off even while you watch.
 - Level 1 structures no longer count towards the main world's limit on required overmap specials. The elevator lobbies would have pushed the main world over that limit.
 - Cars can no longer block an arrival alcove: any car touching the alcove or the 3 tiles in front of its opening is removed (the parking bays elsewhere keep all six car spots).
