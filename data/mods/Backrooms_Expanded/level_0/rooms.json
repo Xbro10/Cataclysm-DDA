@@ -1,0 +1,62 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br0_manila_wall",
+    "copy-from": "t_backroom_wall",
+    "name": "manila wall",
+    "description": "Wallpaper the colour of an old manila folder, dry and clean, without a single water stain.  After the endless damp yellow outside, it looks almost kind.",
+    "color": "brown",
+    "looks_like": "t_wall_b"
+  },
+  {
+    "type": "item_group",
+    "id": "br0_manila_supplies",
+    "subtype": "distribution",
+    "//": "The Manila Room's random finds, on top of its guaranteed food and water.",
+    "entries": [
+      { "group": "br_cat_medical", "prob": 25 },
+      { "group": "br_cat_light", "prob": 20 },
+      { "group": "br_cat_tools", "prob": 15 },
+      { "group": "br_cat_power", "prob": 15 },
+      { "group": "br_cat_snacks", "prob": 15 },
+      { "group": "br_cat_hardware", "prob": 10 }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_manila_room",
+    "//": "The Manila Room (Backrooms Wiki, Level 0): a rare, small, dry room. Always has food (cupboard) and almond water (table), plus a few random finds. Mixed into Level 0's small-room slot (level_0/lights.json). K cupboard, C sofa, B bedroll, T table, h chair, W manila wall; D door from backrooms_palette.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rotation": [ 0, 3 ],
+      "rows": [
+        "WWWWWW",
+        "WK  CW",
+        "W  . W",
+        "WhT  W",
+        "W   BW",
+        "WWDWWW"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": {
+        "W": "t_br0_manila_wall",
+        "K": "t_carpet_backrooms",
+        "C": "t_carpet_backrooms",
+        "B": "t_carpet_backrooms",
+        "T": "t_carpet_backrooms",
+        "h": "t_carpet_backrooms"
+      },
+      "furniture": { "K": "f_cupboard", "C": "f_sofa", "B": "f_makeshift_bed", "T": "f_table", "h": "f_chair" },
+      "items": {
+        "K": [
+          { "item": "br1_breakroom_larder", "chance": 100, "repeat": [ 3, 4 ] },
+          { "item": "br0_manila_supplies", "chance": 60, "repeat": [ 1, 2 ] }
+        ],
+        "T": { "item": "almond_water_sealed", "chance": 100, "repeat": [ 2, 3 ] },
+        "C": { "item": "br0_manila_supplies", "chance": 50 },
+        "B": { "item": "br0_manila_supplies", "chance": 40 }
+      },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]
