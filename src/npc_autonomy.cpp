@@ -714,6 +714,9 @@ constexpr const char *var_warm_gave_up = "autonomy_warm_gave_up_until";
 constexpr const char *var_warm_plan = "autonomy_warm_plan";
 // The fire they last said they were warming up by.
 constexpr const char *var_warm_fire = "autonomy_warm_fire";
+// 1 while they hold a piece of firewood in their hands for the fire (it didn't fit the pack),
+// so a 2x4 they fight with is never mistaken for fuel.
+constexpr const char *var_wood_in_hands = "autonomy_wood_in_hands";
 
 enum class warm_step { by_fire, to_fire, to_wood, to_hearth, feed_fire };
 
@@ -764,11 +767,55 @@ int fuel_wanted( const npc &guy )
     return std::max( for_air, for_body );
 }
 
+// Holding firewood they picked up for the fire (not their weapon).
+bool holds_wood_for_fire( const npc &guy )
+{
+    const item *held = guy.get_wielded_item().get_item();
+    return held != nullptr && held->has_flag( flag_FIREWOOD ) &&
+           get_num( guy, var_wood_in_hands, 0.0 ) > 0.0;
+}
+
+// Firewood in the pack, or in their hands for the fire. A wielded 2x4 they fight with doesn't count.
 bool carries_firewood( const npc &guy )
 {
-    return guy.has_item_with( []( const item & it ) {
-        return it.has_flag( flag_FIREWOOD );
+    if( holds_wood_for_fire( guy ) ) {
+        return true;
+    }
+    const item *held = guy.get_wielded_item().get_item();
+    return guy.has_item_with( [held]( const item & it ) {
+        return &it != held && it.has_flag( flag_FIREWOOD );
     } );
+}
+
+// Wood too big for the pack (a plank, a log) can still go in their hands, one piece a trip:
+// hands free, or a weapon that fits the pack while they carry it; light enough to lift.
+bool can_carry_in_hands( const npc &guy, const item &wood )
+{
+    if( guy.is_using_bionic_weapon() ) {
+        return false;
+    }
+    if( const item_location held = guy.get_wielded_item() ) {
+        if( holds_wood_for_fire( guy ) || !guy.can_unwield( *held ).success() ||
+            !const_cast<npc &>( guy ).can_stash( *held ) ) {
+            return false;
+        }
+    }
+    return guy.can_wield( wood ).success() && guy.can_pickWeight( wood, true );
+}
+
+// Put the wood in their hands on the hearth, then take their weapon back out.
+void put_held_wood_on( npc &guy, const tripoint_bub_ms &p )
+{
+    item_location held = guy.get_wielded_item();
+    guy.remove_value( var_wood_in_hands );
+    if( !held || !held->has_flag( flag_FIREWOOD ) ) {
+        return;
+    }
+    item wood = *held;
+    held.remove_item();
+    get_map().add_item_or_charges( p, wood, false );
+    guy.mod_moves( -to_moves<int>( 2_seconds ) );
+    guy.wield_better_weapon();
 }
 
 // How far this NPC may go for warmth: followers stay near the player, guards near their
@@ -818,7 +865,7 @@ std::optional<tripoint_bub_ms> nearest_hearth( const npc &guy )
 }
 
 // Firewood (sticks, planks, logs...) lying where the NPC may take it.
-// need_room = false finds wood they may take but can't fit in their pack (to say why).
+// need_room = false finds wood they may take but can't carry, in the pack or hands (to say why).
 std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy, const bool need_room = true )
 {
     return nearest_seen( guy, [&guy, need_room]( const map & here, const tripoint_bub_ms & p ) {
@@ -827,7 +874,8 @@ std::optional<tripoint_bub_ms> nearest_firewood( const npc &guy, const bool need
         }
         for( item &it : get_map().i_at( p ) ) {
             if( it.has_flag( flag_FIREWOOD ) && guy.may_take( item_location( map_cursor( p ), &it ) ) &&
-                ( !need_room || const_cast<npc &>( guy ).can_stash( it ) ) ) {
+                ( !need_room || const_cast<npc &>( guy ).can_stash( it ) ||
+                  can_carry_in_hands( guy, it ) ) ) {
                 return true;
             }
         }
@@ -949,6 +997,20 @@ bool take_firewood( npc &guy, const tripoint_bub_ms &p )
             return true;
         }
     }
+    // Too big for the pack: one piece in their hands, their weapon put away meanwhile.
+    for( item &it : here.i_at( p ) ) {
+        item_location loc( map_cursor( p ), &it );
+        if( it.has_flag( flag_FIREWOOD ) && guy.may_take( loc ) && can_carry_in_hands( guy, it ) ) {
+            if( item_location held = guy.get_wielded_item() ) {
+                guy.stow_item( *held );
+            }
+            if( guy.get_wielded_item() || !guy.wield( loc ) ) {
+                return false;
+            }
+            guy.set_value( var_wood_in_hands, 1.0 );
+            return true;
+        }
+    }
     return false;
 }
 
@@ -994,6 +1056,9 @@ goal_result get_warm( npc &guy )
             return goal_result::acted;
         case warm_step::to_hearth:
             if( adjacent ) {
+                if( holds_wood_for_fire( guy ) ) {
+                    put_held_wood_on( guy, plan->where );
+                }
                 if( guy.autonomy_light_hearth( plan->where ) ) {
                     guy.set_value( var_warm_fails, 0.0 );
                     if( player_sees( guy ) ) {
@@ -1025,11 +1090,14 @@ goal_result get_warm( npc &guy )
                 }
                 return VisitResponse::NEXT;
             } );
-            if( !wood ) {
+            if( wood ) {
+                get_map().add_item_or_charges( plan->where, guy.i_rem( wood.get_item() ), false );
+                guy.mod_moves( -to_moves<int>( 2_seconds ) );
+            } else if( holds_wood_for_fire( guy ) ) {
+                put_held_wood_on( guy, plan->where );
+            } else {
                 return goal_result::none;
             }
-            get_map().add_item_or_charges( plan->where, guy.i_rem( wood.get_item() ), false );
-            guy.mod_moves( -to_moves<int>( 2_seconds ) );
             if( player_sees( guy ) ) {
                 add_msg( m_neutral, _( "%s adds wood to the fire." ), guy.get_name() );
             }
@@ -1077,7 +1145,7 @@ std::string warm_blocker( const npc &guy )
                _( "Cold: no fireplace, stove or fire pit in reach" );
     }
     if( nearest_firewood( guy, false ) ) {
-        return _( "Cold: no room to carry the firewood" );
+        return _( "Cold: can't carry the firewood (no room in the pack, hands busy, or too heavy)" );
     }
     return _( "Cold: no firewood in sight" );
 }
@@ -1188,6 +1256,14 @@ void drop_stale_plans( npc &guy )
     if( guy.get_committed_goal() != goal_get_warm ) {
         guy.remove_value( var_warm_plan );
         guy.remove_value( var_warm_fire );
+        // Done with the fire (warm now, or called away) with a plank still in their hands:
+        // set it down and take their weapon back out. Not mid-fight: their combat code
+        // picks the weapon then.
+        if( holds_wood_for_fire( guy ) && is_safe( guy ) ) {
+            put_held_wood_on( guy, guy.pos_bub() );
+        } else if( !holds_wood_for_fire( guy ) ) {
+            guy.remove_value( var_wood_in_hands );
+        }
     }
 }
 

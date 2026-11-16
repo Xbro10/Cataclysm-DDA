@@ -40,7 +40,9 @@ static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_bottle_plastic( "bottle_plastic" );
 static const itype_id itype_butane( "butane" );
 static const itype_id itype_hoodie( "hoodie" );
+static const itype_id itype_jeans( "jeans" );
 static const itype_id itype_lighter( "lighter" );
+static const itype_id itype_rock( "rock" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
 static const itype_id itype_splinter( "splinter" );
 static const itype_id itype_tshirt( "tshirt" );
@@ -708,6 +710,38 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         // The fire is only ever in the hearth.
         CHECK_FALSE( here.get_field( guy.pos_bub(), field_fd_fire ) );
     }
+    SECTION( "no bag for the plank: they carry it over in their hands and take their weapon back" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.wear_item( item( itype_jeans ), false ); // pockets, but no room for a plank
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        item rock( itype_rock );
+        REQUIRE( guy.can_stash( rock ) );
+        guy.wield( rock );
+        here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
+        REQUIRE_FALSE( guy.can_stash( item( itype_2x4 ) ) );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run( 300 );
+        CHECK( here.get_field( hearth, field_fd_fire ) != nullptr );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_rock );
+    }
+    SECTION( "a 2x4 they fight with is not firewood" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        guy.wear_item( item( itype_jeans ), false );
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        item plank( itype_2x4 );
+        guy.wield( plank );
+        run( 50 );
+        CHECK_FALSE( here.get_field( hearth, field_fd_fire ) );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_2x4 );
+    }
     SECTION( "beside a fire with no wood left on it: they add wood from their pack" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
         on_their_own();
@@ -749,6 +783,7 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
     SECTION( "the look-around panel says why they can't warm up" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
         on_their_own();
+        guy.wear_item( item( itype_jeans ), false ); // pockets, but no room for a plank
         here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 6, 3 ), 0 ), item( itype_2x4 ) );
         // No lighter.
         CHECK( npc_autonomy::warm_blocker( guy ).find( "light one" ) != std::string::npos );
@@ -757,8 +792,13 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         lighter.ammo_set( itype_butane, 100 );
         guy.i_add( lighter );
         REQUIRE( guy.autonomy_has_firestarter() );
-        CHECK( npc_autonomy::warm_blocker( guy ).find( "no room" ) != std::string::npos );
-        // Room to carry it: no reason, there's a plan.
+        // Hands free: they'll carry the plank in them, so there's a plan.
+        CHECK( npc_autonomy::warm_blocker( guy ).empty() );
+        // A plank in hand they fight with, no bag to put it in: no way to carry another.
+        item plank( itype_2x4 );
+        guy.wield( plank );
+        CHECK( npc_autonomy::warm_blocker( guy ).find( "carry" ) != std::string::npos );
+        // A backpack: room for the wood.
         guy.wear_item( item( itype_backpack ), false );
         CHECK( npc_autonomy::warm_blocker( guy ).empty() );
         // Warm: nothing to say.

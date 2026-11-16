@@ -33,7 +33,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   enough, no firewood in sight, or no room to carry it), on its own line under their needs. While warming up
   they keep the fire going, bigger the colder the day (1 to 3 pieces of wood on it: 10 °C or warmer, 0-10 °C,
   freezing), adding wood from their pack or fetching some first ("adds wood to the fire"), and say "warms up by
-  the fire" once. A cold NPC also puts on warmer clothes they carry, instead of waiting until Very cold.
+  the fire" once. Wood too big for their pack (planks) goes in their hands, one piece a trip, their weapon put
+  away meanwhile and taken back out after; a plank they fight with is never burned. A cold NPC also puts on
+  warmer clothes they carry, instead of waiting until Very cold.
 - [C++] **NPCs avoid traps:** they never step onto a harmful trap they can see (pits, spikes, bear traps), so a
   hungry NPC no longer walks through spiked pits to reach food.
 - [C++] **Getting food (step 3.4b):** very hungry NPCs (Food 50+) eat from their pack, or walk to food they can
