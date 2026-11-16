@@ -18,6 +18,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ## November 16, 2026
 
+### Backrooms
+- [BE] **Breakroom larder:** the Breakroom keeps its own food on the kitchen counters and water in the fridge, enough
+  for a few days. With NPC autonomy on, its people eat from it; taking from it yourself is stealing. Each runner who
+  gets home brings a fresh batch. Its crates and lockers are stocked far more often too.
+- [BE] **Breakroom lockers** no longer crowd the doorways.
+
 ### NPCs
 - [C++] **Getting warm (step 3.4c):** cold NPCs (Warmth 50+) put on warmer clothes, walk to a fire burning in a
   fireplace, wood stove or fire pit and stay until warm, or, with a lighter or matches, gather firewood (never
