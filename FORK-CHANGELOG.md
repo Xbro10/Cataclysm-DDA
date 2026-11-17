@@ -11,8 +11,23 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 | **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
 | **[Launcher]** | The launcher in `tools/launcher/` |
 
-**Jump to:** [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
+**Jump to:** [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
 [Nov 12–14, the first version](#november-1214-2026-the-first-version) · [How to add an entry](#how-to-add-an-entry)
+
+---
+
+## November 17, 2026
+
+### Launcher
+- [C++] **Discord status card:** while you play, Discord shows which level or world you're in (with a picture),
+  how long you've played and a **Get the fork** button. Options > General > Discord: Off, Basic or Detailed (adds
+  the day, your followers, and sleeping or driving). Needs the Discord desktop app.
+
+### For developers
+- [C++] `src/discord_presence.{h,cpp}`: a small Discord IPC client (named pipe or Unix socket, no library),
+  hooked in `main.cpp` and `game::do_turn`, at most one update per 15 s. Settings and pictures per dimension in
+  `data/discord_presence.json` (application id empty = off). Card art: `tools/backrooms_expanded/draw_discord_art.ps1`.
+  Test `[discord_presence]`.
 
 ---
 

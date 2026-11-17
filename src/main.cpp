@@ -39,6 +39,7 @@
 #include "crash.h"
 #include "cursesdef.h"
 #include "debug.h"
+#include "discord_presence.h"
 #include "do_turn.h"
 #include "event.h"
 #include "event_bus.h"
@@ -875,12 +876,15 @@ void run_game_loop( cli_opts &cli )
 
     while( true ) {
         main_menu menu;
+        // Xbro10 fork: Discord "Playing" card shows the main menu, then the world once it's loaded.
+        discord_presence::show_menu();
         if( !menu.opening_screen() ) {
             break;
         }
 
         shared_ptr_fast<ui_adaptor> ui = g->create_or_get_main_ui_adaptor();
         get_event_bus().send<event_type::game_begin>( getVersionString() );
+        discord_presence::game_started();
         while( !g->do_turn() ) {}
         cata_timer::print_stats();
     }
