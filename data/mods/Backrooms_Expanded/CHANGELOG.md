@@ -5,6 +5,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ## Unreleased
 
+## v0.1.0 - 2026-11-17
+
 ### Added
 - The Breakroom has **archers** and a **supply depot**. Two archers with bows (recurve, compound or long) and quivers of arrows watch the front: from the sandbag nests in the Checkpoint's yard, or behind the Bunker's sandbag wall. The depot (racks and crates along the Checkpoint's yard, racks in the Bunker's workshop) holds food, almond water, medicine, tools, lights and batteries, owned by the Breakroom, and every runner who gets home brings a fresh batch.
 - The Backrooms' entities (Smilers, Hounds, Deathmoths, Wretches, Skin-stealers, Partygoers and the Redeemer) are their own faction now: they never fight each other, always attack zombies and other outsiders that wander in, and leave Facelings alone.
@@ -85,5 +87,3 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Level 1 structures no longer count towards the main world's limit on required overmap specials. The elevator lobbies would have pushed the main world over that limit.
 - Cars can no longer block an arrival alcove: any car touching the alcove or the 3 tiles in front of its opening is removed (the parking bays elsewhere keep all six car spots).
 - Followers now arrive with you through rippling walls (they were left stranded where you first landed). Followers within 20 tiles come along and land on free tiles next to you.
-
-### Removed
