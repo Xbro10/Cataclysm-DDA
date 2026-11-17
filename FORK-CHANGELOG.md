@@ -18,6 +18,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ## November 17, 2026
 
+### Backrooms
+- [BE] **Breakroom archers and supply depot:** two archers with bows guard the front of each Breakroom layout, and a
+  depot of food, water, medicine and tools fills back up every time a runner gets home.
+- [BE] **Backrooms entities are their own faction:** they never fight each other, always attack zombies and other
+  outsiders, and leave Facelings alone.
+
 ### Launcher
 - [C++] **Discord status card:** while you play, Discord shows which level or world you're in (with the launcher picture),
   how long you've played and a **Get the fork** button. Options > General > Discord: Off, Basic or Detailed (adds
