@@ -1,0 +1,43 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_SPAWN_GABRIEL",
+    "//": "Developer shortcut (Debug menu > Activate EOC).  Spawns Gabriel next to you.  Doesn't check for an existing Gabriel; his real spawn point comes later.",
+    "effect": [
+      { "u_spawn_npc": "sm_gabriel", "real_count": 1, "min_radius": 1, "max_radius": 2 },
+      { "u_message": "Survivor Minds debug: Gabriel spawned nearby.", "type": "info" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_WATCH_GABRIEL",
+    "//": "Developer shortcut: watch mode.  Spawns a new, unrecruited Gabriel a short way off and makes you unseen, unheard, unscented and unhurtable, with sight through walls, so he acts as if you weren't there.  A follower would just follow you, so don't recruit this one.  EOC_SM_DEBUG_WATCH_STOP ends it.",
+    "effect": [
+      { "u_spawn_npc": "sm_gabriel", "real_count": 1, "min_radius": 6, "max_radius": 10 },
+      { "u_add_trait": "DEBUG_CLOAK" },
+      { "u_add_trait": "DEBUG_SILENT" },
+      { "u_add_trait": "DEBUG_NOSCENT" },
+      { "u_add_trait": "DEBUG_NODMG" },
+      { "u_add_trait": "DEBUG_NOTEMP" },
+      { "u_add_trait": "DEBUG_CLAIRVOYANCE" },
+      {
+        "u_message": "Survivor Minds debug: watch mode on.  Gabriel spawned 6-10 tiles away; nothing can see, hear, smell or hurt you.  Stay within about 60 tiles or he stops acting.  Run EOC_SM_DEBUG_WATCH_STOP to end it.",
+        "type": "info"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_WATCH_STOP",
+    "//": "Ends watch mode: removes the debug traits EOC_SM_DEBUG_WATCH_GABRIEL gave you.  Gabriel stays where he is.",
+    "effect": [
+      { "u_lose_trait": "DEBUG_CLOAK" },
+      { "u_lose_trait": "DEBUG_SILENT" },
+      { "u_lose_trait": "DEBUG_NOSCENT" },
+      { "u_lose_trait": "DEBUG_NODMG" },
+      { "u_lose_trait": "DEBUG_NOTEMP" },
+      { "u_lose_trait": "DEBUG_CLAIRVOYANCE" },
+      { "u_message": "Survivor Minds debug: watch mode off.  You can be seen and hurt again.", "type": "info" }
+    ]
+  }
+]

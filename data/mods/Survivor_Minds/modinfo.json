@@ -8,6 +8,6 @@
     "description": "NPCs with inner lives: journals, wall markings, daily routines, personality-driven reactions and shared knowledge.  Works with or without the Backrooms.",
     "category": "misc_additions",
     "dependencies": [ "dda" ],
-    "version": "0.0.1"
+    "version": "0.1.0"
   }
 ]

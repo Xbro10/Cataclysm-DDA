@@ -5,6 +5,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ## Unreleased
 
+## v0.1.0 - 2026-11-17
+
 ### Added
 - The Breakroom has **archers** and a **supply depot**. Two archers with bows (recurve, compound or long) and quivers of arrows watch the front: from the sandbag nests in the Checkpoint's yard, or behind the Bunker's sandbag wall. The depot (racks and crates along the Checkpoint's yard, racks in the Bunker's workshop) holds food, almond water, medicine, tools, lights and batteries, owned by the Breakroom, and every runner who gets home brings a fresh batch.
 - The Backrooms' entities (Smilers, Hounds, Deathmoths, Wretches, Skin-stealers, Partygoers and the Redeemer) are their own faction now: they never fight each other, always attack zombies and other outsiders that wander in, and leave Facelings alone.
@@ -63,6 +65,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+- Level 0 runs faster: its ceiling lights shine at brightness 40 instead of 120 (overriding the upstream Backrooms terrain). Light barely fades in open air, so each light reached about 92 tiles and the thousands of them took most of each turn's map update. The floor still reads as brightly lit everywhere, and lighting takes about 40% less time.
 - Breakroom lockers no longer crowd the doorways: the stores room has three lockers and Dot's supply locker, and its door to the back rooms moved two tiles over; the Checkpoint guard room's lockers moved to the side wall.
 - Level 0 ceiling lights are in order now: rows and columns of lights every 4 tiles across rooms and halls, with about 1 in 7 dead, instead of a random 1 in 20 floor tiles. Only newly generated areas change. (The first version of this placed the grid before the rooms, which painted over it and left Level 0 with no lights at all.)
 - The Breakroom is no longer marked on your map when you first reach Level 1 (and the "arrow on the pillar" message is gone). Find it by exploring, or from notes and people. Breakroom Hire still starts you there with it marked.
@@ -84,5 +87,3 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Level 1 structures no longer count towards the main world's limit on required overmap specials. The elevator lobbies would have pushed the main world over that limit.
 - Cars can no longer block an arrival alcove: any car touching the alcove or the 3 tiles in front of its opening is removed (the parking bays elsewhere keep all six car spots).
 - Followers now arrive with you through rippling walls (they were left stranded where you first landed). Followers within 20 tiles come along and land on free tiles next to you.
-
-### Removed

@@ -1,10 +1,52 @@
 # Backrooms Expanded
 
-An add-on for **The Backrooms** mod for Cataclysm: Dark Days Ahead: new
-levels, structures and survival resources (water sources, vending machines,
-almond water).
+An add-on for **The Backrooms** mod for Cataclysm: Dark Days Ahead: new levels,
+places, people, entities and survival resources, deeper in.
 
-**Status:** in development. Level 1 (the Parking Deck) is playable, reached through rare rippling walls on Level 0.  The way back is much harder to find. See `CHANGELOG.md`.
+**Version 0.1.0** (2026-11-17). Full details in `CHANGELOG.md`.
+
+## What it adds
+
+**Level 0, the Lobby** (the Backrooms mod's own level), filled out: archway
+rooms over deep carpet, pitch-black blackout zones with pooled fluid, pillar
+halls, and the rare Manila Room, a small dry room that always has food and
+almond water. Ceiling lights hang in proper rows, water coolers stand in the
+halls, and a few of the Backrooms' own entities roam: Facelings, Hounds, Smilers,
+Deathmoths and, later, Wretches. Somewhere there is a way further in.
+
+**Level 1, the Parking Deck**, a new level: endless concrete garage under
+flickering lights that die one by one.
+- **The Breakroom**, a walled survivor hub (a guarded Checkpoint or a Bunker)
+  with Dot the Foreman, Marcus the mapkeeper, a door guard, archers, a stocked
+  larder and supply depot, runners who head out across the level on a schedule
+  you can read, and jobs that earn you standing, a supply key and Marcus' map.
+- **Squatter camps** of lost survivors to talk to, trade with and recruit.
+- **The Exchange**, a fenced market of three traders, and **the All-Nite**,
+  a diner with a cook, a server and regulars.
+- **Elevator lobbies**: bright, safe rooms whose lifts take you somewhere else
+  on the level, usually.
+- Security offices with a gun safe, generator rooms that bring lights back,
+  storage cages, vending alcoves, drip pools, dead zones, overrun camps,
+  siphonable cars, notes and graffiti left by earlier travellers.
+- Entities: Smilers that keep to the dark, Hound packs, Deathmoths at the lights,
+  Wretches, Facelings, Skin-stealers and the rare Partygoer.
+
+**Level 2, the Pipe Tunnels**, a new level: a hot, wet maze of maintenance
+tunnels. Leaking steam, burst pipes, boiler rooms, valve wheels that shut the
+leaks, flooded dips, and the Tunnel Crew, Level 2's only people.
+
+**Starts.** Four new scenarios: **Wrong Exit**, **Breakroom Hire** and **One of
+the Lost** start on Level 1; **Pipe Rat** starts alone on Level 2, the hardest.
+Every Backrooms start comes with the wanderer's field guide.
+
+**Almond water** turns up on every level, calms you when you drink it, and is
+the closest thing the Backrooms have to money.
+
+The Backrooms' entities are one faction: they leave each other alone and attack
+anything from outside that wanders in.
+
+How to get from one level to the next is for you to find. People and notes in
+the game drop hints.
 
 ## Install
 
@@ -35,9 +77,11 @@ level plays (how many entities, how much food, what goes wrong):
 
 ## Requirements
 
-- Current CDDA experimental build.
+- A current CDDA experimental build.
 - The Backrooms mod (included with the game).
-- Made with the UltiCa tileset in mind; every new ID has a `looks_like` fallback.
+- Made with the UltiCa tileset in mind, with sprites for UltiCa and
+  UndeadPeople; every new ID has a `looks_like` fallback, so other tilesets work.
+- Works well with **Survivor Minds** (followers have Backrooms lines).
 
 ## Credits
 
@@ -45,7 +89,8 @@ level plays (how many entities, how much food, what goes wrong):
   (github.com/TGWeaver/Backrooms-CDDA-Mod), now maintained inside CDDA.
 - The CDDA contributors who keep The Backrooms working on current builds.
 - The **Backrooms Wiki** (backrooms-wiki.wikidot.com) community, for the Survival
-  Difficulty Class system and each level's class. The level descriptions here are our own.
+  Difficulty Class system, each level's class, and the Level 0 places this mod
+  builds from. The descriptions and art here are our own.
 
 ## License
 
