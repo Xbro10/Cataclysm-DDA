@@ -75,6 +75,19 @@ TEST_CASE( "discord_presence_card_text", "[discord_presence]" )
     }
 }
 
+TEST_CASE( "discord_presence_one_picture_hover_shows_who", "[discord_presence]" )
+{
+    // With no small picture (the shipped setup), the big picture's hover text says who you play.
+    discord_presence::config cfg = sample_config();
+    cfg.small_image.clear();
+    discord_presence::snapshot s;
+    s.dimension = "backrooms_level_2";
+    s.who = "Pipe Rat · Plumber";
+    const std::string a = discord_presence::activity_json( cfg, s );
+    CHECK( a.find( "\"large_text\":\"Pipe Rat" ) != std::string::npos );
+    CHECK( a.find( "small_image" ) == std::string::npos );
+}
+
 TEST_CASE( "discord_presence_shipped_config_parses", "[discord_presence]" )
 {
     // The real data/discord_presence.json must parse (application_id may still be empty).

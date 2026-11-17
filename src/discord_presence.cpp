@@ -123,8 +123,11 @@ std::string activity_json( const config &cfg, const snapshot &s )
     jsout.start_object();
     if( !where.image.empty() ) {
         jsout.member( "large_image", where.image );
-        if( !where.image_text.empty() ) {
-            jsout.member( "large_text", where.image_text );
+        // Without a small picture, the big one's hover text says who you're playing.
+        const std::string hover = !s.in_menu && cfg.small_image.empty() && !s.who.empty() ? s.who :
+                                  where.image_text;
+        if( !hover.empty() ) {
+            jsout.member( "large_text", hover );
         }
     }
     if( !cfg.small_image.empty() ) {
