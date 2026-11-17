@@ -1,7 +1,7 @@
 [
   {
     "type": "mod_tileset",
-    "//": "Level 1 overmap sprites, drawn for this mod (CC-BY-SA 3.0). Used with UltiCa or UndeadPeople; other tilesets fall back to each terrain's looks_like. Sprite numbers count from 0 within br1_overmap.png (nine 32x32 tiles in a row).",
+    "//": "Level 1 overmap sprites, drawn for this mod (CC-BY-SA 3.0). Used with UltiCa or UndeadPeople; other tilesets fall back to each terrain's looks_like. Sprite numbers count from 0 within br1_overmap.png (twelve 32x32 tiles in a row).",
     "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
     "tiles-new": [
       {
@@ -22,7 +22,9 @@
           { "id": "br1_dead_zone", "fg": 6, "rotates": false },
           { "id": "br1_overrun_camp", "fg": 7, "rotates": false },
           { "id": "br1_elevator_lobby", "fg": 8, "rotates": false },
-          { "id": "br1_generator_site", "fg": 9, "rotates": false }
+          { "id": "br1_generator_site", "fg": 9, "rotates": false },
+          { "id": "br1_exchange", "fg": 10, "rotates": false },
+          { "id": "br1_diner", "fg": 11, "rotates": false }
         ]
       }
     ]
