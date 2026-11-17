@@ -23,6 +23,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   how long you've played and a **Get the fork** button. Options > General > Discord: Off, Basic or Detailed (adds
   the day, your followers, and sleeping or driving). Needs the Discord desktop app.
 
+### Bug fixes
+- [C++] **No more "item_location lost its target item during a save/load cycle" pop-ups** after loading: something
+  being used from a pile of identical items on the ground or in a vehicle (eating, picking up, hauling) lost track of
+  its item, because the save keeps only one id for the whole pile.
+
 ### For developers
 - [C++] `src/discord_presence.{h,cpp}`: a small Discord IPC client (named pipe or Unix socket, no library),
   hooked in `main.cpp` and `game::do_turn`, at most one update per 15 s. Settings and pictures per dimension in
