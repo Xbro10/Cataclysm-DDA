@@ -12,7 +12,7 @@ As of 2026-11-17. Update this each time a prompt is finished.
 - Phases 0, 1 and 2: finished (Prompts 0.1 to 2.6). Don't redo, re-plan or re-verify them.
 - Phase 3: 3.1 to 3.4 finished (3.4: water, food and warmth, all tested in game by 2026-11-17).
   The planned "stocking up" step became Prompt 7.0 (stock count) in the new playbook.
-- Current: Prompt 5.1 (release v0.1.0 of both mods), being planned 2026-11-17.
+- Phase 5: 5.1 finished 2026-11-17 (both mods v0.1.0, one combined GitHub release `mods-v0.1.0`). Next: 5.2.
 - Fixes already made ahead of Phase 5: part of 5.3 (a follower drops a meal when left behind, guards eat
   on their post, water trips use upstream's follow and guard reach). Still open in 5.3: chats.
 - Next after 3.4: Phase 5 in order (5.1 first), then Phase 6 (6.0 first), then 3.6, then Phase 7, then Phase 8 (it takes over the shelter half of 7.7; 8.6, Backrooms homes, goes on `dev`).
@@ -74,7 +74,12 @@ For developers; see "How to add an entry" at its end), as well as to its mod's `
   attach files, so the user drags the zip in.
 - A ruleset (PR required, no force-push or delete) covers `master`, `dev`, `npc-autonomy`, `testing`; Xbro10 bypasses it,
   so pushes still work and GitHub prints a "must be made through a pull request" note.
-- Release tags are per mod: `survivor-minds-vX.Y.Z`, `backrooms-expanded-vX.Y.Z`.
+- Mod releases (playbook P.1): each mod keeps its own version and tag (`survivor-minds-vX.Y.Z`, `backrooms-expanded-vX.Y.Z`),
+  but the user wants **one combined GitHub release** (full release, not pre-release): tag `mods-vX.Y.Z`, title
+  "Mods vX.Y.Z: Backrooms Expanded + Survivor Minds", both zips (`git archive --prefix=<Folder>/ <tag>:data/mods/<Folder>`
+  into `D:\dev\releases\`), notes = install steps, a short list per mod and each changelog entry in a `<details>` block.
+  First: `mods-v0.1.0` (2026-11-17). No `gh` CLI here: create it in the built-in browser; the user drags the zips in.
+  The launcher only reads `testing-build-*` tags, so mod releases never show there.
 
 ## Fork changes to the game itself (watch these during upstream merges)
 

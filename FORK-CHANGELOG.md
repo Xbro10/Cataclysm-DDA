@@ -18,8 +18,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ## November 17, 2026
 
-**First releases:** Backrooms Expanded v0.1.0 and Survivor Minds v0.1.0, each with its own download on the
-GitHub Releases page (tags `backrooms-expanded-v0.1.0`, `survivor-minds-v0.1.0`). Both READMEs now list everything
+**First releases:** Backrooms Expanded v0.1.0 and Survivor Minds v0.1.0, together in one release on the GitHub
+Releases page ("Mods v0.1.0", tag `mods-v0.1.0`), with a download for each mod. Both READMEs now list everything
 built so far.
 
 ### Backrooms
