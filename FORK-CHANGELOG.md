@@ -24,6 +24,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   the day, your followers, and sleeping or driving). Needs the Discord desktop app.
 
 ### Bug fixes
+- [BE] **Breakroom runners** now really leave at the time on the runner board (the schedule couldn't find them).
+  New worlds only.
+- [BE] **Exchange traders and the All-Nite cook** lay out their whole stock to trade, not one or two items.
 - [C++] **No more "item_location lost its target item during a save/load cycle" pop-ups** after loading: something
   being used from a pile of identical items on the ground or in a vehicle (eating, picking up, hauling) lost track of
   its item, because the save keeps only one id for the whole pile.
