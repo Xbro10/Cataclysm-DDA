@@ -83,5 +83,44 @@
       ],
       "faction_owner": [ { "id": "br_breakroom", "x": [ 3, 6 ], "y": [ 10, 10 ] } ]
     }
+  },
+  {
+    "type": "item_group",
+    "id": "br1_breakroom_depot",
+    "subtype": "distribution",
+    "//": "The Breakroom's supply depot (racks r and crates Y in both layouts): what the runners bring home.",
+    "entries": [
+      { "group": "br1_breakroom_larder", "prob": 30 },
+      { "group": "almond_water_sealed", "prob": 20 },
+      { "group": "br_cat_medical", "prob": 15 },
+      { "group": "br_cat_tools", "prob": 10 },
+      { "group": "br_cat_light", "prob": 10 },
+      { "group": "br_cat_power", "prob": 10 },
+      { "group": "br_cat_hardware", "prob": 5 }
+    ]
+  },
+  {
+    "type": "mapgen",
+    "update_mapgen_id": "br1_depot_restock_checkpoint",
+    "//": "A runner home: a batch onto the Checkpoint yard depot (racks and crates on row 16), owned by the Breakroom.",
+    "object": {
+      "place_items": [
+        { "item": "br1_breakroom_depot", "x": [ 10, 13 ], "y": 16, "chance": 100, "repeat": [ 3, 5 ] },
+        { "item": "br1_breakroom_depot", "x": [ 15, 17 ], "y": 16, "chance": 100, "repeat": [ 3, 5 ] }
+      ],
+      "faction_owner": [ { "id": "br_breakroom", "x": [ 10, 17 ], "y": [ 16, 16 ] } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "update_mapgen_id": "br1_depot_restock_bunker",
+    "//": "A runner home: a batch onto the Bunker workshop depot (racks on row 13), owned by the Breakroom.",
+    "object": {
+      "place_items": [
+        { "item": "br1_breakroom_depot", "x": [ 4, 5 ], "y": 13, "chance": 100, "repeat": [ 3, 5 ] },
+        { "item": "br1_breakroom_depot", "x": [ 9, 10 ], "y": 13, "chance": 100, "repeat": [ 3, 5 ] }
+      ],
+      "faction_owner": [ { "id": "br_breakroom", "x": [ 4, 10 ], "y": [ 13, 13 ] } ]
+    }
   }
 ]
