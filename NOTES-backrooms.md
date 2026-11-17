@@ -336,6 +336,20 @@ in `src/monmove.cpp`. Everything else only has stats, triggers and speech. To gi
 
 Do these one entity at a time, each with its own checklist entry.
 
+### Weaknesses (planned 2026-11-16, user request)
+
+Smilers are very deadly encounters, so they get a counter: **light burns them**. A Smiler standing in light (your
+flashlight switched on mid-fight, a lamp, a lit ceiling tile) takes damage every turn while it stays lit, enough to kill
+it quickly, and it shows (a message, smoke or sizzling). That pairs with `AVOIDS_LIGHT`, which already keeps it from
+walking into light on its own; this covers light that arrives where it already is.
+
+- How: a monster flag (for example `BURNS_IN_LIGHT`, with a light threshold and damage per turn) checked in the C++ next
+  to `AVOIDS_LIGHT` in `src/monmove.cpp` (light at the monster's tile from the map's lightmap). JSON alone can't read the
+  light level at a monster every turn cheaply, so this needs a small C++ hook; official builds would just ignore the flag.
+- Test: a Smiler next to the player, the flashlight on, it loses HP each turn and dies within a few turns; in the dark
+  it doesn't.
+- Later: every other entity gets its own weakness, worked out one at a time (ideas to decide with the user).
+
 ## 8. Exits are found in play, not told (rule, 2026-11-15)
 
 Nothing written for the player outside the game world (scenario descriptions, the class cards, the field guide)
