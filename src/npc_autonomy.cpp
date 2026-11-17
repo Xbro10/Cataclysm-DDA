@@ -288,6 +288,8 @@ void update_needs( npc &guy, const time_duration &elapsed )
 
 void on_npc_turn( npc &guy )
 {
+    // Also with the option just turned off: nothing else would give them their weapon back.
+    set_down_wood_after_trip( guy );
     if( !enabled() || !calendar::once_every( 1_minutes ) ) {
         return;
     }
@@ -1263,14 +1265,19 @@ void drop_stale_plans( npc &guy )
     if( guy.get_committed_goal() != goal_get_warm ) {
         guy.remove_value( var_warm_plan );
         guy.remove_value( var_warm_fire );
-        // Done with the fire (warm now, or called away) with a plank still in their hands:
-        // set it down and take their weapon back out. Not mid-fight: their combat code
-        // picks the weapon then.
-        if( holds_wood_for_fire( guy ) && is_safe( guy ) ) {
-            put_held_wood_on( guy, guy.pos_bub() );
-        } else if( !holds_wood_for_fire( guy ) ) {
+        if( !holds_wood_for_fire( guy ) ) {
             guy.remove_value( var_wood_in_hands );
         }
+    }
+}
+
+void set_down_wood_after_trip( npc &guy )
+{
+    // Checked every turn, not once a minute: warmed up the moment they picked the plank up,
+    // they kept holding it instead of their weapon until the next minute (reported 2026-11-17).
+    // Not mid-fight: their combat code picks the weapon then.
+    if( guy.get_committed_goal() != goal_get_warm && holds_wood_for_fire( guy ) && is_safe( guy ) ) {
+        put_held_wood_on( guy, guy.pos_bub() );
     }
 }
 

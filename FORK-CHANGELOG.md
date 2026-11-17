@@ -32,6 +32,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   its item, because the save keeps only one id for the whole pile.
 - [C++] **Character creator: facial hair can be changed again.** Taking off "Facial hair: none" to pick a beard showed
   "my_traits and my_mutations were out of sync" and did nothing, because random looks gave it the wrong way.
+- [C++] **NPC autonomy: a plank carried for the fire is put down straight away** once the NPC no longer needs the
+  fire (warmed up, or called away), and they take their weapon back out. Before, they could hold it for up to a
+  game minute.
 
 ### For developers
 - [C++] `src/discord_presence.{h,cpp}`: a small Discord IPC client (named pipe or Unix socket, no library),

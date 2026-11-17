@@ -138,6 +138,9 @@ bool avoids_trap( const npc &guy, const tripoint_bub_ms &p );
 std::string plan_text( const npc &guy );
 /** Once a minute: forget water and food plans the NPC isn't pursuing any more (they moved on). */
 void drop_stale_plans( npc &guy );
+/** Every turn: done with the fire (warm now, or called away) with a plank still in their hands,
+ *  they set it down and take their weapon back out. */
+void set_down_wood_after_trip( npc &guy );
 
 // ---- Quests (step 3.1) ----
 

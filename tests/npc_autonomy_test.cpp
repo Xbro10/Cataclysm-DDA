@@ -927,9 +927,10 @@ TEST_CASE( "npc_autonomy_warm_trip_called_off_with_wood_in_hands", "[npc][autono
                                     guy.get_wielded_item() ? guy.get_wielded_item()->typeId().str() : "-" );
         }
     };
+    // Right away, not at the next once-a-minute tidy (seen in game a second after warming up).
     const auto plank_down_gun_back = [&]() {
         trace.clear();
-        run_until( 200, [&]() {
+        run_until( 5, [&]() {
             return holds( itype_mossberg_590 );
         } );
         INFO( trace );
