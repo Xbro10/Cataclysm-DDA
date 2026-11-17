@@ -1151,6 +1151,11 @@ void bodypart::add_or_worsen_wound( const wound &wd, const Character *who,
 
                 remove_wound( *old_wound );
                 add_wound( new_wound );
+                // Xbro10 fork: the old wound is gone now, so it can't progress again.  A wound
+                // with two progressions (heavy bruising: severe bruising or torn skin) whose
+                // rolls both passed looked for it again: "Tried to get wound bruise_bad from
+                // bodypart torso, but none were found", then read through a null pointer.
+                break;
             }
         }
 

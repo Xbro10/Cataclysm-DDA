@@ -6,8 +6,11 @@
 #include "calendar.h"
 #include "cata_catch.h"
 #include "character.h"
+#include "damage.h"
 #include "options.h"
+#include "player_helpers.h"
 #include "type_id.h"
+#include "wound.h"
 
 // Tests for Character healing, including:
 //
@@ -33,6 +36,8 @@ static const float zero = 0.0f;
 // Healing effects
 static const efftype_id effect_bandaged( "bandaged" );
 static const efftype_id effect_disinfected( "disinfected" );
+
+static const wound_type_id wound_bruise_bad( "bruise_bad" );
 
 // Empty `dummy` of all traits, and give them a single trait with name `trait_name`
 static void give_one_trait( Character &dummy, const std::string &trait_name )
@@ -425,5 +430,25 @@ TEST_CASE( "healing_rate_medicine_with_bandages_and/or_disinfectant", "[heal][ba
             }
         }
     }
+}
+
+// Xbro10 fork: heavy bruising has two progressions (severe bruising, torn skin).  When both
+// rolls passed, the second looked for the bruise the first had already replaced: a debug
+// message ("Tried to get wound bruise_bad from bodypart torso") and a null pointer read.
+TEST_CASE( "worsening_a_wound_with_two_progressions", "[wounds]" )
+{
+    clear_avatar();
+    Character &dummy = get_player_character();
+    bodypart *torso = dummy.get_part( bodypart_id( "torso" ) );
+    REQUIRE( torso != nullptr );
+    for( int i = 0; i < 300; ++i ) {
+        torso->get_wounds().clear();
+        dealt_damage_instance ddi;
+        torso->add_or_worsen_wound( wound_bruise_bad, &dummy, ddi );
+        torso->add_or_worsen_wound( wound_bruise_bad, &dummy, ddi );
+        // At most: the first bruise, plus a second bruise or the one wound it became.
+        CHECK( torso->get_wounds().size() <= 2 );
+    }
+    torso->get_wounds().clear();
 }
 

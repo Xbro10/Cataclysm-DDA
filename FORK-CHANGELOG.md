@@ -66,6 +66,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ### Bug fixes
 - [BE] **Level 2 tunnels** no longer show a mapgen error when a ceiling light lands on a junk pile.
 - [BE] **Breakroom runners' deaths** are recorded again (the game refused to run their death script).
+- [C++] **No more "Tried to get wound bruise_bad" pop-ups** in fights: when heavy bruising got worse in two ways at
+  once (severe bruising and torn skin), the game lost track of the bruise. It could also crash.
 
 ### For developers
 - [C++] **Synced with upstream CDDA** (30 commits: faults, wounds, factions linked to monster factions). No
