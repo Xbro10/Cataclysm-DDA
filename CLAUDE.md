@@ -3,8 +3,8 @@
 This is Xbro10's fork of Cataclysm: Dark Days Ahead (CDDA). The project plan is the
 playbook PDF at
 `C:\Users\xande\Documents\CDDA documents for modding\CDDA Backrooms + Autonomous NPCs — Claude Code Playbook.pdf`
-(Phases 0–7 plus testing/publishing prompts; the 2026-11-16 version, the older one is kept beside it
-as "(old, 2026-11-12)"). Map every request to a playbook prompt.
+(Phases 0–8 plus testing/publishing prompts; the 2026-11-17 version, which adds Phase 8 "Making a home: NPC construction";
+older ones are kept beside it as "(old, 2026-11-12)" and "(old, 2026-11-16)"). Map every request to a playbook prompt.
 
 ## Playbook progress
 
@@ -15,7 +15,7 @@ As of 2026-11-16. Update this each time a prompt is finished.
   Then 3.4 is finished. The planned "stocking up" step became Prompt 7.0 (stock count) in the new playbook.
 - Fixes already made ahead of Phase 5: part of 5.3 (a follower drops a meal when left behind, guards eat
   on their post, water trips use upstream's follow and guard reach). Still open in 5.3: chats.
-- Next after 3.4: Phase 5 in order (5.1 first), then Phase 6 (6.0 first), then 3.6, then Phase 7.
+- Next after 3.4: Phase 5 in order (5.1 first), then Phase 6 (6.0 first), then 3.6, then Phase 7, then Phase 8 (it takes over the shelter half of 7.7; 8.6, Backrooms homes, goes on `dev`).
   Skip 3.5 and 4.1 (covered by 5.6), 4.5 (5.8 step B), 3.7 and 4.7 (Phase 7). 6.6 starts 4.6 (scouts).
 - The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
 - Phase 6 rule: stance, anchor, leash, wants and trips are saved NPC variables, not new enum entries.
