@@ -1,6 +1,6 @@
 {
   "//": "Xbro10 fork: the Discord 'Playing' card (src/discord_presence.cpp; option Discord status). Not game data: read once by the game, not by the JSON loader. application_id is the Discord application's id from discord.com/developers (empty = no card). Image names must match the Art Assets uploaded to that application; every place uses the launcher's picture (cdda_menu), whose hover text shows your scenario and profession. 'places' is keyed by dimension id; 'default' is the normal world, and 'default:<mod id>' wins while that mod is active (the Backrooms mod turns the normal world into Level 0).",
-  "application_id": "",
+  "application_id": "1572273581453479996",
   "small_image": "",
   "button_label": "Get the fork",
   "button_url": "https://github.com/Xbro10/Cataclysm-DDA/releases",
