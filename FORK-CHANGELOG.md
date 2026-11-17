@@ -27,6 +27,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **No more "item_location lost its target item during a save/load cycle" pop-ups** after loading: something
   being used from a pile of identical items on the ground or in a vehicle (eating, picking up, hauling) lost track of
   its item, because the save keeps only one id for the whole pile.
+- [C++] **Character creator: facial hair can be changed again.** Taking off "Facial hair: none" to pick a beard showed
+  "my_traits and my_mutations were out of sync" and did nothing, because random looks gave it the wrong way.
 
 ### For developers
 - [C++] `src/discord_presence.{h,cpp}`: a small Discord IPC client (named pipe or Unix socket, no library),

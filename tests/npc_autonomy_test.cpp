@@ -1,6 +1,7 @@
 // Xbro10 fork: tests for "NPC autonomy (experimental)" (src/npc_autonomy.*).
 
 #include <algorithm>
+#include <functional>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -41,12 +42,15 @@ static const activity_id ACT_CONSUME( "ACT_CONSUME" );
 static const itype_id itype_2x4( "2x4" );
 static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_bottle_plastic( "bottle_plastic" );
+static const itype_id itype_duffelbag( "duffelbag" );
 static const itype_id itype_butane( "butane" );
 static const itype_id itype_hoodie( "hoodie" );
 static const itype_id itype_jeans( "jeans" );
 static const itype_id itype_lighter( "lighter" );
+static const itype_id itype_mossberg_590( "mossberg_590" );
 static const itype_id itype_rock( "rock" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
+static const itype_id itype_single_sling( "single_sling" );
 static const itype_id itype_splinter( "splinter" );
 static const itype_id itype_tshirt( "tshirt" );
 static const itype_id itype_water_clean( "water_clean" );
@@ -880,6 +884,82 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
         override_option autonomy( "NPC_AUTONOMY", "true" );
         here.add_field( hearth, field_fd_fire, 1 );
         CHECK_FALSE( npc_autonomy::wants_warmth( guy ) );
+    }
+}
+
+// Reported 2026-11-17: a cold follower with a shotgun picked up a plank for the fireplace,
+// the fire was put out and they were warmed up, and they kept the plank in their hands
+// instead of their shotgun.
+TEST_CASE( "npc_autonomy_warm_trip_called_off_with_wood_in_hands", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    guy.set_all_parts_temp_conv( BODYTEMP_VERY_COLD );
+    const tripoint_bub_ms hearth( player_pos + point( 3, 2 ), 0 );
+    here.furn_set( hearth, furn_f_fireplace );
+    guy.wear_item( item( itype_duffelbag ), false );
+    guy.wear_item( item( itype_single_sling ), false ); // the shotgun goes here, not the plank
+    item gun( itype_mossberg_590 );
+    REQUIRE( guy.can_stash( gun ) );
+    guy.wield( gun );
+    here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 4, -2 ), 0 ), item( itype_2x4 ) );
+    REQUIRE_FALSE( guy.can_stash( item( itype_2x4 ) ) );
+    const auto holds = [&guy]( const itype_id & id ) {
+        return guy.get_wielded_item() && guy.get_wielded_item()->typeId() == id;
+    };
+    std::string trace;
+    const auto run_until = [&]( int turns, const std::function<bool()> &done ) {
+        for( int t = 0; t < turns && !done(); ++t ) {
+            calendar::turn += 1_turns;
+            guy.set_moves( guy.get_speed() );
+            guy.npc_update_body();
+            guy.move();
+            if( guy.activity ) {
+                guy.activity.do_turn( guy );
+            }
+            trace += string_format( " t%d:goal=%s held=%s", t, guy.get_committed_goal(),
+                                    guy.get_wielded_item() ? guy.get_wielded_item()->typeId().str() : "-" );
+        }
+    };
+    const auto plank_down_gun_back = [&]() {
+        trace.clear();
+        run_until( 200, [&]() {
+            return holds( itype_mossberg_590 );
+        } );
+        INFO( trace );
+        CHECK( holds( itype_mossberg_590 ) );
+        CHECK( guy.maybe_get_value( "autonomy_wood_in_hands" ) == nullptr );
+    };
+
+    SECTION( "warmed up on the way to the fireplace" ) {
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run_until( 200, [&]() {
+            return holds( itype_2x4 );
+        } );
+        INFO( trace );
+        REQUIRE( holds( itype_2x4 ) );
+        guy.set_all_parts_temp_conv( BODYTEMP_NORM );
+        plank_down_gun_back();
+    }
+    SECTION( "the fire goes out and they have nothing to light it with" ) {
+        here.add_field( hearth, field_fd_fire, 1 );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run_until( 200, [&]() {
+            return holds( itype_2x4 );
+        } );
+        INFO( trace );
+        REQUIRE( holds( itype_2x4 ) );
+        here.remove_field( hearth, field_fd_fire );
+        plank_down_gun_back();
     }
 }
 
