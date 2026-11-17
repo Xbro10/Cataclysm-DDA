@@ -198,7 +198,7 @@
     "common": false,
     "worn_override": "NC_BR1_FOREMAN_worn",
     "traits": [ { "group": "Appearance_demographics" } ],
-    "shopkeeper_item_group": [ { "group": "br1_diner_stock" } ],
+    "shopkeeper_item_group": [ { "group": "br1_diner_stock", "rigid": true } ],
     "restock_interval": "1 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },

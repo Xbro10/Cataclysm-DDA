@@ -175,7 +175,7 @@
     "worn_override": "NC_BR1_RUNNER_worn",
     "traits": [ { "group": "Appearance_demographics" } ],
     "bonus_int": { "rng": [ 0, 2 ] },
-    "shopkeeper_item_group": [ { "group": "br1_exchange_supplies" } ],
+    "shopkeeper_item_group": [ { "group": "br1_exchange_supplies", "rigid": true } ],
     "restock_interval": "3 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
@@ -191,7 +191,7 @@
     "worn_override": "NC_BR1_FOREMAN_worn",
     "traits": [ { "group": "Appearance_demographics" } ],
     "bonus_str": { "rng": [ 0, 2 ] },
-    "shopkeeper_item_group": [ { "group": "br1_exchange_gear" } ],
+    "shopkeeper_item_group": [ { "group": "br1_exchange_gear", "rigid": true } ],
     "restock_interval": "3 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
@@ -208,7 +208,7 @@
     "worn_override": "NC_BR1_RUNNER_worn",
     "traits": [ { "group": "Appearance_demographics" } ],
     "bonus_per": { "rng": [ 0, 2 ] },
-    "shopkeeper_item_group": [ { "group": "br1_exchange_curios" } ],
+    "shopkeeper_item_group": [ { "group": "br1_exchange_curios", "rigid": true } ],
     "restock_interval": "4 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },

@@ -74,6 +74,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
 
 ### Fixed
+- The Exchange traders and the All-Nite cook had almost nothing to sell (their stock was bought on a tiny budget); they now lay out their whole stock every restock.
+- Breakroom runners never set off in a real game: the Breakroom map didn't give Jonah and Rosa the ids the runner schedule looks them up by. New worlds only (runners placed before this fix keep standing still).
 - When Jonah or Rosa died, their death was never recorded (an error instead): the runner board now crosses them out and the other runner can still go out.
 - Level 2 no longer shows a mapgen error ("setting terrain to t_br2_light ... when item ... existed") when a tunnel light lands on a junk pile.
 - Breakroom runners never left on a run: picking where to go always failed, so every run was put off 6 hours, forever. Their travel also always pointed at their own spot, and the "Find the runner" job marked your own position instead of the runner's. Runners now leave at the time on the runner board and walk off even while you watch.
