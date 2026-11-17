@@ -1,11 +1,11 @@
 param([string]$Out, [string]$Preview)
-# Draws the Level 1 overmap sprite sheet: ten 32x32 tiles in a row, UndeadPeople-style.
+# Draws the Level 1 overmap sprite sheet: twelve 32x32 tiles in a row, UndeadPeople-style.
 # 0-2 garage variants, 3 arrival alcove, 4 Breakroom, 5 squatter camp, 6 dead zone, 7 overrun camp, 8 elevator lobby,
-# 9 generator room (marked by an oil-stained note).
+# 9 generator room (marked by an oil-stained note), 10 the Exchange (market), 11 the All-Nite diner.
 # Plain squares are textured ground; landmarks are signboards with a pictogram (see sprite_common.ps1).
 Add-Type -AssemblyName System.Drawing
 $T = 32
-$Count = 10
+$Count = 12
 $bmp = New-Object System.Drawing.Bitmap ($Count * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 . "$PSScriptRoot\sprite_common.ps1"
 $rng = New-Object System.Random 1337
@@ -82,5 +82,19 @@ Garage 9; Sign 9 (Hex '#e0a82e') (Hex '#9a7018')
 $gen = Hex '#c8432e'; $genD = Hex '#8a2c1e'; $bolt = Hex '#ffe24a'
 ORect 9 7 7 11 7 $gen; Fill 9 8 12 9 1 $genD; Fill 9 9 9 3 2 (Hex '#3a3a3a'); Px 9 10 6 $INK; Px 9 15 6 $INK
 Line 9 22 4 20 9 $bolt; Line 9 20 9 23 9 $bolt; Line 9 23 9 21 14 $bolt
+
+# 10: the Exchange: a gold coin with a dollar sign over a market stall awning, yellow band
+Garage 10; Sign 10 (Hex '#d8b42a') (Hex '#94781a')
+$awn = Hex '#c8432e'; $awnL = Hex '#eeeae0'; $coin = Hex '#ffd23a'; $coinD = Hex '#b8901a'
+for ($x = 7; $x -lt 25; $x += 3) { Fill 10 $x 4 3 3 $(if ((($x - 7) / 3) % 2 -eq 0) { $awn } else { $awnL }) }
+Fill 10 7 4 18 1 $INK
+OEll 10 16 11 3 3 $coin; Fill 10 16 9 1 5 $coinD; Fill 10 15 10 3 1 $coinD; Fill 10 15 12 3 1 $coinD
+
+# 11: the All-Nite diner: a burger on a plate, red band
+Garage 11; Sign 11 (Hex '#d8504a') (Hex '#963028')
+$plate = Hex '#eeeae0'; $bun = Hex '#d89a4a'; $bunL = Hex '#efc27a'; $patty = Hex '#6a3a1e'; $let = Hex '#6ab04a'
+OEll 11 16 10 7 4 $plate
+Fill 11 11 6 10 2 $bun; Fill 11 12 5 8 1 $bunL; Px 11 13 6 $plate; Px 11 17 6 $plate
+Fill 11 11 8 10 1 $let; Fill 11 11 9 10 2 $patty; Fill 11 11 11 10 2 $bun
 
 SaveSheet $Out $Preview $Count

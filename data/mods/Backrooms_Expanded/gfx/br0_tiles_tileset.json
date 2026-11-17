@@ -1,7 +1,7 @@
 [
   {
     "type": "mod_tileset",
-    "//": "Level 0 walls and floors (upstream Backrooms terrain), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br0_tiles.ps1 in UndeadPeople style. Walls are full connecting multitiles: sprite N (0-15 yellow, 16-31 grey) is connection mask N with S=1, E=2, W=4, N=8. Rotation orders follow cata_tiles::get_rotation_and_subtile: corner [SE, SW, NW, NE connections], t_connection [missing N, missing E, missing S, missing W], edge [NS, EW], end_piece [S, W, N, E].",
+    "//": "Level 0 walls and floors (upstream Backrooms terrain), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br0_tiles.ps1 in UndeadPeople style. Walls are full connecting multitiles: sprite N (0-15 yellow, 16-31 grey, 38-53 manila) is connection mask N with S=1, E=2, W=4, N=8. Rotation orders follow cata_tiles::get_rotation_and_subtile: corner [SE, SW, NW, NE connections], t_connection [missing N, missing E, missing S, missing W], edge [NS, EW], end_piece [S, W, N, E].",
     "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
     "tiles-new": [
       {
@@ -44,7 +44,23 @@
           },
           { "id": "t_carpet_backrooms_light", "fg": 35, "rotates": false },
           { "id": "t_tile_backrooms", "fg": 36, "rotates": false },
-          { "id": "t_tile_backrooms_light", "fg": 37, "rotates": false }
+          { "id": "t_tile_backrooms_light", "fg": 37, "rotates": false },
+          {
+            "id": "t_br0_manila_wall",
+            "fg": 38,
+            "multitile": true,
+            "additional_tiles": [
+              { "id": "center", "fg": 53 },
+              { "id": "corner", "fg": [ 41, 43, 50, 48 ] },
+              { "id": "t_connection", "fg": [ 45, 51, 52, 49 ] },
+              { "id": "edge", "fg": [ 47, 44 ] },
+              { "id": "end_piece", "fg": [ 39, 42, 46, 40 ] },
+              { "id": "unconnected", "fg": 38 }
+            ]
+          },
+          { "id": "t_br0_carpet_deep", "fg": 54, "rotates": false },
+          { "id": "t_br0_carpet_dark", "fg": 55, "rotates": false },
+          { "id": "t_br0_fluid", "fg": 56, "rotates": false }
         ]
       }
     ]
