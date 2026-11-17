@@ -18,6 +18,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ## November 17, 2026
 
+**First releases:** Backrooms Expanded v0.1.0 and Survivor Minds v0.1.0, each with its own download on the
+GitHub Releases page (tags `backrooms-expanded-v0.1.0`, `survivor-minds-v0.1.0`). Both READMEs now list everything
+built so far.
+
 ### Backrooms
 - [BE] **Breakroom archers and supply depot:** two archers with bows guard the front of each Breakroom layout, and a
   depot of food, water, medicine and tools fills back up every time a runner gets home.
