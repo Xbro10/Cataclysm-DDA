@@ -8,11 +8,11 @@ older ones are kept beside it as "(old, 2026-11-12)" and "(old, 2026-11-16)"). M
 
 ## Playbook progress
 
-As of 2026-11-16. Update this each time a prompt is finished.
+As of 2026-11-17. Update this each time a prompt is finished.
 - Phases 0, 1 and 2: finished (Prompts 0.1 to 2.6). Don't redo, re-plan or re-verify them.
-- Phase 3: 3.1, 3.2, 3.3 finished (3.3 tested in game 2026-11-16). **3.4 built in full**: 3.4a (get water) and 3.4b
-  (get food) tested in game (2026-11-16); 3.4c (get warm) built 2026-11-16, waiting for the in-game test.
-  Then 3.4 is finished. The planned "stocking up" step became Prompt 7.0 (stock count) in the new playbook.
+- Phase 3: 3.1 to 3.4 finished (3.4: water, food and warmth, all tested in game by 2026-11-17).
+  The planned "stocking up" step became Prompt 7.0 (stock count) in the new playbook.
+- Current: Prompt 5.1 (release v0.1.0 of both mods), being planned 2026-11-17.
 - Fixes already made ahead of Phase 5: part of 5.3 (a follower drops a meal when left behind, guards eat
   on their post, water trips use upstream's follow and guard reach). Still open in 5.3: chats.
 - Next after 3.4: Phase 5 in order (5.1 first), then Phase 6 (6.0 first), then 3.6, then Phase 7, then Phase 8 (it takes over the shelter half of 7.7; 8.6, Backrooms homes, goes on `dev`).
