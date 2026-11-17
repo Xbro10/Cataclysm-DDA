@@ -14,7 +14,7 @@
     "id": "mon_br_smiler",
     "name": { "str": "smiler" },
     "description": "In the dark between the lights there is a grin, too wide and too white, and nothing else you can make out.  It keeps exactly to the edge of your light.  When the light goes out, it doesn't.",
-    "default_faction": "nether",
+    "default_faction": "br_entity",
     "looks_like": "mon_darkman",
     "bodytype": "human",
     "species": [ "NETHER" ],
@@ -43,7 +43,7 @@
     "id": "mon_br_hound",
     "name": { "str": "hound" },
     "description": "It was a person once, or it learned to look like one.  Now it runs on all fours, head low, listening.  Hounds hunt in small packs and lose their nerve fast when one of them falls.",
-    "default_faction": "nether",
+    "default_faction": "br_entity",
     "looks_like": "mon_zombie_dog",
     "bodytype": "human",
     "species": [ "NETHER" ],
@@ -71,7 +71,7 @@
     "id": "mon_br_deathmoth",
     "name": { "str": "deathmoth" },
     "description": "A moth the size of a dog, dusty grey wings beating in a slow stagger.  Deathmoths gather wherever the lights still work, and they don't care whose light it is.",
-    "default_faction": "insect",
+    "default_faction": "br_entity",
     "looks_like": "mon_dragonfly_giant",
     "bodytype": "flying insect",
     "species": [ "INSECT" ],
@@ -99,7 +99,7 @@
     "id": "mon_br_wretch",
     "name": { "str": "wretch", "str_pl": "wretches" },
     "description": "A survivor who stayed on Level 1 too long.  The skin is gone; raw red muscle stretches over bone, the ribs show through, and pale growths crust the joints.  Yellow eyes burn in a face that is mostly skull.  It shuffles between the pillars on long, thin legs, muttering bay numbers, and rakes at anything that gets close with curved claws of bone.",
-    "default_faction": "nether",
+    "default_faction": "br_entity",
     "looks_like": "mon_zombie_survivor",
     "bodytype": "human",
     "species": [ "HUMAN" ],
@@ -139,10 +139,19 @@
   },
   {
     "type": "MONSTER_FACTION",
+    "name": "br_entity",
+    "//": "The Backrooms' own entities (Smiler, Hound, Deathmoth, Wretch, Skin-stealer, Partygoer, the Redeemer): never fight each other, always fight zombies and other outsiders that wander in, ignore Facelings and small harmless things, and treat people by mood like the game's nether creatures. Level-specific infighting is a later idea (factions are the same on every level).",
+    "friendly": [ "attack_player_only" ],
+    "neutral": [ "br_faceling", "cult", "small_animal", "fish", "slime", "passive_machine" ],
+    "hate": [ "zombie" ],
+    "by_mood": [ "leech_plant", "vortex", "mi-go" ]
+  },
+  {
+    "type": "MONSTER_FACTION",
     "name": "br_faceling",
     "//": "Facelings keep to themselves: everything else leaves them alone and they leave everything alone.",
     "base_faction": "small_animal",
-    "neutral": [ "zombie", "nether", "animal", "insect", "small_animal", "mammal_small", "fish", "slime" ]
+    "neutral": [ "zombie", "nether", "br_entity", "animal", "insect", "small_animal", "mammal_small", "fish", "slime" ]
   },
   {
     "type": "MONSTER",
@@ -178,7 +187,7 @@
     "id": "mon_br_skin_stealer",
     "name": { "str": "skin-stealer" },
     "description": "Too tall and too thin, grey and sinewy, leaning forward on long legs.  Over its shoulders hangs a human skin, worn like a coat: the hair is still on it, and the slack face still has its eye holes.  It calls out in that person's voice, asking for help, saying it found water, asking if anyone is there.  It is very good at sounding like someone you'd want to find.",
-    "default_faction": "nether",
+    "default_faction": "br_entity",
     "looks_like": "mon_zombie_tough",
     "bodytype": "human",
     "species": [ "NETHER" ],
@@ -210,7 +219,7 @@
     "id": "mon_br_partygoer",
     "name": { "str": "partygoer" },
     "description": "A tall, thin figure the colour of old mustard, its skin ridged in rings at the neck, belly and knees, its legs swelling into thick stumps.  The small egg-shaped head has two dark slits for eyes and a wide red grin under them.  Its hands end in mouths.  A red balloon bobs beside it on a string.  It is very fast, it is very strong, and it wants you to come to the party.  Nobody who went to the party has said what it was like.",
-    "default_faction": "nether",
+    "default_faction": "br_entity",
     "looks_like": "mon_shoggoth",
     "bodytype": "human",
     "species": [ "NETHER" ],
@@ -234,14 +243,64 @@
     "death_function": { "corpse_type": "NO_CORPSE", "message": "The %s pops like a balloon.  Somewhere, a party horn toots once." },
     "flags": [ "SEES", "HEARS", "NO_BREATHE", "PATH_AVOID_DANGER" ]
   },
-  { "type": "speech", "speaker": [ "mon_br_skin_stealer" ], "sound": "\"Hello?  Is someone there?\"", "volume": 25 },
-  { "type": "speech", "speaker": [ "mon_br_skin_stealer" ], "sound": "\"Please, I'm hurt.  I can't walk.  Over here.\"", "volume": 25 },
-  { "type": "speech", "speaker": [ "mon_br_skin_stealer" ], "sound": "\"I found water!  There's loads of it, come and look!\"", "volume": 30 },
-  { "type": "speech", "speaker": [ "mon_br_skin_stealer" ], "sound": "\"Is that you?  It's me.  It's me, I promise.\"", "volume": 20 },
-  { "type": "speech", "speaker": [ "mon_br_skin_stealer" ], "sound": "\"I know the way out.  Follow my voice.\"", "volume": 25 },
-  { "type": "speech", "speaker": [ "mon_br_partygoer" ], "sound": "\"Wanna party?  =)\"", "volume": 20 },
-  { "type": "speech", "speaker": [ "mon_br_partygoer" ], "sound": "\"Come to the party!  Everyone's there!  =)\"", "volume": 20 },
-  { "type": "speech", "speaker": [ "mon_br_partygoer" ], "sound": "\"Don't leave!  The fun's just starting!  =)\"", "volume": 20 },
-  { "type": "speech", "speaker": [ "mon_br_partygoer" ], "sound": "\"Hide and seek!  Ready or not!  =)\"", "volume": 25 },
-  { "type": "speech", "speaker": [ "mon_br_partygoer" ], "sound": "a party horn, somewhere close.", "volume": 15 }
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_skin_stealer" ],
+    "sound": "\"Hello?  Is someone there?\"",
+    "volume": 25
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_skin_stealer" ],
+    "sound": "\"Please, I'm hurt.  I can't walk.  Over here.\"",
+    "volume": 25
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_skin_stealer" ],
+    "sound": "\"I found water!  There's loads of it, come and look!\"",
+    "volume": 30
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_skin_stealer" ],
+    "sound": "\"Is that you?  It's me.  It's me, I promise.\"",
+    "volume": 20
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_skin_stealer" ],
+    "sound": "\"I know the way out.  Follow my voice.\"",
+    "volume": 25
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_partygoer" ],
+    "sound": "\"Wanna party?  =)\"",
+    "volume": 20
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_partygoer" ],
+    "sound": "\"Come to the party!  Everyone's there!  =)\"",
+    "volume": 20
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_partygoer" ],
+    "sound": "\"Don't leave!  The fun's just starting!  =)\"",
+    "volume": 20
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_partygoer" ],
+    "sound": "\"Hide and seek!  Ready or not!  =)\"",
+    "volume": 25
+  },
+  {
+    "type": "speech",
+    "speaker": [ "mon_br_partygoer" ],
+    "sound": "a party horn, somewhere close.",
+    "volume": 15
+  }
 ]
