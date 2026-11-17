@@ -58,6 +58,22 @@ static void run_eoc( Creature &who, const effect_on_condition_id &eoc )
     eoc->activate( d );
 }
 
+// Items owned by a shopkeeper's faction lying around them (where restocking puts the stock and
+// where the trade window looks for it).
+static int owned_stock_near( const npc &guy )
+{
+    map &here = get_map();
+    int n = 0;
+    for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), 6 ) ) {
+        for( const item &it : here.i_at( p ) ) {
+            if( it.get_owner() == guy.get_fac_id() ) {
+                n++;
+            }
+        }
+    }
+    return n;
+}
+
 TEST_CASE( "breakroom_runner_leaves_on_a_run", "[.][backrooms_runner]" )
 {
     if( !effect_on_condition_EOC_BR1_RUNNER_TICK.is_valid() ) {
@@ -155,6 +171,9 @@ TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
             }
         }
         CHECK( guards >= 1 );
+        // The runners carry the unique ids the 30-minute tick looks them up by.
+        CHECK( g->unique_npc_exists( "BR1_runner_jonah" ) );
+        CHECK( g->unique_npc_exists( "BR1_runner_rosa" ) );
         // Larder: food on the kitchen counters, drinks in the fridge.
         CHECK( !here.i_at( corner + point( 3, 10 ) ).empty() );
         CHECK( !here.i_at( corner + point( 4, 10 ) ).empty() );
@@ -305,7 +324,7 @@ TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
             traders++;
             guy.shop_restock();
             CAPTURE( guy.myclass.str() );
-            CHECK( guy.inv_dump().size() > 5 );
+            CHECK( owned_stock_near( guy ) > 5 );
         } else {
             guards++;
         }
@@ -341,7 +360,7 @@ TEST_CASE( "diner_generates", "[.][backrooms_runner]" )
         if( guy.mission == NPC_MISSION_SHOPKEEP ) {
             cooks++;
             guy.shop_restock();
-            CHECK( guy.inv_dump().size() > 5 );
+            CHECK( owned_stock_near( guy ) > 5 );
         } else {
             servers++;
         }
