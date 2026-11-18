@@ -2360,28 +2360,90 @@ bool avatar::load_template( const std::string &template_name, pool_type &pool )
     } );
 }
 
+// Xbro10 fork: picking a scenario keeps what the new scenario still allows: stats, skills,
+// profession, backgrounds, and the traits and looks the player chose. Upstream reset all of
+// it (stats to 8, first profession, default background only, no traits, no skills), so
+// picking a scenario after anything else meant starting over.
 void reset_scenario( avatar &u, const scenario *scen )
 {
-    profession_sorter psorter;
-    const auto permitted = scen->permitted_professions();
-    const auto default_prof = *std::min_element( permitted.begin(), permitted.end(), psorter );
+    // traits that come with a scenario, profession or background, not picked by the player
+    const auto locked_traits = [&u]( const scenario * s ) {
+        std::set<trait_id> rval;
+        if( s ) {
+            const std::set<trait_id> scen_traits = s->get_locked_traits();
+            rval.insert( scen_traits.begin(), scen_traits.end() );
+        }
+        if( u.prof ) {
+            for( const trait_and_var &tr : u.prof->get_locked_traits() ) {
+                rval.insert( tr.trait );
+            }
+        }
+        for( const profession *hobby : u.hobbies ) {
+            for( const trait_and_var &tr : hobby->get_locked_traits() ) {
+                rval.insert( tr.trait );
+            }
+        }
+        return rval;
+    };
+    const std::set<trait_id> old_locked = locked_traits( get_scenario() );
 
     u.random_start_location = true;
-    u.set_str_base( 8 );
-    u.set_dex_base( 8 );
-    u.set_int_base( 8 );
-    u.set_per_base( 8 );
     set_scenario( scen );
-    u.prof = &default_prof.obj();
 
-    u.hobbies.clear();
-    if( !scen->has_flag( flag_SKIP_DEFAULT_BACKGROUND ) ) {
+    // the profession stays if the new scenario allows it
+    const std::vector<profession_id> permitted = scen->permitted_professions();
+    if( !u.prof || std::find( permitted.begin(), permitted.end(), u.prof->ident() ) == permitted.end() ) {
+        profession_sorter psorter;
+        u.prof = &std::min_element( permitted.begin(), permitted.end(), psorter )->obj();
+    }
+
+    // so do backgrounds the new scenario and profession allow
+    const std::vector<profession_id> permitted_hobbies = scen->permitted_hobbies();
+    for( auto it = u.hobbies.begin(); it != u.hobbies.end(); ) {
+        const profession_id hobby = ( *it )->ident();
+        if( std::find( permitted_hobbies.begin(), permitted_hobbies.end(), hobby ) == permitted_hobbies.end() ||
+            !u.prof->allows_hobby( hobby ) ) {
+            it = u.hobbies.erase( it );
+        } else {
+            ++it;
+        }
+    }
+    if( u.hobbies.empty() && !scen->has_flag( flag_SKIP_DEFAULT_BACKGROUND ) ) {
         u.add_default_background();
-    };
-    u.clear_mutations();
-    u.recalc_hp();
-    u.empty_skills();
+    }
+
+    // drop traits that only came with what was left behind, or that the new scenario forbids
+    const std::set<trait_id> new_locked = locked_traits( scen );
+    for( const trait_id &tr : u.get_mutations() ) {
+        if( !u.has_trait( tr ) || new_locked.count( tr ) ) {
+            continue;
+        }
+        if( old_locked.count( tr ) || scen->is_forbidden_trait( tr ) ) {
+            u.toggle_trait_deps( tr );
+        }
+    }
+    // and chosen traits that clash with a trait the new choices bring
+    for( const trait_id &locked : new_locked ) {
+        if( u.has_trait( locked ) || !u.has_conflicting_trait( locked ) ) {
+            continue;
+        }
+        for( const trait_id &suspect : u.get_mutations() ) {
+            if( !new_locked.count( suspect ) && are_conflicting_traits( locked, suspect ) ) {
+                popup( _( "Your trait %1$s has been removed since it conflicts with the %2$s trait." ),
+                       u.mutation_name( suspect ), locked->name() );
+                u.toggle_trait_deps( suspect );
+            }
+        }
+    }
+    for( const profession *hobby : u.hobbies ) {
+        for( const trait_and_var &tr : hobby->get_locked_traits() ) {
+            if( !u.has_trait( tr.trait ) ) {
+                u.toggle_trait_deps( tr.trait );
+            }
+        }
+    }
     u.add_traits();
+    u.recalc_hp();
 }
 
 character_creator_ui_impl::character_creator_ui_impl( character_creator_ui *parent ) :

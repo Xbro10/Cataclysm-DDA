@@ -61,6 +61,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   follower you load up on purpose just walks slower.
 
 ### Bug fixes
+- [C++] **Picking a scenario no longer starts your character over:** stats, skills, traits, looks (hair, eyes,
+  skin) and your profession and backgrounds stay, as long as the new scenario allows them. Only what it doesn't
+  allow is dropped, plus traits that came with the old scenario.
 - [C++] **Ambient volume changes apply in game:** lowering Ambient sound volume or Sound effect volume and leaving
   Options fades the playing ambient loops (rain, wind, night) so they come back at the new volume; before, they kept
   the old volume until a restart.
