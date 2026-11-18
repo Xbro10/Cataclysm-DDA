@@ -26,6 +26,7 @@
     "armor": { "bash": 8, "cut": 10, "electric": 100 },
     "vision_day": 40,
     "vision_night": 20,
+    "harvest": "br_redeemer",
     "death_drops": "br_redeemer_drops",
     "special_attacks": [ [ "SHOCKSTORM", 15 ] ],
     "anger_triggers": [ "HOSTILE_SEEN", "PLAYER_CLOSE" ],

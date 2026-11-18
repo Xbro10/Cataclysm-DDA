@@ -1,0 +1,155 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br_hound_fang",
+    "//": "Hound trophy (br_hound_drops). The Exchange's oddities trader buys it.",
+    "subtypes": [ "GENERIC" ],
+    "category": "other",
+    "name": { "str": "hound fang" },
+    "description": "A long, yellowed canine tooth pulled from a hound.  It looks almost human at the root.  The traders at the Exchange pay for these; nobody says what they do with them.",
+    "looks_like": "bone",
+    "weight": "15 g",
+    "volume": "5 ml",
+    "price": "5 USD",
+    "price_postapoc": "8 USD",
+    "material": [ "bone" ],
+    "symbol": ",",
+    "color": "yellow"
+  },
+  {
+    "type": "ITEM",
+    "id": "br_smiler_teeth",
+    "//": "What a Smiler sometimes leaves when it fades (br_smiler_drops). A curio the oddities trader pays well for.",
+    "subtypes": [ "GENERIC" ],
+    "category": "other",
+    "name": { "str_sp": "Smiler's teeth" },
+    "description": "A loose crescent of teeth, far too many and far too white, still set in a strip of something black and cold.  When the lights flicker you could swear they're still smiling.",
+    "looks_like": "bone",
+    "weight": "40 g",
+    "volume": "20 ml",
+    "price": "40 USD",
+    "price_postapoc": "60 USD",
+    "material": [ "bone" ],
+    "symbol": ",",
+    "color": "white"
+  },
+  {
+    "type": "ITEM",
+    "id": "br_redeemer_insulator",
+    "//": "Redeemer trophy: always drops (br_redeemer_drops). Worth a lot to the oddities trader.",
+    "subtypes": [ "GENERIC" ],
+    "category": "other",
+    "name": { "str": "cracked insulator" },
+    "description": "A brown glazed ceramic insulator, as big as your fist, wrenched off the pole in the Redeemer's back.  The glaze is scorched and crazed, and it still hums very faintly if you hold it to your ear.",
+    "looks_like": "ceramic_shard",
+    "weight": "700 g",
+    "volume": "400 ml",
+    "price": "100 USD",
+    "price_postapoc": "250 USD",
+    "material": [ "ceramic" ],
+    "symbol": "*",
+    "color": "brown"
+  },
+  {
+    "type": "ITEM",
+    "id": "br_red_balloon",
+    "//": "Every Partygoer's balloon (br_partygoer_drops).",
+    "subtypes": [ "GENERIC" ],
+    "category": "other",
+    "name": { "str": "red balloon" },
+    "description": "A shiny red party balloon on a long white string.  It never seems to lose any air, and it tugs, very gently, in a direction that isn't up.",
+    "looks_like": "balloon",
+    "weight": "5 g",
+    "volume": "250 ml",
+    "price": "1 USD",
+    "price_postapoc": "2 USD",
+    "material": [ "plastic" ],
+    "symbol": "o",
+    "color": "red"
+  },
+  {
+    "type": "ITEM",
+    "id": "br_party_hat",
+    "copy-from": "hat_ball",
+    "//": "A Partygoer's hat (br_partygoer_drops); wears like a baseball cap.",
+    "name": { "str": "party hat" },
+    "description": "A pointed paper party hat, striped yellow and red, with an elastic chin strap.  It's warm, as if someone just took it off.  Wearing it feels like being watched.",
+    "looks_like": "hat_ball",
+    "color": "yellow"
+  },
+  {
+    "type": "harvest",
+    "id": "br_hound",
+    "//": "Hound: lean, stringy mutant meat, a little fat, bone and sinew, and a hide that can be tanned. Not human, whatever it looks like.",
+    "entries": [
+      { "drop": "mutant_meat", "type": "flesh", "mass_ratio": 0.25 },
+      { "drop": "fat", "type": "flesh", "mass_ratio": 0.04 },
+      { "drop": "bone", "type": "bone", "mass_ratio": 0.12 },
+      { "drop": "sinew", "type": "bone", "mass_ratio": 0.0004 },
+      { "drop": "raw_leather", "type": "skin", "mass_ratio": 0.02 }
+    ]
+  },
+  {
+    "type": "harvest",
+    "id": "br_deathmoth",
+    "//": "Deathmoth: a soft body with a little mutant meat in it (its jelly comes from br_deathmoth_drops).",
+    "entries": [ { "drop": "mutant_meat", "type": "flesh", "mass_ratio": 0.15 } ]
+  },
+  {
+    "type": "harvest",
+    "id": "br_redeemer",
+    "//": "The Redeemer: a lot of strange mutant meat, fat, bone and sinew.",
+    "entries": [
+      { "drop": "mutant_meat", "type": "flesh", "mass_ratio": 0.2 },
+      { "drop": "fat", "type": "flesh", "mass_ratio": 0.05 },
+      { "drop": "bone", "type": "bone", "mass_ratio": 0.12 },
+      { "drop": "sinew", "type": "bone", "mass_ratio": 0.0004 },
+      { "drop": "raw_leather", "type": "skin", "mass_ratio": 0.02 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_hound_drops",
+    "subtype": "collection",
+    "entries": [ { "item": "br_hound_fang", "count": [ 1, 2 ], "prob": 40 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_smiler_drops",
+    "//": "A Smiler leaves no body; sometimes its teeth stay behind.",
+    "subtype": "collection",
+    "entries": [ { "item": "br_smiler_teeth", "prob": 30 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_faceling_drops",
+    "//": "A Faceling is someone in ordinary clothes: what was on them.",
+    "subtype": "collection",
+    "entries": [
+      { "group": "clothing_outdoor_torso", "prob": 70 },
+      { "group": "clothing_outdoor_pants", "prob": 60 },
+      { "group": "wallets", "prob": 40 },
+      { "group": "br_cat_snacks", "prob": 30 },
+      { "item": "almond_water", "container-item": "bottle_almond_water", "prob": 10 },
+      { "item": "br1_note_lost", "prob": 5 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_skin_stealer_drops",
+    "//": "The human skin a Skin-stealer wears like a coat. Grim, but it tans into leather.",
+    "subtype": "collection",
+    "entries": [ { "item": "raw_hleather", "count": [ 2, 4 ] } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_partygoer_drops",
+    "//": "Every Partygoer has its balloon; often its hat; now and then a slice of cake that might even be fine.",
+    "subtype": "collection",
+    "entries": [
+      { "item": "br_red_balloon" },
+      { "item": "br_party_hat", "prob": 60 },
+      { "item": "cake2", "prob": 20 }
+    ]
+  }
+]

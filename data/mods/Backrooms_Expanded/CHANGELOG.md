@@ -13,6 +13,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - **Firesalt tools** (craftable): a **firesalt torch** that burns twice as long as a fuel torch and a little brighter, and **firesalt twists**, a quick fire-starter good for about five fires (followers who light fires can use them too). Sprites for both.
 - The new finds are part of trade: the Exchange's supplies stall sells moth jelly and the odd royal ration (and pays well for rations), the gear stall sells and buys firesalt, and every Level 2 tunnel crew member carries a pouch of firesalt to trade. No trader buys cloudy water ("That isn't almond water.").
 - NPCs never drink cloudy water on their own; with Survivor Minds, those you hand it to write about it.
+- **Entity loot**, each with a sprite: hounds sometimes leave a fang or two; a Smiler that fades sometimes leaves its teeth; Facelings drop the ordinary clothes and pocket things they were carrying (a wallet, a snack, now and then almond water); a Skin-stealer leaves the human skin it wore (it tans into leather); every Partygoer leaves its red balloon, often a party hat, sometimes a slice of cake; the Redeemer always leaves a cracked insulator from its pole. Wretches sometimes carry a lost note. The Exchange's oddities stall buys fangs, teeth, insulators and balloons, and pays extra for the trophies.
 
 ### Changed
 
@@ -25,6 +26,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Fixed
 
+- Butchering Backrooms entities no longer gives human flesh. Hounds give stringy mutant meat, fat, bone, sinew and a hide; Deathmoths a little mutant meat; the Redeemer a great deal of it. Only Wretches and Facelings, which were or look like people, still butcher as people.
 - Breakroom runners really leave now. They looked for a squatter camp, lobby or generator room only 12 squares away, and those are rare, so most days they found nothing and the board said "Done for today". They now look 30 squares out, and if there is still nothing they go scavenging in the lanes ("OUT, scavenging the lanes").
 - Breakroom Bunker: the two archers now stand in half-sandbag nests either side of the airlock instead of in the open at the ends of the sandbag wall.
 - Breakroom archers carry a combat knife in a sheath and wear a bow sling. When something gets close they draw the knife and sling the bow, instead of dropping the bow and fighting with an arrow.
