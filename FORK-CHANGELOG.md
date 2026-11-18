@@ -41,6 +41,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   sheltering stranger scared off their spot looks for safety only within 6 tiles of it, and walks back once calm,
   as guards return to their post. They remember the spot where they first stood calm, so a trader already standing
   in the aisle in an old save takes the aisle as their spot.
+- [C++] **Overloaded NPCs lighten their load (with NPC autonomy on):** an NPC carrying more than it can puts down
+  the cheapest junk it picked up itself ("Too heavy.  Leaving the ... here."). It keeps its clothes, weapon, ammo,
+  food, drink, medicine, firewood and favourites, and what you trade to a follower counts as a favourite, so a
+  follower you load up on purpose just walks slower.
 
 ### Bug fixes
 - [C++] **Ambient volume changes apply in game:** lowering Ambient sound volume or Sound effect volume and leaving

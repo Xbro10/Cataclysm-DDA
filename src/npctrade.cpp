@@ -25,6 +25,7 @@
 #include "item_location.h"
 #include "item_pocket.h"
 #include "npc.h"
+#include "npc_autonomy.h"
 #include "npc_opinion.h"
 #include "npctrade_utils.h"
 #include "pocket_type.h"
@@ -82,6 +83,12 @@ std::list<item> npc_trading::transfer_items( trade_selector::select_t &stuff, Ch
         }
 
         gift.set_owner( receiver );
+        // Xbro10 fork: with NPC autonomy on, what you hand a follower is a favourite (as with "give"),
+        // so an overloaded follower never puts it down on its own (npc_load).
+        if( npc_autonomy::enabled() && giver.is_avatar() && receiver.is_npc() &&
+            receiver.as_npc()->is_player_ally() ) {
+            gift.set_favorite( true );
+        }
 
         // Items are moving to escrow.
         if( use_escrow && ip.first->count_by_charges() ) {

@@ -90,6 +90,7 @@
 #include "npc_attack.h"
 #include "npc_autonomy.h"
 #include "npc_decision_category.h"
+#include "npc_load.h"
 #include "npc_opinion.h"
 #include "npc_sleep.h"
 #include "npc_trip.h"
@@ -1685,6 +1686,12 @@ void npc::move()
         }
         abandon_activity();
         clear_committed_goal();
+    }
+    // Xbro10 fork: with NPC autonomy on, an overloaded NPC puts down junk it picked up itself.
+    if( !has_activity() && ai_cache.danger <= 0.0f && !in_harms_way() &&
+        npc_load::lighten_load( *this ) ) {
+        execute_action( npc_player_activity );
+        return;
     }
     npc_action action = npc_undecided;
 
