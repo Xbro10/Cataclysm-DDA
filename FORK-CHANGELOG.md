@@ -41,6 +41,9 @@ built so far.
 - [C++] **Discord status card:** while you play, Discord shows which level or world you're in (with the launcher picture),
   how long you've played and a **Get the fork** button. Options > General > Discord: Off, Basic or Detailed (adds
   the day, your followers, and sleeping or driving). Needs the Discord desktop app.
+- [Launcher] **Sound packs:** a new **Sound** page downloads and updates **CC-Sounds** (music and effects) and
+  **@'s soundpack** into `UserData\sound`, where game updates never touch them, and **Use this pack** makes the game
+  use it. **Menu sounds only** switches back. Launcher version 2026-11-17.
 
 ### Bug fixes
 - [BE] **Breakroom runners** now really leave at the time on the runner board (the schedule couldn't find them).
