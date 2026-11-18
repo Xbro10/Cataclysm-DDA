@@ -1017,6 +1017,12 @@ void npc::assess_danger()
         ai_cache.hostile_guys.emplace_back( g->shared_from( player_character ) );
     }
 
+    // Xbro10 fork: NPC autonomy's gunner rules: a ready gunner that outguns what it sees
+    // also aims at hostiles too far off to count as a threat yet (see after the loop).
+    const bool gunner_aims = npc_autonomy::gunner_stance_for( *this ) != npc_autonomy::gunner_stance::none;
+    const monster *gunner_target = nullptr;
+    float gunner_target_threat = 0.0f;
+    int gunner_target_dist = std::min( max_range, 10 ) + 1;
     for( const monster &critter : g->all_monsters() ) {
         if( !clairvoyant && !here.has_potential_los( pos_bub(), critter.pos_bub() ) ) {
             continue;
@@ -1130,6 +1136,19 @@ void npc::assess_danger()
             ai_cache.target = g->shared_from( critter );
             ai_cache.danger = critter_threat;
         }
+        // Xbro10 fork: gunner rules: the nearest hostile it may shoot (seen, a clear shot,
+        // allowed by a follower's engagement rules), within its sure range and 10 tiles.
+        if( gunner_aims && dist < gunner_target_dist ) {
+            gunner_target = &critter;
+            gunner_target_dist = dist;
+            gunner_target_threat = critter_threat;
+        }
+    }
+    // Xbro10 fork: gunner rules: nothing close enough to count yet, so shoot the walker
+    // before it gets there (the game only took aim at a lone zombie within about 3 tiles).
+    if( gunner_target != nullptr && !ai_cache.target.lock() ) {
+        ai_cache.target = g->shared_from( *gunner_target );
+        ai_cache.danger = std::max( gunner_target_threat, 1.0f );
     }
 
     if( mem_combat.assess_enemy == 0.0 && ai_cache.hostile_guys.empty() ) {
@@ -1327,6 +1346,16 @@ void npc::act_on_danger_assessment()
     bool npc_ranged = get_wielded_item() && get_wielded_item()->is_gun();
     bool failed_reposition = false;
     Character &player_character = get_player_character();
+    // Xbro10 fork: with NPC autonomy on, a ready gunner that outguns what it sees stands and
+    // shoots instead of backing away (it never fired while kiting a walking zombie), and only
+    // takes the short step back from something slower within 2 tiles, never the long retreat.
+    const npc_autonomy::gunner_stance gunner = npc_autonomy::gunner_stance_for( *this );
+    if( gunner == npc_autonomy::gunner_stance::hold && has_effect( effect_npc_run_away ) &&
+        !has_effect( effect_npc_fire_bad ) ) {
+        remove_effect( effect_npc_run_away );
+        mem_combat.repositioning = false;
+        path.clear();
+    }
     if( has_effect( effect_npc_run_away ) ) {
         // this check runs each turn that the NPC is repositioning and assesses if the situation is getting any better.
         // The longer they try to move without improving, the more likely they become to stop and stand their ground.
@@ -1350,7 +1379,8 @@ void npc::act_on_danger_assessment()
     }
     if( !has_effect( effect_npc_run_away ) && !has_effect( effect_npc_fire_bad ) ) {
         mem_combat.assessment_before_repos = std::round( mem_combat.assess_enemy );
-        if( mem_combat.assess_ally < mem_combat.assess_enemy ) {
+        if( mem_combat.assess_ally < mem_combat.assess_enemy &&
+            gunner == npc_autonomy::gunner_stance::none ) { // Xbro10 fork: gunner rules
             // Each time NPC decides to run away, their panic increases, which increases likelihood
             // and duration of running away.
             // if they run to a more advantageous position, they'll reassess and rally.
@@ -1390,9 +1420,10 @@ void npc::act_on_danger_assessment()
                     }
                 }
             }
-        } else if( failed_reposition ||
-                   ( mem_combat.assess_ally / 3.0f + mem_combat.my_defence_assess < mem_combat.assess_enemy *
-                     mem_combat.swarm_count ) ) {
+        } else if( gunner != npc_autonomy::gunner_stance::hold && // Xbro10 fork: gunner rules
+                   ( failed_reposition ||
+                     ( mem_combat.assess_ally / 3.0f + mem_combat.my_defence_assess < mem_combat.assess_enemy *
+                       mem_combat.swarm_count ) ) ) {
             add_msg_debug( debugmode::DF_NPC_COMBATAI,
                            "<color_light_gray>%s considers </color>repositioning<color_light_gray> from swarming enemies.</color>",
                            name );

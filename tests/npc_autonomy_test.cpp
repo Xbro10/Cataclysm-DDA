@@ -29,6 +29,7 @@
 #include "npc.h"
 #include "npc_autonomy.h"
 #include "options_helpers.h"
+#include "monster_helpers.h"
 #include "player_helpers.h"
 #include "point.h"
 #include "talker.h"
@@ -37,6 +38,7 @@
 
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
+static const efftype_id effect_npc_run_away( "npc_run_away" );
 
 static const activity_id ACT_CONSUME( "ACT_CONSUME" );
 
@@ -49,6 +51,7 @@ static const itype_id itype_hoodie( "hoodie" );
 static const itype_id itype_jeans( "jeans" );
 static const itype_id itype_katana( "katana" );
 static const itype_id itype_lighter( "lighter" );
+static const itype_id itype_modular_m16a4( "modular_m16a4" );
 static const itype_id itype_mossberg_590( "mossberg_590" );
 static const itype_id itype_rock( "rock" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
@@ -66,7 +69,9 @@ effect_on_condition_EOC_AUTONOMY_DEBUG_OWNED_AREA( "EOC_AUTONOMY_DEBUG_OWNED_ARE
 static const string_id<behavior::node_t> behavior_node_t_npc_priorities( "npc_priorities" );
 
 static const skill_id skill_cutting( "cutting" );
+static const skill_id skill_gun( "gun" );
 static const skill_id skill_melee( "melee" );
+static const skill_id skill_rifle( "rifle" );
 
 static const furn_str_id furn_f_cupboard( "f_cupboard" );
 static const furn_str_id furn_f_fireplace( "f_fireplace" );
@@ -1319,5 +1324,137 @@ TEST_CASE( "npc_autonomy_seek_safety", "[npc][autonomy]" )
         run( 60 );
         CHECK( rl_dist( guy.pos_bub(), get_avatar().pos_bub() ) <= 8 );
         CHECK( rl_dist( guy.pos_bub(), room ) > 3 );
+    }
+}
+
+// Reported 2026-11-17: an NPC with a gun kept backing off from a walking zombie and never
+// fired. With autonomy on, a ready gunner that outguns what it sees holds and shoots.
+TEST_CASE( "npc_autonomy_gunner_stance", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    const auto spawn_at = [&guy]( const char *what, int dist, int count = 1 ) {
+        for( int i = 0; i < count; ++i ) {
+            spawn_test_monster( what, guy.pos_bub() + point( dist, i * 2 - count ) );
+        }
+        get_map().build_map_cache( 0 );
+    };
+    const auto stance = [&guy]() {
+        return npc_autonomy::gunner_stance_for( guy );
+    };
+    using npc_autonomy::gunner_stance;
+
+    SECTION( "option off: the game's own" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        arm_shooter( guy, itype_modular_m16a4 );
+        spawn_at( "mon_zombie", 6 );
+        CHECK( stance() == gunner_stance::none );
+    }
+    SECTION( "option on" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        SECTION( "a loaded rifle, a zombie 6 tiles off: hold and shoot" ) {
+            arm_shooter( guy, itype_modular_m16a4 );
+            spawn_at( "mon_zombie", 6 );
+            CHECK( stance() == gunner_stance::hold );
+        }
+        SECTION( "a zombie 2 tiles off, slower than them: a short step back is fine" ) {
+            arm_shooter( guy, itype_modular_m16a4 );
+            spawn_at( "mon_zombie", 2 );
+            CHECK( stance() == gunner_stance::step_back );
+        }
+        SECTION( "a zombie dog 2 tiles off, as fast as them: the game's own" ) {
+            arm_shooter( guy, itype_modular_m16a4 );
+            spawn_at( "mon_zombie_dog", 2 );
+            CHECK( stance() == gunner_stance::none );
+        }
+        SECTION( "a zombie hulk: outgunned, the game's own" ) {
+            arm_shooter( guy, itype_modular_m16a4 );
+            spawn_at( "mon_zombie_hulk", 8 );
+            CHECK( stance() == gunner_stance::none );
+        }
+        SECTION( "no ammo at all: not a gunner" ) {
+            item rifle( itype_modular_m16a4 );
+            guy.wield( rifle );
+            spawn_at( "mon_zombie", 6 );
+            REQUIRE( guy.get_wielded_item()->shots_remaining( get_map(), &guy ) == 0 );
+            CHECK( stance() == gunner_stance::none );
+        }
+        SECTION( "a melee weapon: not a gunner" ) {
+            item katana( itype_katana );
+            guy.wield( katana );
+            spawn_at( "mon_zombie", 6 );
+            CHECK( stance() == gunner_stance::none );
+        }
+        SECTION( "a follower told not to use guns: not a gunner" ) {
+            guy.set_attitude( NPCATT_FOLLOW );
+            guy.set_fac( faction_your_followers );
+            arm_shooter( guy, itype_modular_m16a4 );
+            guy.rules.clear_flag( ally_rule::use_guns );
+            spawn_at( "mon_zombie", 6 );
+            CHECK( stance() == gunner_stance::none );
+        }
+    }
+}
+
+TEST_CASE( "npc_autonomy_gunner_shoots_a_walking_zombie", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    avatar &you = get_avatar();
+    // A follower beside you, allowed loud guns and to fire at will, a zombie walking in.
+    npc &guy = spawn_follower( you.pos_bub().xy() + point( 1, 0 ) );
+    guy.rules.set_flag( ally_rule::use_guns );
+    guy.rules.clear_flag( ally_rule::use_silent );
+    guy.rules.engagement = combat_engagement::ALL;
+    arm_shooter( guy, itype_modular_m16a4 );
+    guy.set_skill_level( skill_gun, 4 );
+    guy.set_skill_level( skill_rifle, 4 );
+    monster &zed = spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 10, 0 ) );
+    get_map().build_map_cache( 0 );
+    // Turns in which the zombie was hit from 4 or more tiles away.
+    const auto fight = [&]( std::string & trace ) {
+        int hurt_at_range = 0;
+        for( int t = 0; t < 40 && !zed.is_dead(); ++t ) {
+            calendar::turn += 1_turns;
+            guy.set_moves( guy.get_speed() );
+            guy.npc_update_body();
+            const int before = zed.get_hp();
+            const int dist = rl_dist( guy.pos_bub(), zed.pos_bub() );
+            guy.move();
+            if( zed.is_dead() || zed.get_hp() < before ) {
+                hurt_at_range += dist >= 4 ? 1 : 0;
+            }
+            if( zed.is_dead() ) {
+                break;
+            }
+            zed.plan();
+            move_monster_turn( zed );
+            trace += string_format( " t%d:d%d hp%d run%d", t, rl_dist( guy.pos_bub(), zed.pos_bub() ),
+                                    zed.get_hp(), guy.has_effect( effect_npc_run_away ) );
+        }
+        return hurt_at_range;
+    };
+
+    SECTION( "autonomy on: they shoot it before it gets close, without backing off" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        std::string trace;
+        const int hits = fight( trace );
+        INFO( trace );
+        CHECK( hits > 0 );
+        CHECK( trace.find( "run1" ) == std::string::npos );
+    }
+    SECTION( "autonomy off: the game's own (it waits until the zombie is about 3 tiles off)" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        std::string trace;
+        const int hits = fight( trace );
+        INFO( trace );
+        CHECK( hits == 0 );
     }
 }

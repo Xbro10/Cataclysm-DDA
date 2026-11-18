@@ -128,6 +128,24 @@ bool wants_warmth( const npc &guy );
 
 /** Scared and a spot to go to or hold, or seeking safety and not yet calm. */
 bool wants_safety( const npc &guy );
+
+// ---- Gunners hold their ground (step 5.2, reported 2026-11-17) ----
+// The game's own combat backs an NPC with a gun away from anything within about 7 tiles,
+// and it doesn't shoot while backing away, so a walking zombie kept it retreating and it
+// never fired. With NPC autonomy on, a ready gunner (a gun in hand it may fire, loaded or
+// with ammo to reload) that outguns the hostiles it can see (their threat ratings against
+// own_strength(), the gun included) stands and shoots instead.
+
+enum class gunner_stance {
+    // Not a ready gunner, or outgunned: the game's own fight-or-flee.
+    none,
+    // Nothing within 2 tiles: no backing away at all, shoot.
+    hold,
+    // Something within 2 tiles that's slower than them: the game's short step back is
+    // fine, then shoot again; never the long retreat.
+    step_back
+};
+gunner_stance gunner_stance_for( npc &guy );
 /**
  * For the look-around panel: why a cold NPC (Warmth 50+) can't warm up, e.g. "Cold: no room
  * to carry the firewood"; "" when they aren't cold or have a way.

@@ -35,6 +35,7 @@
 #include "mission.h"
 #include "monster.h"
 #include "mtype.h"
+#include "gun_mode.h"
 #include "npc.h"
 #include "npc_trip.h"
 #include "options.h"
@@ -256,14 +257,19 @@ static float watched_threat( const npc &guy )
 // How well the NPC could fight on their own, on the same scale as a monster's threat
 // rating: defence (dodge and armour) plus the weapon in hand, both as the game itself
 // rates them, scaled by health. An unarmed survivor is about 4 (a zombie is 5); a katana
-// adds about 10, or nearly 30 with good skills (a zombie brute is 27, a hulk 173).
+// adds about 10, or nearly 30 with good skills (a zombie brute is 27, a hulk 173). The game
+// rates a loaded gun on a much bigger scale (a rifle about 680), so a gun counts a tenth:
+// a rifle then beats zombies and brutes, but not a hulk.
 static float own_strength( const npc &guy )
 {
     const float health = std::clamp( guy.hp_percentage() / 100.0f, 0.0f, 1.0f );
     const float defence = guy.mem_combat.my_defence_assess > 0.0f ? guy.mem_combat.my_defence_assess :
                           guy.get_dodge() * health;
     const item_location weapon = guy.get_wielded_item();
-    const float attack = weapon ? static_cast<float>( guy.evaluate_weapon( *weapon ) ) : 0.0f;
+    float attack = weapon ? static_cast<float>( guy.evaluate_weapon( *weapon ) ) : 0.0f;
+    if( weapon && weapon->is_gun() ) {
+        attack /= 10.0f;
+    }
     return defence + attack * health;
 }
 
@@ -1429,6 +1435,55 @@ bool is_goal( const std::string &goal )
 {
     return goal == goal_meal || goal == goal_socialize || goal == goal_get_water ||
            goal == goal_get_food || goal == goal_get_warm || goal == goal_seek_safety;
+}
+
+namespace
+{
+
+// A gun in hand they're allowed to fire (the same rules the game's own weapon choice uses)
+// with a shot in it, or ammo to reload.
+bool ready_gunner( npc &guy )
+{
+    const item_location weapon = guy.get_wielded_item();
+    if( !weapon || !weapon->is_gun() || !guy.rules.has_flag( ally_rule::use_guns ) ) {
+        return false;
+    }
+    bool may_fire = false;
+    for( const std::pair<const gun_mode_id, gun_mode> &mode : weapon->gun_all_modes() ) {
+        if( !( mode.second.melee() || mode.second.flags.count( "NPC_AVOID" ) ||
+               !guy.can_use( *mode.second.target ) ||
+               ( guy.rules.has_flag( ally_rule::use_silent ) && guy.is_player_ally() &&
+                 !mode.second->is_silent() ) ) ) {
+            may_fire = true;
+            break;
+        }
+    }
+    return may_fire && ( weapon->shots_remaining( get_map(), &guy ) > 0 || guy.can_reload_current() );
+}
+
+} // namespace
+
+gunner_stance gunner_stance_for( npc &guy )
+{
+    if( !enabled() || !ready_gunner( guy ) ) {
+        return gunner_stance::none;
+    }
+    const float watched = watched_threat( guy );
+    if( watched >= own_strength( guy ) ) {
+        return gunner_stance::none;
+    }
+    bool close = false;
+    for( const Creature *critter : guy.get_visible_creatures( 2 ) ) {
+        if( guy.attitude_to( *critter ) != Creature::Attitude::HOSTILE ) {
+            continue;
+        }
+        if( critter->get_speed() >= guy.get_speed() ) {
+            // Can't outpace it: fight as the game would.
+            return gunner_stance::none;
+        }
+        close = true;
+    }
+    return close ? gunner_stance::step_back : gunner_stance::hold;
 }
 
 bool wants_safety( const npc &guy )

@@ -45,7 +45,12 @@ built so far.
   while scared.
 - [C++] **No more pacing back and forth** between two hostiles: once an NPC heads for a safe spot it keeps going until
   calm (Safety under 25 and two minutes since it was last scared), and only switches to a clearly better spot.
-
+- [C++] **Gunners stand and shoot:** with NPC autonomy on, an NPC holding a gun it may fire (loaded, or ammo to
+  reload) that outguns what it sees no longer backs away from walkers it should be shooting. It aims at the nearest
+  hostile within its gun's sure range and 10 tiles (a follower within your engagement rules) and fires before it gets
+  close; it only takes a short step back from something slower within 2 tiles. Out of ammo, too slow, or
+  outgunned (a rifle beats zombies and brutes, not a hulk), it fights or flees as before. Followers still only use
+  loud guns when your rules allow it.
 ### Launcher
 - [C++] **Discord status card:** while you play, Discord shows which level or world you're in (with the launcher picture),
   how long you've played and a **Get the fork** button. Options > General > Discord: Off, Basic or Detailed (adds
