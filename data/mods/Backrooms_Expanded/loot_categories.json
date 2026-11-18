@@ -106,7 +106,7 @@
     "id": "br_cat_food",
     "//": "One packaged or canned meal.",
     "subtype": "distribution",
-    "entries": [ { "group": "br1_camp_food", "prob": 60 }, { "group": "cannedfood", "prob": 40 } ]
+    "entries": [ { "group": "br1_camp_food", "prob": 60 }, { "group": "cannedfood", "prob": 40 }, { "item": "br_royal_ration", "prob": 3 } ]
   },
   {
     "type": "item_group",

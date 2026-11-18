@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Backrooms Wiki finds (moth jelly, firesalt, royal ration, cloudy water), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br_finds.ps1 in UndeadPeople style.",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br_finds.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          { "id": "br_moth_jelly", "fg": 0, "rotates": false },
+          { "id": "br_firesalt", "fg": 1, "rotates": false },
+          { "id": "br_royal_ration", "fg": 2, "rotates": false },
+          { "id": "br_liquid_pain", "fg": 3, "rotates": false }
+        ]
+      }
+    ]
+  }
+]

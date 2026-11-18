@@ -1,0 +1,131 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br_moth_jelly",
+    "//": "From the Backrooms Wiki. Deathmoths leave it behind (br_deathmoth_drops). A sweet food that mends a few hit points.",
+    "subtypes": [ "COMESTIBLE" ],
+    "comestible_type": "FOOD",
+    "category": "food",
+    "name": { "str_sp": "moth jelly" },
+    "description": "A glob of pale, faintly glowing jelly scraped from a deathmoth.  It smells like warm honey and tastes sweeter than it has any right to.  People in the Backrooms swear a mouthful takes the sting out of cuts and bruises.",
+    "looks_like": "royal_jelly",
+    "weight": "60 g",
+    "volume": "50 ml",
+    "price": "3 USD",
+    "price_postapoc": "4 USD",
+    "material": [ "honey" ],
+    "symbol": "%",
+    "color": "light_cyan",
+    "calories": 220,
+    "quench": 2,
+    "fun": 6,
+    "healthy": 1,
+    "spoils_in": "5 days",
+    "vitamins": [ [ "vitC", 5 ] ],
+    "consumption_effect_on_conditions": [ "EOC_BR_MOTH_JELLY_MEND" ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_MOTH_JELLY_MEND",
+    "//": "u ate moth jelly: a few hit points back on every body part.",
+    "effect": [
+      { "math": [ "u_hp('ALL')", "+=", "4" ] },
+      { "u_message": "Sweet and warm.  The ache in your bruises eases a little.", "type": "good" }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_deathmoth_drops",
+    "//": "What a dead deathmoth leaves: sometimes a glob or two of moth jelly.",
+    "subtype": "collection",
+    "entries": [ { "item": "br_moth_jelly", "count": [ 1, 2 ], "prob": 35 } ]
+  },
+  {
+    "type": "ITEM",
+    "id": "br_firesalt",
+    "//": "From the Backrooms Wiki. Burns as lamp fuel (ammo type lamp_oil): oil lamps and the Flamero-Mado spear take it like kerosene. Level 2 finds.",
+    "subtypes": [ "AMMO" ],
+    "category": "fuel",
+    "name": { "str_sp": "firesalt" },
+    "description": "Coarse red crystals that feel warm in the hand.  Crushed into a lamp or a fuel tank they smoulder and burn like kerosene, without the smell.  The tunnel crews on Level 2 trade it by the handful.",
+    "looks_like": "salt",
+    "weight": "2 g",
+    "volume": "250 ml",
+    "price": "20 cent",
+    "price_postapoc": "3 USD",
+    "count": 50,
+    "stack_size": 50,
+    "symbol": "*",
+    "color": "light_red",
+    "material": [ "salt" ],
+    "ammo_type": "lamp_oil"
+  },
+  {
+    "type": "ITEM",
+    "id": "br_royal_ration",
+    "//": "From the Backrooms Wiki. A rare, light, never-spoiling bar worth most of a day's food.",
+    "subtypes": [ "COMESTIBLE" ],
+    "comestible_type": "FOOD",
+    "category": "food",
+    "name": { "str": "royal ration" },
+    "description": "A plain foil-wrapped bar with no brand and no writing, about the size of a deck of cards.  Whatever you were hoping for, it tastes like that: a roast dinner, a birthday cake, your grandmother's soup.  One keeps you going for most of a day.",
+    "looks_like": "granola",
+    "weight": "250 g",
+    "volume": "200 ml",
+    "price": "15 USD",
+    "price_postapoc": "40 USD",
+    "material": [ "wheat" ],
+    "symbol": "%",
+    "color": "yellow",
+    "calories": 1800,
+    "quench": -2,
+    "fun": 8,
+    "vitamins": [ [ "vitA", 50 ], [ "vitC", 50 ], [ "calcium", 50 ], [ "iron", 50 ], [ "vitB", 50 ] ]
+  },
+  {
+    "type": "ITEM",
+    "id": "br_liquid_pain",
+    "//": "From the Backrooms Wiki. Turns up in almond water bottles; drinking it is agony (pain +40, a bad mood). A trap for the careless reader.",
+    "subtypes": [ "COMESTIBLE" ],
+    "comestible_type": "DRINK",
+    "category": "food",
+    "name": { "str_sp": "cloudy water" },
+    "description": "A bottle of slightly cloudy liquid.  It looks just like almond water, but the smell is sharp rather than sweet, like pennies and struck matches.",
+    "looks_like": "almond_water",
+    "weight": "250 g",
+    "volume": "250 ml",
+    "price": "1 cent",
+    "price_postapoc": "1 cent",
+    "material": [ "water" ],
+    "symbol": "~",
+    "color": "white",
+    "phase": "liquid",
+    "charges": 1,
+    "quench": 10,
+    "fun": -20,
+    "container": "bottle_almond_water",
+    "flags": [ "EATEN_COLD" ],
+    "consumption_effect_on_conditions": [ "EOC_BR_LIQUID_PAIN" ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR_LIQUID_PAIN",
+    "//": "u drank liquid pain: a wave of pain and a lasting bad mood.",
+    "effect": [
+      { "math": [ "u_pain()", "+=", "40" ] },
+      {
+        "u_add_morale": "morale_br_liquid_pain",
+        "bonus": -20,
+        "max_bonus": -20,
+        "duration": "2 hours",
+        "decay_start": "1 hours"
+      },
+      { "u_message": "That wasn't almond water.  Fire runs down your throat and into every joint at once.", "type": "bad" }
+    ]
+  },
+  {
+    "type": "morale_type",
+    "id": "morale_br_liquid_pain",
+    "text": "Drank liquid pain"
+  }
+]

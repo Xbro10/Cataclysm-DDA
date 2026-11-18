@@ -19,7 +19,8 @@
       { "group": "br_cat_tools", "prob": 15 },
       { "group": "br_cat_power", "prob": 15 },
       { "group": "br_cat_snacks", "prob": 15 },
-      { "group": "br_cat_hardware", "prob": 10 }
+      { "group": "br_cat_hardware", "prob": 10 },
+      { "item": "br_royal_ration", "prob": 5 }
     ]
   },
   {
