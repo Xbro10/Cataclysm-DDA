@@ -63,6 +63,15 @@
     "score_argument": "0.8"
   },
   {
+    "type": "behavior",
+    "id": "npc_autonomy_return_home",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). Shopkeepers and sheltering strangers, whom the game keeps standing still without remembering where: once calm and away from the tile where they first stood calm (NPC var autonomy_home_spot), walk back to it. Seeking safety keeps them within 6 tiles of it. 30 minutes off after a failed walk. score_argument is the weight (0-1); seeking safety (0.4+) wins while scared.",
+    "conditions": [ { "predicate": "npc_autonomy_wants_return_home" } ],
+    "goal": "autonomy_return_home",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.35"
+  },
+  {
     "type": "snippet",
     "category": "<ally_rule_no_self_care_true_text>",
     "//": "Xbro10 fork, follower rule no_self_care (NPC autonomy option).",

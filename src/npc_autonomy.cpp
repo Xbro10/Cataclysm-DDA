@@ -54,6 +54,7 @@ static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_near_starving( "hunger_near_starving" );
 static const efftype_id effect_hunger_starving( "hunger_starving" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
+static const efftype_id effect_npc_run_away( "npc_run_away" );
 
 namespace npc_autonomy
 {
@@ -86,11 +87,28 @@ constexpr const char *var_safety = "autonomy_need_safety";
 constexpr const char *var_social = "autonomy_need_social";
 // Turns since the start of the game at the last update.
 constexpr const char *var_updated = "autonomy_needs_updated";
+// Where a shopkeeper (or a sheltering stranger) belongs, "x,y,z" (absolute): the game keeps
+// them standing still and never remembers where, so once something moved them they stayed
+// wherever they ended up (reported 2026-11-18: Exchange traders left in the aisle).
+constexpr const char *var_home_spot = "autonomy_home_spot";
+// They look for safety within this many tiles of it, and walk back once calm.
+constexpr int home_spot_reach = 6;
 
 double get_num( const Creature &who, const char *key, double fallback )
 {
     const diag_value *val = who.maybe_get_value( key );
     return val != nullptr && val->is_dbl() ? val->dbl() : fallback;
+}
+
+std::optional<tripoint_abs_ms> home_spot( const Creature &who )
+{
+    const diag_value *val = who.maybe_get_value( var_home_spot );
+    tripoint_abs_ms p;
+    if( val == nullptr || !val->is_str() ||
+        std::sscanf( val->str().c_str(), "%d,%d,%d", &p.x(), &p.y(), &p.z() ) != 3 ) {
+        return std::nullopt;
+    }
+    return p;
 }
 
 int turns_since_start()
@@ -346,6 +364,7 @@ void on_npc_turn( npc &guy )
 {
     // Also with the option just turned off: nothing else would give them their weapon back.
     set_down_wood_after_trip( guy );
+    remember_home_spot( guy );
     if( !enabled() || !calendar::once_every( 1_minutes ) ) {
         return;
     }
@@ -1237,6 +1256,12 @@ bool safe_spot_in_reach( const npc &guy, const tripoint_abs_ms &p )
     if( const std::optional<npc_reach> reach = guy.obligation_reach() ) {
         return reach->contains( p );
     }
+    // A shopkeeper stays close to their booth.
+    if( stays_put( guy ) ) {
+        if( const std::optional<tripoint_abs_ms> home = home_spot( guy ) ) {
+            return rl_dist( *home, p ) <= home_spot_reach;
+        }
+    }
     return rl_dist( guy.pos_abs(), p ) <= safety_radius;
 }
 
@@ -1429,12 +1454,83 @@ std::string safe_plan_text( const npc &guy )
            string_format( _( "Plan: stay safe (heading to a safer spot %d tiles away)" ), dist );
 }
 
+// ---- Back to their spot ----
+
+constexpr const char *goal_return_home = "autonomy_return_home";
+// A spot they couldn't get back to: they stop trying until this turn.
+constexpr const char *var_home_gave_up = "autonomy_home_gave_up_until";
+
+goal_result return_home( npc &guy )
+{
+    const std::optional<tripoint_abs_ms> home = home_spot( guy );
+    map &here = get_map();
+    if( !home || *home == guy.pos_abs() || !here.inbounds( *home ) ) {
+        return goal_result::none;
+    }
+    const tripoint_bub_ms spot = here.get_bub( *home );
+    // Someone in their spot: stand next to it.
+    const Creature *there = get_creature_tracker().creature_at( spot );
+    const npc_trip_spec trip = there != nullptr ? npc_trip_spec::within_range( spot, 1, true ) :
+                               npc_trip_spec::stand_on( spot, true );
+    if( there != nullptr && rl_dist( guy.pos_bub(), spot ) <= 1 ) {
+        return goal_result::none;
+    }
+    if( guy.move_to_and_verify( trip ) ) {
+        return goal_result::acted;
+    }
+    guy.set_value( var_home_gave_up,
+                   static_cast<double>( turns_since_start() + to_turns<int>( 30_minutes ) ) );
+    return goal_result::none;
+}
+
+std::string home_plan_text( const npc &guy )
+{
+    if( guy.get_committed_goal() != goal_return_home ) {
+        return std::string();
+    }
+    const std::optional<tripoint_abs_ms> home = home_spot( guy );
+    if( !home ) {
+        return std::string();
+    }
+    return string_format( _( "Plan: back to their spot (%d tiles away)" ),
+                          rl_dist( guy.pos_abs(), *home ) );
+}
+
 } // namespace
 
 bool is_goal( const std::string &goal )
 {
     return goal == goal_meal || goal == goal_socialize || goal == goal_get_water ||
-           goal == goal_get_food || goal == goal_get_warm || goal == goal_seek_safety;
+           goal == goal_get_food || goal == goal_get_warm || goal == goal_seek_safety ||
+           goal == goal_return_home;
+}
+
+bool stays_put( const npc &guy )
+{
+    return !guy.is_player_ally() && !guy.is_walking_with() &&
+           ( guy.mission == NPC_MISSION_SHOPKEEP || guy.mission == NPC_MISSION_SHELTER );
+}
+
+void remember_home_spot( npc &guy )
+{
+    if( !enabled() || !stays_put( guy ) || guy.maybe_get_value( var_home_spot ) != nullptr ||
+        guy.get_committed_goal() == goal_seek_safety || guy.has_effect( effect_npc_run_away ) ||
+        !is_safe( guy ) ) {
+        return;
+    }
+    guy.set_value( var_home_spot, target_key( guy.pos_abs() ) );
+}
+
+bool wants_return_home( const npc &guy )
+{
+    if( !enabled() || guy.in_sleep_state() || !stays_put( guy ) || !is_safe( guy ) ||
+        turns_since_start() < get_num( guy, var_home_gave_up, -1.0 ) ) {
+        return false;
+    }
+    const std::optional<tripoint_abs_ms> home = home_spot( guy );
+    return home && *home != guy.pos_abs() && get_map().inbounds( *home ) &&
+           !( get_creature_tracker().creature_at( get_map().get_bub( *home ) ) != nullptr &&
+              rl_dist( guy.pos_abs(), *home ) <= 1 );
 }
 
 namespace
@@ -1710,7 +1806,11 @@ std::string plan_text( const npc &guy )
         return food;
     }
     const std::string safe = safe_plan_text( guy );
-    return safe.empty() ? warm_plan_text( guy ) : safe;
+    if( !safe.empty() ) {
+        return safe;
+    }
+    const std::string home = home_plan_text( guy );
+    return home.empty() ? warm_plan_text( guy ) : home;
 }
 
 bool wants_meal( const npc &guy )
@@ -1805,6 +1905,9 @@ goal_result run_goal( npc &guy, const std::string &goal )
 {
     if( goal == goal_seek_safety ) {
         return seek_safety( guy );
+    }
+    if( goal == goal_return_home ) {
+        return return_home( guy );
     }
     if( goal == goal_meal ) {
         return eat_meal( guy );

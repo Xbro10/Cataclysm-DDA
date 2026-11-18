@@ -129,6 +129,19 @@ bool wants_warmth( const npc &guy );
 /** Scared and a spot to go to or hold, or seeking safety and not yet calm. */
 bool wants_safety( const npc &guy );
 
+// ---- Back to their spot (reported 2026-11-18) ----
+// The game keeps shopkeepers (and sheltering strangers) standing still but never remembers
+// where, so a trader scared off their booth stayed in the aisle. With NPC autonomy on, they
+// remember the tile where they first stood calm (NPC var autonomy_home_spot), look for safety
+// only within 6 tiles of it, and walk back once calm (goal autonomy_return_home).
+
+/** A shopkeeper, or a stranger on a shelter mission: the game keeps them in one place. */
+bool stays_put( const npc &guy );
+/** Every turn: note where a stays-put NPC belongs, the first time they're calm and still. */
+void remember_home_spot( npc &guy );
+/** Calm, awake, away from their spot and able to get there. */
+bool wants_return_home( const npc &guy );
+
 // ---- Gunners hold their ground (step 5.2, reported 2026-11-17) ----
 // The game's own combat backs an NPC with a gun away from anything within about 7 tiles,
 // and it doesn't shoot while backing away, so a walking zombie kept it retreating and it

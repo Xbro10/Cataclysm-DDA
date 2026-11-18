@@ -658,6 +658,12 @@ float character_oracle_t::autonomy_weight( std::string_view weight ) const
     return std::clamp( value, 0.0f, 1.0f );
 }
 
+status_t character_oracle_t::autonomy_wants_return_home( std::string_view ) const
+{
+    const npc *n = dynamic_cast<const npc *>( subject );
+    return n && npc_autonomy::wants_return_home( *n ) ? status_t::running : status_t::failure;
+}
+
 status_t character_oracle_t::autonomy_wants_safety( std::string_view ) const
 {
     const npc *n = dynamic_cast<const npc *>( subject );

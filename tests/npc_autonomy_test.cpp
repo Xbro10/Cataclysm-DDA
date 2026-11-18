@@ -1458,3 +1458,65 @@ TEST_CASE( "npc_autonomy_gunner_shoots_a_walking_zombie", "[npc][autonomy]" )
         CHECK( hits == 0 );
     }
 }
+
+// Reported 2026-11-18: Exchange traders scared off their booth stayed standing in the aisle.
+TEST_CASE( "npc_autonomy_shopkeeper_returns_to_their_spot", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    map &here = get_map();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 4, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    guy.set_mission( NPC_MISSION_SHOPKEEP );
+    const tripoint_bub_ms booth = guy.pos_bub();
+    const auto run = [&guy]( int turns ) {
+        for( int turn = 0; turn < turns; ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            npc_autonomy::run_goal( guy, "autonomy_return_home" );
+        }
+    };
+
+    SECTION( "option off: the game's own (nothing remembered)" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        npc_autonomy::remember_home_spot( guy );
+        guy.setpos( here, booth + tripoint( 5, 0, 0 ) );
+        CHECK_FALSE( npc_autonomy::wants_return_home( guy ) );
+    }
+    SECTION( "option on" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        REQUIRE( npc_autonomy::stays_put( guy ) );
+        npc_autonomy::remember_home_spot( guy );
+        SECTION( "at their spot: nothing to do" ) {
+            CHECK_FALSE( npc_autonomy::wants_return_home( guy ) );
+        }
+        SECTION( "moved off it and calm: they walk back" ) {
+            guy.setpos( here, booth + tripoint( 5, 2, 0 ) );
+            // Remembered once: standing somewhere else doesn't move their spot.
+            npc_autonomy::remember_home_spot( guy );
+            REQUIRE( npc_autonomy::wants_return_home( guy ) );
+            run( 30 );
+            CHECK( guy.pos_bub() == booth );
+            CHECK_FALSE( npc_autonomy::wants_return_home( guy ) );
+        }
+        SECTION( "scared: their safe spots stay within 6 tiles of the booth" ) {
+            // A zombie beside the booth: away from it would be 20 tiles, but not for them.
+            spawn_test_monster( "mon_zombie", booth + point( -2, 0 ) );
+            here.build_map_cache( 0 );
+            REQUIRE( npc_autonomy::wants_safety( guy ) );
+            for( int turn = 0; turn < 40; ++turn ) {
+                guy.set_moves( guy.get_speed() );
+                npc_autonomy::run_goal( guy, "autonomy_seek_safety" );
+            }
+            CHECK( rl_dist( guy.pos_bub(), booth ) <= 6 );
+            CHECK_FALSE( npc_autonomy::wants_return_home( guy ) ); // still scared
+        }
+        SECTION( "a follower isn't a shopkeeper" ) {
+            guy.set_attitude( NPCATT_FOLLOW );
+            guy.set_fac( faction_your_followers );
+            CHECK_FALSE( npc_autonomy::stays_put( guy ) );
+        }
+    }
+}

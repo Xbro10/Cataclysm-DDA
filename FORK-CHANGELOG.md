@@ -32,6 +32,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [BE] **Breakroom archers can draw their bows:** every bow needs Strength 9 and some archers rolled less, so they
   kept trying to wield it ("needs at least strength 9"). Archers get +5 Strength, and enough skill for their knife.
 
+### NPCs
+- [C++] **Shopkeepers go back to their booth:** with NPC autonomy on, a shopkeeper (like the Exchange traders) or a
+  sheltering stranger scared off their spot looks for safety only within 6 tiles of it, and walks back once calm,
+  as guards return to their post. They remember the spot where they first stood calm, so a trader already standing
+  in the aisle in an old save takes the aisle as their spot.
+
 ## November 17, 2026
 
 **First releases:** Backrooms Expanded v0.1.0 and Survivor Minds v0.1.0, together in one release on the GitHub
