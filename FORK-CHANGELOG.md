@@ -27,6 +27,10 @@ built so far.
   depot of food, water, medicine and tools fills back up every time a runner gets home.
 - [BE] **Backrooms entities are their own faction:** they never fight each other, always attack zombies and other
   outsiders, and leave Facelings alone.
+- [BE] **Breakroom fixes from play:** runners really leave now (they looked only 12 squares away for a camp, lobby or
+  generator room, found nothing and stayed home; now 30 squares, or a scavenging run through the lanes). The Bunker's
+  archers stand in sandbag nests, and archers draw a knife and sling the bow when something gets close instead of
+  dropping the bow.
 
 ### NPCs
 - [C++] **Scared NPCs head for safety (step 5.2):** with NPC autonomy on, an NPC who is scared (Safety 50+) but not
