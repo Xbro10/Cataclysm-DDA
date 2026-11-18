@@ -8,6 +8,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ### Fixed
 
 - Breakroom runners really leave now. They looked for a squatter camp, lobby or generator room only 12 squares away, and those are rare, so most days they found nothing and the board said "Done for today". They now look 30 squares out, and if there is still nothing they go scavenging in the lanes ("OUT, scavenging the lanes").
+- Breakroom Bunker: the two archers now stand in half-sandbag nests either side of the airlock instead of in the open at the ends of the sandbag wall.
+- Breakroom archers carry a combat knife in a sheath and wear a bow sling. When something gets close they draw the knife and sling the bow, instead of dropping the bow and fighting with an arrow.
 
 ## v0.1.0 - 2026-11-17
 
