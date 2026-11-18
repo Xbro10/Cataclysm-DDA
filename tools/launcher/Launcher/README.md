@@ -32,7 +32,7 @@ to `UserData`.
     are in the fork's `data\mods` but not in the installed game.
 - **Sound:** download and update sound packs into `UserData\sound` (game updates never touch them):
   **CC-Sounds** (music and effects, from its newest GitHub release) and **@'s soundpack** (damalsk, 2019).
-  **Use this pack** sets the game's sound pack option (`SOUNDPACKS` in `UserDatanfigoptions.json`);
+  **Use this pack** sets the game's sound pack option (`SOUNDPACKS` in `UserData\config\options.json`);
   **Menu sounds only** switches back to the game's own pack. Removed packs go to the Recycle Bin.
 - **Saves & backups:** open the save and backup folders, back up your saves to a zip, or swap back to the
   previous build.
