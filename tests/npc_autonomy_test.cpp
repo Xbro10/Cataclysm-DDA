@@ -19,6 +19,7 @@
 #include "flexbuffer_json.h"
 #include "item.h"
 #include "json.h"
+#include "game.h"
 #include "json_loader.h"
 #include "lightmap.h"
 #include "map.h"
@@ -38,6 +39,7 @@
 
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
+static const efftype_id effect_npc_flee_player( "npc_flee_player" );
 static const efftype_id effect_npc_run_away( "npc_run_away" );
 
 static const activity_id ACT_CONSUME( "ACT_CONSUME" );
@@ -1571,5 +1573,74 @@ TEST_CASE( "npc_autonomy_arms_up_when_hostiles_are_near", "[npc][autonomy]" )
         get_map().build_map_cache( 0 );
         turns( 6 );
         CHECK_FALSE( guy.get_wielded_item() );
+    }
+}
+
+// Reported 2026-11-18: a stranger who ran from zombies then "fled from you" for a day.
+TEST_CASE( "stranger_running_from_monsters_doesnt_flee_the_player_for_a_day", "[npc]" )
+{
+    clear_map();
+    clear_avatar();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 4, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    guy.personality.bravery = 0;
+    REQUIRE_FALSE( guy.has_effect( effect_npc_flee_player ) );
+    // Badly outmatched by monsters: the game's flat-out retreat.
+    guy.mem_combat.assess_enemy = 20.0f;
+    guy.mem_combat.assess_ally = 1.0f;
+    guy.mem_combat.panic = 5;
+    guy.act_on_danger_assessment();
+    REQUIRE( guy.get_attitude() == NPCATT_FLEE_TEMP );
+    REQUIRE( guy.has_effect( effect_npc_flee_player ) );
+    CHECK( guy.get_effect_dur( effect_npc_flee_player ) <= 1_hours );
+}
+
+// Reported 2026-11-18: NPCs who dropped their weapon in a fight didn't pick it back up.
+TEST_CASE( "npc_autonomy_picks_up_what_it_dropped_in_a_fight", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 4, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    item knife( itype_knife_combat );
+    guy.wield( knife );
+    // A fight starts: a zombie right there.
+    monster &zed = spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 0, 2 ) );
+    here.build_map_cache( 0 );
+    npc_autonomy::track_fight_items( guy );
+    // The knife ends up on the ground two tiles off.
+    const tripoint_bub_ms where = guy.pos_bub() + tripoint( 2, 0, 0 );
+    here.add_item_or_charges( where, guy.remove_weapon() );
+    REQUIRE_FALSE( guy.get_wielded_item() );
+    // The fight ends.
+    g->remove_zombie( zed );
+    here.build_map_cache( 0 );
+    npc_autonomy::track_fight_items( guy );
+    const auto run = [&guy]( int turns ) {
+        for( int t = 0; t < turns; ++t ) {
+            calendar::turn += 1_turns;
+            guy.set_moves( guy.get_speed() );
+            npc_autonomy::run_goal( guy, "autonomy_recover_items" );
+        }
+    };
+
+    SECTION( "they walk over and take it back in hand" ) {
+        REQUIRE( npc_autonomy::wants_to_recover_items( guy ) );
+        run( 10 );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_knife_combat );
+        CHECK_FALSE( guy.get_wielded_item()->has_var( "autonomy_carried_by" ) );
+        CHECK( here.i_at( where ).empty() );
+    }
+    SECTION( "someone else's knife lying there isn't theirs" ) {
+        here.i_clear( where );
+        here.add_item_or_charges( where, item( itype_knife_combat ) );
+        CHECK_FALSE( npc_autonomy::wants_to_recover_items( guy ) );
     }
 }

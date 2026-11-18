@@ -64,6 +64,15 @@
   },
   {
     "type": "behavior",
+    "id": "npc_autonomy_recover_items",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). After a fight, for 30 minutes: walk to things the NPC carried when it started (tagged with item var autonomy_carried_by) lying within 10 tiles in reach and sight, and pick them up, the weapon back into their hands. score_argument is the weight (0-1): above returning to a shop booth (0.35), below a scare (0.4+).",
+    "conditions": [ { "predicate": "npc_autonomy_wants_to_recover_items" } ],
+    "goal": "autonomy_recover_items",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.38"
+  },
+  {
+    "type": "behavior",
     "id": "npc_autonomy_return_home",
     "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). Shopkeepers and sheltering strangers, whom the game keeps standing still without remembering where: once calm and away from the tile where they first stood calm (NPC var autonomy_home_spot), walk back to it. Seeking safety keeps them within 6 tiles of it. 30 minutes off after a failed walk. score_argument is the weight (0-1); seeking safety (0.4+) wins while scared.",
     "conditions": [ { "predicate": "npc_autonomy_wants_return_home" } ],

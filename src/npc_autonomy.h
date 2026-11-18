@@ -149,6 +149,19 @@ void arm_up( npc &guy );
 
 /** Calm enough for meals, chats and trips: Safety under 50 and nothing hostile within 3 tiles. */
 bool safe_for_daily_life( const npc &guy );
+
+// ---- Picking up what they dropped in a fight (reported 2026-11-18) ----
+// A dropped item is copied into the map with a new id, so when a fight starts (not safe, the
+// game sees danger, a hostile in view within 10 tiles, or running away) the NPC's weapon, worn items and what's in them get an
+// item var with the NPC's id (wood carried for a fire excepted). When the fight ends, what
+// they still carry is untagged, and for 30 minutes they walk to tagged things lying within
+// 10 tiles in reach and sight and pick them up (goal autonomy_recover_items), the weapon back
+// into their hands.
+
+/** Every turn: tag at a fight's start, untag what they kept at its end. */
+void track_fight_items( npc &guy );
+/** Safe, in the 30 minutes after a fight, and something of theirs lying nearby. */
+bool wants_to_recover_items( const npc &guy );
 /** Calm, awake, away from their spot and able to get there. */
 bool wants_return_home( const npc &guy );
 

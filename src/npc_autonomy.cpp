@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdio>
+#include <functional>
 #include <limits>
 #include <map>
 #include <cmath>
@@ -39,6 +40,7 @@
 #include "npc.h"
 #include "npc_trip.h"
 #include "options.h"
+#include "pocket_type.h"
 #include "string_formatter.h"
 #include "text_snippets.h"
 #include "translation.h"
@@ -366,6 +368,7 @@ void on_npc_turn( npc &guy )
     set_down_wood_after_trip( guy );
     remember_home_spot( guy );
     arm_up( guy );
+    track_fight_items( guy );
     if( !enabled() || !calendar::once_every( 1_minutes ) ) {
         return;
     }
@@ -1499,13 +1502,215 @@ std::string home_plan_text( const npc &guy )
                           rl_dist( guy.pos_abs(), *home ) );
 }
 
+// ---- Picking up what they dropped in a fight (reported 2026-11-18) ----
+// Dropping copies an item into the map with a new id, so a fight's start tags what the NPC
+// carries with an item var (copied along with the item); the fight's end untags what they
+// still carry, and the tagged things lying about are theirs to pick up.
+
+constexpr const char *goal_recover_items = "autonomy_recover_items";
+// Item var: the id of the NPC who carried it when a fight started.
+constexpr const char *ivar_carried_by = "autonomy_carried_by";
+// Item var: it was the weapon in their hands.
+constexpr const char *ivar_was_wielded = "autonomy_was_wielded";
+// NPC var: 1 while a fight is on (tags placed).
+constexpr const char *var_in_fight = "autonomy_in_fight";
+// NPC var: they look for their things until this turn.
+constexpr const char *var_recover_until = "autonomy_recover_until";
+constexpr int recover_radius = 10;
+constexpr time_duration recover_for = 30_minutes;
+
+std::string carrier_key( const npc &guy )
+{
+    return std::to_string( guy.getID().get_value() );
+}
+
+// Cheap checks only: this runs every NPC turn.
+bool in_a_fight( const npc &guy )
+{
+    return guy.get_ai_danger() > 0.0f || guy.has_effect( effect_npc_run_away ) ||
+           guy.sees_hostile_within( watch_hostile_range );
+}
+
+// The weapon in hand, what they wear, and what's in what they wear (not deeper: a whole bag
+// dropped comes back with its contents).
+void for_each_carried( npc &guy, const std::function<void( item & )> &fn )
+{
+    item_location weapon = guy.get_wielded_item();
+    if( weapon ) {
+        fn( *weapon.get_item() );
+    }
+    for( item_location &worn : guy.top_items_loc() ) {
+        fn( *worn );
+        for( item *inside : worn->all_items_top( pocket_type::CONTAINER ) ) {
+            fn( *inside );
+        }
+    }
+}
+
+bool is_mine_to_recover( const npc &guy, const item &it )
+{
+    return it.get_var( ivar_carried_by ) == carrier_key( guy );
+}
+
+// The nearest tagged item of theirs lying where they may go and can see.
+std::optional<tripoint_bub_ms> nearest_lost_item( const npc &guy )
+{
+    map &here = get_map();
+    for( const tripoint_bub_ms &p : closest_points_first( guy.pos_bub(), recover_radius ) ) {
+        if( !here.inbounds( p ) || !here.has_items( p ) ) {
+            continue;
+        }
+        bool found = false;
+        for( const item &it : here.i_at( p ) ) {
+            if( is_mine_to_recover( guy, it ) ) {
+                found = true;
+                break;
+            }
+        }
+        if( found && safe_spot_in_reach( guy, here.get_abs( p ) ) && guy.sees( here, p ) ) {
+            return p;
+        }
+    }
+    return std::nullopt;
+}
+
+// Pick up their things on an adjacent tile: into the pack, or in hand if it was their weapon
+// or won't fit and their hands are free. Untags what they take.
+bool take_lost_items( npc &guy, const tripoint_bub_ms &p )
+{
+    map &here = get_map();
+    bool took = false;
+    bool stuck = false;
+    for( item &it : here.i_at( p ) ) {
+        if( !is_mine_to_recover( guy, it ) ) {
+            continue;
+        }
+        item_location loc( map_cursor( p ), &it );
+        const bool was_weapon = it.get_var( ivar_was_wielded, 0.0 ) > 0.0;
+        item copy = it;
+        copy.erase_var( ivar_carried_by );
+        copy.erase_var( ivar_was_wielded );
+        if( was_weapon && !guy.get_wielded_item() && guy.can_wield( copy ).success() ) {
+            guy.wield( copy );
+        } else if( guy.can_stash( copy ) ) {
+            guy.i_add( copy );
+        } else if( !guy.get_wielded_item() && guy.can_wield( copy ).success() ) {
+            guy.wield( copy );
+        } else {
+            stuck = true;
+            continue;
+        }
+        loc.remove_item();
+        guy.mod_moves( -to_moves<int>( 1_seconds ) );
+        took = true;
+        // One per turn: the stack changed.
+        break;
+    }
+    if( took ) {
+        guy.wield_better_weapon();
+        if( player_sees( guy ) ) {
+            add_msg( m_neutral, _( "%s picks their things back up." ), guy.get_name() );
+        }
+    } else if( stuck ) {
+        // Can't carry what's left: stop looking.
+        guy.remove_value( var_recover_until );
+    }
+    return took;
+}
+
+goal_result recover_items( npc &guy )
+{
+    const std::optional<tripoint_bub_ms> spot = nearest_lost_item( guy );
+    if( !spot ) {
+        guy.remove_value( var_recover_until );
+        return goal_result::none;
+    }
+    if( square_dist( guy.pos_bub(), *spot ) <= 1 ) {
+        return take_lost_items( guy, *spot ) ? goal_result::acted : goal_result::none;
+    }
+    if( guy.move_to_and_verify( npc_trip_spec::within_range( *spot, 1, true ) ) ) {
+        return goal_result::acted;
+    }
+    guy.remove_value( var_recover_until );
+    return goal_result::none;
+}
+
+std::string recover_plan_text( const npc &guy )
+{
+    if( guy.get_committed_goal() != goal_recover_items ) {
+        return std::string();
+    }
+    return _( "Plan: pick their things back up" );
+}
+
 } // namespace
+
+void track_fight_items( npc &guy )
+{
+    if( !enabled() ) {
+        return;
+    }
+    const bool fighting = in_a_fight( guy );
+    const bool was_fighting = get_num( guy, var_in_fight, 0.0 ) > 0.0;
+    if( fighting == was_fighting ) {
+        return;
+    }
+    const std::string key = carrier_key( guy );
+    if( fighting ) {
+        guy.set_value( var_in_fight, 1.0 );
+        const item *weapon = guy.get_wielded_item().get_item();
+        // Wood carried for a fire is set down on purpose; never fetch it back.
+        const bool wood_for_fire = holds_wood_for_fire( guy );
+        for_each_carried( guy, [&]( item & it ) {
+            if( &it == weapon && wood_for_fire ) {
+                return;
+            }
+            it.set_var( ivar_carried_by, key );
+            if( &it == weapon ) {
+                it.set_var( ivar_was_wielded, 1.0 );
+            }
+        } );
+        return;
+    }
+    // Fight over: what they still carry isn't lost.
+    guy.remove_value( var_in_fight );
+    for( item *it : guy.items_with( []( const item & i ) {
+    return i.has_var( ivar_carried_by );
+    } ) ) {
+        it->erase_var( ivar_carried_by );
+        it->erase_var( ivar_was_wielded );
+    }
+    guy.set_value( var_recover_until,
+                   static_cast<double>( turns_since_start() + to_turns<int>( recover_for ) ) );
+}
+
+bool wants_to_recover_items( const npc &guy )
+{
+    if( !enabled() || guy.in_sleep_state() || !is_safe( guy ) ||
+        turns_since_start() >= get_num( guy, var_recover_until, -1.0 ) ) {
+        return false;
+    }
+    // The tile scan is cheap enough only every few turns.
+    struct check {
+        int turn = 0;
+        bool found = false;
+    };
+    static std::map<character_id, check> checks;
+    const int now = turns_since_start();
+    const auto known = checks.find( guy.getID() );
+    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < recheck_turns ) {
+        return known->second.found;
+    }
+    const bool found = nearest_lost_item( guy ).has_value();
+    checks[guy.getID()] = { now, found };
+    return found;
+}
 
 bool is_goal( const std::string &goal )
 {
     return goal == goal_meal || goal == goal_socialize || goal == goal_get_water ||
            goal == goal_get_food || goal == goal_get_warm || goal == goal_seek_safety ||
-           goal == goal_return_home;
+           goal == goal_return_home || goal == goal_recover_items;
 }
 
 bool stays_put( const npc &guy )
@@ -1828,7 +2033,11 @@ std::string plan_text( const npc &guy )
         return safe;
     }
     const std::string home = home_plan_text( guy );
-    return home.empty() ? warm_plan_text( guy ) : home;
+    if( !home.empty() ) {
+        return home;
+    }
+    const std::string recover = recover_plan_text( guy );
+    return recover.empty() ? warm_plan_text( guy ) : recover;
 }
 
 bool wants_meal( const npc &guy )
@@ -1926,6 +2135,9 @@ goal_result run_goal( npc &guy, const std::string &goal )
     }
     if( goal == goal_return_home ) {
         return return_home( guy );
+    }
+    if( goal == goal_recover_items ) {
+        return recover_items( guy );
     }
     if( goal == goal_meal ) {
         return eat_meal( guy );

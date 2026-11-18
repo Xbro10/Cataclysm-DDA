@@ -47,6 +47,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **NPCs draw their best weapon when trouble shows up:** with hostiles in view they switch to the best weapon
   they carry within a few turns (before, only when idle or once an hour, so a katana handed over mid-chase stayed in
   the pack).
+- [C++] **NPCs pick their things back up after a fight:** with NPC autonomy on, a weapon knocked away or set down
+  mid-fight, arrows and bolts they shot, or anything else they carried that ended up on the ground nearby is
+  fetched once the fight is over (within 10 tiles they can see and may go to, for 30 minutes), the weapon back into
+  their hands. "Name picks their things back up." Things used up are just gone, and wood carried for a fire stays put.
 - [C++] **Overloaded NPCs lighten their load (with NPC autonomy on):** an NPC carrying more than it can puts down
   the cheapest junk it picked up itself ("Too heavy.  Leaving the ... here."). It keeps its clothes, weapon, ammo,
   food, drink, medicine, firewood and favourites, and what you trade to a follower counts as a favourite, so a
@@ -56,6 +60,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **Ambient volume changes apply in game:** lowering Ambient sound volume or Sound effect volume and leaving
   Options fades the playing ambient loops (rain, wind, night) so they come back at the new volume; before, they kept
   the old volume until a restart.
+- [C++] **A stranger who ran from monsters no longer flees from you for a day:** running from zombies switched them
+  to the game's "fleeing" attitude, which also meant fleeing the player for 24 hours, so they kept running from you
+  after you had killed what scared them. Now it lasts as long as that run (unless they already feared you).
 
 ## November 17, 2026
 

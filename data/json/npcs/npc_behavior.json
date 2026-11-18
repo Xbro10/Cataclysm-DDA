@@ -50,7 +50,8 @@
       "npc_autonomy_get_food",
       "npc_autonomy_get_warm",
       "npc_autonomy_seek_safety",
-      "npc_autonomy_return_home"
+      "npc_autonomy_return_home",
+      "npc_autonomy_recover_items"
     ]
   },
   {
