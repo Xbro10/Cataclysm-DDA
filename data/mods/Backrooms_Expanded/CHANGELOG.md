@@ -12,7 +12,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Changed
 
-- Breakroom runners are the camp's best fighters: high melee, cutting, dodge and pistol skills, a machete in a scabbard, a Glock 19 with three loaded magazines, a leather jacket, a first aid kit, bandages and painkillers. A runner badly hurt on a run (torso or head under half, or in a lot of pain) cuts it short and heads home; otherwise a run lasts until 1-2 days after leaving. The diner server and the Exchange traders keep the runners' old everyday clothes.
+- Breakroom runners are the camp's best fighters: high melee, cutting, dodge and pistol skills, a machete in a scabbard, a loaded Glock 19 with spare magazines, a leather jacket, a first aid kit, bandages and painkillers. A runner badly hurt on a run (torso or head under half, or in a lot of pain) cuts it short and heads home; otherwise a run lasts until 1-2 days after leaving. Runners check how hurt they are every 10 minutes (it was every 30), so they turn back soon after a bad fight. The diner server and the Exchange traders keep the runners' old everyday clothes.
 - The All-Nite serves chili and soup in a bowl and coffee in a styrofoam cup. Chili used to spawn as a loose puddle (it has no container of its own), soup came in a can and coffee in a plastic bottle.
 - The pistol in a security office's gun safe has its part-loaded magazine in the gun, instead of the gun and magazine lying side by side.
 - Breakroom runners start with a loaded magazine in their Glock and two spares, instead of an empty gun and three loose magazines.
@@ -87,8 +87,6 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
-
-- Breakroom runners are the camp's best fighters: high melee, cutting, dodge and pistol skills, a machete in a scabbard, a Glock 19 with three loaded magazines, a leather jacket, a first aid kit, bandages and painkillers. A runner badly hurt on a run (torso or head under half, or in a lot of pain) cuts it short and heads home; otherwise a run lasts until 1-2 days after leaving. The diner server and the Exchange traders keep the runners' old everyday clothes.
 - Level 0 runs faster: its ceiling lights shine at brightness 40 instead of 120 (overriding the upstream Backrooms terrain). Light barely fades in open air, so each light reached about 92 tiles and the thousands of them took most of each turn's map update. The floor still reads as brightly lit everywhere, and lighting takes about 40% less time.
 - Breakroom lockers no longer crowd the doorways: the stores room has three lockers and Dot's supply locker, and its door to the back rooms moved two tiles over; the Checkpoint guard room's lockers moved to the side wall.
 - Level 0 ceiling lights are in order now: rows and columns of lights every 4 tiles across rooms and halls, with about 1 in 7 dead, instead of a random 1 in 20 floor tiles. Only newly generated areas change. (The first version of this placed the grid before the rooms, which painted over it and left Level 0 with no lights at all.)
