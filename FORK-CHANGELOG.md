@@ -64,6 +64,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   to the game's "fleeing" attitude, which also meant fleeing the player for 24 hours, so they kept running from you
   after you had killed what scared them. Now it lasts as long as that run (unless they already feared you).
 
+### For developers
+- [C++] **Test runs no longer fail after a data file changes:** the first run of the test program after any JSON
+  edit logged "Stale game data detected" as an error per changed file, so it ended with "Treating result as failure
+  due to error logged during initialization" even when every test passed. The test program now turns that check off
+  (`--option WARN_ON_MODIFIED:true` turns it back on), as this build's own config already does.
+
 ## November 17, 2026
 
 **First releases:** Backrooms Expanded v0.1.0 and Survivor Minds v0.1.0, together in one release on the GitHub

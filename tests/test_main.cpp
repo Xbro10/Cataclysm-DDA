@@ -121,6 +121,14 @@ static void init_global_game_state( const std::vector<mod_id> &mods,
 
     get_options().init();
     get_options().load();
+    // Xbro10 fork: the first test run after any data file changed logged "Stale game data
+    // detected" as an error for each changed file, so it failed ("error logged during
+    // initialization") even when every test passed. The check is for players who install over
+    // an old copy; here several sessions edit mod files all day, and the game's own config has
+    // it off. --option WARN_ON_MODIFIED:true still turns it back on.
+    if( get_options().has_option( "WARN_ON_MODIFIED" ) ) {
+        get_options().get_option( "WARN_ON_MODIFIED" ).setValue( "false" );
+    }
 
     // Apply command-line option overrides for test suite execution.
     if( !option_overrides.empty() ) {
