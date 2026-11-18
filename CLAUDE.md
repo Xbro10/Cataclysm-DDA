@@ -40,6 +40,9 @@ As of 2026-11-18. Update this each time a prompt is finished.
   6. Gunners may range further from the player than melee followers (a longer follow leash while armed with a gun
      they may fire), to get a clear angle or keep their distance before firing, then rejoin. Followers still obey
      "hold the line" and follow orders.
+- Squad roles (user request, 2026-11-18, inspired by squad-based survival games): followers in a group each take a
+  role (medic, scout, fighter) that shapes how they fight and help. A big job; fold it into Phase 9 (9.5 "Fighting
+  as a group" and 9.8 "Patching each other up" are the natural homes) when Phase 9 is planned.
 - Note for Phase 10: 10.1 (eat, drink and sleep while away, from the NPC's own pack) fixes a problem players hit
   today (followers come back starving) and could come earlier in a simple form; ask the user before moving it.
 - The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
