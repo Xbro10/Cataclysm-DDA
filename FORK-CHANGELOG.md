@@ -31,12 +31,21 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   and pays extra for it.
 - [BE] **Breakroom archers can draw their bows:** every bow needs Strength 9 and some archers rolled less, so they
   kept trying to wield it ("needs at least strength 9"). Archers get +5 Strength, and enough skill for their knife.
+- [BE] **Exchange stalls keep their own stock:** each trader has a stall faction and their own loot zone, so the
+  supplies trader no longer lists the gear stall's tools; stall crates no longer roll camp loot; the diner cook sells
+  from the counter. **Stronger runners:** top combat skills, a machete, a Glock 19 with spare magazines and a first aid
+  kit; a badly hurt runner heads home early.
 
 ### NPCs
 - [C++] **Shopkeepers go back to their booth:** with NPC autonomy on, a shopkeeper (like the Exchange traders) or a
   sheltering stranger scared off their spot looks for safety only within 6 tiles of it, and walks back once calm,
   as guards return to their post. They remember the spot where they first stood calm, so a trader already standing
   in the aisle in an old save takes the aisle as their spot.
+
+### Bug fixes
+- [C++] **Ambient volume changes apply in game:** lowering Ambient sound volume or Sound effect volume and leaving
+  Options fades the playing ambient loops (rain, wind, night) so they come back at the new volume; before, they kept
+  the old volume until a restart.
 
 ## November 17, 2026
 
