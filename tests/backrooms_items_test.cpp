@@ -25,7 +25,9 @@
 #include "item_location.h"
 #include "itype.h"
 #include "map.h"
+#include "magic.h"
 #include "map_helpers.h"
+#include "npc.h"
 #include "player_helpers.h"
 #include "point.h"
 #include "string_formatter.h"
@@ -240,5 +242,49 @@ TEST_CASE( "backrooms_wiki_finds_work", "[.][backrooms_items]" )
             }
         }
         CHECK( jelly > 30 );
+    }
+}
+
+TEST_CASE( "npcs_never_drink_cloudy_water_on_their_own", "[.][backrooms_items]" )
+{
+    if( !backrooms_items_loaded() ) {
+        return;
+    }
+    clear_avatar();
+    clear_map_without_vision();
+    npc &guy = spawn_npc( point_bub_ms( 62, 60 ), "test_talker" );
+    clear_character( guy );
+    guy.set_thirst( 400 );
+
+    item pain( itype_id( "br_liquid_pain" ) );
+    REQUIRE( pain.has_flag( flag_id( "NPC_REFUSES" ) ) );
+    guy.i_add( pain.in_its_container() );
+    CHECK_FALSE( guy.consume_food( npc::consume_filter::drink_only ) );
+    CHECK( guy.find_nearby_food( npc::consume_filter::drink_only ).empty() );
+
+    // Control: real water in the same pack is drunk.
+    guy.i_add( item( itype_id( "water_clean" ) ).in_its_container() );
+    CHECK( guy.consume_food( npc::consume_filter::drink_only ) );
+}
+
+TEST_CASE( "firesalt_tools_and_the_burning_spear", "[.][backrooms_items]" )
+{
+    if( !backrooms_items_loaded() ) {
+        return;
+    }
+    SECTION( "the lit spear carries its on-hit fire spell, the unlit one doesn't" ) {
+        const item lit( itype_br_flamero_mado_on );
+        const item unlit( itype_br_flamero_mado_off );
+        CHECK( lit.is_relic() );
+        CHECK_FALSE( unlit.is_relic() );
+        CHECK( spell_id( "br_flamero_ignite" ).is_valid() );
+    }
+    SECTION( "the firesalt twist starts fires and the torch outlasts a plain one" ) {
+        const item twist( itype_id( "br_firesalt_twist" ) );
+        CHECK( twist.has_flag( flag_id( "FIRESTARTER" ) ) );
+        CHECK( twist.ammo_remaining() == 5 );
+        const item torch( itype_id( "br_firesalt_torch_lit" ) );
+        const item plain( itype_id( "torch_lit" ) );
+        CHECK( torch.ammo_remaining() > plain.ammo_remaining() );
     }
 }

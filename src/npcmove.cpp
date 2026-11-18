@@ -202,6 +202,7 @@ static const field_type_str_id field_fd_last_known( "fd_last_known" );
 
 static const flag_id json_flag_FIRESTARTER( "FIRESTARTER" );
 static const flag_id json_flag_MARLOSS( "MARLOSS" );
+static const flag_id json_flag_NPC_REFUSES( "NPC_REFUSES" );
 
 static const item_category_id item_category_food( "food" );
 
@@ -5511,6 +5512,12 @@ static float rate_food( const Character &who, const item &it, int want_nutr,
 
     // Let the player decide whether to use Marloss or Mycus foods.
     if( it.has_flag( flag_MYCUS_OK ) || it.has_flag( json_flag_MARLOSS ) ) {
+        return 0.0f;
+    }
+
+    // Xbro10 fork: a mod can mark food or drink NPCs never take on their own (Backrooms Expanded's
+    // cloudy water, which is liquid pain). The mod defines the flag, so it is checked only if loaded.
+    if( json_flag_NPC_REFUSES.is_valid() && it.has_flag( json_flag_NPC_REFUSES ) ) {
         return 0.0f;
     }
 
