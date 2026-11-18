@@ -154,6 +154,8 @@
         ]
       },
       "place_npcs": [ { "class": "BR1_diner_cook", "x": 6, "y": 3 }, { "class": "BR1_diner_server", "x": 12, "y": 3 } ],
+      "//": "The cook sells from the counter in front of the grill (its own loot zone), so the trade window shows the day's plates and not the fridge and cupboards.",
+      "place_zones": [ { "type": "LOOT_UNSORTED", "faction": "br1_diner", "x": [ 3, 10 ], "y": 4 } ],
       "place_nested": [
         { "chunks": [ [ "br1_squatter_npc", 60 ], [ "null", 40 ] ], "x": 6, "y": 5 },
         { "chunks": [ [ "br1_squatter_npc", 50 ], [ "null", 50 ] ], "x": 16, "y": 5 },
@@ -238,7 +240,7 @@
     "name": { "str": "Server" },
     "job_description": "I pour the coffee and I hear everything.  Everything.",
     "common": false,
-    "worn_override": "NC_BR1_RUNNER_worn",
+    "worn_override": "NC_BR1_CIVILIAN_worn",
     "traits": [ { "group": "Appearance_demographics" } ],
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
