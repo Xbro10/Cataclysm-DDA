@@ -246,7 +246,7 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_RUNNER_SEND",
-    "//": "Run as a runner at home at their departure hour: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-12 squares away (falling back to the other kinds) and set off. u_br1_dest starts as the runner's own spot, so if nothing is found it stays close and there is no run today (u_br1_left_day marks today either way). Goals and mission targets that use a var also name an om_terrain: the game ignores the var when om_terrain is empty and uses the NPC's own square. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
+    "//": "Run as a runner at home at their departure hour: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-30 squares away (falling back to the other kinds; these are rare, 3-8 of each per overmap, so a 12-square search usually found nothing and the runner stayed home) and set off. If none is found, the runner goes scavenging (4) at an ordinary garage square 4-10 squares away. u_br1_dest starts as the runner's own spot, so if even that fails it stays close and there is no run today (u_br1_left_day marks today either way). Goals and mission targets that use a var also name an om_terrain: the game ignores the var when om_terrain is empty and uses the NPC's own square. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
     "effect": [
       { "math": [ "u_br1_run_dest = rand(2) + 1" ] },
       { "u_location_variable": { "u_val": "br1_dest" } },
@@ -255,7 +255,7 @@
         "then": [
           {
             "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
           }
         ]
       },
@@ -264,7 +264,7 @@
         "then": [
           {
             "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
           }
         ]
       },
@@ -273,7 +273,7 @@
         "then": [
           {
             "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
           }
         ]
       },
@@ -284,7 +284,7 @@
           { "math": [ "u_br1_run_dest = 1" ] },
           {
             "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
           }
         ]
       },
@@ -294,7 +294,7 @@
           { "math": [ "u_br1_run_dest = 2" ] },
           {
             "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
           }
         ]
       },
@@ -304,7 +304,18 @@
           { "math": [ "u_br1_run_dest = 3" ] },
           {
             "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
+          }
+        ]
+      },
+      {
+        "//": "Still nothing: a scavenging run through the lanes.",
+        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
+        "then": [
+          { "math": [ "u_br1_run_dest = 4" ] },
+          {
+            "u_location_variable": { "u_val": "br1_dest" },
+            "target_params": { "om_terrain": "br1_garage", "random": true, "search_range": 10, "min_distance": 4, "z": 0 }
           }
         ]
       },
@@ -339,7 +350,11 @@
           "no": {
             "math": [ "n_br1_run_dest == 2" ],
             "yes": "On a run for Dot.  Checking a lobby for Marcus: is it still there, do the lifts still come, did anything turn up in the bin.",
-            "no": "On a run for Dot.  There's a generator room out this way.  If somebody's left a can of gas there, it's coming home with me."
+            "no": {
+              "math": [ "n_br1_run_dest == 3" ],
+              "yes": "On a run for Dot.  There's a generator room out this way.  If somebody's left a can of gas there, it's coming home with me.",
+              "no": "On a run for Dot.  Nothing on the list this week, so I'm working the lanes: car trunks, glove boxes, whatever the last lot missed."
+            }
           }
         },
         "no": {
@@ -580,9 +595,21 @@
                         ],
                         "else": [
                           {
-                            "set_string_var": "<global_val:br1_bl_name>: OUT, to a generator room.  Back in a day or two.",
-                            "target_var": { "global_val": "br1_bl_line" },
-                            "parse_tags": true
+                            "if": { "math": [ "br1_bl_dest == 3" ] },
+                            "then": [
+                              {
+                                "set_string_var": "<global_val:br1_bl_name>: OUT, to a generator room.  Back in a day or two.",
+                                "target_var": { "global_val": "br1_bl_line" },
+                                "parse_tags": true
+                              }
+                            ],
+                            "else": [
+                              {
+                                "set_string_var": "<global_val:br1_bl_name>: OUT, scavenging the lanes.  Back in a day or two.",
+                                "target_var": { "global_val": "br1_bl_line" },
+                                "parse_tags": true
+                              }
+                            ]
                           }
                         ]
                       }
