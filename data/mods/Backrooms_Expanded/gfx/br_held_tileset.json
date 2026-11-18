@@ -1,0 +1,20 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "The Flamero-Mado spear in your hands, UltiCa: upright and slim, 32x64 like UltiCa's own pikes (tools/backrooms_expanded/draw_br_held.ps1).",
+    "compatibility": [ "UltimateCataclysm" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br_held.png",
+        "sprite_width": 32,
+        "sprite_height": 64,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": -32,
+        "tiles": [
+          { "id": "overlay_wielded_br_flamero_mado_off", "fg": 0, "rotates": false },
+          { "id": "overlay_wielded_br_flamero_mado_on", "fg": 1, "rotates": false }
+        ]
+      }
+    ]
+  }
+]
