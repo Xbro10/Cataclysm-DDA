@@ -114,8 +114,8 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_RUNNERS_TICK",
-    "//": "Every 30 minutes while the player is on Level 1, each living runner takes one step of its errand (EOC_BR1_RUNNER_TICK, run as the runner). Runners in a level the player isn't on don't move, so this only runs on Level 1. br1_tick_depart is that runner's departure hour today (EOC_BR1_RUNNER_SCHEDULE).",
-    "recurrence": [ "30 minutes", "30 minutes" ],
+    "//": "Every 10 minutes while the player is on Level 1 (often enough that a badly hurt runner turns home soon after a fight), each living runner takes one step of its errand (EOC_BR1_RUNNER_TICK, run as the runner). Runners in a level the player isn't on don't move, so this only runs on Level 1. br1_tick_depart is that runner's departure hour today (EOC_BR1_RUNNER_SCHEDULE).",
+    "recurrence": [ "10 minutes", "10 minutes" ],
     "condition": { "current_dimension": "backrooms_level_1" },
     "effect": [
       { "run_eocs": "EOC_BR1_RUNNER_SCHEDULE" },
