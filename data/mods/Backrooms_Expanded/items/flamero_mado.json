@@ -1,0 +1,165 @@
+[
+  {
+    "type": "ITEM",
+    "subtypes": [ "TOOL" ],
+    "id": "br_flamero_mado_off",
+    "//": "Rare end-game spear with a fuel tank in the shaft. Use it to light the head (br_flamero_mado_on), like the chainsaw's on/off pair. Found in Level 2 crew stores, on the Redeemer, at the Exchange's curios trader, and in museums and mansions; crafted only from br_flamero_schematic.",
+    "name": { "str": "Flamero-Mado spear (unlit)", "str_pl": "Flamero-Mado spears (unlit)" },
+    "description": "A long steel spear with a blackened, finned head.  A narrow fuel tank runs inside the shaft, feeding a ring of tiny jets behind the blade, and a brass valve sits under your forward hand.  Fill it with kerosene or gasoline and open the valve to wreathe the head in flame.  Unlit, it is still a fine spear.",
+    "weight": "2400 g",
+    "volume": "1600 ml",
+    "longest_side": "190 cm",
+    "price": "4000 USD",
+    "price_postapoc": "900 USD",
+    "to_hit": { "grip": "weapon", "length": "long", "surface": "point", "balance": "good" },
+    "material": [ "mc_steel", "wood" ],
+    "symbol": "/",
+    "color": "light_red",
+    "looks_like": "spear_steel",
+    "techniques": [ "WBLOCK_1", "PENETRATE" ],
+    "weapon_category": [ "SPEARS" ],
+    "pocket_data": [ { "pocket_type": "MAGAZINE", "ammo_restriction": { "lamp_oil": 500, "gasoline": 500 }, "watertight": true, "rigid": true } ],
+    "charges_per_use": 1,
+    "use_action": {
+      "type": "effect_on_conditions",
+      "menu_text": "Light the head",
+      "effect_on_conditions": [
+        {
+          "id": "EOC_br_flamero_mado_light",
+          "condition": { "and": [ { "not": "u_is_underwater" }, "has_ammo" ] },
+          "effect": [
+            { "turn_cost": { "math": [ "1" ] } },
+            { "u_message": "You open the valve.  With a soft whump, flame wraps the spearhead.", "type": "good" },
+            { "u_make_sound": "a whump of igniting fuel.", "type": "activity", "volume": 6 },
+            { "transform_item": "br_flamero_mado_on", "active": true }
+          ],
+          "false_effect": [ { "u_message": "You open the valve, but nothing catches.  The tank is empty, or it's too wet here." } ]
+        }
+      ]
+    },
+    "flags": [ "DURABLE_MELEE", "SPEAR", "REACH_ATTACK", "SHEATH_SPEAR" ],
+    "melee_damage": { "bash": 6, "stab": 32 }
+  },
+  {
+    "type": "ITEM",
+    "subtypes": [ "TOOL" ],
+    "id": "br_flamero_mado_on",
+    "copy-from": "br_flamero_mado_off",
+    "//": "Lit: adds heat damage (melee_damage heat plus the FLAMING flag's extra 1-8 and 'You burn ...' message), gives a little light, burns one charge every 3 turns (500 charges, about 25 minutes) and goes out by itself when empty or underwater.",
+    "name": { "str": "Flamero-Mado spear (lit)", "str_pl": "Flamero-Mado spears (lit)" },
+    "description": "A long steel spear with its head wrapped in hissing flame.  Every thrust burns as well as pierces.  Use it to close the valve and put it out.",
+    "looks_like": "spear_steel",
+    "turns_per_charge": 3,
+    "charges_per_use": 0,
+    "revert_to": "br_flamero_mado_off",
+    "light": 30,
+    "use_action": {
+      "type": "effect_on_conditions",
+      "menu_text": "Put it out",
+      "ammo_scale": 0,
+      "effect_on_conditions": [
+        {
+          "id": "EOC_br_flamero_mado_douse",
+          "effect": [
+            { "u_message": "You close the valve and the flame gutters out." },
+            { "transform_item": "br_flamero_mado_off" }
+          ]
+        }
+      ]
+    },
+    "tick_action": {
+      "type": "effect_on_conditions",
+      "effect_on_conditions": [
+        {
+          "id": "EOC_br_flamero_mado_burning",
+          "effect": {
+            "run_eocs": "EOC_toolweapon_running",
+            "variables": {
+              "sound_chance": 30,
+              "sound_message": { "i18n": true, "str": "Your Flamero-Mado spear hisses and crackles." },
+              "volume": 3,
+              "revert_to": "br_flamero_mado_off"
+            }
+          }
+        }
+      ]
+    },
+    "flags": [ "DURABLE_MELEE", "SPEAR", "REACH_ATTACK", "FLAMING", "WATER_EXTINGUISH", "TRADER_AVOID" ],
+    "melee_damage": { "bash": 6, "stab": 32, "heat": 12 }
+  },
+  {
+    "type": "ITEM",
+    "subtypes": [ "BOOK" ],
+    "id": "br_flamero_schematic",
+    "//": "The only way to learn the Flamero-Mado spear recipe. Spawns with the spear's rare caches.",
+    "category": "manuals",
+    "name": { "str": "Flamero-Mado schematic" },
+    "description": "Oil-stained blueprints folded into a plastic sleeve: a spear shaft hollowed for a fuel tank, a valve, a pilot light and a ring of jets behind the head.  The margins are full of crossed-out pressures and a note in red pen: \"NOT FOR INDOOR USE.\"",
+    "weight": "60 g",
+    "volume": "100 ml",
+    "price": "300 USD",
+    "price_postapoc": "150 USD",
+    "material": [ "paper", "plastic" ],
+    "symbol": "?",
+    "color": "light_red",
+    "looks_like": "recipe_lab_elec",
+    "intelligence": 9,
+    "time": "40 m"
+  },
+  {
+    "type": "recipe",
+    "result": "br_flamero_mado_off",
+    "//": "End-game: Fabrication 8, Mechanics 6, welding and metalworking, and only from the schematic.",
+    "category": "CC_WEAPON",
+    "subcategory": "CSC_WEAPON_PIERCING",
+    "skill_used": "fabrication",
+    "skills_required": [ [ "mechanics", 6 ] ],
+    "difficulty": 8,
+    "activity_level": "MODERATE_EXERCISE",
+    "time": "6 h",
+    "autolearn": false,
+    "book_learn": [ [ "br_flamero_schematic", 7 ] ],
+    "proficiencies": [ { "proficiency": "prof_welding" }, { "proficiency": "prof_metalworking" } ],
+    "using": [ [ "welding_standard", 10 ] ],
+    "qualities": [ { "id": "WRENCH", "level": 1 }, { "id": "SAW_M", "level": 1 }, { "id": "DRILL", "level": 1 } ],
+    "components": [
+      [ [ "spear_steel", 1 ], [ "qiang", 1 ] ],
+      [ [ "metal_tank_little", 1 ] ],
+      [ [ "hose", 1 ] ],
+      [ [ "pilot_light", 1 ] ],
+      [ [ "pipe", 1 ] ]
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_flamero_cache",
+    "//": "A found Flamero-Mado spear: some fuel left in the tank, and usually its schematic tucked with it.",
+    "subtype": "collection",
+    "entries": [
+      { "item": "br_flamero_mado_off", "charges": [ 0, 250 ] },
+      { "item": "br_flamero_schematic", "prob": 60 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br_redeemer_drops",
+    "//": "What the Redeemer leaves behind: once in a while the spear it took from someone who came to kill it.",
+    "subtype": "collection",
+    "entries": [ { "group": "br_flamero_cache", "prob": 20 }, { "item": "br_flamero_schematic", "prob": 15 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "museum_melee",
+    "copy-from": "museum_melee",
+    "//": "Backrooms Expanded: a Flamero-Mado spear in a museum case, about 1 roll in 160.",
+    "extend": { "items": [ { "item": "br_flamero_mado_off", "prob": 2 } ] }
+  },
+  {
+    "type": "item_group",
+    "id": "mansion_exotic_weapons",
+    "copy-from": "mansion_exotic_weapons",
+    "subtype": "distribution",
+    "//": "Backrooms Expanded: a collector's Flamero-Mado spear, about 1 roll in 250.",
+    "extend": { "items": [ { "item": "br_flamero_mado_off", "prob": 1 } ] }
+  }
+]

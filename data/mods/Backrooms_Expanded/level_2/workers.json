@@ -87,7 +87,8 @@
       { "group": "br_cat_hardware", "count": [ 3, 6 ], "prob": 15 },
       { "group": "br_cat_power", "count": [ 3, 6 ], "prob": 10 },
       { "item": "gasoline", "container-item": "jerrycan", "charges": [ 1000, 4000 ], "prob": 5 },
-      { "group": "almond_water_sealed", "count": [ 1, 2 ], "prob": 5 }
+      { "group": "almond_water_sealed", "count": [ 1, 2 ], "prob": 5 },
+      { "group": "br_flamero_cache", "prob": 1 }
     ]
   },
   {

@@ -5,6 +5,10 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ## Unreleased
 
+### Added
+
+- The **Flamero-Mado spear**, a rare end-game spear with a fuel tank in its shaft. Fill it with kerosene or gasoline and use it to light the head: lit, every hit burns as well as pierces, it gives off a little light and hisses, and it burns about 25 minutes on a full tank before going out by itself (or use it again to put it out, which keeps the fuel). Unlit it is still a better spear than the steel one. Very rare: Level 2 crew stores, the Exchange oddities trader's rare find, the Redeemer's remains, and in the regular world museum displays and mansion weapon collections. It can be crafted (Fabrication 8, Mechanics 6, welding and metalworking) only after reading its schematic, which turns up with the spear. Sprites for UltiCa and UndeadPeople (unlit, lit, and the schematic).
+
 ### Changed
 
 - Trading overhaul at the Exchange and the All-Nite diner. Traders and the cook only sell their stall stock, never the gun, magazines, clothes or flashlight they carry. Each has a clear trade with fewer kinds of goods in deeper piles: supplies (almond water, beans, granola, crackers, bandages, aspirin, disinfectant, purifying tablets), gear (battery cells, flashlights, glowsticks, lighters, tape, rope, a few tools), oddities (maps, guides, generator notes, markers, plus one rare find each restock), and the cook (about five dishes a day, three or four portions each, plus coffee and almond water). The crates behind the Exchange stalls no longer start full of random camp stores.
