@@ -12,12 +12,15 @@
 #include <vector>
 
 #include "avatar.h"
+#include "bodypart.h"
 #include "calendar.h"
 #include "cata_catch.h"
 #include "coordinates.h"
 #include "dialogue.h"
 #include "effect_on_condition.h"
 #include "game.h"
+#include "clzones.h"
+#include "game_constants.h"
 #include "global_vars.h"
 #include "item.h"
 #include "item_location.h"
@@ -95,6 +98,26 @@ static int stock_kinds_near( const npc &guy )
         }
     }
     return static_cast<int>( kinds.size() );
+}
+
+// Every item in the trader's own loot zones (what the trade window lists) belongs to their trade, so
+// neighbouring stalls don't mix; returns how many items that is.
+static int trade_window_stock( npc &guy )
+{
+    map &here = get_map();
+    int n = 0;
+    for( const tripoint_bub_ms &p : zone_manager::get_manager().get_point_set_loot( guy.pos_abs(),
+            PICKUP_RANGE, guy.get_fac_id() ) ) {
+        for( const item &it : here.i_at( p ) ) {
+            CAPTURE( it.typeId().str() );
+            // TRADER_AVOID items (notes) are sold but never bought back, by any trader.
+            if( !it.has_flag( flag_id( "TRADER_AVOID" ) ) ) {
+                CHECK( guy.wants_to_buy( it ) );
+            }
+            n++;
+        }
+    }
+    return n;
 }
 
 // A trader sells only their stall stock (nothing they carry or wear) and buys only their own trade.
@@ -221,6 +244,34 @@ TEST_CASE( "breakroom_runner_goes_far_or_scavenges", "[.][backrooms_runner]" )
     }
 }
 
+// A runner badly hurt on a run cuts it short and heads home at once; an unhurt one keeps going.
+TEST_CASE( "breakroom_runner_comes_home_when_hurt", "[.][backrooms_runner]" )
+{
+    if( !effect_on_condition_EOC_BR1_RUNNER_TICK.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    const bool hurt = GENERATE( true, false );
+    CAPTURE( hurt );
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    npc &guy = spawn_npc( get_avatar().pos_bub().xy() + point( 3, 0 ), "test_talker" );
+    guy.set_attitude( NPCATT_NULL );
+    // Out on a run: home and destination both far away, not due back for a day.
+    guy.set_value( "br1_run_state", 1.0 );
+    guy.set_value( "br1_home_set", 1.0 );
+    guy.set_value( "br1_home", guy.pos_abs() + tripoint( 200, 0, 0 ) );
+    guy.set_value( "br1_dest", guy.pos_abs() + tripoint( 0, 200, 0 ) );
+    guy.set_value( "br1_run_turn", to_turns<double>( calendar::turn + 1_days - calendar::turn_zero ) );
+    get_globals().set_global_value( "br1_tick_who", 1.0 );
+    if( hurt ) {
+        guy.set_part_hp_cur( bodypart_id( "torso" ), guy.get_part_hp_max( bodypart_id( "torso" ) ) / 3 );
+    }
+    run_eoc( guy, effect_on_condition_EOC_BR1_RUNNER_TICK );
+    CHECK( runner_var( guy, "br1_run_state" ) == ( hurt ? 2 : 1 ) );
+}
+
 // Both Breakroom layouts build, with the runner board, supply locker and front defences in place.
 TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
 {
@@ -262,6 +313,20 @@ TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
         // The runners carry the unique ids the 30-minute tick looks them up by.
         CHECK( g->unique_npc_exists( "BR1_runner_jonah" ) );
         CHECK( g->unique_npc_exists( "BR1_runner_rosa" ) );
+        // The two runners are the Breakroom's best fighters: machete in hand, a Glock and meds, the skills to use them.
+        for( npc &guy : g->all_npcs() ) {
+            if( guy.myclass != npc_class_id( "NC_BR1_RUNNER" ) ) {
+                continue;
+            }
+            REQUIRE( guy.get_wielded_item() );
+            CHECK( guy.get_wielded_item()->typeId() == itype_id( "machete" ) );
+            CHECK( guy.meets_requirements( *guy.get_wielded_item() ) );
+            CHECK( guy.has_amount( itype_id( "glock_19" ), 1 ) );
+            CHECK( guy.meets_requirements( item( itype_id( "glock_19" ) ) ) );
+            CHECK( guy.has_amount( itype_id( "bandages" ), 4 ) );
+            CHECK( static_cast<int>( guy.get_skill_level( skill_id( "melee" ) ) ) >= 5 );
+            CHECK( static_cast<int>( guy.get_skill_level( skill_id( "dodge" ) ) ) >= 5 );
+        }
         // Two archers with bows at the front, and a stocked supply depot.
         int archers = 0;
         for( npc &guy : g->all_npcs() ) {
@@ -436,13 +501,17 @@ TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
     int traders = 0;
     int guards = 0;
     for( npc &guy : g->all_npcs() ) {
-        if( guy.get_fac_id() != faction_id( "br1_exchange" ) ) {
+        if( guy.get_fac_id().str().rfind( "br1_exchange", 0 ) != 0 ) {
             continue;
         }
         if( guy.mission == NPC_MISSION_SHOPKEEP ) {
             traders++;
-            guy.shop_restock();
             CAPTURE( guy.myclass.str() );
+            // The mapgen gave this stall its own loot zone, so restock won't add a fallback zone over its neighbours.
+            CHECK( zone_manager::get_manager().has_near( zone_type_id( "LOOT_UNSORTED" ), guy.pos_abs(), PICKUP_RANGE,
+                    guy.get_fac_id() ) );
+            guy.shop_restock();
+            CHECK( trade_window_stock( guy ) >= 8 );
             CHECK( owned_stock_near( guy ) > 5 );
             CHECK( owned_stock_near( guy ) >= 8 );
             CHECK( stock_kinds_near( guy ) <= 12 );
@@ -488,6 +557,7 @@ TEST_CASE( "diner_generates", "[.][backrooms_runner]" )
         if( guy.mission == NPC_MISSION_SHOPKEEP ) {
             cooks++;
             guy.shop_restock();
+            CHECK( trade_window_stock( guy ) >= 8 );
             CHECK( owned_stock_near( guy ) > 5 );
             check_trader_rules( guy, "can_beans", "hammer" );
         } else {
