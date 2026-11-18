@@ -23,6 +23,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   never the gun or gear they carry; each has a clear trade with a few kinds of goods in deep piles, says what they
   sell ("What do you sell?", "What's cooking today?"), has a sign or menu board, buys only their own kind of goods
   and pays extra for it.
+- [BE] **Breakroom archers can draw their bows:** every bow needs Strength 9 and some archers rolled less, so they
+  kept trying to wield it ("needs at least strength 9"). Archers get +5 Strength, and enough skill for their knife.
 
 ## November 17, 2026
 
