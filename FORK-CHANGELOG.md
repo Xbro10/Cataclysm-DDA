@@ -48,9 +48,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **A well-armed NPC isn't scared of one weak monster, even up close:** Safety now only rises when what an NPC
   sees matches or beats what it could fight on its own, at any range (a katana fighter read Safety 50 from a single
   Hound). Meals, chats and trips still wait while anything hostile is within 3 tiles.
-- [C++] **NPCs draw their best weapon when trouble shows up:** with hostiles in view they switch to the best weapon
-  they carry within a few turns (before, only when idle or once an hour, so a katana handed over mid-chase stayed in
-  the pack).
+- [C++] **NPCs draw a weapon when trouble shows up:** empty-handed (or holding a tool or wood) with hostiles in view,
+  they draw the best weapon they carry within a few turns (before, only when idle or once an hour, so a katana handed
+  over mid-chase stayed in the pack). A weapon already in hand is never swapped by this: an earlier version pulled a
+  pistol over a drawn machete while the game's attack choice picked the machete for a zombie next to them, so a
+  Breakroom runner swapped back and forth every turn and never attacked.
 - [C++] **NPCs pick their things back up after a fight:** with NPC autonomy on, a weapon knocked away or set down
   mid-fight, arrows and bolts they shot, or anything else they carried that ended up on the ground nearby is
   fetched once the fight is over (within 10 tiles they can see and may go to, for 30 minutes), the weapon back into

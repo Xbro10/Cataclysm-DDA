@@ -32,6 +32,7 @@
 #include "options_helpers.h"
 #include "monster_helpers.h"
 #include "player_helpers.h"
+#include "pocket_type.h"
 #include "point.h"
 #include "talker.h"
 #include "type_id.h"
@@ -51,9 +52,13 @@ static const itype_id itype_duffelbag( "duffelbag" );
 static const itype_id itype_butane( "butane" );
 static const itype_id itype_hoodie( "hoodie" );
 static const itype_id itype_jeans( "jeans" );
+static const itype_id itype_9mm( "9mm" );
+static const itype_id itype_glock_19( "glock_19" );
+static const itype_id itype_glockmag( "glockmag" );
 static const itype_id itype_katana( "katana" );
 static const itype_id itype_knife_combat( "knife_combat" );
 static const itype_id itype_lighter( "lighter" );
+static const itype_id itype_machete( "machete" );
 static const itype_id itype_modular_m16a4( "modular_m16a4" );
 static const itype_id itype_mossberg_590( "mossberg_590" );
 static const itype_id itype_rock( "rock" );
@@ -1431,9 +1436,9 @@ TEST_CASE( "npc_autonomy_gunner_shoots_a_walking_zombie", "[npc][autonomy]" )
     guy.set_skill_level( skill_rifle, 4 );
     monster &zed = spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 10, 0 ) );
     get_map().build_map_cache( 0 );
-    // Turns in which the zombie was hit from 4 or more tiles away.
+    // The farthest the zombie was from them when it was hit (0: never hit).
     const auto fight = [&]( std::string & trace ) {
-        int hurt_at_range = 0;
+        int farthest_hit = 0;
         for( int t = 0; t < 40 && !zed.is_dead(); ++t ) {
             calendar::turn += 1_turns;
             guy.set_moves( guy.get_speed() );
@@ -1442,7 +1447,7 @@ TEST_CASE( "npc_autonomy_gunner_shoots_a_walking_zombie", "[npc][autonomy]" )
             const int dist = rl_dist( guy.pos_bub(), zed.pos_bub() );
             guy.move();
             if( zed.is_dead() || zed.get_hp() < before ) {
-                hurt_at_range += dist >= 4 ? 1 : 0;
+                farthest_hit = std::max( farthest_hit, dist );
             }
             if( zed.is_dead() ) {
                 break;
@@ -1452,23 +1457,23 @@ TEST_CASE( "npc_autonomy_gunner_shoots_a_walking_zombie", "[npc][autonomy]" )
             trace += string_format( " t%d:d%d hp%d run%d", t, rl_dist( guy.pos_bub(), zed.pos_bub() ),
                                     zed.get_hp(), guy.has_effect( effect_npc_run_away ) );
         }
-        return hurt_at_range;
+        return farthest_hit;
     };
 
     SECTION( "autonomy on: they shoot it before it gets close, without backing off" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
         std::string trace;
-        const int hits = fight( trace );
+        const int farthest = fight( trace );
         INFO( trace );
-        CHECK( hits > 0 );
+        CHECK( farthest >= 4 );
         CHECK( trace.find( "run1" ) == std::string::npos );
     }
-    SECTION( "autonomy off: the game's own (it waits until the zombie is about 3 tiles off)" ) {
+    SECTION( "autonomy off: the game's own (it waits until the zombie is 3 or 4 tiles off)" ) {
         override_option autonomy( "NPC_AUTONOMY", "false" );
         std::string trace;
-        const int hits = fight( trace );
+        const int farthest = fight( trace );
         INFO( trace );
-        CHECK( hits == 0 );
+        CHECK( farthest < 6 );
     }
 }
 
@@ -1642,5 +1647,51 @@ TEST_CASE( "npc_autonomy_picks_up_what_it_dropped_in_a_fight", "[npc][autonomy]"
         here.i_clear( where );
         here.add_item_or_charges( where, item( itype_knife_combat ) );
         CHECK_FALSE( npc_autonomy::wants_to_recover_items( guy ) );
+    }
+}
+// Reported 2026-11-18: a Breakroom runner with a machete drawn, an empty pistol and loaded
+// magazines swapped weapons every turn next to a zombie and never attacked. The weapon check
+// rated the pistol best while the game's attack choice picked the machete.
+TEST_CASE( "npc_autonomy_arm_up_never_swaps_a_drawn_weapon", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 6, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    guy.set_skill_level( skill_gun, 5 );
+    guy.wear_item( item( itype_backpack ), false );
+    item pistol( itype_glock_19 );
+    item loaded_mag( itype_glockmag );
+    loaded_mag.ammo_set( itype_9mm, 15 );
+    pistol.put_in( loaded_mag, pocket_type::MAGAZINE_WELL );
+    guy.i_add( pistol );
+    for( int i = 0; i < 2; ++i ) {
+        item mag( itype_glockmag );
+        mag.ammo_set( itype_9mm, 15 );
+        guy.i_add( mag );
+    }
+    spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 1, 0 ) );
+    get_map().build_map_cache( 0 );
+    const auto turns = [&guy]( int count ) {
+        for( int t = 0; t < count; ++t ) {
+            calendar::turn += 1_turns;
+            npc_autonomy::arm_up( guy );
+        }
+    };
+
+    SECTION( "a machete in hand: it stays in hand" ) {
+        item machete( itype_machete );
+        guy.wield( machete );
+        turns( 9 );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_machete );
+    }
+    SECTION( "empty hands: they still draw something" ) {
+        turns( 9 );
+        CHECK( guy.get_wielded_item() );
     }
 }

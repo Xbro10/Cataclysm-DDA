@@ -1735,6 +1735,15 @@ void arm_up( npc &guy )
         guy.is_using_bionic_weapon() || !guy.sees_hostile_within( watch_hostile_range ) ) {
         return;
     }
+    // Only for empty hands, or hands holding something that isn't a weapon (wood for a fire,
+    // a tool). Swapping one weapon for another is left to the game's own attack choice: asking
+    // for "the best weapon" every few turns rated a pistol over the machete it had just drawn
+    // for a zombie next to it, so a runner swapped back and forth and never attacked
+    // (reported 2026-11-18).
+    const item_location held = guy.get_wielded_item();
+    if( held && ( held->is_gun() || held->is_melee() ) && !holds_wood_for_fire( guy ) ) {
+        return;
+    }
     // The game's own choice of weapon (it follows the follower rules on guns).
     guy.wield_better_weapon();
 }
