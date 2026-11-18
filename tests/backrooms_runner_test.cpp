@@ -8,6 +8,7 @@
 // player watches.
 
 #include <string>
+#include <vector>
 
 #include "avatar.h"
 #include "calendar.h"
@@ -17,6 +18,8 @@
 #include "effect_on_condition.h"
 #include "game.h"
 #include "global_vars.h"
+#include "item.h"
+#include "item_location.h"
 #include "map.h"
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
@@ -136,6 +139,62 @@ TEST_CASE( "breakroom_runner_leaves_on_a_run", "[.][backrooms_runner]" )
     CHECK( max_dist >= 20 );
 }
 
+// Camps and lobbies are rare on Level 1. A runner whose nearest camp is 20 squares away still goes,
+// and one with no camp, lobby or generator room in reach goes scavenging in the lanes (destination 4)
+// instead of staying home ("Done for today", the bug seen in play).
+TEST_CASE( "breakroom_runner_goes_far_or_scavenges", "[.][backrooms_runner]" )
+{
+    if( !effect_on_condition_EOC_BR1_RUNNER_TICK.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    const bool far_camp = GENERATE( true, false );
+    CAPTURE( far_camp );
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 10_hours );
+    const tripoint_abs_omt home_omt = get_avatar().pos_abs_omt();
+    // Wipe any camps, lobbies and generator rooms the test overmap generated near home.
+    for( const tripoint_abs_omt &p : points_in_radius( home_omt, 32 ) ) {
+        const std::string id = overmap_buffer.ter( p ).id().str();
+        if( id.rfind( "br1_squatter_camp", 0 ) == 0 || id.rfind( "br1_elevator_lobby", 0 ) == 0 ||
+            id.rfind( "br1_generator_site", 0 ) == 0 || id.rfind( "br1_garage", 0 ) == 0 ) {
+            overmap_buffer.ter_set( p, oter_id( "field" ) );
+        }
+    }
+    overmap_buffer.ter_set( home_omt, oter_id( "br1_breakroom" ) );
+    if( far_camp ) {
+        overmap_buffer.ter_set( home_omt + point( 20, 0 ), oter_id( "br1_squatter_camp" ) );
+    } else {
+        overmap_buffer.ter_set( home_omt + point( 0, 6 ), oter_id( "br1_garage" ) );
+    }
+
+    npc &guy = spawn_npc( get_avatar().pos_bub().xy() + point( 3, 0 ), "test_talker" );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_mission( NPC_MISSION_GUARD );
+    guy.guard_pos = guy.pos_abs();
+
+    global_variables &globals = get_globals();
+    run_eoc( get_avatar(), effect_on_condition_EOC_BR1_RUNNER_SCHEDULE );
+    globals.set_global_value( "br1_tick_who", 1.0 );
+    globals.set_global_value( "br1_tick_depart", 10.0 );
+    globals.set_global_value( "br1_depart_1", 10.0 );
+    globals.set_global_value( "br1_runner_out", 0.0 );
+
+    run_eoc( guy, effect_on_condition_EOC_BR1_RUNNER_TICK );
+    INFO( "run_dest " << runner_var( guy, "br1_run_dest" ) << ", goal " << guy.goal.to_string() );
+    REQUIRE( runner_var( guy, "br1_run_state" ) == 1 );
+    if( far_camp ) {
+        CHECK( runner_var( guy, "br1_run_dest" ) == 1 );
+        CHECK( rl_dist( guy.goal, home_omt ) == 20 );
+    } else {
+        CHECK( runner_var( guy, "br1_run_dest" ) == 4 );
+        CHECK( rl_dist( guy.goal, home_omt ) == 6 );
+        run_eoc( get_avatar(), effect_on_condition_EOC_BR1_RUNNER_BOARD_READ );
+        CHECK( global_str( "br1_board_1" ) == "JONAH: OUT, scavenging the lanes.  Back in a day or two." );
+    }
+}
+
 // Both Breakroom layouts build, with the runner board, supply locker and front defences in place.
 TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
 {
@@ -179,11 +238,27 @@ TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
         CHECK( g->unique_npc_exists( "BR1_runner_rosa" ) );
         // Two archers with bows at the front, and a stocked supply depot.
         int archers = 0;
-        for( const npc &guy : g->all_npcs() ) {
+        for( npc &guy : g->all_npcs() ) {
             if( guy.myclass == npc_class_id( "NC_BR1_ARCHER" ) ) {
                 archers++;
                 REQUIRE( guy.get_wielded_item() );
                 CHECK( guy.get_wielded_item()->is_gun() ); // bows are guns that fire arrows
+                // Half sandbags in front of every archer (the Bunker's used to stand in the open).
+                CHECK( here.furn( guy.pos_bub() + point( 0, 1 ) ) == furn_str_id( "f_sandbag_half" ) );
+                // A knife for close fights; drawing it puts the bow in the bow sling, not on the floor.
+                CHECK( guy.is_wearing( itype_id( "bow_sling" ) ) );
+                REQUIRE( guy.has_amount( itype_id( "knife_combat" ), 1 ) );
+                const itype_id bow = guy.get_wielded_item()->typeId();
+                const std::vector<item *> knives = guy.items_with( []( const item & it ) {
+                    return it.typeId() == itype_id( "knife_combat" );
+                } );
+                REQUIRE( !knives.empty() );
+                item_location knife( guy, knives.front() );
+                const int on_floor = here.i_at( guy.pos_bub() ).size();
+                CHECK( guy.wield( knife ) );
+                CHECK( guy.get_wielded_item()->typeId() == itype_id( "knife_combat" ) );
+                CHECK( guy.has_amount( bow, 1 ) );
+                CHECK( static_cast<int>( here.i_at( guy.pos_bub() ).size() ) == on_floor );
             }
         }
         CHECK( archers == 2 );
