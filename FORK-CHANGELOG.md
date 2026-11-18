@@ -22,6 +22,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [BE] **Flamero-Mado spear:** a rare end-game spear you fill with kerosene or gasoline and light; lit, it burns as
   well as pierces. Found in Level 2 crew stores, at the Exchange, on the Redeemer, and in museums and mansions; crafted
   only from its schematic. Sprites for UltiCa and UndeadPeople.
+- [BE] **Loot comes packed:** the All-Nite serves chili and soup in a bowl and coffee in a cup (chili used to spawn
+  as a loose puddle), and the security office pistol has its magazine in it. A new test spawns every mod loot table
+  and fails on anything loose that should be packed.
 - [BE] **Trading overhaul (the Exchange and the All-Nite diner):** traders and the cook sell only their stall stock,
   never the gun or gear they carry; each has a clear trade with a few kinds of goods in deep piles, says what they
   sell ("What do you sell?", "What's cooking today?"), has a sign or menu board, buys only their own kind of goods

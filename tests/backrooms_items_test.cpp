@@ -3,15 +3,23 @@
 //   Cataclysm-test-vcpkg-static-Release-x64.exe --mods=backrooms,backrooms_expanded "[backrooms_items]"
 // The Flamero-Mado spear: a fuel-fed spear you light and put out like the chainsaw. Lit, it adds heat
 // damage, burns its fuel and goes out by itself when the tank is empty.
+// The spawn check: every Backrooms Expanded and Survivor Minds item group (ids starting br, NC_BR or NC_SM) is
+// spawned many times; nothing may come out loose that should be packed (a liquid outside a container, a gun
+// lying beside an empty-welled magazine that fits it). Overflowing containers already fail through debugmsg.
 
+#include <map>
+#include <set>
 #include <string>
+#include <vector>
 
 #include "avatar.h"
 #include "calendar.h"
 #include "cata_catch.h"
 #include "damage.h"
+#include "enums.h"
 #include "flag.h"
 #include "item.h"
+#include "item_factory.h"
 #include "item_group.h"
 #include "item_location.h"
 #include "itype.h"
@@ -19,6 +27,7 @@
 #include "map_helpers.h"
 #include "player_helpers.h"
 #include "point.h"
+#include "string_formatter.h"
 #include "type_id.h"
 
 static const damage_type_id damage_heat( "heat" );
@@ -112,4 +121,75 @@ TEST_CASE( "flamero_mado_cache_spawns_a_spear_with_some_fuel", "[.][backrooms_it
         }
         CHECK( found );
     }
+}
+
+static bool is_mod_group( const item_group_id &id )
+{
+    const std::string &s = id.str();
+    return s.rfind( "br", 0 ) == 0 || s.rfind( "NC_BR", 0 ) == 0 || s.rfind( "NC_SM", 0 ) == 0;
+}
+
+TEST_CASE( "backrooms_item_groups_spawn_packed", "[.][backrooms_items]" )
+{
+    if( !backrooms_items_loaded() ) {
+        return;
+    }
+    std::vector<item_group_id> groups;
+    for( const item_group_id &id : item_controller->get_all_group_names() ) {
+        if( is_mod_group( id ) ) {
+            groups.push_back( id );
+        }
+    }
+    REQUIRE( groups.size() > 20 );
+
+    // group -> what came out loose, and how often.
+    std::map<std::string, std::map<std::string, int>> loose;
+    for( const item_group_id &id : groups ) {
+        for( int i = 0; i < 300; i++ ) {
+            const item_group::ItemList spawned = item_group::items_from( id, calendar::turn_zero );
+            for( const item &it : spawned ) {
+                if( it.made_of( phase_id::LIQUID ) ) {
+                    loose[id.str()]["liquid outside a container: " + it.typeId().str()]++;
+                }
+                if( !it.is_gun() || it.magazine_integral() || it.magazine_current() ) {
+                    continue;
+                }
+                for( const item &other : spawned ) {
+                    if( other.is_magazine() && it.can_contain( other ).success() ) {
+                        loose[id.str()]["gun " + it.typeId().str() + " beside its magazine " +
+                                        other.typeId().str()]++;
+                    }
+                }
+            }
+        }
+    }
+    std::string report;
+    for( const auto &g : loose ) {
+        for( const auto &what : g.second ) {
+            report += string_format( "\n  %s: %s (%d of 300 spawns)", g.first, what.first, what.second );
+        }
+    }
+    INFO( "Checked " << groups.size() << " item groups." << report );
+    CHECK( loose.empty() );
+}
+
+TEST_CASE( "guard_office_pistols_spawn_loaded", "[.][backrooms_items]" )
+{
+    if( !backrooms_items_loaded() ) {
+        return;
+    }
+    int pistols = 0;
+    for( int i = 0; i < 300; i++ ) {
+        for( const item &it : item_group::items_from( item_group_id( "br1_security_guns" ),
+                calendar::turn_zero ) ) {
+            if( !it.is_gun() || it.magazine_integral() ) {
+                continue;
+            }
+            pistols++;
+            CAPTURE( it.typeId().str() );
+            REQUIRE( it.magazine_current() != nullptr );
+            CHECK( it.ammo_remaining() > 0 );
+        }
+    }
+    CHECK( pistols > 100 );
 }
