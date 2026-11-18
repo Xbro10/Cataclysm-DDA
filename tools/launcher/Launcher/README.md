@@ -15,7 +15,7 @@ An older folder with `Start CDDA Launcher.bat` still works, and the next launche
 
 ## What it does
 
-The menu on the left switches between four pages. **PLAY** (bottom right) starts the game with `--userdir` set
+The menu on the left switches between five pages. **PLAY** (bottom right) starts the game with `--userdir` set
 to `UserData`.
 
 - **Game:**
@@ -30,6 +30,10 @@ to `UserData`.
   - Add a mod from a GitHub link or a zip file. Removed mods go to the Recycle Bin.
   - **Sync my mods from my fork** (only shown when the fork's source folder is on this PC) copies mod folders that
     are in the fork's `data\mods` but not in the installed game.
+- **Sound:** download and update sound packs into `UserData\sound` (game updates never touch them):
+  **CC-Sounds** (music and effects, from its newest GitHub release) and **@'s soundpack** (damalsk, 2019).
+  **Use this pack** sets the game's sound pack option (`SOUNDPACKS` in `UserDatanfigoptions.json`);
+  **Menu sounds only** switches back to the game's own pack. Removed packs go to the Recycle Bin.
 - **Saves & backups:** open the save and backup folders, back up your saves to a zip, or swap back to the
   previous build.
 - **Settings:**
@@ -50,7 +54,7 @@ If either is missing, the launcher downloads it again on its next update check.
 |---|---|---|
 | `Game\` | the installed build | replaced |
 | `Game_previous\` | the build before (for rollback) | replaced |
-| `UserData\` | saves, config, templates, fonts, **mods** | never |
+| `UserData\` | saves, config, templates, fonts, **mods**, **sound packs** | never |
 | `Downloads\` | the newest build zip (older ones are deleted) | yes |
 | `Backups\` | save backups | never |
 
@@ -62,10 +66,12 @@ fork's source (`tools\launcher`), it doesn't update itself; pull the fork instea
 ```bat
 powershell -ExecutionPolicy Bypass -File cdda-launcher.ps1 -InstallNewest
 powershell -ExecutionPolicy Bypass -File cdda-launcher.ps1 -AddMod https://github.com/owner/repo
+powershell -ExecutionPolicy Bypass -File cdda-launcher.ps1 -InstallSound cc
 powershell -ExecutionPolicy Bypass -File cdda-launcher.ps1 -SelfTest
 ```
 
 `-InstallNewest` uses the source picked in the window (tester builds unless you changed it).
+`-InstallSound` installs or updates a sound pack (`cc` = CC-Sounds, `at` = @'s soundpack) and makes the game use it.
 Settings are kept in `settings.json` next to the script.
 
 ## For the fork's maintainer

@@ -13,7 +13,7 @@
 
         <root>\Game\            the installed game (replaced on every update)
         <root>\Game_previous\   the build before that (for rolling back)
-        <root>\UserData\        saves, config, templates, user mods  (never touched by updates)
+        <root>\UserData\        saves, config, templates, user mods, sound packs  (never touched by updates)
         <root>\Downloads\       cached build zips
         <root>\Backups\         save backups
 
@@ -25,11 +25,12 @@
 param(
     [switch]$SelfTest,          # run non-GUI checks and print results
     [string]$Screenshot = '',   # open the window, wait for the build list, save a PNG, close
-    [string]$Page = '',         # open on this page: game, mods, saves, settings (used with -Screenshot)
+    [string]$Page = '',         # open on this page: game, mods, sound, saves, settings (used with -Screenshot)
     [string]$Theme = '',        # use this theme for this run only: black, blue, light
     [string]$RootOverride = '', # use another root folder (for testing)
     [switch]$InstallNewest,     # command line: install the newest build from the chosen source, no window
-    [string]$AddMod = ''        # command line: install a mod from a GitHub link, no window
+    [string]$AddMod = '',       # command line: install a mod from a GitHub link, no window
+    [string]$InstallSound = ''  # command line: install a sound pack (cc or at) and make it the game's pack, no window
 )
 
 $ErrorActionPreference = 'Stop'
@@ -45,10 +46,11 @@ $script:PrevDir     = Join-Path $Root 'Game_previous'
 $script:StagingDir  = Join-Path $Root '_staging'
 $script:UserDir     = Join-Path $Root 'UserData'
 $script:UserModsDir = Join-Path $UserDir 'mods'
+$script:UserSoundDir = Join-Path $UserDir 'sound'
 $script:DownloadDir = Join-Path $Root 'Downloads'
 $script:BackupDir   = Join-Path $Root 'Backups'
 $script:SettingsFile = if ($RootOverride) { Join-Path $Root 'settings.json' } else { Join-Path $LauncherDir 'settings.json' }
-$script:LauncherVersion = '2026-11-15.3'
+$script:LauncherVersion = '2026-11-17'
 # Where a newer launcher is published (the testing branch is what testers get).
 $script:LauncherUpdateUrl = 'https://raw.githubusercontent.com/Xbro10/Cataclysm-DDA/testing/tools/launcher/Launcher/cdda-launcher.ps1'
 $script:LauncherExeName = 'CDDA Fork Launcher.exe'
@@ -85,11 +87,27 @@ $script:Sources = [ordered]@{
         Title = 'Cataclysm: Dark Days Ahead  -  experimental builds'
     }
 }
+# Sound packs the Sound page offers. They go in UserData\sound\<Folder>, where the game looks for them.
+# Name is the pack's id in its soundpack.txt (the game's SOUNDPACKS option); FixTxt rewrites that file
+# on install because @'s soundpack has its NAME and VIEW lines run together.
+$script:SoundPacks = [ordered]@{
+    cc = @{
+        Label = 'CC-Sounds'; Folder = 'CC-Sounds'; Name = 'CC-Sounds'; Repo = 'Fris0uman/CDDA-Soundpacks'; Asset = 'CC-Sounds.zip'
+        About = 'Music and effects (CC0 / CC-BY sounds), as in official sound builds. Updated regularly.'
+        Home = 'https://github.com/Fris0uman/CDDA-Soundpacks'
+    }
+    at = @{
+        Label = "@'s soundpack"; Folder = 'ats-soundpack'; Name = "@'s soundpack"; FixTxt = $true
+        Url = 'https://codeload.github.com/damalsk/damalsksoundpack/zip/refs/heads/master'; Version = 'master (2019)'
+        About = 'Vehicle sounds, music and more, by damalsk. Last updated in 2019.'
+        Home = 'https://github.com/damalsk/damalsksoundpack'
+    }
+}
 $script:ExeName = 'cataclysm-tiles.exe'
 $script:ProcName = 'cataclysm-tiles'
 $script:UA = 'cdda-fork-launcher'
 
-foreach ($d in @($UserDir, $UserModsDir, $DownloadDir)) {
+foreach ($d in @($UserDir, $UserModsDir, $UserSoundDir, $DownloadDir)) {
     if (-not (Test-Path -LiteralPath $d)) { New-Item -ItemType Directory -Force -Path $d | Out-Null }
 }
 
@@ -129,6 +147,52 @@ function Save-Settings {
 }
 
 $script:Settings = Read-Settings
+
+# ---------------------------------------------------------------- sound packs
+# The game keeps its chosen pack as the SOUNDPACKS option in UserData\config\options.json.
+function Get-GameOptionsFile { return (Join-Path $UserDir 'config\options.json') }
+$script:SoundOptionRx = '("name"\s*:\s*"SOUNDPACKS"\s*,\s*"value"\s*:\s*")([^"]*)(")'
+function Get-GameSoundpack {
+    $f = Get-GameOptionsFile
+    if (-not (Test-Path -LiteralPath $f)) { return '' }
+    $m = [regex]::Match([System.IO.File]::ReadAllText($f), $script:SoundOptionRx)
+    if ($m.Success) { return $m.Groups[2].Value } else { return '' }
+}
+function Set-GameSoundpack([string]$name) {
+    $f = Get-GameOptionsFile
+    $enc = New-Object System.Text.UTF8Encoding($false)
+    $entry = '{ "name": "SOUNDPACKS", "value": "' + $name + '" }'
+    if (Test-Path -LiteralPath $f) {
+        $text = [System.IO.File]::ReadAllText($f)
+        if ([regex]::IsMatch($text, $script:SoundOptionRx)) {
+            $text = [regex]::Replace($text, $script:SoundOptionRx, { param($m) $m.Groups[1].Value + $name + $m.Groups[3].Value })
+        } else {
+            $i = $text.IndexOf('[')
+            if ($i -lt 0) { throw "Couldn't read $f." }
+            $rest = $text.Substring($i + 1).TrimStart()
+            $text = $text.Substring(0, $i + 1) + "`n  " + $entry + $(if ($rest.StartsWith(']')) { "`n" } else { ",`n  " }) + $rest
+        }
+    } else {
+        [void][System.IO.Directory]::CreateDirectory((Split-Path $f -Parent))
+        $text = "[`n  $entry`n]`n"
+    }
+    [System.IO.File]::WriteAllText($f, $text, $enc)
+}
+function Get-SoundPackVersion($pack) {
+    $dir = Join-Path $UserSoundDir $pack.Folder
+    if (-not (Test-Path -LiteralPath (Join-Path $dir 'soundpack.txt'))) { return '' }
+    $v = Join-Path $dir 'launcher-pack.txt'
+    if (Test-Path -LiteralPath $v) { return ([string](Get-Content -LiteralPath $v -TotalCount 1)).Trim() }
+    return 'added by hand'
+}
+function Get-SoundInstallParams([string]$k) {
+    $pk = $script:SoundPacks[$k]
+    return @{
+        Label = $pk.Label; Folder = $pk.Folder; Name = $pk.Name; FixTxt = [bool]$pk.FixTxt
+        Repo = [string]$pk.Repo; Asset = [string]$pk.Asset; Url = [string]$pk.Url; Version = [string]$pk.Version
+        Installed = (Get-SoundPackVersion $pk); Root = $Root; DownloadDir = $DownloadDir; SoundDir = $UserSoundDir
+    }
+}
 
 # ---------------------------------------------------------------- small helpers
 function Get-ShortTag([string]$tag) { return ($tag -replace '^cdda-experimental-', '' -replace '^testing-build-', 'tester ') }
@@ -478,6 +542,43 @@ $script:SyncWork = {
     return [pscustomobject]@{ Names = @($p.Names) }
 }
 
+$script:SoundInstallWork = {
+    $hdr = @{ 'User-Agent' = 'cdda-fork-launcher'; 'Accept' = 'application/vnd.github+json' }
+    $url = $p.Url; $size = 0L; $version = $p.Version
+    if ($p.Repo) {
+        $sync.Status = "Asking GitHub for the newest $($p.Label)..."
+        $sync.Percent = -1
+        $rel = Invoke-RestMethod -UseBasicParsing -Uri "https://api.github.com/repos/$($p.Repo)/releases/latest" -Headers $hdr
+        $a = $rel.assets | Where-Object { $_.name -eq $p.Asset } | Select-Object -First 1
+        if (-not $a) { throw "$($p.Asset) is missing from $($p.Repo)'s newest release." }
+        $url = [string]$a.browser_download_url; $size = [long]$a.size; $version = [string]$rel.tag_name
+        if ($p.Installed -and $p.Installed -eq $version) { return [pscustomobject]@{ Version = $version; Same = $true } }
+    }
+    $zip = Join-Path $p.DownloadDir "sound-$($p.Folder).zip"
+    $work = Join-Path $p.Root '_soundstaging'
+    try {
+        [void][System.IO.Directory]::CreateDirectory($p.DownloadDir)
+        Get-File $url $zip $size $sync "Downloading $($p.Label)"
+        Expand-ZipSafe $zip $work $sync "Unpacking $($p.Label)"
+        $txt = Get-ChildItem -LiteralPath $work -Recurse -File -Filter 'soundpack.txt' | Sort-Object { $_.FullName.Length } | Select-Object -First 1
+        if (-not $txt) { throw "No sound pack found in $($p.Label) (there is no soundpack.txt in it)." }
+        if ($p.FixTxt) {
+            Set-Content -LiteralPath $txt.FullName -Encoding ASCII -Value @("NAME: $($p.Name)", "VIEW: $($p.Label)")
+        }
+        $sync.Status = "Installing $($p.Label)..."
+        $sync.Percent = -1
+        [void][System.IO.Directory]::CreateDirectory($p.SoundDir)
+        $target = Join-Path $p.SoundDir $p.Folder
+        Remove-Dir $target
+        Move-Item -LiteralPath $txt.DirectoryName -Destination $target
+        Set-Content -LiteralPath (Join-Path $target 'launcher-pack.txt') -Encoding ASCII -Value $version
+        return [pscustomobject]@{ Version = $version; Same = $false }
+    } finally {
+        Remove-Dir $work
+        if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force }
+    }
+}
+
 $script:BackupWork = {
     $sync.Status = 'Zipping your saves...'
     $sync.Percent = -1
@@ -569,6 +670,13 @@ if ($AddMod) {
     foreach ($n in $res.Names) { $Settings.ModOrigins[$n] = $res.Origin }
     Save-Settings
     "Installed mod(s): $($res.Names -join ', ') into $UserModsDir"
+    return
+}
+if ($InstallSound) {
+    if (-not $SoundPacks.Contains($InstallSound)) { throw "Unknown sound pack '$InstallSound' (use one of: $(@($SoundPacks.Keys) -join ', '))." }
+    $res = Invoke-WorkNow $SoundInstallWork (Get-SoundInstallParams $InstallSound)
+    Set-GameSoundpack $SoundPacks[$InstallSound].Name
+    "$($SoundPacks[$InstallSound].Label): $(if ($res.Same) { 'already up to date' } else { 'installed' }) ($($res.Version)); the game will use it."
     return
 }
 
@@ -906,7 +1014,7 @@ $side.Controls.AddRange(@($picLogo, $lblBrand, $lblBrandSub))
 
 $script:NavButtons = @{}
 $navY = 176
-foreach ($n in @(@('game', 'Game'), @('mods', 'Mods'), @('saves', 'Saves & backups'), @('settings', 'Settings'))) {
+foreach ($n in @(@('game', 'Game'), @('mods', 'Mods'), @('sound', 'Sound'), @('saves', 'Saves & backups'), @('settings', 'Settings'))) {
     $b = New-Object System.Windows.Forms.Button
     $b.Name = $n[0]; $b.Text = '    ' + $n[1]; $b.Tag = 'nav'
     $b.TextAlign = 'MiddleLeft'; $b.Font = New-Font 10.5; $b.UseMnemonic = $false
@@ -1036,6 +1144,30 @@ $pageMods.Controls.Add((New-SurfaceBox $lvMods))
 $pageMods.Controls.Add($modsBar)
 $pageMods.Controls.Add($lblModsInfo)
 
+# ---------------------------------------------------------------- page: sound
+$pageSound = New-Page
+$lblSoundInfo = New-Label ("Sound packs go in UserData\sound, so game updates never remove them. 'Use this pack' makes it the game's " +
+    "sound pack (in game: Options > General > Choose soundpack); restart the game to hear a change.") 'muted'
+$lblSoundInfo.Dock = 'Top'; $lblSoundInfo.AutoSize = $false; $lblSoundInfo.Height = 44
+$lvSound = New-ThemedListView
+$lvSound.MultiSelect = $false
+[void]$lvSound.Columns.Add('Sound pack', 170)
+[void]$lvSound.Columns.Add('Installed', 130)
+[void]$lvSound.Columns.Add('In use', 60)
+[void]$lvSound.Columns.Add('About', 380)
+$soundBar = New-Bar
+$btnSoundInstall = New-Button 'Install / update' 'accent'
+$btnSoundInstall.Font = New-Font 9.5 'Bold'
+$btnSoundUse = New-Button 'Use this pack'
+$btnSoundRemove = New-Button 'Remove'
+$btnSoundHome = New-Button 'Open its page'
+$btnOpenSound = New-Button 'Open sound folder'
+$soundBar.Controls.AddRange(@($btnSoundInstall, $btnSoundUse, $btnSoundRemove, $btnSoundHome, $btnOpenSound))
+foreach ($c in @($btnSoundInstall, $btnSoundUse, $btnSoundRemove)) { $script:ActionButtons.Add($c) }
+$pageSound.Controls.Add((New-SurfaceBox $lvSound))
+$pageSound.Controls.Add($soundBar)
+$pageSound.Controls.Add($lblSoundInfo)
+
 # ---------------------------------------------------------------- shared helpers for form-style pages
 function New-FormGrid {
     $g = New-Object System.Windows.Forms.TableLayoutPanel
@@ -1158,8 +1290,8 @@ $form.Controls.Add($main)
 $form.Controls.Add($side)
 $main.BringToFront()
 
-$script:Pages = @{ game = $pageGame; mods = $pageMods; saves = $pageSaves; settings = $pageSettings }
-$script:PageTitles = @{ game = ''; mods = 'Mods'; saves = 'Saves & backups'; settings = 'Settings' }
+$script:Pages = @{ game = $pageGame; mods = $pageMods; sound = $pageSound; saves = $pageSaves; settings = $pageSettings }
+$script:PageTitles = @{ game = ''; mods = 'Mods'; sound = 'Sound packs'; saves = 'Saves & backups'; settings = 'Settings' }
 $script:CurrentPage = 'game'
 function Show-Page([string]$name) {
     if (-not $script:Pages.ContainsKey($name)) { $name = 'game' }
@@ -1520,6 +1652,80 @@ function Remove-SelectedMods {
     $lblStatus.Text = "Removed: $names"
 }
 
+# ---- sound packs (option helpers are near the top, with Get-SoundPackVersion)
+function Update-SoundList {
+    $inUse = Get-GameSoundpack
+    $sel = if ($lvSound.SelectedItems.Count) { [string]$lvSound.SelectedItems[0].Tag } else { 'cc' }
+    $lvSound.BeginUpdate()
+    $lvSound.Items.Clear()
+    $rows = @(@($script:SoundPacks.Keys) + 'builtin')
+    foreach ($k in $rows) {
+        if ($k -eq 'builtin') {
+            $label = 'Menu sounds only'; $ver = 'comes with the game'; $name = 'Menu_Sound_Test'
+            $about = "The game's own pack: a few menu sounds, no music."
+        } else {
+            $pk = $script:SoundPacks[$k]
+            $label = $pk.Label; $ver = Get-SoundPackVersion $pk; $name = $pk.Name; $about = $pk.About
+            if (-not $ver) { $ver = 'not installed' }
+        }
+        $item = New-Object System.Windows.Forms.ListViewItem($label)
+        [void]$item.SubItems.Add($ver)
+        [void]$item.SubItems.Add($(if ($inUse -eq $name) { 'yes' } else { '' }))
+        [void]$item.SubItems.Add($about)
+        $item.Tag = $k
+        [void]$lvSound.Items.Add($item)
+        if ($k -eq $sel) { $item.Selected = $true }
+    }
+    $lvSound.EndUpdate()
+}
+function Get-SelectedSoundKey {
+    if ($lvSound.SelectedItems.Count -eq 0) { Show-Info 'Pick a sound pack in the list first.'; return $null }
+    return [string]$lvSound.SelectedItems[0].Tag
+}
+function Install-SoundPack {
+    $k = Get-SelectedSoundKey
+    if (-not $k) { return }
+    if ($k -eq 'builtin') { Show-Info 'The menu sounds come with the game; there is nothing to download.'; return }
+    $pk = $script:SoundPacks[$k]
+    $params = Get-SoundInstallParams $k
+    $script:SoundJobKey = $k
+    Start-Work "Getting $($pk.Label)..." $SoundInstallWork $params {
+        param($res, $err)
+        if ($err) { return }
+        $pk = $script:SoundPacks[$script:SoundJobKey]
+        Update-SoundList
+        if ($res.Same) { $lblStatus.Text = "$($pk.Label) is already up to date ($($res.Version))."; return }
+        $lblStatus.Text = "Installed $($pk.Label) ($($res.Version))."
+        if ((Get-GameSoundpack) -ne $pk.Name -and (Confirm-Action "$($pk.Label) is installed. Use it in the game now?")) { Use-SoundPack $script:SoundJobKey }
+    }
+}
+function Use-SoundPack([string]$k) {
+    if (-not $k) { $k = Get-SelectedSoundKey; if (-not $k) { return } }
+    if ($k -eq 'builtin') { $name = 'Menu_Sound_Test'; $label = 'the menu sounds' }
+    else {
+        $pk = $script:SoundPacks[$k]
+        if (-not (Get-SoundPackVersion $pk)) { Show-Info "$($pk.Label) isn't installed yet. Press 'Install / update' first."; return }
+        $name = $pk.Name; $label = $pk.Label
+    }
+    if (Test-GameRunning) { return }
+    Set-GameSoundpack $name
+    Update-SoundList
+    $lblStatus.Text = "The game will use $label next time it starts."
+}
+function Remove-SoundPack {
+    $k = Get-SelectedSoundKey
+    if (-not $k) { return }
+    if ($k -eq 'builtin') { Show-Info "The menu sounds come with the game and can't be removed."; return }
+    $pk = $script:SoundPacks[$k]
+    $dir = Join-Path $UserSoundDir $pk.Folder
+    if (-not (Test-Path -LiteralPath $dir)) { Show-Info "$($pk.Label) isn't installed."; return }
+    if (-not (Confirm-Action "Remove $($pk.Label)?`r`n`r`nThe folder goes to the Recycle Bin, so you can get it back.")) { return }
+    [Microsoft.VisualBasic.FileIO.FileSystem]::DeleteDirectory($dir, 'OnlyErrorDialogs', 'SendToRecycleBin')
+    if ((Get-GameSoundpack) -eq $pk.Name -and -not (Test-GameRunning)) { Set-GameSoundpack 'Menu_Sound_Test' }
+    Update-SoundList
+    $lblStatus.Text = "Removed $($pk.Label)."
+}
+
 function Start-Game {
     $exe = Join-Path $GameDir $ExeName
     if (-not (Test-Path -LiteralPath $exe)) { Show-Info 'No game installed yet. Pick a build on the Game page and press Install.'; return }
@@ -1609,6 +1815,16 @@ $txtGh.add_KeyDown({ param($s, $e) if ($e.KeyCode -eq 'Enter') { $e.SuppressKeyP
 $btnRemoveMod.add_Click({ Invoke-Safe { Remove-SelectedMods } })
 $btnOpenMods.add_Click({ Invoke-Safe { Open-Folder $UserModsDir } })
 
+$btnSoundInstall.add_Click({ Invoke-Safe { Install-SoundPack } })
+$lvSound.add_DoubleClick({ Invoke-Safe { Install-SoundPack } })
+$btnSoundUse.add_Click({ Invoke-Safe { Use-SoundPack '' } })
+$btnSoundRemove.add_Click({ Invoke-Safe { Remove-SoundPack } })
+$btnSoundHome.add_Click({ Invoke-Safe {
+    $k = Get-SelectedSoundKey
+    if ($k -and $k -ne 'builtin') { Start-Process $script:SoundPacks[$k].Home }
+} })
+$btnOpenSound.add_Click({ Invoke-Safe { Open-Folder $UserSoundDir } })
+
 $btnOpenGame.add_Click({ Invoke-Safe { Open-Folder $GameDir } })
 $btnOpenUser.add_Click({ Invoke-Safe { Open-Folder $UserDir } })
 $btnOpenBackups.add_Click({ Invoke-Safe { Open-Folder $BackupDir } })
@@ -1646,6 +1862,7 @@ $form.add_Shown({
     Update-SyncButton
     Update-VersionLabels
     Update-ModList
+    Update-SoundList
     if ($script:Settings.CheckBuildsOnStart -or $Screenshot) {
         Update-Releases
     } else {
