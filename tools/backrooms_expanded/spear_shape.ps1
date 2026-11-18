@@ -122,8 +122,13 @@ function OutlineT($tile, $col) {
 # Flame ribbons. Each ribbon is a list of pixel points (a path); it is painted as overlapping discs that shrink
 # toward its end: dark red rim, orange body, yellow core. Behind = only on empty pixels; front = over the spear too.
 $F = @{ rim = (Hex '#8c1e10'); red = (Hex '#e0482a'); orange = (Hex '#ff9a32'); yellow = (Hex '#ffe07a'); white = (Hex '#fff6d6') }
+# Flame layers, outside in: (share of the radius, colour). Set $script:flameLayers = $FlameBright for a hotter
+# flame with a white core (the UndeadPeople held sprite, where the flames are small on screen).
+$FlameNormal = @(@(1.0, $F.rim), @(0.72, $F.red), @(0.48, $F.orange), @(0.24, $F.yellow))
+$FlameBright = @(@(1.0, $F.red), @(0.8, $F.orange), @(0.56, $F.yellow), @(0.28, $F.white))
+$script:flameLayers = $FlameNormal
 function Ribbon($tile, $path, $r0, $front) {
-  $layers = @(@(1.0, $F.rim), @(0.72, $F.red), @(0.48, $F.orange), @(0.24, $F.yellow))
+  $layers = $script:flameLayers
   foreach ($layer in $layers) {
     $scale = $layer[0]; $col = $layer[1]
     $n = $path.Count

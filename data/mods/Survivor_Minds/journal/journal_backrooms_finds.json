@@ -1,0 +1,89 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_EV_ATE_MOTH_JELLY",
+    "//": "An NPC eats moth jelly (Backrooms Expanded). Compares item ids as text, so it loads and simply never fires without that mod. At most once a day per NPC.",
+    "eoc_type": "EVENT",
+    "required_event": "character_eats_item",
+    "condition": {
+      "and": [
+        "u_is_npc",
+        { "compare_string": [ { "context_val": "itype" }, "br_moth_jelly" ] },
+        { "or": [ { "not": { "math": [ "has_var(u_sm_last_moth_jelly)" ] } }, { "math": [ "time_since(u_sm_last_moth_jelly) > time('1 d')" ] } ] }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_sm_last_moth_jelly = time('now')" ] },
+      { "set_string_var": "<sm_j_ev_moth_jelly>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+      { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_EV_ATE_ROYAL_RATION",
+    "//": "An NPC eats a royal ration (Backrooms Expanded). At most once a day per NPC.",
+    "eoc_type": "EVENT",
+    "required_event": "character_eats_item",
+    "condition": {
+      "and": [
+        "u_is_npc",
+        { "compare_string": [ { "context_val": "itype" }, "br_royal_ration" ] },
+        { "or": [ { "not": { "math": [ "has_var(u_sm_last_royal_ration)" ] } }, { "math": [ "time_since(u_sm_last_royal_ration) > time('1 d')" ] } ] }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_sm_last_royal_ration = time('now')" ] },
+      { "set_string_var": "<sm_j_ev_royal_ration>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+      { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_EV_ATE_LIQUID_PAIN",
+    "//": "An NPC drinks cloudy water / liquid pain (Backrooms Expanded). NPCs never pick it themselves, so this is when the player hands it to them. At most once a day per NPC.",
+    "eoc_type": "EVENT",
+    "required_event": "character_eats_item",
+    "condition": {
+      "and": [
+        "u_is_npc",
+        { "compare_string": [ { "context_val": "itype" }, "br_liquid_pain" ] },
+        { "or": [ { "not": { "math": [ "has_var(u_sm_last_liquid_pain)" ] } }, { "math": [ "time_since(u_sm_last_liquid_pain) > time('1 d')" ] } ] }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_sm_last_liquid_pain = time('now')" ] },
+      { "set_string_var": "<sm_j_ev_liquid_pain>", "target_var": { "u_val": "sm_line" }, "parse_tags": true },
+      { "run_eocs": "EOC_SM_JOURNAL_ADD_LINE" }
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_j_ev_moth_jelly>",
+    "text": [
+      "Ate moth jelly today.  Felt better than I have in weeks.",
+      "Scraped jelly off a dead moth and ate it.  Tasted like honey.  I'm not proud.",
+      "The moth stuff actually works.  My cuts stopped stinging.",
+      "Moth jelly for lunch.  Sweet, warm, a bit glowy.  Don't think about it."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_j_ev_royal_ration>",
+    "text": [
+      "Found a royal ration.  It tasted like my mother's stew.  I had to sit down after.",
+      "One little bar and I'm full for the day.  Nobody knows who makes them.",
+      "Ate a royal ration.  It tasted like a birthday.  Whose, I couldn't say.",
+      "Royal ration.  Best thing I've eaten since all this started."
+    ]
+  },
+  {
+    "type": "snippet",
+    "category": "<sm_j_ev_liquid_pain>",
+    "text": [
+      "Drank what I thought was almond water.  It wasn't.  Everything still hurts.",
+      "The bad water.  I should have smelled it first.  I won't make that mistake twice.",
+      "Liquid pain, they call it.  They're not exaggerating.",
+      "Someone handed me a bottle of the bad stuff.  I'm going to remember that."
+    ]
+  }
+]
