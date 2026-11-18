@@ -7,6 +7,7 @@
 // (EOC_BR1_RUNNER_TICK) before and after their departure hour, then lets them take turns while the
 // player watches.
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,7 @@
 #include "monfaction.h"
 #include "mtype.h"
 #include "npc.h"
+#include "npctrade.h"
 #include "omdata.h"
 #include "overmapbuffer.h"
 #include "player_helpers.h"
@@ -77,6 +79,30 @@ static int owned_stock_near( const npc &guy )
         }
     }
     return n;
+}
+
+// How many different kinds of item are on a shopkeeper's own booth (2 tiles; the Exchange stalls sit 4 apart).
+// Concentrated stock = few kinds, deep piles.
+static int stock_kinds_near( const npc &guy )
+{
+    map &here = get_map();
+    std::set<itype_id> kinds;
+    for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), 2 ) ) {
+        for( const item &it : here.i_at( p ) ) {
+            if( it.get_owner() == guy.get_fac_id() ) {
+                kinds.insert( it.typeId() );
+            }
+        }
+    }
+    return static_cast<int>( kinds.size() );
+}
+
+// A trader sells only their stall stock (nothing they carry or wear) and buys only their own trade.
+static void check_trader_rules( npc &guy, const char *buys, const char *refuses )
+{
+    CHECK( npc_trading::init_selling( guy ).empty() );
+    CHECK( guy.wants_to_buy( item( itype_id( buys ) ) ) );
+    CHECK_FALSE( guy.wants_to_buy( item( itype_id( refuses ) ) ) );
 }
 
 TEST_CASE( "breakroom_runner_leaves_on_a_run", "[.][backrooms_runner]" )
@@ -415,6 +441,15 @@ TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
             guy.shop_restock();
             CAPTURE( guy.myclass.str() );
             CHECK( owned_stock_near( guy ) > 5 );
+            CHECK( owned_stock_near( guy ) >= 8 );
+            CHECK( stock_kinds_near( guy ) <= 12 );
+            if( guy.myclass == npc_class_id( "NC_BR1_TRADER_SUPPLIES" ) ) {
+                check_trader_rules( guy, "can_beans", "hammer" );
+            } else if( guy.myclass == npc_class_id( "NC_BR1_TRADER_GEAR" ) ) {
+                check_trader_rules( guy, "hammer", "can_beans" );
+            } else {
+                check_trader_rules( guy, "survivormap", "hammer" );
+            }
         } else {
             guards++;
         }
@@ -451,6 +486,7 @@ TEST_CASE( "diner_generates", "[.][backrooms_runner]" )
             cooks++;
             guy.shop_restock();
             CHECK( owned_stock_near( guy ) > 5 );
+            check_trader_rules( guy, "can_beans", "hammer" );
         } else {
             servers++;
         }
