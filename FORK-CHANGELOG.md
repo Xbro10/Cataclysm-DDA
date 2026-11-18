@@ -22,6 +22,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [BE] **Flamero-Mado spear:** a rare end-game spear you fill with kerosene or gasoline and light; lit, it burns as
   well as pierces. Found in Level 2 crew stores, at the Exchange, on the Redeemer, and in museums and mansions; crafted
   only from its schematic. Sprites for UltiCa and UndeadPeople.
+- [BE] **Entity loot and proper butchery:** butchering a Hound, Deathmoth or the Redeemer gave human flesh (the game's
+  default); now they give mutant meat, fat, bone and hide. Hounds drop fangs, Smilers sometimes their teeth, Facelings
+  their clothes and pocket things, Skin-stealers the skin they wore, Partygoers a red balloon and party hat, the
+  Redeemer a cracked insulator. The Exchange buys the trophies.
 - [BE] **More for the Backrooms finds:** the lit Flamero-Mado spear sets what it hits on fire about one hit in three;
   craftable firesalt torches (twice as long as a fuel torch) and firesalt twists (a quick fire-starter); the Exchange
   sells moth jelly, royal rations and firesalt, Level 2 crews carry firesalt to trade, and no trader buys cloudy water.

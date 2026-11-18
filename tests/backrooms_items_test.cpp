@@ -27,6 +27,9 @@
 #include "map.h"
 #include "magic.h"
 #include "map_helpers.h"
+#include "harvest.h"
+#include "monstergenerator.h"
+#include "mtype.h"
 #include "npc.h"
 #include "player_helpers.h"
 #include "point.h"
@@ -287,4 +290,50 @@ TEST_CASE( "firesalt_tools_and_the_burning_spear", "[.][backrooms_items]" )
         const item plain( itype_id( "torch_lit" ) );
         CHECK( torch.ammo_remaining() > plain.ammo_remaining() );
     }
+}
+
+TEST_CASE( "backrooms_entities_butcher_and_drop_properly", "[.][backrooms_items]" )
+{
+    if( !backrooms_items_loaded() ) {
+        return;
+    }
+    // People, or things that were once people, butcher as people. Everything else must not give human flesh.
+    const std::set<std::string> human_ok = { "mon_br_wretch", "mon_br_faceling" };
+    int checked = 0;
+    for( const mtype &mon : MonsterGenerator::generator().get_all_mtypes() ) {
+        const std::string id = mon.id.str();
+        if( id.rfind( "mon_br_", 0 ) != 0 ) {
+            continue;
+        }
+        checked++;
+        CAPTURE( id );
+        if( mon.mdeath_effect.corpse_type != mdeath_type::NO_CORPSE && !human_ok.count( id ) ) {
+            for( const harvest_entry &entry : *mon.harvest ) {
+                CHECK( entry.drop != "human_flesh" );
+            }
+        }
+        // Every entity's death drops spawn without errors.
+        if( !mon.death_drops.is_null() ) {
+            for( int i = 0; i < 20; i++ ) {
+                item_group::items_from( mon.death_drops, calendar::turn_zero );
+            }
+        }
+    }
+    CHECK( checked >= 8 );
+
+    // Smilers leave teeth now and then; Partygoers always leave their balloon.
+    int teeth = 0;
+    bool balloon = true;
+    for( int i = 0; i < 200; i++ ) {
+        for( const item &it : item_group::items_from( item_group_id( "br_smiler_drops" ), calendar::turn_zero ) ) {
+            teeth += it.typeId().str() == "br_smiler_teeth" ? 1 : 0;
+        }
+        bool got = false;
+        for( const item &it : item_group::items_from( item_group_id( "br_partygoer_drops" ), calendar::turn_zero ) ) {
+            got = got || it.typeId().str() == "br_red_balloon";
+        }
+        balloon = balloon && got;
+    }
+    CHECK( teeth > 30 );
+    CHECK( balloon );
 }
