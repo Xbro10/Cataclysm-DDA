@@ -3,96 +3,60 @@ param([string]$Out, [string]$Preview)
 # 0 Flamero-Mado spear, unlit (br_flamero_mado_off)
 # 1 Flamero-Mado spear, lit   (br_flamero_mado_on)
 # 2 Flamero-Mado schematic    (br_flamero_schematic)
-# The spear lies corner to corner (butt bottom-left, head top-right) like other long weapons on the ground.
+# The spear lies corner to corner, butt top-right, blade pointing down-left. Its shape lives in spear_shape.ps1.
 Add-Type -AssemblyName System.Drawing
-$T = 32
+$T = 32; $TW = 32; $TH = 32
 $Count = 3
-$bmp = New-Object System.Drawing.Bitmap ($Count * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+# One extra tile on the right is scratch space for the schematic's silhouette; it is cropped off before saving.
+$bmp = New-Object System.Drawing.Bitmap (($Count + 1) * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 . "$PSScriptRoot\sprite_common.ps1"
+. "$PSScriptRoot\spear_shape.ps1"
 $rng = New-Object System.Random 1717
 
-$wood = Hex '#8a5a32'; $woodL = Hex '#b07a46'; $woodD = Hex '#5e3c20'
-$tank = Hex '#4a4e54'; $tankL = Hex '#7c828a'; $tankD = Hex '#2e3034'
-$brass = Hex '#c89a3a'; $brassL = Hex '#f0c868'
-$blade = Hex '#3a3c40'; $bladeL = Hex '#8e939a'; $bladeD = Hex '#232427'
-$heat = Hex '#b8402a'
-
-# The spear itself, shared by both versions. $lit tints the blade's edge red-hot.
-function Spear($tile, $lit) {
-  # Shaft: two pixels wide, light along the top edge.
-  for ($k = 0; $k -le 17; $k++) { $x = 3 + $k; $y = 28 - $k; Px $tile $x $y $wood; Px $tile ($x + 1) $y $woodD; Px $tile $x ($y - 1) $woodL }
-  # Butt cap.
-  Px $tile 3 28 $tankD; Px $tile 4 28 $tankD; Px $tile 3 27 $tankL
-  # Fuel tank sleeve in the middle of the shaft: three pixels wide, steel with a highlight.
-  for ($k = 6; $k -le 11; $k++) { $x = 3 + $k; $y = 28 - $k; Px $tile ($x - 1) $y $tank; Px $tile $x $y $tank; Px $tile ($x + 1) $y $tankD; Px $tile $x ($y - 1) $tankL; Px $tile ($x - 1) ($y - 1) $tank }
-  # Brass valve knob on the side of the tank, and a thin brass feed line up to the head.
-  Fill $tile 13 21 2 2 $brass; Px $tile 13 21 $brassL
-  for ($k = 12; $k -le 17; $k++) { Px $tile (4 + $k) (28 - $k) $brass }
-  # Jet collar behind the head: a ring of dark steel with brass nozzles.
-  Fill $tile 20 9 3 3 $tank; Px $tile 20 9 $tankL; Px $tile 22 11 $tankD; Px $tile 21 8 $brass; Px $tile 23 10 $brass
-  # Blade: a blackened leaf with two fins, tip in the top-right corner.
-  $w = @(2, 2, 2, 2, 1, 1, 1, 0)
-  for ($k = 0; $k -lt 8; $k++) {
-    $cx = 22 + $k; $cy = 8 - $k
-    for ($j = -$w[$k]; $j -le $w[$k]; $j++) { Px $tile ($cx + $j) ($cy + $j) $blade; Px $tile ($cx + $j + 1) ($cy + $j) $blade }
-    Px $tile $cx $cy $bladeL
-    if ($lit) { Px $tile ($cx + $w[$k] + 1) ($cy + $w[$k]) $heat } else { Px $tile ($cx - $w[$k]) ($cy - $w[$k]) $bladeD }
-  }
-  Px $tile 29 1 $bladeL
-  # Fins swept back from the collar.
-  Px $tile 19 7 $bladeD; Px $tile 18 6 $blade; Px $tile 24 12 $bladeD; Px $tile 25 13 $blade
-}
+$ground = Layout 30.5 1.5 -1 1 41 -Flip -Split 66
 
 # ---- 0: unlit.
-Spear 0 $false
-Outline 0; Shadow 0 15 30 9
+DrawSpear 0 $ground $false
+OutlineT 0 $INK
+Shadow 0 15 30 9
 
-# ---- 1: lit: the same spear with flame streaming off the jets and around the head.
-Spear 1 $true
-$f1 = Hex '#ffe27a'; $f2 = Hex '#ffa83a'; $f3 = Hex '#e8582a'; $f4 = Hex '#a8301e'
-# Flame as a halo around the head: rings of fire grow out from the blade and collar, hottest (yellow) next to the
-# steel, red at the edge, and taller above the head than below it because fire rises.
-$head = New-Object System.Collections.Generic.List[object]
-for ($y = 0; $y -lt 15; $y++) { for ($x = 16; $x -lt $T; $x++) { if ($bmp.GetPixel(1 * $T + $x, $y).A -ne 0 -and ($x + $y) -ge 26 -and ($x - $y) -ge 9) { $head.Add(@($x, $y)) } } }
-$paint = @{}
-for ($y = 0; $y -lt 18; $y++) { for ($x = 13; $x -lt $T; $x++) {
-  if ($bmp.GetPixel(1 * $T + $x, $y).A -ne 0) { continue }
-  $best = 99.0
-  foreach ($p in $head) {
-    $dx = $x - $p[0]; $dy = $y - $p[1]
-    # Below the head counts double, above it counts half: the halo leans upward.
-    $dy2 = if ($dy -gt 0) { $dy * 2.0 } else { $dy * 0.55 }
-    $d = [Math]::Sqrt($dx * $dx + $dy2 * $dy2)
-    if ($d -lt $best) { $best = $d }
-  }
-  $jit = $rng.NextDouble() * 1.1
-  $v = $best + $jit
-  if ($v -le 1.5) { $paint["$x,$y"] = $f1 } elseif ($v -le 2.5) { $paint["$x,$y"] = $f2 } elseif ($v -le 3.4) { $paint["$x,$y"] = $f3 } elseif ($v -le 4.0 -and $rng.NextDouble() -lt 0.6) { $paint["$x,$y"] = $f4 }
-} }
-foreach ($k in $paint.Keys) { $xy = $k.Split(','); Px 1 ([int]$xy[0]) ([int]$xy[1]) $paint[$k] }
-# Hot core right at the jets, over the collar.
-Px 1 21 8 $f1; Px 1 23 9 $f1; Px 1 22 7 $f2
-Outline 1
+# ---- 1: lit: ribbons of flame curl out of the collar jets, wrap the blade's base and rise.
+DrawSpear 1 $ground $true
+OutlineT 1 $INK
+Ribbon 1 @(@(12, 18), @(9, 17), @(7, 15), @(7, 12), @(9, 10), @(10, 8)) 2.5 $false
+Ribbon 1 @(@(15, 20), @(18, 21), @(20, 19), @(21, 16), @(20, 13), @(21, 11)) 2.4 $false
+Ribbon 1 @(@(14, 17), @(15, 14), @(14, 11), @(15, 9)) 1.7 $false
+Ribbon 1 @(@(10, 21), @(7, 21), @(5, 19), @(5, 16)) 1.6 $false
+Ribbon 1 @(@(14, 22), @(16, 24), @(18, 24), @(19, 22)) 1.3 $false
+# One thin strand wraps in front of the collar.
+Ribbon 1 @(@(11, 21), @(13, 19), @(15, 17), @(16, 16)) 1.0 $true
+Embers 1 @(@(11, 6), @(6, 9), @(22, 9), @(17, 7), @(3, 14), @(23, 14))
 Shadow 1 15 30 9
 
-# ---- 2: schematic: a blueprint sheet in a plastic sleeve, the spear's cutaway drawn in white, a red note.
-$bp = Hex '#2e5a9a'; $bpD = Hex '#21447a'; $bpL = Hex '#4a78b8'; $ink = Hex '#e8f0fa'; $red = Hex '#d23a2a'; $sleeve = Hex '#c8dae8'
-Fill 2 6 7 21 17 $bp
-Grain 2 6 7 21 17 $bpD $bpL 18 $rng
-# Grid lines.
-for ($x = 8; $x -lt 27; $x += 4) { Fill 2 $x 7 1 17 $bpL }
-for ($y = 9; $y -lt 24; $y += 4) { Fill 2 6 $y 21 1 $bpL }
-# The spear in cutaway: shaft, tank outline and the head.
-Line 2 8 20 24 10 $ink
-Box 2 13 15 5 3 $ink
-Px 2 25 9 $ink; Px 2 24 9 $ink; Px 2 25 10 $ink; Px 2 23 9 $ink
-# Dimension ticks and the red margin note.
-Px 2 9 22 $ink; Px 2 23 22 $ink; Line 2 9 22 23 22 $ink
-Fill 2 8 9 6 1 $red; Fill 2 8 11 4 1 $red
-# Plastic sleeve: a pale border with a glint, and a folded corner.
-Box 2 5 6 23 19 $sleeve
-Px 2 6 7 (Hex '#ffffff'); Px 2 7 7 (Hex '#ffffff'); Px 2 6 8 (Hex '#ffffff')
-Px 2 26 23 $bpD; Px 2 25 23 $bpD; Px 2 26 22 $bpD
-Outline 2; Shadow 2 16 26 10
+# ---- 2: schematic: blueprint in a plastic sleeve, the spear drawn as a pale technical outline, red notes.
+$bp = Hex '#2e5a9a'; $bpD = Hex '#21447a'; $bpL = Hex '#4a78b8'; $line = Hex '#e8f0fa'; $fill = Hex '#7fa6d8'; $red = Hex '#d23a2a'; $sleeve = Hex '#c8dae8'
+Fill 2 5 7 23 17 $bp
+Grain 2 5 7 23 17 $bpD $bpL 18 $rng
+for ($x = 7; $x -lt 28; $x += 4) { Fill 2 $x 7 1 17 $bpL }
+for ($y = 9; $y -lt 24; $y += 4) { Fill 2 5 $y 23 1 $bpL }
+# Draw the spear small on the scratch tile, then copy it over as an outline drawing.
+DrawSpear 3 (Layout 7.5 21.5 1 -0.62 22) $false
+for ($y = 0; $y -lt $T; $y++) { for ($x = 0; $x -lt $T; $x++) {
+  if ((SGet 3 $x $y).A -eq 0) { continue }
+  $edge = $false
+  foreach ($d in @(@(1, 0), @(-1, 0), @(0, 1), @(0, -1))) { $nx = $x + $d[0]; $ny = $y + $d[1]; if ($nx -lt 0 -or $ny -lt 0 -or $nx -ge $T -or $ny -ge $T -or (SGet 3 $nx $ny).A -eq 0) { $edge = $true } }
+  SPix 2 $x $y ($(if ($edge) { $line } else { $fill }))
+} }
+# Dimension line under it, a callout to the collar, and the red margin note.
+Line 2 8 22 25 22 $line; Px 2 8 21 $line; Px 2 25 21 $line
+Line 2 17 13 22 9 $line; Fill 2 22 9 3 1 $line
+Fill 2 7 9 6 1 $red; Fill 2 7 11 4 1 $red
+Box 2 4 6 25 19 $sleeve
+Px 2 5 7 (Hex '#ffffff'); Px 2 6 7 (Hex '#ffffff'); Px 2 5 8 (Hex '#ffffff')
+Px 2 27 23 $bpD; Px 2 26 23 $bpD; Px 2 27 22 $bpD
+Outline 2; Shadow 2 16 26 11
 
+# Crop off the scratch tile and save.
+$full = $bmp
+$bmp = $full.Clone((New-Object System.Drawing.Rectangle 0, 0, ($Count * $T), $T), $full.PixelFormat)
 SaveSheet $Out $Preview $Count '#5c5650'
