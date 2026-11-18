@@ -12,11 +12,14 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
   Level 2. Exits and the Breakroom aren't marked or explained: find them yourself, or listen to the people down there.
   The **Breakroom** is bigger and comes in one of two layouts (a lit, fenced **Checkpoint** or a sandbagged
   **Bunker**), with a door guard, a **runner board** and its own larder.
-  New this time: on **Level 0**, the rare **Manila Room** (a small dry room that always has food and almond water),
-  **archway rooms** over deep carpet, **blackout zones** (unlit, with ankle-deep pools; Smilers like them) and whole
-  **pillar halls**. On **Level 1**, **the Exchange** (a fenced market with three traders and a guard; almond water
-  is the best currency) and **the All-Nite diner** (a cook selling hot meals, a server full of gossip, regulars in
-  the booths). Fixed: a mapgen error when starting as Pipe Rat, and a dead Breakroom runner's death not counting.
+  Level 0 has the rare **Manila Room** (always food and almond water), **archway rooms**, **blackout zones** and
+  **pillar halls**; Level 1 has **the Exchange** (a fenced market with three traders) and **the All-Nite diner**.
+  New this time: the Breakroom has **two archers** with bows guarding the front and a **supply depot** (racks and
+  crates of food, almond water, medicine, tools and batteries) that runners restock when they get home. Backrooms
+  entities are now **one faction**: they never fight each other, attack zombies that wander in, and leave Facelings
+  alone. New sprites for the Manila Room walls, the new Level 0 floors and the Exchange and diner map signs.
+  Fixed: runners leave at the time on the board (start a new world for this), and the Exchange traders and the
+  diner cook have a full stock to sell.
 - **Survivor Minds** (mod): NPCs with inner lives: journals, chalk wall marks, routines, reactions to what you do,
   gossip and danger warnings, and **Gabriel**, a unique recruitable NPC. Gossip no longer marks places on your map,
   and you can tell a follower to stop marking places as looted ("Got a minute?").
@@ -28,7 +31,11 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
 - **The base game** is updated to the latest CDDA experimental (bone setting and wound fixes, crafting faults, and more).
 - **Fixes in the game itself**: followers no longer get left behind when you change levels; saving while you or an
   NPC is eating or using an item in a bag no longer loses the item on load; NPCs with Mind Over Matter powers fight
-  instead of casting a harmless spell.
+  instead of casting a harmless spell; a heavy bruise getting worse no longer crashes the game; facial hair can be
+  changed again in the character creator.
+- **New in the game itself**: the character creator shows your character's **sprite** while you pick traits and
+  looks, and a **Discord "Playing" card** shows where you are (Options > General > Discord status: off, basic or
+  detailed).
 - **The launcher** (`tools/launcher/`): installs this build, tells you when a new one is out, and keeps your saves.
 
 What changed is listed in each mod's `CHANGELOG.md` (`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
