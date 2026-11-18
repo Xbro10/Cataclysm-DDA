@@ -48,6 +48,12 @@ As of 2026-11-18. Update this each time a prompt is finished.
 - Runners for every camp (user request, 2026-11-18): any camp, with a faction or not, sends a runner out for supplies.
   Build it in Phase 10 next to 10.5 (trips that keep going), on the Breakroom's runners (`camps_runners.json`), which
   stay Breakroom-only until then as the working model. Ties in with the parked "Trade between camps" idea.
+- Side-by-side survival test (user idea, 2026-11-18, very long term: after the phases are done): a small test map
+  split in two, one NPC on each side with exactly the same body, skills, gear, terrain, loot and monsters, one with
+  NPC autonomy on and one without (upstream behaviour). Run both for days or weeks and compare how long each survives
+  and how well it does (food and water kept, injuries, kills, things built). It extends the long tests already
+  planned (7.9 a month alone, 9.10 arena fights, 10.7 long absence) into a direct autonomy-vs-upstream comparison;
+  build it from those tests' setups and report both NPCs side by side.
 - The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
 - Phase 6 rule: stance, anchor, leash, wants and trips are saved NPC variables, not new enum entries.
   The follower rule `ally_rule::no_self_care` (added 2026-11-15) predates this rule.
