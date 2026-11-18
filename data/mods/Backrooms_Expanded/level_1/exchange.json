@@ -72,7 +72,7 @@
   {
     "type": "mapgen",
     "om_terrain": "br1_exchange",
-    "//": "Three trader booths behind counters (crates of stock behind each trader), a locked storeroom, a lit aisle with a rest corner, all inside a chain-link fence with one gate and a guard. Garage keeps going around it.",
+    "//": "Three trader booths behind counters (empty crates behind each trader: the restock fills the stall with that trader's stock only), a locked storeroom, a lit aisle with a rest corner, all inside a chain-link fence with one gate and a guard. Garage keeps going around it.",
     "object": {
       "predecessor_mapgen": "br1_garage",
       "remove_vehicles": [ { "x": [ 0, 23 ], "y": [ 0, 13 ] } ],
@@ -113,7 +113,6 @@
         "                        "
       ],
       "palettes": [ "br1_camp_palette" ],
-      "items": { "X": { "item": "br1_camp_stores", "chance": 90, "repeat": [ 1, 2 ] } },
       "place_terrain": [ { "ter": "t_door_metal_locked", "x": 19, "y": 4 } ],
       "place_npcs": [
         { "class": "BR1_trader_supplies", "x": 5, "y": 3 },
@@ -121,7 +120,12 @@
         { "class": "BR1_trader_curios", "x": 15, "y": 3 },
         { "class": "BR1_exchange_guard", "x": 11, "y": 9 }
       ],
-      "place_signs": [ { "x": 12, "y": 11, "signage": "THE EXCHANGE.  FAIR TRADES.  NO FIGHTING INSIDE THE WIRE.  WE BUY ALMOND WATER." } ],
+      "place_signs": [
+        { "x": 12, "y": 11, "signage": "THE EXCHANGE.  FAIR TRADES.  NO FIGHTING INSIDE THE WIRE.  WE BUY ALMOND WATER." },
+        { "x": 6, "y": 5, "signage": "SUPPLIES.  FOOD - WATER - MEDICINE.  WE BUY THE SAME.  NO SCRAP." },
+        { "x": 11, "y": 5, "signage": "GEAR.  BATTERIES - LIGHTS - TOOLS - TAPE - ROPE.  WE BUY TOOLS AND PARTS." },
+        { "x": 16, "y": 5, "signage": "ODDITIES.  MAPS - GUIDES - NOTES - ONE RARE FIND EVERY FEW DAYS.  WE BUY STORIES." }
+      ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
@@ -129,41 +133,100 @@
     "type": "item_group",
     "id": "br1_exchange_supplies",
     "subtype": "collection",
-    "//": "Stock of the supplies trader: food, water, medicine. Restocks every 3 days.",
+    "//": "Stock of the supplies trader: a few kinds of food, water and medicine in deep piles. Restocks every 3 days.",
     "entries": [
-      { "group": "almond_water_sealed", "count": [ 3, 6 ] },
-      { "group": "br1_breakroom_larder", "count": [ 6, 10 ] },
-      { "group": "br_cat_food", "count": [ 2, 4 ] },
-      { "group": "br_cat_snacks", "count": [ 2, 4 ] },
-      { "group": "br_cat_medical", "count": [ 3, 5 ] }
+      { "group": "almond_water_sealed", "count": [ 6, 10 ] },
+      { "item": "can_beans", "count": [ 4, 8 ] },
+      { "item": "granola", "count": [ 4, 8 ] },
+      { "item": "crackers", "count": [ 3, 6 ] },
+      { "item": "bandages", "count": [ 6, 10 ] },
+      { "item": "aspirin", "count": [ 2, 4 ] },
+      { "item": "disinfectant", "count": [ 2, 4 ] },
+      { "item": "pur_tablets", "count": [ 2, 4 ] }
     ]
   },
   {
     "type": "item_group",
     "id": "br1_exchange_gear",
     "subtype": "collection",
-    "//": "Stock of the gear trader: tools, hardware, lights, batteries, car parts.",
+    "//": "Stock of the gear trader: batteries and lights above all, then tape, rope and a few real tools.",
     "entries": [
-      { "group": "br_cat_tools", "count": [ 3, 5 ] },
-      { "group": "br_cat_hardware", "count": [ 3, 5 ] },
-      { "group": "br_cat_light", "count": [ 2, 4 ] },
-      { "group": "br_cat_power", "count": [ 3, 5 ] },
-      { "group": "br_cat_car", "count": [ 1, 3 ] }
+      { "item": "light_battery_cell", "charges": 16, "count": [ 6, 10 ] },
+      { "item": "flashlight", "charges": 16, "count": [ 2, 4 ] },
+      { "item": "glowstick", "charges": 1400, "count": [ 3, 6 ] },
+      { "item": "lighter", "charges": 100, "count": [ 3, 5 ] },
+      { "item": "duct_tape", "count": [ 3, 5 ] },
+      { "item": "rope_30", "count": [ 2, 3 ] },
+      { "item": "hammer" },
+      { "item": "screwdriver" },
+      { "item": "crowbar", "prob": 60 },
+      { "item": "wrench", "prob": 50 }
     ]
   },
   {
     "type": "item_group",
     "id": "br1_exchange_curios",
     "subtype": "collection",
-    "//": "Stock of the oddities trader: maps, notes and guides people found, plus a little of everything.",
+    "//": "Stock of the oddities trader: maps, guides and notes, plus one rare find that changes with each restock.",
     "entries": [
-      { "item": "survivormap", "count": [ 1, 2 ] },
-      { "item": "br_level_guide", "prob": 60 },
-      { "item": "br1_note_generator", "prob": 40 },
-      { "item": "permanent_marker", "count": [ 1, 2 ] },
-      { "group": "br_cat_light", "count": [ 1, 2 ] },
-      { "group": "br_cat_medical", "count": [ 1, 2 ] },
-      { "group": "almond_water_sealed", "count": [ 1, 2 ] }
+      { "item": "survivormap", "count": [ 2, 3 ] },
+      { "item": "roadmap", "count": [ 1, 2 ] },
+      { "item": "br_level_guide", "count": [ 1, 2 ] },
+      { "item": "br1_note_generator", "count": [ 1, 2 ] },
+      { "item": "permanent_marker", "count": [ 2, 3 ] },
+      { "group": "br1_exchange_rare_find" }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_exchange_rare_find",
+    "subtype": "distribution",
+    "//": "The oddities trader's one rare item per restock.",
+    "items": [
+      { "item": "two_way_radio", "prob": 25 },
+      { "item": "binoculars", "prob": 25 },
+      { "item": "heavy_flashlight", "charges": 16, "prob": 25 },
+      { "item": "handflare", "charges": 300, "count": [ 3, 4 ], "prob": 25 }
+    ]
+  },
+  {
+    "type": "shopkeeper_whitelist",
+    "id": "br1_buys_supplies",
+    "//": "What the supplies trader buys: food, drink, medicine, and the cans and bottles they come in.",
+    "message": "<npcname> only deals in food, water and medicine.",
+    "entries": [ { "category": "food" }, { "category": "drugs" }, { "category": "container" }, { "item": "pur_tablets" } ]
+  },
+  {
+    "type": "shopkeeper_whitelist",
+    "id": "br1_buys_gear",
+    "//": "What the gear trader buys: tools, parts, lights, batteries and car bits, plus almond water.",
+    "message": "<npcname> only deals in tools, lights and batteries.",
+    "entries": [
+      { "category": "tools" },
+      { "category": "spare_parts" },
+      { "category": "tool_magazine" },
+      { "group": "br_cat_tools" },
+      { "group": "br_cat_hardware" },
+      { "group": "br_cat_light" },
+      { "group": "br_cat_power" },
+      { "group": "br_cat_car" },
+      { "item": "rope_30" },
+      { "item": "bottle_almond_water" },
+      { "item": "almond_water" }
+    ]
+  },
+  {
+    "type": "shopkeeper_whitelist",
+    "id": "br1_buys_curios",
+    "//": "What the oddities trader buys: books, maps, notes and odd finds, plus almond water.",
+    "message": "<npcname> only buys maps, books, notes and oddities.",
+    "entries": [
+      { "category": "books" },
+      { "category": "maps" },
+      { "group": "br1_exchange_curios" },
+      { "group": "br1_exchange_rare_find" },
+      { "item": "bottle_almond_water" },
+      { "item": "almond_water" }
     ]
   },
   {
@@ -176,6 +239,14 @@
     "traits": [ { "group": "Appearance_demographics" } ],
     "bonus_int": { "rng": [ 0, 2 ] },
     "shopkeeper_item_group": [ { "group": "br1_exchange_supplies", "rigid": true } ],
+    "//": "Sells only the stall stock, never their own gear (sells_belongings). Their trade (food, medicine) sells a little under the Exchange price and they pay full price for it; they buy nothing else.",
+    "sells_belongings": false,
+    "shopkeeper_whitelist": "br1_buys_supplies",
+    "shopkeeper_price_rules": [
+      { "category": "food", "premium": 1.5, "markup": 0.8 },
+      { "category": "drugs", "premium": 1.3, "markup": 0.8 },
+      { "item": "almond_water", "price": 2500 }
+    ],
     "restock_interval": "3 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
@@ -192,6 +263,10 @@
     "traits": [ { "group": "Appearance_demographics" } ],
     "bonus_str": { "rng": [ 0, 2 ] },
     "shopkeeper_item_group": [ { "group": "br1_exchange_gear", "rigid": true } ],
+    "//": "Sells only the stall stock, never their own gear. Pays a quarter extra for what they sell, and sells it a little cheaper than that.",
+    "sells_belongings": false,
+    "shopkeeper_whitelist": "br1_buys_gear",
+    "shopkeeper_price_rules": [ { "group": "br1_exchange_gear", "premium": 1.25, "markup": 0.8 } ],
     "restock_interval": "3 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
@@ -209,6 +284,10 @@
     "traits": [ { "group": "Appearance_demographics" } ],
     "bonus_per": { "rng": [ 0, 2 ] },
     "shopkeeper_item_group": [ { "group": "br1_exchange_curios", "rigid": true } ],
+    "//": "Sells only the stall stock, never their own gear. Pays a quarter extra for maps, guides and notes.",
+    "sells_belongings": false,
+    "shopkeeper_whitelist": "br1_buys_curios",
+    "shopkeeper_price_rules": [ { "group": "br1_exchange_curios", "premium": 1.25, "markup": 0.8 } ],
     "restock_interval": "4 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
@@ -266,10 +345,26 @@
     ],
     "responses": [
       { "text": "Let's trade.", "effect": "start_trade", "topic": "TALK_BR1_TRADER" },
+      { "text": "What do you sell?", "topic": "TALK_BR1_TRADER_SELLS" },
       { "text": "What is this place?", "topic": "TALK_BR1_EXCHANGE_ABOUT" },
       { "text": "Heard anything worth knowing?", "topic": "TALK_BR1_EXCHANGE_NEWS" },
       { "text": "Just looking.  Bye.", "topic": "TALK_DONE" }
     ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_TRADER_SELLS",
+    "//": "Each trader names their trade: what's on the stall, what they buy, and that their own kit isn't for sale.",
+    "dynamic_line": {
+      "npc_has_class": "NC_BR1_TRADER_SUPPLIES",
+      "yes": "Food, water, medicine.  Almond water by the case, beans, granola, crackers, bandages, aspirin, disinfectant, purifying tablets.  Everything on the stall, nothing on me.  I'll buy the same off you, and I pay well for it, but I don't want your scrap.",
+      "no": {
+        "npc_has_class": "NC_BR1_TRADER_GEAR",
+        "yes": "Batteries first, lights second.  Cells, flashlights, glowsticks, lighters, duct tape, rope, and a few real tools when the runners find them.  The stall's for sale; my own kit isn't.  Bring me tools, parts and batteries and I'll pay a quarter over the odds.",
+        "no": "Maps, guides, notes.  Things that tell you where you are, which down here is worth more than food.  And one odd find every few days, whatever turned up.  Bring me books, maps, scraps of paper with writing on: I buy stories.  Everything else, try my neighbours."
+      }
+    },
+    "responses": [ { "text": "Let's trade.", "effect": "start_trade", "topic": "TALK_BR1_TRADER" }, { "text": "Thanks.", "topic": "TALK_BR1_TRADER" } ]
   },
   {
     "type": "talk_topic",
