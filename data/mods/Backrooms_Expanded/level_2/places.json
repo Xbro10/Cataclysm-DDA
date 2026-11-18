@@ -209,7 +209,8 @@
       { "item": "rag", "count": [ 3, 6 ], "prob": 20 },
       { "item": "bone_human", "count": [ 1, 3 ], "prob": 10 },
       { "item": "br1_note_lost", "prob": 10 },
-      { "item": "almond_water", "container-item": "bottle_almond_water", "prob": 5 }
+      { "item": "almond_water", "container-item": "bottle_almond_water", "prob": 5 },
+      { "item": "br_liquid_pain", "container-item": "bottle_almond_water", "prob": 3 }
     ]
   },
   {

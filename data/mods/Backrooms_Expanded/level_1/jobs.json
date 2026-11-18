@@ -30,7 +30,7 @@
     "type": "item_group",
     "id": "br1_den_scraps",
     "subtype": "distribution",
-    "entries": [ { "item": "bone", "prob": 70 }, { "item": "rag", "prob": 30 } ]
+    "entries": [ { "item": "bone", "prob": 70 }, { "item": "rag", "prob": 30 }, { "item": "br_liquid_pain", "container-item": "bottle_almond_water", "prob": 4 } ]
   },
   {
     "type": "overmap_terrain",

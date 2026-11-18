@@ -27,6 +27,7 @@
       { "group": "br_cat_tools", "count": [ 3, 6 ], "prob": 15 },
       { "group": "br_cat_light", "count": [ 3, 6 ], "prob": 10 },
       { "group": "br_cat_power", "count": [ 3, 6 ], "prob": 8 },
+      { "item": "br_firesalt", "charges": [ 10, 50 ], "prob": 4 },
       { "group": "cannedfood", "count": [ 3, 6 ], "prob": 1 },
       { "item": "br2_note_tunnel", "prob": 3 }
     ]

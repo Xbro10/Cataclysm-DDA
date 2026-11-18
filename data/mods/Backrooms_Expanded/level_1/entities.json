@@ -92,6 +92,7 @@
     "vision_night": 15,
     "anger_triggers": [ "PLAYER_CLOSE" ],
     "fear_triggers": [ "HURT", "FIRE" ],
+    "death_drops": "br_deathmoth_drops",
     "flags": [ "SEES", "HEARS", "FLIES", "STUMBLES", "SEEKS_LIGHT" ]
   },
   {

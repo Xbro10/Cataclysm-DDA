@@ -85,11 +85,18 @@
   },
   {
     "type": "item_group",
+    "id": "br1_runner_glockmag",
+    "//": "The loaded magazine that goes inside a runner's Glock (contents-group of NC_BR1_RUNNER_carry); two spares ride in the kit.",
+    "subtype": "collection",
+    "entries": [ { "item": "glockmag", "ammo-item": "9mm", "charges": 15 } ]
+  },
+  {
+    "type": "item_group",
     "id": "NC_BR1_RUNNER_carry",
     "subtype": "collection",
     "entries": [
-      { "item": "glock_19" },
-      { "item": "glockmag", "ammo-item": "9mm", "charges": 15, "count": 3 },
+      { "item": "glock_19", "contents-group": "br1_runner_glockmag" },
+      { "item": "glockmag", "ammo-item": "9mm", "charges": 15, "count": 2 },
       { "group": "full_1st_aid" },
       { "item": "bandages", "count": [ 4, 6 ] },
       { "item": "aspirin" },
