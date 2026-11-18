@@ -54,6 +54,15 @@
     "score_argument": "0.45"
   },
   {
+    "type": "behavior",
+    "id": "npc_autonomy_seek_safety",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 5.2. Safety 50+ (a hostile they can see within 10 tiles, outmatched, or badly hurt) while the game's own fight-or-flee branch (npc_combat, tried first) isn't acting: walk to the safest spot in reach, judged by light (the same test Smilers avoid), friendly people within 3 tiles and distance from the hostiles they can see, and hold it until Safety is under 25 (at least two minutes). Followers stay within follow reach, guards near their post, others 20 tiles. Scores score_argument times Safety (0.4 at Safety 50, 0.8 at 100).",
+    "conditions": [ { "predicate": "npc_autonomy_wants_safety" } ],
+    "goal": "autonomy_seek_safety",
+    "score": "npc_autonomy_safety_urgency",
+    "score_argument": "0.8"
+  },
+  {
     "type": "snippet",
     "category": "<ally_rule_no_self_care_true_text>",
     "//": "Xbro10 fork, follower rule no_self_care (NPC autonomy option).",

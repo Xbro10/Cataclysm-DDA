@@ -20,6 +20,7 @@
 #include "item.h"
 #include "json.h"
 #include "json_loader.h"
+#include "lightmap.h"
 #include "map.h"
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
@@ -69,6 +70,10 @@ static const furn_str_id furn_f_fireplace( "f_fireplace" );
 static const field_type_str_id field_fd_fire( "fd_fire" );
 static const furn_str_id furn_f_water_heater( "f_water_heater" );
 
+static const ter_str_id ter_t_flat_roof( "t_flat_roof" );
+static const ter_str_id ter_t_floor( "t_floor" );
+static const ter_str_id ter_t_utility_light( "t_utility_light" );
+static const ter_str_id ter_t_wall( "t_wall" );
 static const ter_str_id ter_t_water_sh( "t_water_sh" );
 
 static const trap_str_id tr_spike_pit( "tr_spike_pit" );
@@ -1125,4 +1130,129 @@ TEST_CASE( "npc_autonomy_safety_hostile_close_by", "[npc][autonomy]" )
     spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 2, 0 ) );
     get_map().build_map_cache( 0 );
     CHECK( npc_autonomy::current_needs( guy ).safety >= 50 );
+}
+
+TEST_CASE( "npc_autonomy_safety_sees_hostiles_within_10_tiles", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 10, 0 ) );
+    guy.mem_combat.assess_enemy = 0.0f;
+    guy.mem_combat.assess_ally = 5.0f;
+
+    SECTION( "8 tiles away: scared (step 5.2; it took 3 tiles before)" ) {
+        spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 8, 0 ) );
+        get_map().build_map_cache( 0 );
+        CHECK( npc_autonomy::current_needs( guy ).safety >= 50 );
+    }
+    SECTION( "15 tiles away: calm" ) {
+        spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 15, 0 ) );
+        get_map().build_map_cache( 0 );
+        CHECK( npc_autonomy::current_needs( guy ).safety == 0 );
+    }
+}
+
+// Step 5.2: a scared NPC walks to the safest spot in reach (lit, near friends, away from
+// the hostiles they can see) and holds it.
+TEST_CASE( "npc_autonomy_seek_safety", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero ); // midnight: dark outside
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    const auto on_their_own = [&guy]() {
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_no_faction );
+    };
+    // A roofed room lit by a ceiling light, its doorway facing west, off to the east (the
+    // doorway throws a beam of light westward; the NPC starts out of it).
+    const auto build_lit_room = [&here]( const tripoint_bub_ms & center ) {
+        for( const tripoint_bub_ms &q : here.points_in_radius( center, 2 ) ) {
+            here.ter_set( q, rl_dist( q, center ) == 2 ? ter_t_wall : ter_t_floor );
+            here.ter_set( q + tripoint::above, ter_t_flat_roof );
+        }
+        here.ter_set( center, ter_t_utility_light );
+        here.ter_set( center + tripoint( -2, 0, 0 ), ter_t_floor );
+        here.build_map_cache( 1 );
+        here.build_map_cache( 0 );
+    };
+    const auto lit = [&here]( const tripoint_bub_ms & p ) {
+        return here.ambient_light_at( p ) > LIGHT_AMBIENT_LIT;
+    };
+    const auto badly_hurt = [&guy]() {
+        guy.set_all_parts_hp_cur( 5 ); // Safety 50+ from injuries alone
+    };
+    const auto run = [&guy]( int turns ) {
+        for( int turn = 0; turn < turns; ++turn ) {
+            guy.set_moves( guy.get_speed() );
+            npc_autonomy::run_goal( guy, "autonomy_seek_safety" );
+        }
+    };
+
+    SECTION( "scared, in the dark, a lit room in sight: they walk into the light and stay" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        build_lit_room( guy.pos_bub() + tripoint( 10, 6, 0 ) );
+        INFO( "light where they start: " << here.ambient_light_at( guy.pos_bub() ) );
+        REQUIRE_FALSE( lit( guy.pos_bub() ) );
+        badly_hurt();
+        REQUIRE( npc_autonomy::current_needs( guy ).safety >= 50 );
+        REQUIRE( npc_autonomy::wants_safety( guy ) );
+        run( 60 );
+        CHECK( lit( guy.pos_bub() ) );
+        const tripoint_bub_ms spot = guy.pos_bub();
+        run( 30 );
+        CHECK( guy.pos_bub() == spot );
+        CHECK( npc_autonomy::wants_safety( guy ) );
+    }
+    SECTION( "a zombie in plain sight: they back away from it" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        set_time( calendar::turn_zero + 12_hours );
+        on_their_own();
+        const tripoint_bub_ms start = guy.pos_bub();
+        const monster &zed = spawn_test_monster( "mon_zombie", start + point( 3, 0 ) );
+        here.build_map_cache( 0 );
+        REQUIRE( npc_autonomy::current_needs( guy ).safety >= 50 );
+        run( 40 );
+        CHECK( rl_dist( guy.pos_bub(), zed.pos_bub() ) >= 8 );
+    }
+    SECTION( "nothing to be scared of: nothing happens" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        on_their_own();
+        build_lit_room( guy.pos_bub() + tripoint( 10, 6, 0 ) );
+        REQUIRE( npc_autonomy::current_needs( guy ).safety == 0 );
+        CHECK_FALSE( npc_autonomy::wants_safety( guy ) );
+    }
+    SECTION( "the behavior tree picks it; with the option off it never does" ) {
+        on_their_own();
+        badly_hurt();
+        behavior::character_oracle_t oracle( &guy );
+        behavior::tree priorities;
+        priorities.add( &behavior_node_t_npc_priorities.obj() );
+        {
+            override_option autonomy( "NPC_AUTONOMY", "true" );
+            CHECK( priorities.tick( &oracle ) == "autonomy_seek_safety" );
+        }
+        {
+            override_option autonomy( "NPC_AUTONOMY", "false" );
+            CHECK_FALSE( npc_autonomy::wants_safety( guy ) );
+            CHECK( priorities.tick( &oracle ) != "autonomy_seek_safety" );
+        }
+    }
+    SECTION( "a follower doesn't leave follow distance for a lit room further off" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        const tripoint_bub_ms room = guy.pos_bub() + tripoint( 14, 6, 0 );
+        build_lit_room( room );
+        badly_hurt();
+        REQUIRE( guy.is_walking_with() );
+        run( 60 );
+        CHECK( rl_dist( guy.pos_bub(), get_avatar().pos_bub() ) <= 8 );
+        CHECK( rl_dist( guy.pos_bub(), room ) > 3 );
+    }
 }

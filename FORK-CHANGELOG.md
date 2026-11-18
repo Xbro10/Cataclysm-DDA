@@ -28,6 +28,15 @@ built so far.
 - [BE] **Backrooms entities are their own faction:** they never fight each other, always attack zombies and other
   outsiders, and leave Facelings alone.
 
+### NPCs
+- [C++] **Scared NPCs head for safety (step 5.2):** with NPC autonomy on, an NPC who is scared (Safety 50+) but not
+  fighting or fleeing yet walks to the safest spot it may reach: a lit one (where Smilers won't follow), near friendly
+  people and away from the hostiles it can see. "Name backs into the light." It holds there until calm again (Safety
+  under 25, at least two minutes). Followers stay within follow distance, guards near their post. The look-around
+  panel shows "Plan: stay safe (…)".
+- [C++] **Safety notices more:** any hostile an NPC can see within 10 tiles now makes Safety 50+ (it was 3 tiles), so
+  meals, chats and trips also wait while something hostile is that close.
+
 ### Launcher
 - [C++] **Discord status card:** while you play, Discord shows which level or world you're in (with the launcher picture),
   how long you've played and a **Get the fork** button. Options > General > Discord: Off, Basic or Detailed (adds

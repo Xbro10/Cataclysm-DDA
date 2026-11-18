@@ -71,6 +71,7 @@ predicate_map = {{
         { "npc_autonomy_wants_food", make_function( &character_oracle_t::autonomy_wants_food ) },
         { "npc_autonomy_wants_warmth", make_function( &character_oracle_t::autonomy_wants_warmth ) },
         { "npc_autonomy_wants_meal_at_post", make_function( &character_oracle_t::autonomy_wants_meal_at_post ) },
+        { "npc_autonomy_wants_safety", make_function( &character_oracle_t::autonomy_wants_safety ) },
         { "monster_not_hallucination", make_function( &monster_oracle_t::not_hallucination ) },
         { "monster_items_available", make_function( &monster_oracle_t::items_available ) },
         { "monster_split_possible", make_function( &monster_oracle_t::split_possible ) },
@@ -96,7 +97,8 @@ score_predicate_map = {{
         { "npc_safety_urgency", make_score_function( &character_oracle_t::safety_urgency ) },
         { "npc_social_urgency", make_score_function( &character_oracle_t::social_urgency ) },
         { "npc_autonomy_weight", make_score_function( &character_oracle_t::autonomy_weight ) },
-        { "npc_autonomy_warmth_urgency", make_score_function( &character_oracle_t::autonomy_warmth_urgency ) }
+        { "npc_autonomy_warmth_urgency", make_score_function( &character_oracle_t::autonomy_warmth_urgency ) },
+        { "npc_autonomy_safety_urgency", make_score_function( &character_oracle_t::autonomy_safety_urgency ) }
     }
 };
 

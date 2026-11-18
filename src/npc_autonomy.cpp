@@ -14,6 +14,7 @@
 #include "behavior.h"
 #include "character_oracle.h"
 #include "coordinates.h"
+#include "creature_tracker.h"
 #include "creature.h"
 #include "character.h"
 #include "character_id.h"
@@ -25,6 +26,7 @@
 #include "iexamine.h"
 #include "item.h"
 #include "itype.h"
+#include "lightmap.h"
 #include "map.h"
 #include "mapdata.h"
 #include "math_parser_diag_value.h"
@@ -61,8 +63,9 @@ namespace
 constexpr double social_rise_per_minute = 100.0 / ( 24.0 * 60.0 );
 constexpr double social_fall_per_minute = 100.0 / ( 2.0 * 60.0 );
 constexpr int company_range = 3;
-// A hostile the NPC can see this close makes Safety at least 50.
-constexpr int close_hostile_range = 3;
+// A hostile the NPC can see this close makes Safety at least 50 (3 tiles until step 5.2:
+// a follower watching a Smiler 8 tiles off felt perfectly safe).
+constexpr int close_hostile_range = 10;
 // A longer gap since the last update means the NPC was unloaded: no catch-up.
 constexpr time_duration max_catch_up = 5_minutes;
 
@@ -235,7 +238,7 @@ float safety_need( const npc &guy )
         // Evenly matched reads as about 67; outmatched 1.5 to 1 or worse is 100.
         threat = enemy / std::max( guy.mem_combat.assess_ally, 1.0f ) / 1.5f;
     }
-    // Anything hostile they can see close by is a danger, however weak the game rates it
+    // Anything hostile they can see nearby is a danger, however weak the game rates it
     // (a lone zombie at arm's length read as Safety 2).
     if( guy.sees_hostile_within( close_hostile_range ) ) {
         threat = std::max( threat, 0.5f );
@@ -1122,12 +1125,284 @@ goal_result get_warm( npc &guy )
     count_failed_warm_step( guy );
     return goal_result::none;
 }
+
+// ---- Seeking safety (step 5.2) ----
+
+constexpr const char *goal_seek_safety = "autonomy_seek_safety";
+// The spot they're heading for or holding, "x,y,z" (absolute). Said once per spot.
+constexpr const char *var_safe_spot = "autonomy_safe_spot";
+// The turn they reached it (unset while still on the way).
+constexpr const char *var_safe_since = "autonomy_safe_since";
+// A spot they couldn't walk to, skipped for a while.
+constexpr const char *var_safe_bad = "autonomy_safe_bad";
+constexpr const char *var_safe_bad_until = "autonomy_safe_bad_until";
+constexpr int safety_radius = 20;
+// Once there, they stay until Safety is under 25, and at least this long.
+constexpr int calm_enough = 25;
+constexpr time_duration min_hold = 2_minutes;
+// A new spot has to beat the current one by this much (so they don't hop between spots).
+constexpr float better_by = 1.0f;
+constexpr float lit_bonus = 4.0f;
+constexpr float friend_bonus = 1.5f;
+constexpr float per_tile_from_hostile = 0.5f;
+constexpr int hostile_far_enough = 12;
+constexpr float walk_cost_per_tile = 0.15f;
+
+struct safety_view {
+    std::vector<tripoint_abs_ms> hostiles;
+    std::vector<tripoint_abs_ms> friends;
+};
+
+// Who they can see that matters: hostiles, and friendly people who are awake.
+safety_view look_around( const npc &guy )
+{
+    safety_view view;
+    for( const Creature *critter : guy.get_visible_creatures( safety_radius ) ) {
+        if( guy.attitude_to( *critter ) == Creature::Attitude::HOSTILE ) {
+            view.hostiles.push_back( critter->pos_abs() );
+        }
+    }
+    const auto consider = [&]( const Character & other ) {
+        if( &other != &guy && !other.is_dead_state() && !other.in_sleep_state() &&
+            rl_dist( guy.pos_abs(), other.pos_abs() ) <= safety_radius + company_range &&
+            guy.attitude_to( other ) == Creature::Attitude::FRIENDLY ) {
+            view.friends.push_back( other.pos_abs() );
+        }
+    };
+    consider( get_avatar() );
+    for( const npc &other : g->all_npcs() ) {
+        consider( other );
+    }
+    return view;
+}
+
+// Followers stay within the game's own follow reach, guards near their post (the same
+// rule the game uses for its own trips); anyone else 20 tiles.
+bool safe_spot_in_reach( const npc &guy, const tripoint_abs_ms &p )
+{
+    if( const std::optional<npc_reach> reach = guy.obligation_reach() ) {
+        return reach->contains( p );
+    }
+    return rl_dist( guy.pos_abs(), p ) <= safety_radius;
+}
+
+bool lit( const map &here, const tripoint_bub_ms &p )
+{
+    // The same test as the AVOIDS_LIGHT monsters (Smilers) use: they won't step into it.
+    return here.ambient_light_at( p ) > LIGHT_AMBIENT_LIT;
+}
+
+// How safe a tile is, before the walk there: light, friends close by, distance from the
+// hostiles they can see. Nullopt for a tile next to a hostile or one they can't stand on.
+std::optional<float> spot_score( const npc &guy, const map &here, const safety_view &view,
+                                 const tripoint_bub_ms &p )
+{
+    const bool own_tile = p == guy.pos_bub();
+    if( !own_tile && ( !here.passable( p ) || get_creature_tracker().creature_at( p ) != nullptr ||
+                       avoids_trap( guy, p ) || guy.is_dangerous_fields( here.field_at( p ) ) ) ) {
+        return std::nullopt;
+    }
+    const tripoint_abs_ms abs = here.get_abs( p );
+    int nearest_hostile = hostile_far_enough;
+    for( const tripoint_abs_ms &h : view.hostiles ) {
+        nearest_hostile = std::min( nearest_hostile, rl_dist( abs, h ) );
+    }
+    if( nearest_hostile <= 1 && !own_tile ) {
+        return std::nullopt;
+    }
+    int friends_near = 0;
+    for( const tripoint_abs_ms &f : view.friends ) {
+        if( rl_dist( abs, f ) <= company_range ) {
+            friends_near++;
+        }
+    }
+    return ( lit( here, p ) ? lit_bonus : 0.0f ) + friend_bonus * std::min( friends_near, 2 ) +
+           per_tile_from_hostile * nearest_hostile;
+}
+
+std::optional<tripoint_abs_ms> parse_spot( const diag_value *value )
+{
+    tripoint_abs_ms p;
+    if( value == nullptr || !value->is_str() ||
+        std::sscanf( value->str().c_str(), "%d,%d,%d", &p.x(), &p.y(), &p.z() ) != 3 ) {
+        return std::nullopt;
+    }
+    return p;
+}
+
+// The safest spot they may reach, or where they stand when nowhere is clearly better.
+// Nullopt when they may not stay where they are (a follower left behind) and no spot
+// in reach will do.
+std::optional<tripoint_abs_ms> find_safe_spot( const npc &guy )
+{
+    const map &here = get_map();
+    const safety_view view = look_around( guy );
+    const tripoint_bub_ms pos = guy.pos_bub();
+    const std::optional<tripoint_abs_ms> bad = parse_spot( guy.maybe_get_value( var_safe_bad ) );
+    const bool bad_active = bad && turns_since_start() < get_num( guy, var_safe_bad_until, -1.0 );
+
+    // What to beat: staying put, or the spot they already picked.
+    std::optional<tripoint_abs_ms> keep;
+    float keep_total = -1.0e9f;
+    if( safe_spot_in_reach( guy, guy.pos_abs() ) ) {
+        if( const std::optional<float> s = spot_score( guy, here, view, pos ) ) {
+            keep = guy.pos_abs();
+            keep_total = *s;
+        }
+    }
+    if( const std::optional<tripoint_abs_ms> picked = parse_spot( guy.maybe_get_value(
+                var_safe_spot ) ); picked && *picked != guy.pos_abs() && here.inbounds( *picked ) &&
+        safe_spot_in_reach( guy, *picked ) && !( bad_active && *picked == *bad ) ) {
+        const tripoint_bub_ms p = here.get_bub( *picked );
+        if( const std::optional<float> s = spot_score( guy, here, view, p ) ) {
+            const float total = *s - walk_cost_per_tile * rl_dist( pos, p );
+            if( total > keep_total ) {
+                keep = *picked;
+                keep_total = total;
+            }
+        }
+    }
+
+    // Everything in reach, best first; line of sight (the costly part) only for the best few.
+    std::vector<std::pair<float, tripoint_bub_ms>> candidates;
+    for( const tripoint_bub_ms &p : closest_points_first( pos, safety_radius ) ) {
+        if( p == pos || p.z() != pos.z() || !here.inbounds( p ) ) {
+            continue;
+        }
+        const tripoint_abs_ms abs = here.get_abs( p );
+        if( ( bad_active && abs == *bad ) || !safe_spot_in_reach( guy, abs ) ) {
+            continue;
+        }
+        if( const std::optional<float> s = spot_score( guy, here, view, p ) ) {
+            const float total = *s - walk_cost_per_tile * rl_dist( pos, p );
+            if( total > keep_total + better_by ) {
+                candidates.emplace_back( total, p );
+            }
+        }
+    }
+    std::stable_sort( candidates.begin(), candidates.end(), []( const auto & a, const auto & b ) {
+        return a.first > b.first;
+    } );
+    constexpr size_t max_sight_checks = 30;
+    for( size_t i = 0; i < candidates.size() && i < max_sight_checks; ++i ) {
+        if( guy.sees( here, candidates[i].second ) ) {
+            return here.get_abs( candidates[i].second );
+        }
+    }
+    return keep;
+}
+
+// The search scans 20 tiles and the behavior tree asks every turn, so reuse the answer.
+std::optional<tripoint_abs_ms> safe_spot( const npc &guy )
+{
+    struct check {
+        int turn = 0;
+        std::optional<tripoint_abs_ms> spot;
+    };
+    static std::map<character_id, check> checks;
+    const int now = turns_since_start();
+    const auto known = checks.find( guy.getID() );
+    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < recheck_turns ) {
+        return known->second.spot;
+    }
+    const std::optional<tripoint_abs_ms> spot = find_safe_spot( guy );
+    checks[guy.getID()] = { now, spot };
+    return spot;
+}
+
+void forget_safe_spot( npc &guy )
+{
+    guy.remove_value( var_safe_spot );
+    guy.remove_value( var_safe_since );
+}
+
+goal_result seek_safety( npc &guy )
+{
+    const std::optional<tripoint_abs_ms> spot = safe_spot( guy );
+    if( !spot ) {
+        forget_safe_spot( guy );
+        return goal_result::none;
+    }
+    map &here = get_map();
+    const std::string key = target_key( *spot );
+    const diag_value *said = guy.maybe_get_value( var_safe_spot );
+    if( said == nullptr || !said->is_str() || said->str() != key ) {
+        guy.set_value( var_safe_spot, key );
+        guy.remove_value( var_safe_since );
+        if( *spot != guy.pos_abs() && player_sees( guy ) ) {
+            add_msg( m_neutral, lit( here, here.get_bub( *spot ) ) ?
+                     _( "%s backs into the light." ) : _( "%s backs off to a safer spot." ),
+                     guy.get_name() );
+        }
+    }
+    if( *spot == guy.pos_abs() ) {
+        // Hold here, eyes open, until calmer.
+        if( guy.maybe_get_value( var_safe_since ) == nullptr ) {
+            guy.set_value( var_safe_since, static_cast<double>( turns_since_start() ) );
+        }
+        guy.mod_moves( -guy.get_speed() );
+        return goal_result::acted;
+    }
+    if( guy.move_to_and_verify( npc_trip_spec::stand_on( here.get_bub( *spot ), true ) ) ) {
+        return goal_result::acted;
+    }
+    // Can't get there: skip that spot for a while and look again.
+    guy.set_value( var_safe_bad, key );
+    guy.set_value( var_safe_bad_until,
+                   static_cast<double>( turns_since_start() + to_turns<int>( 10_minutes ) ) );
+    forget_safe_spot( guy );
+    return goal_result::none;
+}
+
+std::string safe_plan_text( const npc &guy )
+{
+    if( guy.get_committed_goal() != goal_seek_safety ) {
+        return std::string();
+    }
+    const std::optional<tripoint_abs_ms> spot = parse_spot( guy.maybe_get_value( var_safe_spot ) );
+    if( !spot ) {
+        return std::string();
+    }
+    const map &here = get_map();
+    const bool in_light = here.inbounds( *spot ) && lit( here, here.get_bub( *spot ) );
+    const int dist = rl_dist( guy.pos_abs(), *spot );
+    if( dist == 0 ) {
+        return in_light ? _( "Plan: stay safe (holding in the light)" ) :
+               _( "Plan: stay safe (holding here)" );
+    }
+    return in_light ?
+           string_format( _( "Plan: stay safe (heading to a lit spot %d tiles away)" ), dist ) :
+           string_format( _( "Plan: stay safe (heading to a safer spot %d tiles away)" ), dist );
+}
+
 } // namespace
 
 bool is_goal( const std::string &goal )
 {
     return goal == goal_meal || goal == goal_socialize || goal == goal_get_water ||
-           goal == goal_get_food || goal == goal_get_warm;
+           goal == goal_get_food || goal == goal_get_warm || goal == goal_seek_safety;
+}
+
+bool wants_safety( const npc &guy )
+{
+    if( !enabled() || guy.in_sleep_state() ) {
+        return false;
+    }
+    const float safety = safety_need( guy );
+    if( safety < unsafe ) {
+        // Already at their spot: stay until calmer (Safety under 25) and for at least
+        // two minutes, so they don't step out of the light the moment the threat is
+        // out of sight and walk straight back in.
+        const double since = get_num( guy, var_safe_since, -1.0 );
+        if( guy.get_committed_goal() != goal_seek_safety || since < 0.0 ) {
+            return false;
+        }
+        const bool held_long_enough = turns_since_start() - since >= to_turns<double>( min_hold );
+        if( to_need( safety ) < calm_enough && held_long_enough ) {
+            return false;
+        }
+    }
+    return safe_spot( guy ).has_value();
 }
 
 std::string warm_blocker( const npc &guy )
@@ -1269,6 +1544,9 @@ void drop_stale_plans( npc &guy )
             guy.remove_value( var_wood_in_hands );
         }
     }
+    if( guy.get_committed_goal() != goal_seek_safety ) {
+        forget_safe_spot( guy );
+    }
 }
 
 void set_down_wood_after_trip( npc &guy )
@@ -1325,7 +1603,11 @@ std::string plan_text( const npc &guy )
         return water;
     }
     const std::string food = trip_plan_text( guy, food_trip );
-    return food.empty() ? warm_plan_text( guy ) : food;
+    if( !food.empty() ) {
+        return food;
+    }
+    const std::string safe = safe_plan_text( guy );
+    return safe.empty() ? warm_plan_text( guy ) : safe;
 }
 
 bool wants_meal( const npc &guy )
@@ -1418,6 +1700,9 @@ bool wants_company( const npc &guy )
 
 goal_result run_goal( npc &guy, const std::string &goal )
 {
+    if( goal == goal_seek_safety ) {
+        return seek_safety( guy );
+    }
     if( goal == goal_meal ) {
         return eat_meal( guy );
     }
