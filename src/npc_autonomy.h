@@ -122,10 +122,11 @@ bool wants_warmth( const npc &guy );
 // Goal autonomy_seek_safety. Scared (Safety 50+) but not in the game's own fight-or-flee
 // branch (which the behavior tree tries first): walk to the safest spot in reach (lit, near
 // friendly people, away from the hostiles they can see; followers within follow reach,
-// guards near their post, others 20 tiles) and hold it until Safety is under 25, for at
-// least two minutes.
+// guards near their post, others 20 tiles) and keep at it until Safety is under 25 and two
+// minutes after they were last scared. Hostiles 4-10 tiles off only scare them when together
+// they match the NPC's side (the game's own ratings); any within 3 tiles always does.
 
-/** Scared and a spot to go to or hold, or holding and not yet calm. */
+/** Scared and a spot to go to or hold, or seeking safety and not yet calm. */
 bool wants_safety( const npc &guy );
 /**
  * For the look-around panel: why a cold NPC (Warmth 50+) can't warm up, e.g. "Cold: no room

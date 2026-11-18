@@ -34,8 +34,13 @@ built so far.
   people and away from the hostiles it can see. "Name backs into the light." It holds there until calm again (Safety
   under 25, at least two minutes). Followers stay within follow distance, guards near their post. The look-around
   panel shows "Plan: stay safe (…)".
-- [C++] **Safety notices more:** any hostile an NPC can see within 10 tiles now makes Safety 50+ (it was 3 tiles), so
-  meals, chats and trips also wait while something hostile is that close.
+- [C++] **Safety notices more, but sizes things up:** hostiles an NPC can see within 10 tiles (it was 3) make Safety 50+
+  when together they match or beat what the NPC could fight on their own (armour, dodge and the weapon in hand, by
+  the game's own ratings). Unarmed, a zombie 8 tiles off is scary; with a katana it isn't, but three are, and a zombie
+  brute is until they're skilled; a hulk always is. Anything within 3 tiles still counts. Meals, chats and trips wait
+  while scared.
+- [C++] **No more pacing back and forth** between two hostiles: once an NPC heads for a safe spot it keeps going until
+  calm (Safety under 25 and two minutes since it was last scared), and only switches to a clearly better spot.
 
 ### Launcher
 - [C++] **Discord status card:** while you play, Discord shows which level or world you're in (with the launcher picture),

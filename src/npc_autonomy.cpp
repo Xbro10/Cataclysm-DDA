@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdio>
+#include <limits>
 #include <map>
 #include <cmath>
 #include <optional>
@@ -32,6 +33,8 @@
 #include "math_parser_diag_value.h"
 #include "messages.h"
 #include "mission.h"
+#include "monster.h"
+#include "mtype.h"
 #include "npc.h"
 #include "npc_trip.h"
 #include "options.h"
@@ -63,9 +66,12 @@ namespace
 constexpr double social_rise_per_minute = 100.0 / ( 24.0 * 60.0 );
 constexpr double social_fall_per_minute = 100.0 / ( 2.0 * 60.0 );
 constexpr int company_range = 3;
-// A hostile the NPC can see this close makes Safety at least 50 (3 tiles until step 5.2:
-// a follower watching a Smiler 8 tiles off felt perfectly safe).
-constexpr int close_hostile_range = 10;
+// Any hostile the NPC can see this close makes Safety at least 50.
+constexpr int close_hostile_range = 3;
+// Further out, up to this range, hostiles they can see make Safety at least 50 when together
+// they are a match for the NPC's side (step 5.2: a follower watching a Smiler 8 tiles off
+// felt perfectly safe; a well-armed one shouldn't fear a lone zombie at 8 tiles).
+constexpr int watch_hostile_range = 10;
 // A longer gap since the last update means the NPC was unloaded: no catch-up.
 constexpr time_duration max_catch_up = 5_minutes;
 
@@ -228,6 +234,39 @@ bool has_company( const npc &guy )
     return false;
 }
 
+static float watched_threat( const npc &guy )
+{
+    float total = 0.0f;
+    for( const Creature *critter : guy.get_visible_creatures( watch_hostile_range ) ) {
+        if( guy.attitude_to( *critter ) != Creature::Attitude::HOSTILE ) {
+            continue;
+        }
+        const monster *mon = critter->as_monster();
+        if( mon == nullptr ) {
+            // No cheap way to rate an armed person: treat them as a real threat.
+            return std::numeric_limits<float>::max();
+        }
+        const float hp = static_cast<float>( mon->get_hp() ) / std::max( mon->get_hp_max(), 1 );
+        total += std::max( static_cast<float>( mon->type->get_total_difficulty() ),
+                           NPC_DANGER_VERY_LOW ) * ( hp * 0.5f + 0.5f );
+    }
+    return total;
+}
+
+// How well the NPC could fight on their own, on the same scale as a monster's threat
+// rating: defence (dodge and armour) plus the weapon in hand, both as the game itself
+// rates them, scaled by health. An unarmed survivor is about 4 (a zombie is 5); a katana
+// adds about 10, or nearly 30 with good skills (a zombie brute is 27, a hulk 173).
+static float own_strength( const npc &guy )
+{
+    const float health = std::clamp( guy.hp_percentage() / 100.0f, 0.0f, 1.0f );
+    const float defence = guy.mem_combat.my_defence_assess > 0.0f ? guy.mem_combat.my_defence_assess :
+                          guy.get_dodge() * health;
+    const item_location weapon = guy.get_wielded_item();
+    const float attack = weapon ? static_cast<float>( guy.evaluate_weapon( *weapon ) ) : 0.0f;
+    return defence + attack * health;
+}
+
 float safety_need( const npc &guy )
 {
     // assess_danger() refreshes these each NPC turn. Below ~2 the game itself
@@ -238,10 +277,18 @@ float safety_need( const npc &guy )
         // Evenly matched reads as about 67; outmatched 1.5 to 1 or worse is 100.
         threat = enemy / std::max( guy.mem_combat.assess_ally, 1.0f ) / 1.5f;
     }
-    // Anything hostile they can see nearby is a danger, however weak the game rates it
-    // (a lone zombie at arm's length read as Safety 2).
+    // Anything hostile they can see close by is a danger, however weak the game rates it
+    // (a lone zombie at arm's length read as Safety 2). Further out, only hostiles that
+    // together match or beat what the NPC could take on themselves: well armed, they
+    // aren't scared of a lone zombie at 8 tiles (it's fought if it comes close). A hostile
+    // person always counts.
     if( guy.sees_hostile_within( close_hostile_range ) ) {
         threat = std::max( threat, 0.5f );
+    } else {
+        const float watched = watched_threat( guy );
+        if( watched > 0.0f && watched >= own_strength( guy ) ) {
+            threat = std::max( threat, 0.5f );
+        }
     }
     const float injury = 1.0f - guy.hp_percentage() / 100.0f;
     return std::clamp( std::max( threat, 0.6f * injury ), 0.0f, 1.0f );
@@ -1131,17 +1178,18 @@ goal_result get_warm( npc &guy )
 constexpr const char *goal_seek_safety = "autonomy_seek_safety";
 // The spot they're heading for or holding, "x,y,z" (absolute). Said once per spot.
 constexpr const char *var_safe_spot = "autonomy_safe_spot";
-// The turn they reached it (unset while still on the way).
-constexpr const char *var_safe_since = "autonomy_safe_since";
+// The last turn they were scared (Safety 50+) while seeking safety.
+constexpr const char *var_safe_scared_at = "autonomy_safe_scared_at";
 // A spot they couldn't walk to, skipped for a while.
 constexpr const char *var_safe_bad = "autonomy_safe_bad";
 constexpr const char *var_safe_bad_until = "autonomy_safe_bad_until";
 constexpr int safety_radius = 20;
-// Once there, they stay until Safety is under 25, and at least this long.
+// They carry on until Safety is under 25, and this long after they were last scared.
 constexpr int calm_enough = 25;
 constexpr time_duration min_hold = 2_minutes;
-// A new spot has to beat the current one by this much (so they don't hop between spots).
-constexpr float better_by = 1.0f;
+// A new spot has to beat the current one by this much (so they don't hop between spots
+// as hostiles move about).
+constexpr float better_by = 2.0f;
 constexpr float lit_bonus = 4.0f;
 constexpr float friend_bonus = 1.5f;
 constexpr float per_tile_from_hostile = 0.5f;
@@ -1313,11 +1361,14 @@ std::optional<tripoint_abs_ms> safe_spot( const npc &guy )
 void forget_safe_spot( npc &guy )
 {
     guy.remove_value( var_safe_spot );
-    guy.remove_value( var_safe_since );
+    guy.remove_value( var_safe_scared_at );
 }
 
 goal_result seek_safety( npc &guy )
 {
+    if( safety_need( guy ) >= unsafe ) {
+        guy.set_value( var_safe_scared_at, static_cast<double>( turns_since_start() ) );
+    }
     const std::optional<tripoint_abs_ms> spot = safe_spot( guy );
     if( !spot ) {
         forget_safe_spot( guy );
@@ -1327,19 +1378,16 @@ goal_result seek_safety( npc &guy )
     const std::string key = target_key( *spot );
     const diag_value *said = guy.maybe_get_value( var_safe_spot );
     if( said == nullptr || !said->is_str() || said->str() != key ) {
-        guy.set_value( var_safe_spot, key );
-        guy.remove_value( var_safe_since );
-        if( *spot != guy.pos_abs() && player_sees( guy ) ) {
+        // Said once per scare, not each time a better spot turns up.
+        if( said == nullptr && *spot != guy.pos_abs() && player_sees( guy ) ) {
             add_msg( m_neutral, lit( here, here.get_bub( *spot ) ) ?
                      _( "%s backs into the light." ) : _( "%s backs off to a safer spot." ),
                      guy.get_name() );
         }
+        guy.set_value( var_safe_spot, key );
     }
     if( *spot == guy.pos_abs() ) {
         // Hold here, eyes open, until calmer.
-        if( guy.maybe_get_value( var_safe_since ) == nullptr ) {
-            guy.set_value( var_safe_since, static_cast<double>( turns_since_start() ) );
-        }
         guy.mod_moves( -guy.get_speed() );
         return goal_result::acted;
     }
@@ -1390,15 +1438,15 @@ bool wants_safety( const npc &guy )
     }
     const float safety = safety_need( guy );
     if( safety < unsafe ) {
-        // Already at their spot: stay until calmer (Safety under 25) and for at least
-        // two minutes, so they don't step out of the light the moment the threat is
-        // out of sight and walk straight back in.
-        const double since = get_num( guy, var_safe_since, -1.0 );
-        if( guy.get_committed_goal() != goal_seek_safety || since < 0.0 ) {
+        // Once on their way or at their spot, they carry on until calmer (Safety under 25)
+        // and two minutes after they were last scared. Dropping it the moment a hostile
+        // went out of sight sent them back and forth between two zombies (2026-11-17).
+        const double scared_at = get_num( guy, var_safe_scared_at, -1.0 );
+        if( guy.get_committed_goal() != goal_seek_safety || scared_at < 0.0 ) {
             return false;
         }
-        const bool held_long_enough = turns_since_start() - since >= to_turns<double>( min_hold );
-        if( to_need( safety ) < calm_enough && held_long_enough ) {
+        const bool calm_long_enough = turns_since_start() - scared_at >= to_turns<double>( min_hold );
+        if( to_need( safety ) < calm_enough && calm_long_enough ) {
             return false;
         }
     }

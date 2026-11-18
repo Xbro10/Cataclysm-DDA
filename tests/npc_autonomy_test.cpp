@@ -47,6 +47,7 @@ static const itype_id itype_duffelbag( "duffelbag" );
 static const itype_id itype_butane( "butane" );
 static const itype_id itype_hoodie( "hoodie" );
 static const itype_id itype_jeans( "jeans" );
+static const itype_id itype_katana( "katana" );
 static const itype_id itype_lighter( "lighter" );
 static const itype_id itype_mossberg_590( "mossberg_590" );
 static const itype_id itype_rock( "rock" );
@@ -63,6 +64,9 @@ static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_OWNED_AREA( "EOC_AUTONOMY_DEBUG_OWNED_AREA" );
 
 static const string_id<behavior::node_t> behavior_node_t_npc_priorities( "npc_priorities" );
+
+static const skill_id skill_cutting( "cutting" );
+static const skill_id skill_melee( "melee" );
 
 static const furn_str_id furn_f_cupboard( "f_cupboard" );
 static const furn_str_id furn_f_fireplace( "f_fireplace" );
@@ -1141,16 +1145,60 @@ TEST_CASE( "npc_autonomy_safety_sees_hostiles_within_10_tiles", "[npc][autonomy]
     override_option autonomy( "NPC_AUTONOMY", "true" );
     npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 10, 0 ) );
     guy.mem_combat.assess_enemy = 0.0f;
-    guy.mem_combat.assess_ally = 5.0f;
-
-    SECTION( "8 tiles away: scared (step 5.2; it took 3 tiles before)" ) {
-        spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 8, 0 ) );
+    const auto spawn_at = [&guy]( const char *what, int dist, int count ) {
+        for( int i = 0; i < count; ++i ) {
+            spawn_test_monster( what, guy.pos_bub() + point( dist, i * 2 - count ) );
+        }
         get_map().build_map_cache( 0 );
-        CHECK( npc_autonomy::current_needs( guy ).safety >= 50 );
+    };
+    const auto armed_with_katana = [&guy]( int skill ) {
+        // Skills first: the weapon's value is worked out when it's wielded.
+        guy.set_skill_level( skill_melee, skill );
+        guy.set_skill_level( skill_cutting, skill );
+        item katana( itype_katana );
+        guy.wield( katana );
+    };
+    const auto scared = [&guy]() {
+        return npc_autonomy::current_needs( guy ).safety >= 50;
+    };
+
+    SECTION( "unarmed, a zombie 8 tiles away: scared (step 5.2; it took 3 tiles before)" ) {
+        spawn_at( "mon_zombie", 8, 1 );
+        CHECK( scared() );
+    }
+    SECTION( "with a katana, a lone zombie 8 tiles away: not scared" ) {
+        armed_with_katana( 0 );
+        spawn_at( "mon_zombie", 8, 1 );
+        CHECK_FALSE( scared() );
+    }
+    SECTION( "with a katana, a zombie 2 tiles away: still scared (it's right there)" ) {
+        armed_with_katana( 5 );
+        spawn_at( "mon_zombie", 2, 1 );
+        CHECK( scared() );
+    }
+    SECTION( "zombies add up: three are too many for a katana and no skill" ) {
+        armed_with_katana( 0 );
+        spawn_at( "mon_zombie", 8, 3 );
+        CHECK( scared() );
+    }
+    SECTION( "a zombie brute: scary with an unskilled katana, not for a skilled fighter" ) {
+        spawn_at( "mon_zombie_brute", 8, 1 );
+        SECTION( "no skill" ) {
+            armed_with_katana( 0 );
+            CHECK( scared() );
+        }
+        SECTION( "skilled" ) {
+            armed_with_katana( 5 );
+            CHECK_FALSE( scared() );
+        }
+    }
+    SECTION( "a zombie hulk: always scary" ) {
+        armed_with_katana( 5 );
+        spawn_at( "mon_zombie_hulk", 8, 1 );
+        CHECK( scared() );
     }
     SECTION( "15 tiles away: calm" ) {
-        spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 15, 0 ) );
-        get_map().build_map_cache( 0 );
+        spawn_at( "mon_zombie", 15, 1 );
         CHECK( npc_autonomy::current_needs( guy ).safety == 0 );
     }
 }
@@ -1221,6 +1269,23 @@ TEST_CASE( "npc_autonomy_seek_safety", "[npc][autonomy]" )
         REQUIRE( npc_autonomy::current_needs( guy ).safety >= 50 );
         run( 40 );
         CHECK( rl_dist( guy.pos_bub(), zed.pos_bub() ) >= 8 );
+    }
+    SECTION( "the zombie drops out of view on the way: they keep going until calm for 2 minutes" ) {
+        // Reported 2026-11-17: an NPC between two zombies 7 tiles off went back and forth.
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        set_time( calendar::turn_zero + 12_hours );
+        on_their_own();
+        monster &zed = spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 3, 0 ) );
+        here.build_map_cache( 0 );
+        guy.set_committed_goal_for_test( "autonomy_seek_safety" );
+        REQUIRE( npc_autonomy::wants_safety( guy ) );
+        run( 2 );
+        zed.setpos( here, guy.pos_bub() + tripoint( 40, 0, 0 ) );
+        here.build_map_cache( 0 );
+        REQUIRE( npc_autonomy::current_needs( guy ).safety < 25 );
+        CHECK( npc_autonomy::wants_safety( guy ) );
+        calendar::turn += 3_minutes;
+        CHECK_FALSE( npc_autonomy::wants_safety( guy ) );
     }
     SECTION( "nothing to be scared of: nothing happens" ) {
         override_option autonomy( "NPC_AUTONOMY", "true" );
