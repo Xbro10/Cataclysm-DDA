@@ -193,7 +193,7 @@
     "type": "item_group",
     "id": "NC_BR1_ARCHER_worn",
     "subtype": "collection",
-    "items": [ "pants_cargo", "tshirt", "jacket_flannel", "socks", "boots", "gloves_work", "quiver" ]
+    "items": [ "pants_cargo", "tshirt", "jacket_flannel", "socks", "boots", "gloves_work", "quiver", "bow_sling", "sheath" ]
   },
   {
     "type": "item_group",
@@ -208,6 +208,7 @@
     "entries": [
       { "item": "arrow_wood", "charges": [ 20, 30 ] },
       { "item": "arrow_metal", "charges": [ 5, 10 ] },
+      { "item": "knife_combat" },
       { "item": "flashlight", "charges": [ 50, 100 ] }
     ]
   },
