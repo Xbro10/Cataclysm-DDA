@@ -312,6 +312,10 @@
       { "category": "maps" },
       { "group": "br1_exchange_curios" },
       { "group": "br1_exchange_rare_find" },
+      { "item": "br_hound_fang" },
+      { "item": "br_smiler_teeth" },
+      { "item": "br_redeemer_insulator" },
+      { "item": "br_red_balloon" },
       { "item": "bottle_almond_water" },
       { "item": "almond_water" }
     ]
@@ -378,7 +382,12 @@
     "sells_belongings": false,
     "shopkeeper_whitelist": "br1_buys_curios",
     "shopkeeper_blacklist": "br_never_buys",
-    "shopkeeper_price_rules": [ { "group": "br1_exchange_curios", "premium": 1.25, "markup": 0.8 } ],
+    "shopkeeper_price_rules": [
+      { "group": "br1_exchange_curios", "premium": 1.25, "markup": 0.8 },
+      { "item": "br_hound_fang", "premium": 1.5 },
+      { "item": "br_smiler_teeth", "premium": 1.5 },
+      { "item": "br_redeemer_insulator", "premium": 1.5 }
+    ],
     "restock_interval": "4 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },

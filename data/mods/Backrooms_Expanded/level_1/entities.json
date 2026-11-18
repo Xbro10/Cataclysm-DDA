@@ -36,6 +36,7 @@
     "anger_triggers": [ "PLAYER_CLOSE" ],
     "fear_triggers": [ "BRIGHT_LIGHT", "HURT", "FIRE" ],
     "death_function": { "corpse_type": "NO_CORPSE", "message": "The %s fades back into the dark.  The grin goes last." },
+    "death_drops": "br_smiler_drops",
     "flags": [ "SEES", "HEARS", "NIGHT_INVISIBILITY", "AVOIDS_LIGHT", "NO_BREATHE", "PATH_AVOID_DANGER" ]
   },
   {
@@ -64,6 +65,8 @@
     "vision_night": 8,
     "anger_triggers": [ "HOSTILE_SEEN", "PLAYER_CLOSE" ],
     "fear_triggers": [ "HURT", "FRIEND_DIED", "FIRE" ],
+    "harvest": "br_hound",
+    "death_drops": "br_hound_drops",
     "flags": [ "SEES", "HEARS", "GOODHEARING", "SMELLS", "WARM", "PATH_AVOID_DANGER" ]
   },
   {
@@ -92,6 +95,7 @@
     "vision_night": 15,
     "anger_triggers": [ "PLAYER_CLOSE" ],
     "fear_triggers": [ "HURT", "FIRE" ],
+    "harvest": "br_deathmoth",
     "death_drops": "br_deathmoth_drops",
     "flags": [ "SEES", "HEARS", "FLIES", "STUMBLES", "SEEKS_LIGHT" ]
   },
@@ -135,7 +139,8 @@
       { "group": "clothing_outdoor_pants", "prob": 50 },
       { "group": "br_scav_pick", "prob": 40 },
       { "item": "flashlight", "prob": 15 },
-      { "group": "almond_water_sealed", "prob": 5 }
+      { "group": "almond_water_sealed", "prob": 5 },
+      { "item": "br1_note_lost", "prob": 10 }
     ]
   },
   {
@@ -181,6 +186,9 @@
     "anger_triggers": [ "HURT" ],
     "fear_triggers": [ "FIRE" ],
     "death_function": { "message": "The %s folds to the floor without a sound." },
+    "//2": "Looks like a person, so it butchers like one (and eating it is cannibalism).",
+    "harvest": "human",
+    "death_drops": "br_faceling_drops",
     "flags": [ "SEES", "HEARS", "WARM", "PATH_AVOID_DANGER" ]
   },
   {
@@ -213,6 +221,7 @@
     "anger_triggers": [ "HOSTILE_SEEN", "PLAYER_CLOSE" ],
     "fear_triggers": [ "FIRE" ],
     "death_function": { "corpse_type": "NO_CORPSE", "message": "The %s slumps, and the skin it wore slides off it in a heap." },
+    "death_drops": "br_skin_stealer_drops",
     "flags": [ "SEES", "HEARS", "SMELLS", "WARM", "PATH_AVOID_DANGER" ]
   },
   {
@@ -242,6 +251,7 @@
     "special_attacks": [ [ "PARROT", 30 ] ],
     "anger_triggers": [ "HOSTILE_SEEN", "PLAYER_CLOSE" ],
     "death_function": { "corpse_type": "NO_CORPSE", "message": "The %s pops like a balloon.  Somewhere, a party horn toots once." },
+    "death_drops": "br_partygoer_drops",
     "flags": [ "SEES", "HEARS", "NO_BREATHE", "PATH_AVOID_DANGER" ]
   },
   {

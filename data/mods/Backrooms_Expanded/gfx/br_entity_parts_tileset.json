@@ -1,0 +1,23 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "What Backrooms entities leave behind (hound fang, Smiler's teeth, the Redeemer's insulator, a Partygoer's balloon and hat), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br_entity_parts.ps1 in UndeadPeople style.",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br_entity_parts.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          { "id": "br_hound_fang", "fg": 0, "rotates": false },
+          { "id": "br_smiler_teeth", "fg": 1, "rotates": false },
+          { "id": "br_redeemer_insulator", "fg": 2, "rotates": false },
+          { "id": "br_red_balloon", "fg": 3, "rotates": false },
+          { "id": "br_party_hat", "fg": 4, "rotates": false }
+        ]
+      }
+    ]
+  }
+]
