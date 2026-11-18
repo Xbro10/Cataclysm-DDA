@@ -45,6 +45,9 @@ As of 2026-11-18. Update this each time a prompt is finished.
   as a group" and 9.8 "Patching each other up" are the natural homes) when Phase 9 is planned.
 - Note for Phase 10: 10.1 (eat, drink and sleep while away, from the NPC's own pack) fixes a problem players hit
   today (followers come back starving) and could come earlier in a simple form; ask the user before moving it.
+- Runners for every camp (user request, 2026-11-18): any camp, with a faction or not, sends a runner out for supplies.
+  Build it in Phase 10 next to 10.5 (trips that keep going), on the Breakroom's runners (`camps_runners.json`), which
+  stay Breakroom-only until then as the working model. Ties in with the parked "Trade between camps" idea.
 - The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
 - Phase 6 rule: stance, anchor, leash, wants and trips are saved NPC variables, not new enum entries.
   The follower rule `ally_rule::no_self_care` (added 2026-11-15) predates this rule.
