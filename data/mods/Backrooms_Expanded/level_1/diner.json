@@ -160,7 +160,10 @@
         { "chunks": [ [ "br1_squatter_npc", 50 ], [ "null", 50 ] ], "x": 5, "y": 8 },
         { "chunks": [ [ "br1_squatter_npc", 40 ], [ "null", 60 ] ], "x": 15, "y": 8 }
       ],
-      "place_signs": [ { "x": 15, "y": 11, "signage": "ALL-NITE DINER.  OPEN.  ALWAYS.  (WE DON'T KNOW HOW TO CLOSE.)" } ],
+      "place_signs": [
+        { "x": 15, "y": 11, "signage": "ALL-NITE DINER.  OPEN.  ALWAYS.  (WE DON'T KNOW HOW TO CLOSE.)" },
+        { "x": 13, "y": 5, "signage": "TODAY: WHATEVER'S ON THE GRILL.  BURGERS - PANCAKES - CHILI - SOUP - FRIES - COFFEE.  ASK THE COOK.  WE BUY FOOD FOR THE KITCHEN." }
+      ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
@@ -187,8 +190,28 @@
     "type": "item_group",
     "id": "br1_diner_stock",
     "subtype": "collection",
-    "//": "The cook's shop stock: a full menu plus drinks. Restocks every day.",
-    "entries": [ { "group": "br1_diner_menu", "count": [ 8, 12 ] }, { "group": "almond_water_sealed", "count": [ 2, 4 ] } ]
+    "//": "The cook's shop stock: about five of the dishes on today's grill, three or four portions of each, plus coffee and almond water. Restocks every day, so the menu changes.",
+    "entries": [
+      { "item": "hamburger", "prob": 50, "count": [ 3, 4 ] },
+      { "item": "sandwich_cheese_grilled", "prob": 50, "count": [ 3, 4 ] },
+      { "item": "pancakes", "prob": 50, "count": [ 3, 4 ] },
+      { "item": "waffles", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "fries", "prob": 50, "count": [ 3, 4 ] },
+      { "item": "chili", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "soup_veggy", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "soup_meat", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "toast", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "hotdogs_cooked", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "coffee", "count": [ 4, 6 ] },
+      { "group": "almond_water_sealed", "count": [ 2, 4 ] }
+    ]
+  },
+  {
+    "type": "shopkeeper_whitelist",
+    "id": "br1_buys_cook",
+    "//": "The cook only buys what goes on the grill or in the fridge.",
+    "message": "<npcname> only buys food for the kitchen.",
+    "entries": [ { "category": "food" }, { "category": "container" } ]
   },
   {
     "type": "npc_class",
@@ -199,6 +222,9 @@
     "worn_override": "NC_BR1_FOREMAN_worn",
     "traits": [ { "group": "Appearance_demographics" } ],
     "shopkeeper_item_group": [ { "group": "br1_diner_stock", "rigid": true } ],
+    "//": "Sells only the menu, never their own gear; buys only food.",
+    "sells_belongings": false,
+    "shopkeeper_whitelist": "br1_buys_cook",
     "restock_interval": "1 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
@@ -249,9 +275,17 @@
     ],
     "responses": [
       { "text": "Let me see the menu.", "effect": "start_trade", "topic": "TALK_BR1_DINER_COOK" },
+      { "text": "What's cooking today?", "topic": "TALK_BR1_DINER_MENU" },
       { "text": "How is this place even here?", "topic": "TALK_BR1_DINER_ABOUT" },
       { "text": "Maybe later.", "topic": "TALK_DONE" }
     ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_DINER_MENU",
+    "//": "Says what the cook sells: hot plates that change daily, coffee, almond water; their own kit is not for sale.",
+    "dynamic_line": "Five or so plates a day, three or four of each, till they're gone.  Could be burgers, pancakes, waffles, chili, soup, toast, hot dogs, fries.  Coffee always.  Almond water if you're flush.  Menu changes every morning, so if you see something you like, have it.  And no, the pan's not for sale.  If you've got food that's still good, I'll buy it for the kitchen.",
+    "responses": [ { "text": "Let me see the menu.", "effect": "start_trade", "topic": "TALK_BR1_DINER_COOK" }, { "text": "Thanks.", "topic": "TALK_BR1_DINER_COOK" } ]
   },
   {
     "type": "talk_topic",
