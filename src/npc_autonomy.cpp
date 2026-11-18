@@ -255,23 +255,56 @@ bool has_company( const npc &guy )
     return false;
 }
 
-static float watched_threat( const npc &guy, const int range )
+// The threat rating of the hostiles the NPC can see within near_range tiles and within far_range
+// tiles (near_range <= far_range), from one scan. This runs several times per NPC turn and line of sight
+// is the costly part, so it's only checked for hostiles in range: friends are never looked at.
+static std::pair<float, float> watched_threats( const npc &guy, const int near_range, const int far_range )
 {
-    float total = 0.0f;
-    for( const Creature *critter : guy.get_visible_creatures( range ) ) {
-        if( guy.attitude_to( *critter ) != Creature::Attitude::HOSTILE ) {
-            continue;
-        }
+    const map &here = get_map();
+    const tripoint_abs_ms pos = guy.pos_abs();
+    float near_total = 0.0f;
+    float far_total = 0.0f;
+    bool person_near = false;
+    bool person_far = false;
+    for( const Creature *critter : g->get_creatures_if( [&]( const Creature & other ) {
+    return &other != &guy && other.pos_abs() != pos && rl_dist( pos, other.pos_abs() ) <= far_range &&
+           guy.attitude_to( other ) == Creature::Attitude::HOSTILE && guy.sees( here, other );
+    } ) ) {
+        const bool is_near = rl_dist( pos, critter->pos_abs() ) <= near_range;
         const monster *mon = critter->as_monster();
         if( mon == nullptr ) {
             // No cheap way to rate an armed person: treat them as a real threat.
-            return std::numeric_limits<float>::max();
+            person_far = true;
+            person_near = person_near || is_near;
+            continue;
         }
         const float hp = static_cast<float>( mon->get_hp() ) / std::max( mon->get_hp_max(), 1 );
-        total += std::max( static_cast<float>( mon->type->get_total_difficulty() ),
-                           NPC_DANGER_VERY_LOW ) * ( hp * 0.5f + 0.5f );
+        const float rating = std::max( static_cast<float>( mon->type->get_total_difficulty() ),
+                                       NPC_DANGER_VERY_LOW ) * ( hp * 0.5f + 0.5f );
+        far_total += rating;
+        if( is_near ) {
+            near_total += rating;
+        }
     }
-    return total;
+    constexpr float overwhelming = std::numeric_limits<float>::max();
+    return { person_near ? overwhelming : near_total, person_far ? overwhelming : far_total };
+}
+
+static float watched_threat( const npc &guy, const int range )
+{
+    return watched_threats( guy, range, range ).second;
+}
+
+// npc::sees_hostile_within(), but line of sight is only checked for hostiles: it's the costly
+// part and runs for every check of is_safe(), several per NPC turn.
+static bool sees_hostile_within( const npc &guy, const int radius )
+{
+    const map &here = get_map();
+    const tripoint_abs_ms pos = guy.pos_abs();
+    return !g->get_creatures_if( [&]( const Creature & other ) {
+        return &other != &guy && other.pos_abs() != pos && rl_dist( pos, other.pos_abs() ) <= radius &&
+               guy.attitude_to( other ) == Creature::Attitude::HOSTILE && guy.sees( here, other );
+    } ).empty();
 }
 
 // How well the NPC could fight on their own, on the same scale as a monster's threat
@@ -304,14 +337,14 @@ float safety_need( const npc &guy )
     // fought; a katana fighter read Safety 50 from one Hound, 2026-11-18). A hostile person
     // always counts. Daily life (meals, chats, trips) still waits while anything hostile is
     // within 3 tiles: see is_safe().
-    const float strength = own_strength( guy );
-    const float watched = watched_threat( guy, watch_hostile_range );
+    const auto [watched, seen] = watched_threats( guy, watch_hostile_range, 2 * watch_hostile_range );
+    // Rating the weapon isn't free, and with no hostile in sight it decides nothing below.
+    const float strength = seen > 0.0f ? own_strength( guy ) : 0.0f;
     if( watched > 0.0f && watched >= strength ) {
         threat = 0.5f;
     }
     // The game's own odds (it also counts hostiles further off), unless the NPC sees hostiles
     // and clearly outclasses all of them.
-    const float seen = watched_threat( guy, 2 * watch_hostile_range );
     if( enemy > 2.0f && ( seen <= 0.0f || seen >= strength ) ) {
         // Evenly matched reads as about 67; outmatched 1.5 to 1 or worse is 100.
         threat = std::max( threat, enemy / std::max( guy.mem_combat.assess_ally, 1.0f ) / 1.5f );
@@ -473,7 +506,7 @@ bool looks_after_self( const npc &guy )
 // right there, however weak (a starving follower kept eating with a zombie at arm's length).
 bool is_safe( const npc &guy )
 {
-    return safety_need( guy ) < unsafe && !guy.sees_hostile_within( close_hostile_range );
+    return safety_need( guy ) < unsafe && !sees_hostile_within( guy, close_hostile_range );
 }
 
 // Food in the pack they'd eat, and room in the stomach. (The behavior tree's own
@@ -573,6 +606,43 @@ constexpr int max_failed_targets = 3;
 constexpr time_duration give_up_for = 1_hours;
 // How long the "is there any in reach?" answer is reused, in turns.
 constexpr int recheck_turns = 5;
+
+// The behavior tree asks the "anything in reach?" questions every turn, and each answer
+// comes from a 10-20 tile scan, so an answer is reused for recheck_turns turns. Answers older
+// than that are never read again, so they're dropped once the store grows (it used to keep
+// one entry for every NPC ever met).
+template<typename Key, typename Answer>
+class recent_answers
+{
+    public:
+        template<typename Ask>
+        Answer get( const Key &key, Ask &&ask ) {
+            const int now = turns_since_start();
+            const auto known = answers.find( key );
+            if( known != answers.end() && fresh( known->second.turn, now ) ) {
+                return known->second.answer;
+            }
+            if( answers.size() >= prune_at ) {
+                for( auto it = answers.begin(); it != answers.end(); ) {
+                    it = fresh( it->second.turn, now ) ? std::next( it ) : answers.erase( it );
+                }
+            }
+            Answer answer = ask();
+            answers[key] = { now, answer };
+            return answer;
+        }
+    private:
+        struct entry {
+            int turn = 0;
+            Answer answer;
+        };
+        // The clock can go backwards (a test, a loaded save), which makes an answer stale too.
+        static bool fresh( int turn, int now ) {
+            return now >= turn && now - turn < recheck_turns;
+        }
+        static constexpr size_t prune_at = 64;
+        std::map<Key, entry> answers;
+};
 
 // One kind of trip: which of the game's planners runs it, where its state is kept, what's said.
 struct trip_kind {
@@ -744,24 +814,12 @@ bool wants_trip( const npc &guy, const trip_kind &kind, const int need )
     if( carries_for( guy, kind.need ) ) {
         return true;
     }
-    // The search scans 20 tiles around the NPC; the behavior tree asks every turn,
-    // so the answer is reused for a few turns (performance, 2026-11-15).
-    struct check {
-        int turn = 0;
-        bool found = false;
-    };
-    static std::map<std::pair<character_id, int>, check> checks;
-    const std::pair<character_id, int> key{ guy.getID(), static_cast<int>( kind.need ) };
-    const int now = turns_since_start();
-    const auto known = checks.find( key );
-    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < recheck_turns ) {
-        return known->second.found;
-    }
-    const behavior::character_oracle_t oracle( &guy );
-    const bool found = ( kind.need == npc::need_goal_id::drink_water ? oracle.can_obtain_water( "" ) :
-                         oracle.can_obtain_food( "" ) ) == behavior::status_t::running;
-    checks[key] = { now, found };
-    return found;
+    static recent_answers<std::pair<character_id, int>, bool> in_reach;
+    return in_reach.get( { guy.getID(), static_cast<int>( kind.need ) }, [&guy, &kind]() {
+        const behavior::character_oracle_t oracle( &guy );
+        return ( kind.need == npc::need_goal_id::drink_water ? oracle.can_obtain_water( "" ) :
+                 oracle.can_obtain_food( "" ) ) == behavior::status_t::running;
+    } );
 }
 
 // The NPC is on this trip right now (the game's own goal for the need, or ours).
@@ -1380,19 +1438,10 @@ std::optional<tripoint_abs_ms> find_safe_spot( const npc &guy )
 // The search scans 20 tiles and the behavior tree asks every turn, so reuse the answer.
 std::optional<tripoint_abs_ms> safe_spot( const npc &guy )
 {
-    struct check {
-        int turn = 0;
-        std::optional<tripoint_abs_ms> spot;
-    };
-    static std::map<character_id, check> checks;
-    const int now = turns_since_start();
-    const auto known = checks.find( guy.getID() );
-    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < recheck_turns ) {
-        return known->second.spot;
-    }
-    const std::optional<tripoint_abs_ms> spot = find_safe_spot( guy );
-    checks[guy.getID()] = { now, spot };
-    return spot;
+    static recent_answers<character_id, std::optional<tripoint_abs_ms>> spots;
+    return spots.get( guy.getID(), [&guy]() {
+        return find_safe_spot( guy );
+    } );
 }
 
 void forget_safe_spot( npc &guy )
@@ -1528,7 +1577,7 @@ std::string carrier_key( const npc &guy )
 bool in_a_fight( const npc &guy )
 {
     return guy.get_ai_danger() > 0.0f || guy.has_effect( effect_npc_run_away ) ||
-           guy.sees_hostile_within( watch_hostile_range );
+           sees_hostile_within( guy, watch_hostile_range );
 }
 
 // The weapon in hand, what they wear, and what's in what they wear (not deeper: a whole bag
@@ -1691,19 +1740,10 @@ bool wants_to_recover_items( const npc &guy )
         return false;
     }
     // The tile scan is cheap enough only every few turns.
-    struct check {
-        int turn = 0;
-        bool found = false;
-    };
-    static std::map<character_id, check> checks;
-    const int now = turns_since_start();
-    const auto known = checks.find( guy.getID() );
-    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < recheck_turns ) {
-        return known->second.found;
-    }
-    const bool found = nearest_lost_item( guy ).has_value();
-    checks[guy.getID()] = { now, found };
-    return found;
+    static recent_answers<character_id, bool> lost_items;
+    return lost_items.get( guy.getID(), [&guy]() {
+        return nearest_lost_item( guy ).has_value();
+    } );
 }
 
 bool is_goal( const std::string &goal )
@@ -1732,7 +1772,7 @@ void remember_home_spot( npc &guy )
 void arm_up( npc &guy )
 {
     if( !enabled() || !calendar::once_every( 3_turns ) || guy.in_sleep_state() || guy.activity ||
-        guy.is_using_bionic_weapon() || !guy.sees_hostile_within( watch_hostile_range ) ) {
+        guy.is_using_bionic_weapon() || !sees_hostile_within( guy, watch_hostile_range ) ) {
         return;
     }
     // Only for empty hands, or hands holding something that isn't a weapon (wood for a fire,
@@ -1884,22 +1924,12 @@ bool wants_warmth( const npc &guy )
     if( warmth < need_to_act ) {
         return false;
     }
-    // The searches scan 20 tiles; the behavior tree asks every turn, so reuse the answer.
-    struct check {
-        int turn = 0;
-        bool found = false;
-    };
-    static std::map<character_id, check> checks;
-    const int now = turns_since_start();
-    const auto known = checks.find( guy.getID() );
-    if( known != checks.end() && now >= known->second.turn && now - known->second.turn < recheck_turns ) {
-        return known->second.found;
-    }
-    const bool found = next_warm_step( guy ).has_value() ||
-                       behavior::character_oracle_t( &guy ).can_regulate_temperature( "" ) ==
-                       behavior::status_t::running;
-    checks[guy.getID()] = { now, found };
-    return found;
+    static recent_answers<character_id, bool> warm_steps;
+    return warm_steps.get( guy.getID(), [&guy]() {
+        return next_warm_step( guy ).has_value() ||
+               behavior::character_oracle_t( &guy ).can_regulate_temperature( "" ) ==
+               behavior::status_t::running;
+    } );
 }
 
 bool wants_water( const npc &guy )

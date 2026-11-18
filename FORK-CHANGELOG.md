@@ -78,6 +78,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   edit logged "Stale game data detected" as an error per changed file, so it ended with "Treating result as failure
   due to error logged during initialization" even when every test passed. The test program now turns that check off
   (`--option WARN_ON_MODIFIED:true` turns it back on), as this build's own config already does.
+- [C++] **NPC autonomy checks are 15-25 times cheaper:** the Safety check looked for hostiles twice per call and
+  checked line of sight to every creature in view, friends included, several times per NPC turn. It now scans once,
+  only checks sight to hostiles, and rates the NPC's weapon only when a hostile is in view (`[npc_perf]`: Safety
+  0.023 to 0.001 ms; an autonomous NPC's turn about 0.7 to 0.2-0.3 ms). Same answers as before.
+- [C++] The four "anything in reach?" answers kept for a few turns share one helper (`recent_answers`) that drops
+  stale answers, instead of keeping one for every NPC ever met.
 
 ## November 17, 2026
 
