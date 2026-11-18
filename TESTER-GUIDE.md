@@ -14,12 +14,16 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
   **Bunker**), with a door guard, a **runner board** and its own larder.
   Level 0 has the rare **Manila Room** (always food and almond water), **archway rooms**, **blackout zones** and
   **pillar halls**; Level 1 has **the Exchange** (a fenced market with three traders) and **the All-Nite diner**.
-  New this time: the Breakroom has **two archers** with bows guarding the front and a **supply depot** (racks and
-  crates of food, almond water, medicine, tools and batteries) that runners restock when they get home. Backrooms
-  entities are now **one faction**: they never fight each other, attack zombies that wander in, and leave Facelings
-  alone. New sprites for the Manila Room walls, the new Level 0 floors and the Exchange and diner map signs.
-  Fixed: runners leave at the time on the board (start a new world for this), and the Exchange traders and the
-  diner cook have a full stock to sell.
+  The Breakroom has two archers with bows and a supply depot that runners restock; Backrooms entities are one
+  faction (they never fight each other and attack zombies).
+  New this time (start a **new world** to see most of it): a **trading overhaul** at the Exchange and the diner:
+  traders and the cook sell only their stall stock (never their own gun or gear), each has a clear trade with deep
+  piles of a few goods, says what they sell ("What do you sell?", "What's cooking today?"), has a stall sign or menu
+  board, and buys only their own kind of goods. The **runners** are the Breakroom's best fighters now (machete,
+  pistol, first aid kit) and come home early when badly hurt. The **Flamero-Mado**, a fuel-burning spear the
+  Redeemer can drop, with its own sprite. Fixed: runners really leave (they used to stay home, "Done for today"),
+  each Exchange stall shows only its own stock, Bunker archers stand in sandbag nests, and archers can draw their
+  bows and use a knife up close instead of dropping the bow.
 - **Survivor Minds** (mod): NPCs with inner lives: journals, chalk wall marks, routines, reactions to what you do,
   gossip and danger warnings, and **Gabriel**, a unique recruitable NPC. Gossip no longer marks places on your map,
   and you can tell a follower to stop marking places as looted ("Got a minute?").
@@ -28,11 +32,14 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
   get warm: warmer clothes, a burning fireplace or stove, or firewood gathered (carried by hand if it won't fit the
   pack) for a hearth fire sized to the day's cold, kept going. They never walk into a harmful trap they can see. The
   follower rule **leave food and water to me** turns their own trips off.
+  New: **scared NPCs seek safety**: they back into the light (where Smilers won't follow), near friends and away
+  from what scares them, and size threats up against their own weapon and armour. **Gunners stand and shoot**
+  instead of backing away. Shopkeepers and guards go back to their spot once calm.
 - **The base game** is updated to the latest CDDA experimental (bone setting and wound fixes, crafting faults, and more).
 - **Fixes in the game itself**: followers no longer get left behind when you change levels; saving while you or an
   NPC is eating or using an item in a bag no longer loses the item on load; NPCs with Mind Over Matter powers fight
   instead of casting a harmless spell; a heavy bruise getting worse no longer crashes the game; facial hair can be
-  changed again in the character creator.
+  changed again in the character creator; changing Ambient sound volume in Options takes effect at once.
 - **New in the game itself**: the character creator shows your character's **sprite** while you pick traits and
   looks, and a **Discord "Playing" card** shows where you are (Options > General > Discord status: off, basic or
   detailed).
