@@ -227,6 +227,7 @@
     "//": "Sells only the menu, never their own gear; buys only food.",
     "sells_belongings": false,
     "shopkeeper_whitelist": "br1_buys_cook",
+    "shopkeeper_blacklist": "br_never_buys",
     "restock_interval": "1 days",
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },

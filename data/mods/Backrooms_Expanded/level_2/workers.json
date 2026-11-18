@@ -59,6 +59,7 @@
     "job_description": "I keep the pipes from killing us.  Mostly.",
     "common": false,
     "worn_override": "NC_BR2_WORKER_worn",
+    "carry_override": "NC_BR2_WORKER_carry",
     "traits": [ { "group": "NPC_starting_traits" }, { "group": "Appearance_demographics" } ],
     "bonus_str": { "rng": [ 0, 2 ] },
     "bonus_aggression": { "rng": [ 0, 2 ] },
@@ -75,6 +76,17 @@
     "id": "NC_BR2_WORKER_worn",
     "subtype": "collection",
     "items": [ "jumpsuit", "tank_top", "socks", "boots_steel", "gloves_work", "hat_hard" ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR2_WORKER_carry",
+    "//": "What a tunnel crew member has on them to trade: a pouch of firesalt, sometimes a tool or some hardware.",
+    "subtype": "collection",
+    "entries": [
+      { "item": "br_firesalt", "charges": [ 20, 50 ] },
+      { "group": "br_cat_tools", "prob": 30 },
+      { "group": "br_cat_hardware", "prob": 40 }
+    ]
   },
   {
     "type": "item_group",

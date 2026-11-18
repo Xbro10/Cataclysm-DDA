@@ -2,9 +2,11 @@ param([string]$Out, [string]$Preview)
 # Draws the Backrooms Wiki finds, UndeadPeople-style, 32x32 tiles in a row.
 # 0 moth jelly (br_moth_jelly)       1 firesalt (br_firesalt)
 # 2 royal ration (br_royal_ration)   3 cloudy water / liquid pain, loose (br_liquid_pain)
+# 4 firesalt torch (br_firesalt_torch) 5 firesalt torch, lit (br_firesalt_torch_lit)
+# 6 firesalt twist (br_firesalt_twist)
 Add-Type -AssemblyName System.Drawing
 $T = 32
-$Count = 4
+$Count = 7
 $bmp = New-Object System.Drawing.Bitmap ($Count * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 . "$PSScriptRoot\sprite_common.ps1"
 $rng = New-Object System.Random 2323
@@ -42,5 +44,30 @@ $milk = Hex '#e8e2d2'; $milkD = Hex '#c8bca8'; $pink = Hex '#c89a8a'; $milkL = H
 Ell 3 16 22 7 3 $milk; Ell 3 18 23 4 1 $milkD; Px 3 13 21 $milkL; Px 3 14 21 $milkL
 Px 3 9 22 $pink; Px 3 23 22 $pink; Px 3 20 24 $pink; Px 3 11 23 $pink
 Outline 3
+
+# ---- 4, 5: firesalt torch: a stick corner to corner, its head wrapped in rags crusted with red crystals.
+$stick = Hex '#8a5a32'; $stickL = Hex '#b07a46'; $ragC = Hex '#b8ab90'; $ragD = Hex '#8a7e66'; $salt = Hex '#e04a2a'; $saltL = Hex '#ff8a5a'
+foreach ($tt in 4, 5) {
+  for ($k = 0; $k -le 17; $k++) { $x = 5 + $k; $y = 27 - $k; Px $tt $x $y $stick; Px $tt ($x + 1) $y $stick; Px $tt $x ($y - 1) $stickL }
+  # Rag head: a fat wrapped knot at the top-right end.
+  for ($k = 0; $k -le 6; $k++) { $cx = 21 + $k; $cy = 11 - $k; Fill $tt ($cx - 2) ($cy - 1) 4 3 $ragC; Px $tt ($cx + 1) ($cy + 1) $ragD }
+  Line $tt 19 11 23 7 $ragD; Line $tt 22 12 26 8 $ragD
+  foreach ($p in @(@(21, 9), @(23, 10), @(24, 6), @(26, 7), @(22, 7), @(25, 9), @(27, 5))) { Px $tt $p[0] $p[1] $salt }
+  Px $tt 24 6 $saltL; Px $tt 21 9 $saltL
+}
+Outline 4; Shadow 4 15 29 9
+# Lit: a red-orange flame rising from the head, embers.
+$fR = Hex '#e0482a'; $fO = Hex '#ff9a32'; $fY = Hex '#ffe07a'
+Ell 5 25 5 4 5 $fR; Ell 5 25 5 3 4 $fO; Ell 5 25 6 1 2 $fY; Ell 5 23 2 1 2 $fO; Ell 5 27 1 1 1 $fR
+Px 5 25 0 $fR; Px 5 26 0 $fO
+Outline 5; Px 5 20 1 $fO; Px 5 29 3 $fO; Shadow 5 15 29 9
+
+# ---- 6: firesalt twist: a twisted paper wrap, ends screwed tight, red crystals showing through.
+$pap = Hex '#ece4d0'; $papD = Hex '#c4b896'
+Ell 6 16 20 6 3 $pap; Line 6 9 19 6 17 $papD; Line 6 9 21 6 22 $papD; Line 6 23 19 26 17 $papD; Line 6 23 21 26 22 $papD
+Fill 6 6 17 2 6 $pap; Fill 6 25 17 2 6 $pap
+Line 6 12 18 20 22 $papD
+foreach ($p in @(@(14, 20), @(17, 19), @(18, 21), @(15, 22))) { Px 6 $p[0] $p[1] $salt }
+Outline 6; Shadow 6 16 25 9
 
 SaveSheet $Out $Preview $Count '#5c5650'
