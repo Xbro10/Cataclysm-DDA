@@ -171,19 +171,19 @@
     "type": "item_group",
     "id": "br1_diner_menu",
     "subtype": "distribution",
-    "//": "What the All-Nite's grill turns out. The cook's shop stock and a little in the fridge.",
+    "//": "What the All-Nite's grill turns out. The cook's shop stock and a little in the fridge. Chili and soup come in a bowl, coffee in a cup.",
     "items": [
       { "item": "hamburger", "prob": 15 },
       { "item": "sandwich_cheese_grilled", "prob": 15 },
       { "item": "pancakes", "prob": 10 },
       { "item": "waffles", "prob": 8 },
       { "item": "fries", "prob": 10 },
-      { "item": "chili", "prob": 8 },
-      { "item": "soup_veggy", "prob": 8 },
-      { "item": "soup_meat", "prob": 8 },
+      { "item": "chili", "container-item": "ceramic_bowl", "prob": 8 },
+      { "item": "soup_veggy", "container-item": "ceramic_bowl", "prob": 8 },
+      { "item": "soup_meat", "container-item": "ceramic_bowl", "prob": 8 },
       { "item": "toast", "prob": 8 },
       { "item": "hotdogs_cooked", "prob": 8 },
-      { "item": "coffee", "prob": 12 }
+      { "item": "coffee", "container-item": "styrofoam_cup", "prob": 12 }
     ]
   },
   {
@@ -197,12 +197,12 @@
       { "item": "pancakes", "prob": 50, "count": [ 3, 4 ] },
       { "item": "waffles", "prob": 40, "count": [ 3, 4 ] },
       { "item": "fries", "prob": 50, "count": [ 3, 4 ] },
-      { "item": "chili", "prob": 40, "count": [ 3, 4 ] },
-      { "item": "soup_veggy", "prob": 40, "count": [ 3, 4 ] },
-      { "item": "soup_meat", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "chili", "container-item": "ceramic_bowl", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "soup_veggy", "container-item": "ceramic_bowl", "prob": 40, "count": [ 3, 4 ] },
+      { "item": "soup_meat", "container-item": "ceramic_bowl", "prob": 40, "count": [ 3, 4 ] },
       { "item": "toast", "prob": 40, "count": [ 3, 4 ] },
       { "item": "hotdogs_cooked", "prob": 40, "count": [ 3, 4 ] },
-      { "item": "coffee", "count": [ 4, 6 ] },
+      { "item": "coffee", "container-item": "styrofoam_cup", "count": [ 4, 6 ] },
       { "group": "almond_water_sealed", "count": [ 2, 4 ] }
     ]
   },

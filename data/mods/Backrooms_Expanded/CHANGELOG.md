@@ -11,6 +11,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Changed
 
+- The All-Nite serves chili and soup in a bowl and coffee in a styrofoam cup. Chili used to spawn as a loose puddle (it has no container of its own), soup came in a can and coffee in a plastic bottle.
+- The pistol in a security office's gun safe has its part-loaded magazine in the gun, instead of the gun and magazine lying side by side.
 - Trading overhaul at the Exchange and the All-Nite diner. Traders and the cook only sell their stall stock, never the gun, magazines, clothes or flashlight they carry. Each has a clear trade with fewer kinds of goods in deeper piles: supplies (almond water, beans, granola, crackers, bandages, aspirin, disinfectant, purifying tablets), gear (battery cells, flashlights, glowsticks, lighters, tape, rope, a few tools), oddities (maps, guides, generator notes, markers, plus one rare find each restock), and the cook (about five dishes a day, three or four portions each, plus coffee and almond water). The crates behind the Exchange stalls no longer start full of random camp stores.
 - Each trader says what they sell ("What do you sell?", or "What's cooking today?" for the cook), and a sign at each stall and a menu board in the diner list it. Traders buy only their own kind of goods ("only deals in food, water and medicine"), pay a quarter or more extra for it, and sell it a little cheaper.
 
