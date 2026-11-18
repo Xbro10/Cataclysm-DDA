@@ -29,6 +29,17 @@ As of 2026-11-18. Update this each time a prompt is finished.
   least 20 turns (`std::max( ..., 20_turns )` in `act_on_danger_assessment`), not two. 9.3 and 9.7 can build on
   5.2's safe-spot scoring (`find_safe_spot`). 9.9 (light draws the dead at night) conflicts with 5.2's light
   bonus outside the Backrooms: settle it by 9.9 at the latest.
+- Gunner work the user moved to Phase 9 (2026-11-18), on top of the gunner rules from 5.2:
+  1. Fire control: today an NPC aims until the target is inside its sure range (`npc_attack_gun::use`,
+     `confident_gun_mode_range`), often only 3-5 tiles, and never checks what reaches it first (a TODO there).
+     Fire sooner when the nearest enemy could reach them within about 2 turns or more aiming barely helps.
+  2. Against several enemies, target the one that arrives first (distance and speed), not the biggest threat.
+  3. Step back from the whole group, only to a tile further from all of them (5.2's spot scoring); else stand and shoot.
+  4. Outgunned by a crowd: fall back toward the player or friends while still shooting (with 9.7), not the game's flee.
+  5. Several gunners spread their fire (with 9.5).
+  6. Gunners may range further from the player than melee followers (a longer follow leash while armed with a gun
+     they may fire), to get a clear angle or keep their distance before firing, then rejoin. Followers still obey
+     "hold the line" and follow orders.
 - Note for Phase 10: 10.1 (eat, drink and sleep while away, from the NPC's own pack) fixes a problem players hit
   today (followers come back starving) and could come earlier in a simple form; ask the user before moving it.
 - The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
