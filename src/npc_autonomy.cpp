@@ -253,10 +253,10 @@ bool has_company( const npc &guy )
     return false;
 }
 
-static float watched_threat( const npc &guy )
+static float watched_threat( const npc &guy, const int range )
 {
     float total = 0.0f;
-    for( const Creature *critter : guy.get_visible_creatures( watch_hostile_range ) ) {
+    for( const Creature *critter : guy.get_visible_creatures( range ) ) {
         if( guy.attitude_to( *critter ) != Creature::Attitude::HOSTILE ) {
             continue;
         }
@@ -297,22 +297,22 @@ float safety_need( const npc &guy )
     // treats the area as quiet.
     const float enemy = guy.mem_combat.assess_enemy;
     float threat = 0.0f;
-    if( enemy > 2.0f ) {
-        // Evenly matched reads as about 67; outmatched 1.5 to 1 or worse is 100.
-        threat = enemy / std::max( guy.mem_combat.assess_ally, 1.0f ) / 1.5f;
+    // Only hostiles that together match or beat what the NPC could take on themselves scare
+    // them, at any range: well armed, a lone zombie or Hound isn't scary even close by (it's
+    // fought; a katana fighter read Safety 50 from one Hound, 2026-11-18). A hostile person
+    // always counts. Daily life (meals, chats, trips) still waits while anything hostile is
+    // within 3 tiles: see is_safe().
+    const float strength = own_strength( guy );
+    const float watched = watched_threat( guy, watch_hostile_range );
+    if( watched > 0.0f && watched >= strength ) {
+        threat = 0.5f;
     }
-    // Anything hostile they can see close by is a danger, however weak the game rates it
-    // (a lone zombie at arm's length read as Safety 2). Further out, only hostiles that
-    // together match or beat what the NPC could take on themselves: well armed, they
-    // aren't scared of a lone zombie at 8 tiles (it's fought if it comes close). A hostile
-    // person always counts.
-    if( guy.sees_hostile_within( close_hostile_range ) ) {
-        threat = std::max( threat, 0.5f );
-    } else {
-        const float watched = watched_threat( guy );
-        if( watched > 0.0f && watched >= own_strength( guy ) ) {
-            threat = std::max( threat, 0.5f );
-        }
+    // The game's own odds (it also counts hostiles further off), unless the NPC sees hostiles
+    // and clearly outclasses all of them.
+    const float seen = watched_threat( guy, 2 * watch_hostile_range );
+    if( enemy > 2.0f && ( seen <= 0.0f || seen >= strength ) ) {
+        // Evenly matched reads as about 67; outmatched 1.5 to 1 or worse is 100.
+        threat = std::max( threat, enemy / std::max( guy.mem_combat.assess_ally, 1.0f ) / 1.5f );
     }
     const float injury = 1.0f - guy.hp_percentage() / 100.0f;
     return std::clamp( std::max( threat, 0.6f * injury ), 0.0f, 1.0f );
@@ -365,6 +365,7 @@ void on_npc_turn( npc &guy )
     // Also with the option just turned off: nothing else would give them their weapon back.
     set_down_wood_after_trip( guy );
     remember_home_spot( guy );
+    arm_up( guy );
     if( !enabled() || !calendar::once_every( 1_minutes ) ) {
         return;
     }
@@ -465,9 +466,11 @@ bool looks_after_self( const npc &guy )
     return !guy.is_player_ally() || !guy.rules.has_flag( ally_rule::no_self_care );
 }
 
+// Calm enough for daily life (meals, chats, trips, fires): not scared, and nothing hostile
+// right there, however weak (a starving follower kept eating with a zombie at arm's length).
 bool is_safe( const npc &guy )
 {
-    return safety_need( guy ) < unsafe;
+    return safety_need( guy ) < unsafe && !guy.sees_hostile_within( close_hostile_range );
 }
 
 // Food in the pack they'd eat, and room in the stomach. (The behavior tree's own
@@ -1521,6 +1524,21 @@ void remember_home_spot( npc &guy )
     guy.set_value( var_home_spot, target_key( guy.pos_abs() ) );
 }
 
+void arm_up( npc &guy )
+{
+    if( !enabled() || !calendar::once_every( 3_turns ) || guy.in_sleep_state() || guy.activity ||
+        guy.is_using_bionic_weapon() || !guy.sees_hostile_within( watch_hostile_range ) ) {
+        return;
+    }
+    // The game's own choice of weapon (it follows the follower rules on guns).
+    guy.wield_better_weapon();
+}
+
+bool safe_for_daily_life( const npc &guy )
+{
+    return is_safe( guy );
+}
+
 bool wants_return_home( const npc &guy )
 {
     if( !enabled() || guy.in_sleep_state() || !stays_put( guy ) || !is_safe( guy ) ||
@@ -1564,7 +1582,7 @@ gunner_stance gunner_stance_for( npc &guy )
     if( !enabled() || !ready_gunner( guy ) ) {
         return gunner_stance::none;
     }
-    const float watched = watched_threat( guy );
+    const float watched = watched_threat( guy, watch_hostile_range );
     if( watched >= own_strength( guy ) ) {
         return gunner_stance::none;
     }

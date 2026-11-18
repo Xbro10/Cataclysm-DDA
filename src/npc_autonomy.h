@@ -139,6 +139,16 @@ bool wants_safety( const npc &guy );
 bool stays_put( const npc &guy );
 /** Every turn: note where a stays-put NPC belongs, the first time they're calm and still. */
 void remember_home_spot( npc &guy );
+
+/**
+ * Every turn (reported 2026-11-18): with hostiles in view, wield the best weapon carried,
+ * checked every 3 turns. The game only re-picks when idle with new items, or once an hour,
+ * so a katana handed over during a chase stayed in the pack.
+ */
+void arm_up( npc &guy );
+
+/** Calm enough for meals, chats and trips: Safety under 50 and nothing hostile within 3 tiles. */
+bool safe_for_daily_life( const npc &guy );
 /** Calm, awake, away from their spot and able to get there. */
 bool wants_return_home( const npc &guy );
 

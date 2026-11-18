@@ -41,6 +41,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   sheltering stranger scared off their spot looks for safety only within 6 tiles of it, and walks back once calm,
   as guards return to their post. They remember the spot where they first stood calm, so a trader already standing
   in the aisle in an old save takes the aisle as their spot.
+- [C++] **A well-armed NPC isn't scared of one weak monster, even up close:** Safety now only rises when what an NPC
+  sees matches or beats what it could fight on its own, at any range (a katana fighter read Safety 50 from a single
+  Hound). Meals, chats and trips still wait while anything hostile is within 3 tiles.
+- [C++] **NPCs draw their best weapon when trouble shows up:** with hostiles in view they switch to the best weapon
+  they carry within a few turns (before, only when idle or once an hour, so a katana handed over mid-chase stayed in
+  the pack).
 - [C++] **Overloaded NPCs lighten their load (with NPC autonomy on):** an NPC carrying more than it can puts down
   the cheapest junk it picked up itself ("Too heavy.  Leaving the ... here."). It keeps its clothes, weapon, ammo,
   food, drink, medicine, firewood and favourites, and what you trade to a follower counts as a favourite, so a

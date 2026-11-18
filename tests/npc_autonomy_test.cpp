@@ -50,6 +50,7 @@ static const itype_id itype_butane( "butane" );
 static const itype_id itype_hoodie( "hoodie" );
 static const itype_id itype_jeans( "jeans" );
 static const itype_id itype_katana( "katana" );
+static const itype_id itype_knife_combat( "knife_combat" );
 static const itype_id itype_lighter( "lighter" );
 static const itype_id itype_modular_m16a4( "modular_m16a4" );
 static const itype_id itype_mossberg_590( "mossberg_590" );
@@ -1176,10 +1177,20 @@ TEST_CASE( "npc_autonomy_safety_sees_hostiles_within_10_tiles", "[npc][autonomy]
         spawn_at( "mon_zombie", 8, 1 );
         CHECK_FALSE( scared() );
     }
-    SECTION( "with a katana, a zombie 2 tiles away: still scared (it's right there)" ) {
+    SECTION( "with a katana, a zombie 2 tiles away: not scared, but no meals or chats now" ) {
         armed_with_katana( 5 );
         spawn_at( "mon_zombie", 2, 1 );
+        CHECK_FALSE( scared() );
+        CHECK_FALSE( npc_autonomy::safe_for_daily_life( guy ) );
+    }
+    SECTION( "unarmed, a zombie 2 tiles away: scared" ) {
+        spawn_at( "mon_zombie", 2, 1 );
         CHECK( scared() );
+    }
+    SECTION( "with a katana, a lone fast zombie dog right there: not scared (reported with a Hound)" ) {
+        armed_with_katana( 5 );
+        spawn_at( "mon_zombie_dog", 2, 1 );
+        CHECK_FALSE( scared() );
     }
     SECTION( "zombies add up: three are too many for a katana and no skill" ) {
         armed_with_katana( 0 );
@@ -1518,5 +1529,47 @@ TEST_CASE( "npc_autonomy_shopkeeper_returns_to_their_spot", "[npc][autonomy]" )
             guy.set_fac( faction_your_followers );
             CHECK_FALSE( npc_autonomy::stays_put( guy ) );
         }
+    }
+}
+
+// Reported 2026-11-18: a katana handed over during a chase stayed in the pack for a while.
+TEST_CASE( "npc_autonomy_arms_up_when_hostiles_are_near", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 4, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    guy.wear_item( item( itype_backpack ), false );
+    guy.i_add( item( itype_knife_combat ) );
+    REQUIRE_FALSE( guy.get_wielded_item() );
+    const auto turns = [&guy]( int count ) {
+        for( int t = 0; t < count; ++t ) {
+            calendar::turn += 1_turns;
+            npc_autonomy::arm_up( guy );
+        }
+    };
+
+    SECTION( "nothing around: they leave it in the pack" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        turns( 6 );
+        CHECK_FALSE( guy.get_wielded_item() );
+    }
+    SECTION( "a zombie in view: they draw it within a few turns" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 8, 0 ) );
+        get_map().build_map_cache( 0 );
+        turns( 6 );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_knife_combat );
+    }
+    SECTION( "option off: the game's own timing" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 8, 0 ) );
+        get_map().build_map_cache( 0 );
+        turns( 6 );
+        CHECK_FALSE( guy.get_wielded_item() );
     }
 }
