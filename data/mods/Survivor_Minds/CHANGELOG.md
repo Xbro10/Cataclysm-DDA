@@ -5,6 +5,9 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ## Unreleased
 
+### Added
+- Journal lines about Backrooms finds (with Backrooms Expanded): an NPC who eats moth jelly, a royal ration, or drinks cloudy water (liquid pain) writes about it, at most once a day each. Without Backrooms Expanded they simply never come up.
+
 ## v0.1.0 - 2026-11-17
 
 ### Added

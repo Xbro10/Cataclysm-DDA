@@ -1,5 +1,10 @@
 [
   {
+    "type": "json_flag",
+    "id": "NPC_REFUSES",
+    "//": "Xbro10 fork: NPCs never pick this to eat or drink on their own (src/npcmove.cpp rate_food). Official builds load the flag and ignore it. No \"info\": it would give the trap away in the description."
+  },
+  {
     "type": "ITEM",
     "id": "br_moth_jelly",
     "//": "From the Backrooms Wiki. Deathmoths leave it behind (br_deathmoth_drops). A sweet food that mends a few hit points.",
@@ -104,7 +109,7 @@
     "quench": 10,
     "fun": -20,
     "container": "bottle_almond_water",
-    "flags": [ "EATEN_COLD" ],
+    "flags": [ "EATEN_COLD", "NPC_REFUSES" ],
     "consumption_effect_on_conditions": [ "EOC_BR_LIQUID_PAIN" ]
   },
   {
@@ -127,5 +132,11 @@
     "type": "morale_type",
     "id": "morale_br_liquid_pain",
     "text": "Drank liquid pain"
+  },
+  {
+    "type": "shopkeeper_blacklist",
+    "id": "br_never_buys",
+    "//": "What no Backrooms trader buys (the Exchange stalls and the diner cook): they know the smell of liquid pain.",
+    "entries": [ { "item": "br_liquid_pain", "message": "<npcname> sniffs the bottle and pushes it back.  \"That isn't almond water.\"" } ]
   }
 ]
