@@ -1,0 +1,20 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "The Flamero-Mado spear in your hands, UndeadPeople: held steeply across the body, 64x80 like UndeadPeople's own spears (tools/backrooms_expanded/draw_br_held_udp.ps1).",
+    "compatibility": [ "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br_held_udp.png",
+        "sprite_width": 64,
+        "sprite_height": 80,
+        "sprite_offset_x": -16,
+        "sprite_offset_y": -48,
+        "tiles": [
+          { "id": "overlay_wielded_br_flamero_mado_off", "fg": 0, "rotates": false },
+          { "id": "overlay_wielded_br_flamero_mado_on", "fg": 1, "rotates": false }
+        ]
+      }
+    ]
+  }
+]
