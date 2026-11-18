@@ -37,6 +37,8 @@ This `testing` branch is the build to play. It only changes when Xbro10 updates 
   looks, and a **Discord "Playing" card** shows where you are (Options > General > Discord status: off, basic or
   detailed).
 - **The launcher** (`tools/launcher/`): installs this build, tells you when a new one is out, and keeps your saves.
+  New: a **Sound** page that downloads the **CC-Sounds** or **@'s soundpack** sound packs and switches the game to
+  the one you pick.
 
 What changed is listed in each mod's `CHANGELOG.md` (`data/mods/Backrooms_Expanded/`, `data/mods/Survivor_Minds/`).
 
