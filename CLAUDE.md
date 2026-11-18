@@ -3,21 +3,34 @@
 This is Xbro10's fork of Cataclysm: Dark Days Ahead (CDDA). The project plan is the
 playbook PDF at
 `C:\Users\xande\Documents\CDDA documents for modding\CDDA Backrooms + Autonomous NPCs — Claude Code Playbook.pdf`
-(Phases 0–8 plus testing/publishing prompts; the 2026-11-17 version, which adds Phase 8 "Making a home: NPC construction";
-older ones are kept beside it as "(old, 2026-11-12)" and "(old, 2026-11-16)"). Map every request to a playbook prompt.
+(Phases 0–10 plus testing/publishing prompts and a "Parked ideas" list; the 2026-11-18 version, which adds Phase 9
+"Fighting smart" and Phase 10 "Life off-screen"; older ones are kept beside it as "(old, 2026-11-12)", "(old, 2026-11-16)"
+and "(old, 2026-11-17)"). Map every request to a playbook prompt.
 
 ## Playbook progress
 
-As of 2026-11-17. Update this each time a prompt is finished.
+As of 2026-11-18. Update this each time a prompt is finished.
 - Phases 0, 1 and 2: finished (Prompts 0.1 to 2.6). Don't redo, re-plan or re-verify them.
 - Phase 3: 3.1 to 3.4 finished (3.4: water, food and warmth, all tested in game by 2026-11-17).
-  The planned "stocking up" step became Prompt 7.0 (stock count) in the new playbook.
+  The planned "stocking up" step became Prompt 7.0 (stock count). 3.6 comes after Phase 6.
+- Phase 4: skipped for now. Don't start it.
 - Phase 5: 5.1 finished 2026-11-17 (both mods v0.1.0, one combined GitHub release `mods-v0.1.0`). 5.2 (seek safety)
-  built 2026-11-17, waiting for the in-game test. Next: 5.3 (only chats left), then 5.4.
+  built and tested in game 2026-11-17, plus two fixes from that test (Safety sizes threats up against the NPC's
+  own strength; no pacing between two hostiles) and gunner rules (gunners stand and shoot), whose in-game test
+  is still open. Then 5.2 is finished. Next: 5.3 (only chats left), then 5.4.
 - Fixes already made ahead of Phase 5: part of 5.3 (a follower drops a meal when left behind, guards eat
   on their post, water trips use upstream's follow and guard reach). Still open in 5.3: chats.
-- Next after 3.4: Phase 5 in order (5.1 first), then Phase 6 (6.0 first), then 3.6, then Phase 7, then Phase 8 (it takes over the shelter half of 7.7; 8.6, Backrooms homes, goes on `dev`).
+- Order: the rest of Phase 5 in order, then Phase 6 (6.0 first), then 3.6, then Phase 9, then Phase 7, then Phase 8
+  (it takes over the shelter half of 7.7; 8.6, Backrooms homes, goes on `dev`), then Phase 10 (last).
   Skip 3.5 and 4.1 (covered by 5.6), 4.5 (5.8 step B), 3.7 and 4.7 (Phase 7). 6.6 starts 4.6 (scouts).
+- Notes for Phase 9 (from the 2026-11-18 review): its "what exists today" should include the gunner rules
+  (`npc_autonomy::gunner_stance_for`, hooks in `npc::assess_danger` and `npc::act_on_danger_assessment`);
+  decide in 9.0 whether they move under the "NPC combat tactics" sub-option. The game's long retreat lasts at
+  least 20 turns (`std::max( ..., 20_turns )` in `act_on_danger_assessment`), not two. 9.3 and 9.7 can build on
+  5.2's safe-spot scoring (`find_safe_spot`). 9.9 (light draws the dead at night) conflicts with 5.2's light
+  bonus outside the Backrooms: settle it by 9.9 at the latest.
+- Note for Phase 10: 10.1 (eat, drink and sleep while away, from the NPC's own pack) fixes a problem players hit
+  today (followers come back starving) and could come earlier in a simple form; ask the user before moving it.
 - The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
 - Phase 6 rule: stance, anchor, leash, wants and trips are saved NPC variables, not new enum entries.
   The follower rule `ally_rule::no_self_care` (added 2026-11-15) predates this rule.
