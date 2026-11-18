@@ -25,6 +25,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [BE] **Loot comes packed:** the All-Nite serves chili and soup in a bowl and coffee in a cup (chili used to spawn
   as a loose puddle), and the security office pistol has its magazine in it. A new test spawns every mod loot table
   and fails on anything loose that should be packed.
+- [BE] **Backrooms Wiki finds:** moth jelly from Deathmoths (food that heals a little), firesalt on Level 2 (burns
+  as lamp fuel, so it also fills the Flamero-Mado spear), rare royal rations (most of a day's food, never spoil) and
+  cloudy water, liquid pain in an almond water bottle that hurts to drink. Each has a sprite, and the Flamero-Mado
+  spear now shows in your character's hands, burning when lit. Breakroom runners' Glocks start loaded.
 - [BE] **Trading overhaul (the Exchange and the All-Nite diner):** traders and the cook sell only their stall stock,
   never the gun or gear they carry; each has a clear trade with a few kinds of goods in deep piles, says what they
   sell ("What do you sell?", "What's cooking today?"), has a sign or menu board, buys only their own kind of goods

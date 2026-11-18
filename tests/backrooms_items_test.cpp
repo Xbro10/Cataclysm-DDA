@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "avatar.h"
+#include "bodypart.h"
 #include "calendar.h"
 #include "cata_catch.h"
 #include "damage.h"
@@ -192,4 +193,52 @@ TEST_CASE( "guard_office_pistols_spawn_loaded", "[.][backrooms_items]" )
         }
     }
     CHECK( pistols > 100 );
+}
+
+TEST_CASE( "backrooms_wiki_finds_work", "[.][backrooms_items]" )
+{
+    if( !backrooms_items_loaded() ) {
+        return;
+    }
+    clear_avatar();
+    clear_map_without_vision();
+    avatar &you = get_avatar();
+    const itype_id firesalt( "br_firesalt" );
+    const itype_id moth_jelly( "br_moth_jelly" );
+    const itype_id liquid_pain( "br_liquid_pain" );
+    const bodypart_id torso( "torso" );
+
+    SECTION( "firesalt fuels the Flamero-Mado spear" ) {
+        item spear( itype_br_flamero_mado_off );
+        spear.ammo_set( firesalt, 50 );
+        REQUIRE( spear.ammo_remaining() == 50 );
+        REQUIRE( you.wield( spear ) );
+        you.invoke_item( &*you.get_wielded_item() );
+        CHECK( you.get_wielded_item()->typeId() == itype_br_flamero_mado_on );
+    }
+
+    SECTION( "moth jelly mends a few hit points" ) {
+        you.set_part_hp_cur( torso, 20 );
+        item jelly( moth_jelly );
+        you.consume( jelly, /*force=*/true );
+        CHECK( you.get_part_hp_cur( torso ) > 20 );
+    }
+
+    SECTION( "cloudy water is liquid pain" ) {
+        REQUIRE( you.get_pain() == 0 );
+        item drink( liquid_pain );
+        you.consume( drink, /*force=*/true );
+        CHECK( you.get_pain() >= 30 );
+    }
+
+    SECTION( "deathmoths leave moth jelly" ) {
+        int jelly = 0;
+        for( int i = 0; i < 200; i++ ) {
+            for( const item &it : item_group::items_from( item_group_id( "br_deathmoth_drops" ),
+                    calendar::turn_zero ) ) {
+                jelly += it.typeId() == moth_jelly ? 1 : 0;
+            }
+        }
+        CHECK( jelly > 30 );
+    }
 }
