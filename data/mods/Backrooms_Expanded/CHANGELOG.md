@@ -5,6 +5,10 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ## Unreleased
 
+### Fixed
+
+- Breakroom runners really leave now. They looked for a squatter camp, lobby or generator room only 12 squares away, and those are rare, so most days they found nothing and the board said "Done for today". They now look 30 squares out, and if there is still nothing they go scavenging in the lanes ("OUT, scavenging the lanes").
+
 ## v0.1.0 - 2026-11-17
 
 ### Added
