@@ -2804,6 +2804,59 @@ std::optional<texture_draw_data> cata_tiles::get_texture_draw_data( const std::s
     return texture_draw_data{ texture_ptr.get(), rect, uv0, uv1 };
 }
 
+// Xbro10 fork: character creator sprite preview
+character_preview cata_tiles::get_character_preview( const bool male,
+        const std::vector<std::pair<std::string, std::string>> &overlays )
+{
+    character_preview rval;
+    if( !tileset_ptr ) {
+        return rval;
+    }
+    rval.tile_size = point( tileset_ptr->get_tile_width(), tileset_ptr->get_tile_height() );
+    const auto add_layer = [&]( const std::string & id ) {
+        std::optional<tile_lookup_res> res = find_tile_looks_like( id, TILE_CATEGORY::NONE, "" );
+        if( !res ) {
+            return;
+        }
+        const tile_type &ttype = res->tile();
+        // the first variant, so the preview doesn't flicker between frames
+        const std::vector<int> *indices = ttype.fg.pick( 0 );
+        if( !indices || indices->empty() ) {
+            return;
+        }
+        const texture *tile = tileset_ptr->get_tile( indices->front() );
+        if( !tile ) {
+            return;
+        }
+        SDL_Texture *tex = tile->get_texture_ptr().get();
+        const SDL_Rect rect = tile->get_srcrect();
+        float buf_w = 0.0f;
+        float buf_h = 0.0f;
+        SDL_PropertiesID props = SDL_GetTextureProperties( tex );
+        if( props ) {
+            buf_w = static_cast<float>( SDL_GetNumberProperty( props, SDL_PROP_TEXTURE_WIDTH_NUMBER, 0 ) );
+            buf_h = static_cast<float>( SDL_GetNumberProperty( props, SDL_PROP_TEXTURE_HEIGHT_NUMBER, 0 ) );
+        }
+        if( buf_w <= 0.0f || buf_h <= 0.0f ) {
+            return;
+        }
+        character_preview_layer layer;
+        layer.data = texture_draw_data{ tex, rect, { rect.x / buf_w, rect.y / buf_h },
+            { ( rect.x + rect.w ) / buf_w, ( rect.y + rect.h ) / buf_h } };
+        layer.offset = ttype.offset;
+        layer.pixelscale = ttype.pixelscale;
+        rval.layers.push_back( layer );
+    };
+    add_layer( male ? "player_male" : "player_female" );
+    for( const std::pair<std::string, std::string> &overlay : overlays ) {
+        std::string draw_id;
+        if( find_overlay_looks_like( male, overlay.first, overlay.second, draw_id ) ) {
+            add_layer( draw_id );
+        }
+    }
+    return rval;
+}
+
 std::unordered_set<std::string> cata_tiles::get_all_portrait_tile_ids( bool male ) const
 {
     return tileset_ptr->get_all_portrait_tile_ids( male );

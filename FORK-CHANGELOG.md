@@ -11,14 +11,54 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 | **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
 | **[Launcher]** | The launcher in `tools/launcher/` |
 
-**Jump to:** [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
+**Jump to:** [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
 [Nov 12–14, the first version](#november-1214-2026-the-first-version) · [How to add an entry](#how-to-add-an-entry)
+
+---
+
+## November 17, 2026
+
+**First releases:** Backrooms Expanded v0.1.0 and Survivor Minds v0.1.0, together in one release on the GitHub
+Releases page ("Mods v0.1.0", tag `mods-v0.1.0`), with a download for each mod. Both READMEs now list everything
+built so far.
+
+### Backrooms
+- [BE] **Breakroom archers and supply depot:** two archers with bows guard the front of each Breakroom layout, and a
+  depot of food, water, medicine and tools fills back up every time a runner gets home.
+- [BE] **Backrooms entities are their own faction:** they never fight each other, always attack zombies and other
+  outsiders, and leave Facelings alone.
+
+### Launcher
+- [C++] **Discord status card:** while you play, Discord shows which level or world you're in (with the launcher picture),
+  how long you've played and a **Get the fork** button. Options > General > Discord: Off, Basic or Detailed (adds
+  the day, your followers, and sleeping or driving). Needs the Discord desktop app.
+
+### Bug fixes
+- [BE] **Breakroom runners** now really leave at the time on the runner board (the schedule couldn't find them).
+  New worlds only.
+- [BE] **Exchange traders and the All-Nite cook** lay out their whole stock to trade, not one or two items.
+- [C++] **No more "item_location lost its target item during a save/load cycle" pop-ups** after loading: something
+  being used from a pile of identical items on the ground or in a vehicle (eating, picking up, hauling) lost track of
+  its item, because the save keeps only one id for the whole pile.
+- [C++] **Character creator: facial hair can be changed again.** Taking off "Facial hair: none" to pick a beard showed
+  "my_traits and my_mutations were out of sync" and did nothing, because random looks gave it the wrong way.
+- [C++] **NPC autonomy: a plank carried for the fire is put down straight away** once the NPC no longer needs the
+  fire (warmed up, or called away), and they take their weapon back out. Before, they could hold it for up to a
+  game minute.
+
+### For developers
+- [C++] `src/discord_presence.{h,cpp}`: a small Discord IPC client (named pipe or Unix socket, no library),
+  hooked in `main.cpp` and `game::do_turn`, at most one update per 15 s. Settings and pictures per dimension in
+  `data/discord_presence.json` (application id empty = off). Card picture (the launcher icon): `tools/backrooms_expanded/draw_discord_art.ps1`.
+  Test `[discord_presence]`.
 
 ---
 
 ## November 16, 2026
 
 ### Backrooms
+- [BE] **New sprites** (UltiCa and UndeadPeople): the Manila Room's walls, deep and dark carpet, pooled fluid, and map
+  signs for the Exchange and the All-Nite diner.
 - [BE] **The All-Nite diner:** a diner on Level 1 with a cook who sells hot meals, a server full of gossip,
   regulars in the booths, and a stocked kitchen where NPCs come to eat.
 - [BE] **The Exchange:** a fenced market on Level 1 with three traders (supplies, gear, oddities), a guard and
@@ -64,6 +104,18 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ### Bug fixes
 - [BE] **Level 2 tunnels** no longer show a mapgen error when a ceiling light lands on a junk pile.
 - [BE] **Breakroom runners' deaths** are recorded again (the game refused to run their death script).
+- [C++] **No more "Tried to get wound bruise_bad" pop-ups** in fights: when heavy bruising got worse in two ways at
+  once (severe bruising and torn skin), the game lost track of the bruise. It could also crash.
+
+### For developers
+- [C++] **Synced with upstream CDDA** (30 commits: faults, wounds, factions linked to monster factions). No
+  conflicts; every fork change is intact.
+- [C++] The NPC autonomy tests now start each case at 20 C. Upstream's `tree_tick_full_returns_score` forces
+  -30 C and never undoes it, so the water and food in later tests froze and 3 of them failed in a full test run.
+- [C++] **Character creator sprite preview:** with a tileset on, the creator shows your character's sprite (hair,
+  facial hair, eye colour, skin, other traits with a sprite, and your profession's clothes), large on the TRAITS
+  tab and small at the right end of General Info on every tab. It changes as you pick traits, gender or outfit.
+  `cata_tiles::get_character_preview` plus `draw_character_sprite_preview` in `newcharacter.cpp`.
 
 ---
 

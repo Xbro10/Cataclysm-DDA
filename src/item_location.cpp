@@ -101,6 +101,22 @@ static item *retrieve_by_uid( const T &sel, int64_t uid )
     return obj.get_item();
 }
 
+// Xbro10 fork: a map tile's or vehicle part's items are saved run-length encoded: a run of
+// identical items is written once, with the uid of the run's last item, and on load the
+// others are copies with new uids.  A location saved on one of those finds no item with its
+// uid, so the item at the saved index is used, but only if it is still in such a run (the
+// next item is identical), so an item that is really gone isn't swapped for another one.
+template <typename T>
+static item *retrieve_rle_copy( const T &sel, int idx )
+{
+    if( idx < 0 ) {
+        return nullptr;
+    }
+    item *obj = retrieve_index( sel, idx );
+    const item *next = retrieve_index( sel, idx + 1 );
+    return obj != nullptr && next != nullptr && obj->same_for_rle( *next ) ? obj : nullptr;
+}
+
 class item_location::impl
 {
     public:
@@ -149,6 +165,10 @@ class item_location::impl
         virtual item *unpack_by_uid( int64_t ) const {
             return nullptr;
         }
+        // Xbro10 fork: see retrieve_rle_copy.
+        virtual item *unpack_rle_copy( int ) const {
+            return nullptr;
+        }
 
         item *target() const {
             ensure_unpacked();
@@ -166,6 +186,9 @@ class item_location::impl
                 item *i = nullptr;
                 if( uid_hint > 0 ) {
                     i = unpack_by_uid( uid_hint );
+                    if( !i ) {
+                        i = unpack_rle_copy( idx );
+                    }
                 }
                 if( !i && uid_hint == 0 ) {
                     // Legacy save or vehicle base item: use index
@@ -297,6 +320,10 @@ class item_location::impl::item_on_map : public item_location::impl
 
         item *unpack_by_uid( int64_t uid ) const override {
             return retrieve_by_uid( cur, uid );
+        }
+
+        item *unpack_rle_copy( int idx ) const override {
+            return retrieve_rle_copy( cur, idx );
         }
 
         type where() const override {
@@ -636,6 +663,10 @@ class item_location::impl::item_on_vehicle : public item_location::impl
 
         item *unpack_by_uid( int64_t uid ) const override {
             return retrieve_by_uid( cur, uid );
+        }
+
+        item *unpack_rle_copy( int idx ) const override {
+            return retrieve_rle_copy( cur, idx );
         }
 
         type where() const override {

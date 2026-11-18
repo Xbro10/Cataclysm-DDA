@@ -33,6 +33,7 @@
 #include "debug_capture.h"
 #include "enums.h"
 #include "event.h"
+#include "discord_presence.h"
 #include "event_bus.h"
 #include "explosion.h"
 #include "field.h"
@@ -541,6 +542,8 @@ bool game::do_turn()
     }
 
     drain_renderer_recovery();
+    // Xbro10 fork: refresh the Discord "Playing" card (throttled inside).
+    discord_presence::update();
 
     weather_manager &weather = get_weather();
 

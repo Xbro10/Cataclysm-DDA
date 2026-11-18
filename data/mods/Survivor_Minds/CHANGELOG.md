@@ -5,6 +5,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ## Unreleased
 
+## v0.1.0 - 2026-11-17
+
 ### Added
 - "Got a minute?" has "Stop marking places as looted on your own." / "You can mark places as looted on your own again.": turns a follower's automatic LOOTED marks off or back on. Asking them to mark a place still works.
 - Gabriel's look, picked by the person he's based on: light skin, long blond hair, green eyes, a cyan hoodie and a blue wool scarf (new item `sm_scarf_blue`, with recoloured UltiCa and UndeadPeople sprites).

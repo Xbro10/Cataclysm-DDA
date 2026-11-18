@@ -1,6 +1,8 @@
 // Xbro10 fork: tests for "NPC autonomy (experimental)" (src/npc_autonomy.*).
 
 #include <algorithm>
+#include <functional>
+#include <optional>
 #include <sstream>
 #include <string>
 
@@ -40,12 +42,15 @@ static const activity_id ACT_CONSUME( "ACT_CONSUME" );
 static const itype_id itype_2x4( "2x4" );
 static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_bottle_plastic( "bottle_plastic" );
+static const itype_id itype_duffelbag( "duffelbag" );
 static const itype_id itype_butane( "butane" );
 static const itype_id itype_hoodie( "hoodie" );
 static const itype_id itype_jeans( "jeans" );
 static const itype_id itype_lighter( "lighter" );
+static const itype_id itype_mossberg_590( "mossberg_590" );
 static const itype_id itype_rock( "rock" );
 static const itype_id itype_sandwich_cheese_grilled( "sandwich_cheese_grilled" );
+static const itype_id itype_single_sling( "single_sling" );
 static const itype_id itype_splinter( "splinter" );
 static const itype_id itype_tshirt( "tshirt" );
 static const itype_id itype_water_clean( "water_clean" );
@@ -83,6 +88,18 @@ static npc &spawn_follower( const point_bub_ms &where )
     return guy;
 }
 
+// Tests run earlier can leave the weather cold: behavior_test's tree_tick_full_returns_score forces
+// -30 C and never undoes it. That froze the water and food these tests put down, so they failed
+// whenever they ran after it. Each test here starts at a mild 20 C and puts the weather back after.
+struct mild_weather {
+    restore_on_out_of_scope<std::optional<units::temperature>> forced{ get_weather().forced_temperature };
+    restore_on_out_of_scope<units::temperature> air{ get_weather().temperature };
+    mild_weather() {
+        get_weather().forced_temperature.reset();
+        get_weather().temperature = units::from_celsius( 20 );
+    }
+};
+
 static double stored( const npc &guy, const std::string &key )
 {
     const diag_value *val = guy.maybe_get_value( key );
@@ -92,6 +109,7 @@ static double stored( const npc &guy, const std::string &key )
 
 TEST_CASE( "npc_autonomy_needs_off_by_default", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -105,6 +123,7 @@ TEST_CASE( "npc_autonomy_needs_off_by_default", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_social_need", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -144,6 +163,7 @@ TEST_CASE( "npc_autonomy_social_need", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_felt_needs", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option autonomy( "NPC_AUTONOMY", "true" );
@@ -204,6 +224,7 @@ TEST_CASE( "npc_autonomy_felt_needs", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_mealtimes", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -246,6 +267,7 @@ TEST_CASE( "npc_autonomy_mealtimes", "[npc][autonomy]" )
 // every item in a pocket got a new uid on load ("UID not found in container contents").
 TEST_CASE( "npc_autonomy_meals_on_post_and_when_left_behind", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -280,6 +302,7 @@ TEST_CASE( "npc_autonomy_meals_on_post_and_when_left_behind", "[npc][autonomy]" 
 
 TEST_CASE( "npc_autonomy_rule_leave_food_and_water_to_me", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -303,6 +326,7 @@ TEST_CASE( "npc_autonomy_rule_leave_food_and_water_to_me", "[npc][autonomy]" )
 // player, stood eating, never followed, and didn't fight a zombie next to them.
 TEST_CASE( "npc_autonomy_starving_follower_left_behind", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -358,6 +382,7 @@ TEST_CASE( "npc_autonomy_starving_follower_left_behind", "[npc][autonomy]" )
 
 TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -397,6 +422,7 @@ TEST_CASE( "npc_meal_survives_save_and_load", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -430,6 +456,7 @@ TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_get_water", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -476,6 +503,7 @@ TEST_CASE( "npc_autonomy_get_water", "[npc][autonomy]" )
 // water cooler (keg furniture, water held on its tile as in the Backrooms' f_watercooler).
 TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -512,6 +540,7 @@ TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_debug_lonely", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 3, 0 ) );
@@ -524,6 +553,7 @@ TEST_CASE( "npc_autonomy_debug_lonely", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_debug_owned_area", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     map &here = get_map();
@@ -537,6 +567,7 @@ TEST_CASE( "npc_autonomy_debug_owned_area", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option food_on( "NO_NPC_FOOD", "false" );
@@ -554,6 +585,7 @@ TEST_CASE( "npc_autonomy_no_water_is_not_a_failed_try", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_get_food", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -627,6 +659,7 @@ TEST_CASE( "npc_autonomy_get_food", "[npc][autonomy]" )
 // Reported 2026-11-16: a hungry NPC walked into spiked pits to reach food in the middle.
 TEST_CASE( "npc_autonomy_food_behind_traps", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -673,6 +706,7 @@ TEST_CASE( "npc_autonomy_food_behind_traps", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -853,10 +887,88 @@ TEST_CASE( "npc_autonomy_get_warm", "[npc][autonomy]" )
     }
 }
 
+// Reported 2026-11-17: a cold follower with a shotgun picked up a plank for the fireplace,
+// the fire was put out and they were warmed up, and they kept the plank in their hands
+// instead of their shotgun.
+TEST_CASE( "npc_autonomy_warm_trip_called_off_with_wood_in_hands", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    guy.set_all_parts_temp_conv( BODYTEMP_VERY_COLD );
+    const tripoint_bub_ms hearth( player_pos + point( 3, 2 ), 0 );
+    here.furn_set( hearth, furn_f_fireplace );
+    guy.wear_item( item( itype_duffelbag ), false );
+    guy.wear_item( item( itype_single_sling ), false ); // the shotgun goes here, not the plank
+    item gun( itype_mossberg_590 );
+    REQUIRE( guy.can_stash( gun ) );
+    guy.wield( gun );
+    here.add_item_or_charges( tripoint_bub_ms( player_pos + point( 4, -2 ), 0 ), item( itype_2x4 ) );
+    REQUIRE_FALSE( guy.can_stash( item( itype_2x4 ) ) );
+    const auto holds = [&guy]( const itype_id & id ) {
+        return guy.get_wielded_item() && guy.get_wielded_item()->typeId() == id;
+    };
+    std::string trace;
+    const auto run_until = [&]( int turns, const std::function<bool()> &done ) {
+        for( int t = 0; t < turns && !done(); ++t ) {
+            calendar::turn += 1_turns;
+            guy.set_moves( guy.get_speed() );
+            guy.npc_update_body();
+            guy.move();
+            if( guy.activity ) {
+                guy.activity.do_turn( guy );
+            }
+            trace += string_format( " t%d:goal=%s held=%s", t, guy.get_committed_goal(),
+                                    guy.get_wielded_item() ? guy.get_wielded_item()->typeId().str() : "-" );
+        }
+    };
+    // Right away, not at the next once-a-minute tidy (seen in game a second after warming up).
+    const auto plank_down_gun_back = [&]() {
+        trace.clear();
+        run_until( 5, [&]() {
+            return holds( itype_mossberg_590 );
+        } );
+        INFO( trace );
+        CHECK( holds( itype_mossberg_590 ) );
+        CHECK( guy.maybe_get_value( "autonomy_wood_in_hands" ) == nullptr );
+    };
+
+    SECTION( "warmed up on the way to the fireplace" ) {
+        item lighter( itype_lighter );
+        lighter.ammo_set( itype_butane, 100 );
+        guy.i_add( lighter );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run_until( 200, [&]() {
+            return holds( itype_2x4 );
+        } );
+        INFO( trace );
+        REQUIRE( holds( itype_2x4 ) );
+        guy.set_all_parts_temp_conv( BODYTEMP_NORM );
+        plank_down_gun_back();
+    }
+    SECTION( "the fire goes out and they have nothing to light it with" ) {
+        here.add_field( hearth, field_fd_fire, 1 );
+        REQUIRE( npc_autonomy::wants_warmth( guy ) );
+        run_until( 200, [&]() {
+            return holds( itype_2x4 );
+        } );
+        INFO( trace );
+        REQUIRE( holds( itype_2x4 ) );
+        here.remove_field( hearth, field_fd_fire );
+        plank_down_gun_back();
+    }
+}
+
 // The game's own warming goal used to win once an NPC was Very cold (it scores by how cold
 // they are, ours a flat 0.45), so a Very cold NPC lit no fires and kept none going.
 TEST_CASE( "npc_autonomy_get_warm_wins_when_very_cold", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -889,6 +1001,7 @@ TEST_CASE( "npc_autonomy_get_warm_wins_when_very_cold", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_dress_for_the_cold", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
@@ -921,6 +1034,7 @@ TEST_CASE( "npc_autonomy_dress_for_the_cold", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_stale_plan_is_dropped", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -946,6 +1060,7 @@ TEST_CASE( "npc_autonomy_stale_plan_is_dropped", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 2, 0 ) );
@@ -972,6 +1087,7 @@ TEST_CASE( "npc_autonomy_refill_bottle", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_safety_need", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map_without_vision();
     clear_avatar();
     override_option autonomy( "NPC_AUTONOMY", "true" );
@@ -996,6 +1112,7 @@ TEST_CASE( "npc_autonomy_safety_need", "[npc][autonomy]" )
 
 TEST_CASE( "npc_autonomy_safety_hostile_close_by", "[npc][autonomy]" )
 {
+    const mild_weather weather;
     clear_map();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );

@@ -26,6 +26,8 @@
 #include "mapgen_helpers.h"
 #include "npc_class.h"
 #include "math_parser_diag_value.h"
+#include "monfaction.h"
+#include "mtype.h"
 #include "npc.h"
 #include "omdata.h"
 #include "overmapbuffer.h"
@@ -56,6 +58,22 @@ static void run_eoc( Creature &who, const effect_on_condition_id &eoc )
 {
     dialogue d( get_talker_for( who ), nullptr );
     eoc->activate( d );
+}
+
+// Items owned by a shopkeeper's faction lying around them (where restocking puts the stock and
+// where the trade window looks for it).
+static int owned_stock_near( const npc &guy )
+{
+    map &here = get_map();
+    int n = 0;
+    for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), 6 ) ) {
+        for( const item &it : here.i_at( p ) ) {
+            if( it.get_owner() == guy.get_fac_id() ) {
+                n++;
+            }
+        }
+    }
+    return n;
 }
 
 TEST_CASE( "breakroom_runner_leaves_on_a_run", "[.][backrooms_runner]" )
@@ -133,10 +151,11 @@ TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
         point board_at;
         const char *front_ter;
         point front_at;
+        point depot_at;
     };
     const layout layouts[] = {
-        { "br1_breakroom_checkpoint", point( 4, 12 ), "t_chaingate_c", point( 15, 19 ) },
-        { "br1_breakroom_bunker", point( 6, 16 ), "t_fence_barbed", point( 4, 20 ) },
+        { "br1_breakroom_checkpoint", point( 4, 12 ), "t_chaingate_c", point( 15, 19 ), point( 11, 16 ) },
+        { "br1_breakroom_bunker", point( 6, 16 ), "t_fence_barbed", point( 4, 20 ), point( 4, 13 ) },
     };
     for( const layout &l : layouts ) {
         CAPTURE( l.id );
@@ -155,6 +174,21 @@ TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
             }
         }
         CHECK( guards >= 1 );
+        // The runners carry the unique ids the 30-minute tick looks them up by.
+        CHECK( g->unique_npc_exists( "BR1_runner_jonah" ) );
+        CHECK( g->unique_npc_exists( "BR1_runner_rosa" ) );
+        // Two archers with bows at the front, and a stocked supply depot.
+        int archers = 0;
+        for( const npc &guy : g->all_npcs() ) {
+            if( guy.myclass == npc_class_id( "NC_BR1_ARCHER" ) ) {
+                archers++;
+                REQUIRE( guy.get_wielded_item() );
+                CHECK( guy.get_wielded_item()->is_gun() ); // bows are guns that fire arrows
+            }
+        }
+        CHECK( archers == 2 );
+        CHECK( here.furn( corner + l.depot_at ) == furn_str_id( "f_rack" ) );
+        CHECK( !here.i_at( corner + l.depot_at ).empty() );
         // Larder: food on the kitchen counters, drinks in the fridge.
         CHECK( !here.i_at( corner + point( 3, 10 ) ).empty() );
         CHECK( !here.i_at( corner + point( 4, 10 ) ).empty() );
@@ -305,7 +339,7 @@ TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
             traders++;
             guy.shop_restock();
             CAPTURE( guy.myclass.str() );
-            CHECK( guy.inv_dump().size() > 5 );
+            CHECK( owned_stock_near( guy ) > 5 );
         } else {
             guards++;
         }
@@ -341,11 +375,72 @@ TEST_CASE( "diner_generates", "[.][backrooms_runner]" )
         if( guy.mission == NPC_MISSION_SHOPKEEP ) {
             cooks++;
             guy.shop_restock();
-            CHECK( guy.inv_dump().size() > 5 );
+            CHECK( owned_stock_near( guy ) > 5 );
         } else {
             servers++;
         }
     }
     CHECK( cooks == 1 );
     CHECK( servers == 1 );
+}
+
+// A runner home restocks the supply depot of whichever layout the Breakroom has, owned by the Breakroom.
+TEST_CASE( "breakroom_depot_restock_finds_the_layout", "[.][backrooms_runner]" )
+{
+    const effect_on_condition_id restock( "EOC_BR1_DEPOT_RESTOCK" );
+    if( !restock.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    // The depot's row of racks and crates in each layout (x from, x to, y).
+    struct layout {
+        const char *id;
+        int x0;
+        int x1;
+        int y;
+    };
+    const layout layouts[] = {
+        { "br1_breakroom_checkpoint", 10, 17, 16 },
+        { "br1_breakroom_bunker", 4, 10, 13 },
+    };
+    map &here = get_map();
+    const faction_id breakroom( "br_breakroom" );
+    for( const layout &l : layouts ) {
+        CAPTURE( l.id );
+        clear_map_without_vision();
+        clear_avatar();
+        const tripoint_abs_omt omt = get_avatar().pos_abs_omt();
+        overmap_buffer.ter_set( omt, oter_id( "br1_breakroom" ) );
+        manual_mapgen( omt, manual_nested_mapgen, nested_mapgen_id( l.id ) );
+        const tripoint_bub_ms corner = here.get_bub( project_to<coords::ms>( omt ) );
+        // Empty the depot so only the restock's items count (the layout's own aren't owned here).
+        for( int x = l.x0; x <= l.x1; ++x ) {
+            here.i_clear( corner + point( x, l.y ) );
+        }
+        dialogue d( get_talker_for( get_avatar() ), nullptr );
+        restock->activate( d );
+        int owned = 0;
+        for( int x = l.x0; x <= l.x1; ++x ) {
+            for( const item &it : here.i_at( corner + point( x, l.y ) ) ) {
+                owned += it.get_owner() == breakroom ? 1 : 0;
+            }
+        }
+        CHECK( owned > 0 );
+    }
+}
+
+// The Backrooms' entities are one faction: friends with each other, enemies of zombies.
+TEST_CASE( "backrooms_entities_faction", "[.][backrooms_runner]" )
+{
+    const mfaction_str_id entity( "br_entity" );
+    if( !entity.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    CHECK( mtype_id( "mon_br_hound" )->default_faction == entity );
+    CHECK( mtype_id( "mon_br_smiler" )->default_faction == entity );
+    CHECK( mtype_id( "mon_br_deathmoth" )->default_faction == entity );
+    CHECK( entity->attitude( entity.id() ) == MFA_FRIENDLY );
+    CHECK( entity->attitude( mfaction_str_id( "zombie" ).id() ) == MFA_HATE );
+    CHECK( entity->attitude( mfaction_str_id( "br_faceling" ).id() ) == MFA_NEUTRAL );
 }

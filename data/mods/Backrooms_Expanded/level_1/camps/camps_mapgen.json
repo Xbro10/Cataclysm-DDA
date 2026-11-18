@@ -31,7 +31,9 @@
       "^": [ "t_fence_barbed" ],
       "W": [ "t_thconc_floor" ],
       "k": [ "t_thconc_floor" ],
-      "D": [ "t_thconc_floor" ]
+      "D": [ "t_thconc_floor" ],
+      "r": [ "t_thconc_floor" ],
+      "Y": [ "t_thconc_floor" ]
     },
     "furniture": {
       "V": "f_vending_o",
@@ -47,7 +49,9 @@
       "X": "f_crate_c",
       "=": "f_sandbag_half",
       "W": "f_sandbag_wall",
-      "k": "f_workbench"
+      "k": "f_workbench",
+      "r": "f_rack",
+      "Y": "f_crate_c"
     },
     "items": {
       "X": { "item": "br1_camp_stores", "chance": 60 },
@@ -97,7 +101,7 @@
         "  #L...!....+...!....#  ",
         "  #Lh.....h.#B..S...B#  ",
         "  ###o#+#o############  ",
-        "  |..!.........!.....|  ",
+        "  |..!....YrrY.rrY!..|  ",
         "  |=................=|  ",
         "  |==.....!..!.....==|  ",
         "  |||||||||||||G||||||  ",
@@ -109,7 +113,9 @@
       "palettes": [ "br1_camp_palette" ],
       "items": {
         "X": { "item": "br1_camp_stores", "chance": 100, "repeat": [ 1, 2 ] },
-        "L": { "item": "br1_camp_lockers", "chance": 90 }
+        "L": { "item": "br1_camp_lockers", "chance": 90 },
+        "r": { "item": "br1_breakroom_depot", "chance": 100, "repeat": [ 2, 3 ] },
+        "Y": { "item": "br1_breakroom_depot", "chance": 100, "repeat": [ 2, 3 ] }
       },
       "place_items": [
         { "item": "br1_breakroom_larder", "x": 3, "y": 10, "chance": 100, "repeat": [ 5, 6 ] },
@@ -119,9 +125,11 @@
       "place_npcs": [
         { "class": "BR1_foreman", "x": 7, "y": 8 },
         { "class": "BR1_cartographer", "x": 15, "y": 8 },
-        { "class": "BR1_runner_jonah", "x": 4, "y": 5 },
-        { "class": "BR1_runner_rosa", "x": 9, "y": 5 },
-        { "class": "BR1_gate_guard", "x": 4, "y": 14 }
+        { "class": "BR1_runner_jonah", "x": 4, "y": 5, "unique_id": "BR1_runner_jonah" },
+        { "class": "BR1_runner_rosa", "x": 9, "y": 5, "unique_id": "BR1_runner_rosa" },
+        { "class": "BR1_gate_guard", "x": 4, "y": 14 },
+        { "class": "BR1_breakroom_archer", "x": 4, "y": 17 },
+        { "class": "BR1_breakroom_archer", "x": 19, "y": 17 }
       ],
       "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 16, "y": 10 }, { "furn": "f_br1_runner_board", "x": 4, "y": 12 } ],
       "place_signs": [ { "x": 16, "y": 20, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
@@ -148,7 +156,7 @@
         "  #ccTR...n.#LLL...XX#  ",
         "  #####..#########+###  ",
         "  #kk..!..kk#BB..!.BB#  ",
-        "  #.........#........#  ",
+        "  #.rr...rr.#........#  ",
         "  #XX.....XX#BB....BB#  ",
         "  ######+#############  ",
         "     #D...h#            ",
@@ -163,7 +171,9 @@
       "palettes": [ "br1_camp_palette" ],
       "items": {
         "X": { "item": "br1_camp_stores", "chance": 100, "repeat": [ 1, 2 ] },
-        "L": { "item": "br1_camp_lockers", "chance": 90 }
+        "L": { "item": "br1_camp_lockers", "chance": 90 },
+        "r": { "item": "br1_breakroom_depot", "chance": 100, "repeat": [ 2, 3 ] },
+        "Y": { "item": "br1_breakroom_depot", "chance": 100, "repeat": [ 2, 3 ] }
       },
       "place_items": [
         { "item": "br1_breakroom_larder", "x": 3, "y": 10, "chance": 100, "repeat": [ 5, 6 ] },
@@ -173,9 +183,11 @@
       "place_npcs": [
         { "class": "BR1_foreman", "x": 7, "y": 8 },
         { "class": "BR1_cartographer", "x": 15, "y": 8 },
-        { "class": "BR1_runner_jonah", "x": 4, "y": 5 },
-        { "class": "BR1_runner_rosa", "x": 9, "y": 5 },
-        { "class": "BR1_gate_guard", "x": 10, "y": 16 }
+        { "class": "BR1_runner_jonah", "x": 4, "y": 5, "unique_id": "BR1_runner_jonah" },
+        { "class": "BR1_runner_rosa", "x": 9, "y": 5, "unique_id": "BR1_runner_rosa" },
+        { "class": "BR1_gate_guard", "x": 10, "y": 16 },
+        { "class": "BR1_breakroom_archer", "x": 3, "y": 18 },
+        { "class": "BR1_breakroom_archer", "x": 13, "y": 18 }
       ],
       "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 16, "y": 10 }, { "furn": "f_br1_runner_board", "x": 6, "y": 16 } ],
       "place_signs": [ { "x": 9, "y": 21, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],

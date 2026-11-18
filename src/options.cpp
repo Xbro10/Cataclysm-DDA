@@ -1840,6 +1840,18 @@ void options_manager::add_options_general()
 
     add_empty_line();
 
+    // Xbro10 fork: Discord "Playing" card (src/discord_presence.cpp).
+    add_option_group( "general", Group( "discord_opts", to_translation( "Discord" ),
+                                        to_translation( "What your Discord status shows while you play." ) ),
+    [&]( const std::string & page_id ) {
+        add( "DISCORD_PRESENCE", page_id, to_translation( "Discord status" ),
+             to_translation( "What the Discord desktop app shows your friends while you play.  Basic: which level or world you're in and how long you've played.  Detailed: also the in-game day, your followers and whether you're sleeping or driving.  Off: nothing is sent." ),
+        { { "off", to_translation( "Off" ) }, { "basic", to_translation( "Basic" ) }, { "detailed", to_translation( "Detailed" ) } },
+        "basic" );
+    } );
+
+    add_empty_line();
+
     add_option_group( "general", Group( "soundpacks_opts", to_translation( "Soundpack options" ),
                                         to_translation( "Options regarding soundpack." ) ),
     [&]( const std::string & page_id ) {

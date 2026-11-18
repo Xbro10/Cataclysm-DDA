@@ -37,6 +37,7 @@
 
 static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_jeans( "jeans" );
+static const itype_id itype_rock( "rock" );
 static const itype_id itype_tshirt( "tshirt" );
 static const vproto_id vehicle_prototype_bicycle( "bicycle" );
 static const vproto_id vehicle_prototype_car( "car" );
@@ -654,4 +655,50 @@ TEST_CASE( "item_location_in_container_deserialize_without_uid_falls_back_to_ind
     item_location loaded = deserialize_item_location( json_str );
     REQUIRE( loaded );
     CHECK( loaded->typeId() == itype_tshirt );
+}
+
+// Xbro10 fork: identical items on a tile are saved as one entry ("3 rocks") with only one of
+// their uids, so after a load the others have new uids.  A location saved on one of them
+// ("item_location lost its target item during a save/load cycle") now finds it by its index,
+// as long as it is still one of identical items.  Re-adding the items gives them new uids,
+// like the copies a load makes.
+TEST_CASE( "item_location_on_map_survives_identical_items_reload",
+           "[item][item_location][item_uid]" )
+{
+    clear_map_without_vision();
+    map &m = get_map();
+    const tripoint_bub_ms pos( 60, 60, 0 );
+    m.i_clear( pos );
+    for( int i = 0; i < 3; ++i ) {
+        m.add_item( pos, item( itype_rock ) );
+    }
+    item_location first_rock( map_cursor( pos ), &*m.i_at( pos ).begin() );
+    const std::string json_str = serialize_item_location( first_rock );
+
+    SECTION( "one of identical items: found by its index" ) {
+        m.i_clear( pos );
+        for( int i = 0; i < 3; ++i ) {
+            m.add_item( pos, item( itype_rock ) );
+        }
+        item_location loaded;
+        const std::string msg = capture_debugmsg_during( [&]() {
+            loaded = deserialize_item_location( json_str );
+            CHECK( loaded );
+        } );
+        CHECK( msg.empty() );
+        REQUIRE( loaded );
+        CHECK( loaded->typeId() == itype_rock );
+    }
+    SECTION( "the item is really gone: nothing, not another item" ) {
+        m.i_clear( pos );
+        m.add_item( pos, item( itype_rock ) );
+        m.add_item( pos, item( itype_tshirt ) );
+        item_location loaded;
+        const std::string msg = capture_debugmsg_during( [&]() {
+            loaded = deserialize_item_location( json_str );
+            CHECK_FALSE( loaded );
+        } );
+        CHECK_FALSE( msg.empty() );
+    }
+    m.i_clear( pos );
 }

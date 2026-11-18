@@ -12,6 +12,7 @@
 #include "cata_catch.h"
 #include "character.h"
 #include "creature.h"
+#include "debug.h"
 #include "dialogue.h"
 #include "effect_on_condition.h"
 #include "enum_conversions.h"
@@ -43,6 +44,8 @@ static const mutation_category_id mutation_category_TROGLOBITE( "TROGLOBITE" );
 static const trait_id trait_BEAK( "BEAK" );
 static const trait_id trait_BEAK_PECK( "BEAK_PECK" );
 static const trait_id trait_EAGLEEYED( "EAGLEEYED" );
+static const trait_id trait_FACIAL_HAIR_GOATEE( "FACIAL_HAIR_GOATEE" );
+static const trait_id trait_FACIAL_HAIR_NONE( "FACIAL_HAIR_NONE" );
 static const trait_id trait_FELINE_EARS( "FELINE_EARS" );
 static const trait_id trait_GOURMAND( "GOURMAND" );
 static const trait_id trait_LUPINE_FUR( "LUPINE_FUR" );
@@ -809,4 +812,23 @@ TEST_CASE( "Threshold_substitutions", "[mutations]" )
     CHECK( dummy.has_trait( trait_BEAK_PECK ) );
     CHECK( !dummy.has_trait( trait_WINGS_BIRD ) );
     CHECK( !dummy.has_trait( trait_STR_ALPHA ) );
+}
+
+// Xbro10 fork: random looks gave "no facial hair" as a bare mutation, so taking it off in the
+// character creator (to pick a beard) failed with "my_traits and my_mutations were out of sync".
+TEST_CASE( "random_looks_without_a_beard_can_be_changed", "[mutations][chargen]" )
+{
+    clear_avatar();
+    Character &dummy = get_player_character();
+    dummy.male = false;
+    dummy.randomize_cosmetics();
+    REQUIRE( dummy.has_trait( trait_FACIAL_HAIR_NONE ) );
+    CHECK( dummy.has_base_trait( trait_FACIAL_HAIR_NONE ) );
+    const std::string msgs = capture_debugmsg_during( [&dummy]() {
+        dummy.toggle_trait( trait_FACIAL_HAIR_NONE );
+    } );
+    CHECK( msgs.empty() );
+    CHECK_FALSE( dummy.has_trait( trait_FACIAL_HAIR_NONE ) );
+    dummy.toggle_trait( trait_FACIAL_HAIR_GOATEE );
+    CHECK( dummy.has_trait( trait_FACIAL_HAIR_GOATEE ) );
 }

@@ -4,11 +4,12 @@ param([string]$Out, [string]$Preview)
 # 16-31  grey wall, same masks
 # 32-34  damp carpet (three stain variants)   35  carpet under a ceiling light
 # 36     faded tile                           37  tile under a ceiling light
+# 38-53  manila wall (the Manila Room), same masks   54  deep carpet   55  dark soggy carpet   56  pooled fluid
 # A wall shows its papered face only where no wall continues south (the 3/4 top-down look);
 # elsewhere you see the top of the wall, with a dark edge on every unconnected side.
 Add-Type -AssemblyName System.Drawing
 $T = 32
-$Count = 38
+$Count = 57
 $bmp = New-Object System.Drawing.Bitmap ($Count * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 . "$PSScriptRoot\sprite_common.ps1"
 $rng = New-Object System.Random 1980
@@ -37,7 +38,8 @@ function Wall($tile, $mask, $pal) {
 
 $yellow = @{ Top = (Hex '#8e7c42'); TopD = (Hex '#7a6a36'); TopL = (Hex '#a8955a'); Face = (Hex '#d9c46e'); FaceL = (Hex '#e6d48a'); Stripe = (Hex '#c6b05c'); Stain = (Hex '#a8924a'); Base = (Hex '#6e5a2e') }
 $gray = @{ Top = (Hex '#6e6c68'); TopD = (Hex '#5e5c58'); TopL = (Hex '#868480'); Face = (Hex '#a8a6a0'); FaceL = (Hex '#b8b6b0'); Stripe = (Hex '#9a9892'); Stain = (Hex '#86847e'); Base = (Hex '#4a4844') }
-for ($m = 0; $m -lt 16; $m++) { Wall $m $m $yellow; Wall (16 + $m) $m $gray }
+$manila = @{ Top = (Hex '#9a8a6a'); TopD = (Hex '#887a5c'); TopL = (Hex '#b0a07e'); Face = (Hex '#e4d3a6'); FaceL = (Hex '#efe2bc'); Stripe = (Hex '#e4d3a6'); Stain = (Hex '#e4d3a6'); Base = (Hex '#7a6248') }
+for ($m = 0; $m -lt 16; $m++) { Wall $m $m $yellow; Wall (16 + $m) $m $gray; Wall (38 + $m) $m $manila }
 
 # Floors: damp yellow carpet (three variants), then a lit version; faded tile and its lit version.
 $carpet = Hex '#b8a24e'; $carpetD = Hex '#a48e40'; $carpetL = Hex '#c8b462'; $damp = Hex '#8e7a36'
@@ -63,5 +65,26 @@ function Tiles($tile) {
   Fill $tile 17 9 6 4 (Hex '#b4a878')
 }
 Tiles 36; Tiles 37; Panel 37
+
+# 54: deep carpet (archway rooms): darker, thick tufts, sodden patches.
+$deep = Hex '#9e8a3e'; $deepD = Hex '#86742e'; $deepL = Hex '#b29c4c'; $sog = Hex '#6e5e26'
+Fill 54 0 0 $T $T $deep
+for ($y = 1; $y -lt $T; $y += 3) { for ($x = ($y % 2); $x -lt $T; $x += 3) { Px 54 $x $y $deepD; Px 54 ($x + 1) ($y - 1) $deepL } }
+Grain 54 0 0 $T $T $deepD $deepL 50 $rng
+foreach ($p in @(@(9, 10), @(22, 21), @(14, 26))) { Ell 54 $p[0] $p[1] 4 2 $sog; Ell 54 ($p[0] + 1) $p[1] 2 1 (Hex '#5c4e1e') }
+
+# 55: dark soggy carpet (blackout zones): the same weave, drained of colour and wet.
+$dk = Hex '#4e4630'; $dkD = Hex '#3e3824'; $dkL = Hex '#5c5338'; $wet = Hex '#2e2a1c'
+Fill 55 0 0 $T $T $dk
+for ($y = 0; $y -lt $T; $y += 2) { for ($x = ($y % 4) / 2; $x -lt $T; $x += 2) { Px 55 $x $y $dkD } }
+Grain 55 0 0 $T $T $dkD $dkL 40 $rng
+foreach ($p in @(@(8, 22), @(20, 9), @(25, 25))) { Ell 55 $p[0] $p[1] ($rng.Next(3, 6)) ($rng.Next(2, 3)) $wet }
+
+# 56: pooled fluid: ankle-deep murky water soaked out of the carpet, sickly yellow-green, with a sheen.
+$fl = Hex '#6a6a3a'; $flD = Hex '#55562e'; $flL = Hex '#8a8a52'; $sheen = Hex '#b8b88a'
+Fill 56 0 0 $T $T $fl
+Grain 56 0 0 $T $T $flD $flL 70 $rng
+foreach ($p in @(@(8, 8), @(21, 13), @(12, 23), @(26, 26))) { Line 56 ($p[0] - 3) $p[1] ($p[0] + 3) $p[1] $flL; Px 56 $p[0] ($p[1] - 1) $sheen }
+Line 56 4 16 9 15 $sheen; Line 56 18 5 23 6 $sheen
 
 SaveSheet $Out $Preview $Count

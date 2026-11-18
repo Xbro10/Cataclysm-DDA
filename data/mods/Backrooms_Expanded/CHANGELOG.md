@@ -5,7 +5,12 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ## Unreleased
 
+## v0.1.0 - 2026-11-17
+
 ### Added
+- The Breakroom has **archers** and a **supply depot**. Two archers with bows (recurve, compound or long) and quivers of arrows watch the front: from the sandbag nests in the Checkpoint's yard, or behind the Bunker's sandbag wall. The depot (racks and crates along the Checkpoint's yard, racks in the Bunker's workshop) holds food, almond water, medicine, tools, lights and batteries, owned by the Breakroom, and every runner who gets home brings a fresh batch.
+- The Backrooms' entities (Smilers, Hounds, Deathmoths, Wretches, Skin-stealers, Partygoers and the Redeemer) are their own faction now: they never fight each other, always attack zombies and other outsiders that wander in, and leave Facelings alone.
+- Sprites (UltiCa and UndeadPeople) for the newest things: the Manila Room's cream wallpaper walls (connecting like the other Level 0 walls), deep carpet, dark soggy carpet and pooled fluid, and map signs for the Exchange (a gold coin under a market awning) and the All-Nite diner (a burger on a plate).
 - **The All-Nite**, a diner on Level 1 (one or two per map; a red "D" on the map once seen): a cook who sells hot meals from the grill (burgers, pancakes, chili, coffee and more, fresh every day), a server who hears all the gossip, and regulars at the counter and in the booths. Its fridge and cupboards are stocked and owned by the diner, and there is a water tap in the kitchen, so with NPC autonomy on it is where people come to eat and talk.
 - **The Exchange**, a market on Level 1 (one or two per map, found by exploring; "$" on the map once seen): three traders behind counters (supplies: food, almond water and medicine; gear: tools, hardware, lights and batteries; oddities: maps, notes and field guides), a locked storeroom, a lit aisle with tables, all inside a chain-link fence with a gate and a guard. Stock refreshes every few days. Almond water is the closest thing to money: it sells high and buys a lot. The traders also share rumours.
 - More kinds of space on **Level 0** (from the Backrooms Wiki): **archway rooms** (rings of arches and pillars over deep, squelching carpet that slows you down, open on every side, with dead-end alcoves and one light in the middle), **blackout zones** (unlit rooms of dark, soggy carpet with ankle-deep pools of foul fluid; Smilers like them) and **pillar halls** (a whole square of open carpet with thick pillars every 4 tiles, about 1 square in 17).
@@ -74,11 +79,11 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - You now land where you are (always at ground level on Level 1) when crossing between Level 0 and Level 1. You land just inside the nearest rippling wall within 30 tiles (including the room you came in through); only if there is none does a new alcove or thin-walled room form around you. Leaving Level 1 brings you out under where you were, not where you went in.
 
 ### Fixed
+- The Exchange traders and the All-Nite cook had almost nothing to sell (their stock was bought on a tiny budget); they now lay out their whole stock every restock.
+- Breakroom runners never set off in a real game: the Breakroom map didn't give Jonah and Rosa the ids the runner schedule looks them up by. New worlds only (runners placed before this fix keep standing still).
 - When Jonah or Rosa died, their death was never recorded (an error instead): the runner board now crosses them out and the other runner can still go out.
 - Level 2 no longer shows a mapgen error ("setting terrain to t_br2_light ... when item ... existed") when a tunnel light lands on a junk pile.
 - Breakroom runners never left on a run: picking where to go always failed, so every run was put off 6 hours, forever. Their travel also always pointed at their own spot, and the "Find the runner" job marked your own position instead of the runner's. Runners now leave at the time on the runner board and walk off even while you watch.
 - Level 1 structures no longer count towards the main world's limit on required overmap specials. The elevator lobbies would have pushed the main world over that limit.
 - Cars can no longer block an arrival alcove: any car touching the alcove or the 3 tiles in front of its opening is removed (the parking bays elsewhere keep all six car spots).
 - Followers now arrive with you through rippling walls (they were left stranded where you first landed). Followers within 20 tiles come along and land on free tiles next to you.
-
-### Removed

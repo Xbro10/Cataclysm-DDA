@@ -159,5 +159,67 @@
       "Nothing.  Which means it's out there somewhere else, being something to somebody else."
     ],
     "responses": [ { "text": "Thanks.", "topic": "TALK_BR1_GATE_GUARD" } ]
+  },
+  {
+    "type": "npc",
+    "id": "BR1_breakroom_archer",
+    "//": "Breakroom archer: watches the front from behind the sandbags (both layouts). Stays at the post (GUARD).",
+    "class": "NC_BR1_ARCHER",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_ARCHER",
+    "faction": "br_breakroom"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_ARCHER",
+    "name": { "str": "Archer" },
+    "job_description": "I watch the approach with a bow.  Bows are quiet, and down here quiet keeps you alive.",
+    "common": false,
+    "worn_override": "NC_BR1_ARCHER_worn",
+    "weapon_override": "NC_BR1_ARCHER_weapon",
+    "carry_override": "NC_BR1_ARCHER_carry",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_dex": { "rng": [ 1, 3 ] },
+    "bonus_per": { "rng": [ 1, 3 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "archery", "bonus": { "rng": [ 3, 5 ] } },
+      { "skill": "gun", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "dodge", "bonus": { "rng": [ 1, 2 ] } }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_ARCHER_worn",
+    "subtype": "collection",
+    "items": [ "pants_cargo", "tshirt", "jacket_flannel", "socks", "boots", "gloves_work", "quiver" ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_ARCHER_weapon",
+    "subtype": "distribution",
+    "items": [ [ "recurbow", 50 ], [ "compbow", 30 ], [ "longbow", 20 ] ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_ARCHER_carry",
+    "subtype": "collection",
+    "entries": [
+      { "item": "arrow_wood", "charges": [ 20, 30 ] },
+      { "item": "arrow_metal", "charges": [ 5, 10 ] },
+      { "item": "flashlight", "charges": [ 50, 100 ] }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_ARCHER",
+    "dynamic_line": [
+      "Keep to the light when you cross the yard.  I can't shoot what I can't see.",
+      "Twenty arrows and a good bow.  Guns bring everything in the garage.  This doesn't.",
+      "Something stood at the fence last night.  Didn't come in.  I kept an arrow on it till it went.",
+      "The runners bring the depot back to life every time they come home.  We'd be eating wallpaper otherwise."
+    ],
+    "responses": [ { "text": "Stay sharp.", "topic": "TALK_DONE" } ]
   }
 ]

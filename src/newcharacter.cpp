@@ -84,6 +84,13 @@
 #include "units_utility.h"
 #include "veh_type.h"
 #include "worldfactory.h"
+// Xbro10 fork: character creator sprite preview
+#if defined(TILES)
+#include "cached_options.h"
+#include "cata_tiles.h"
+#include "character_attire.h"
+#include "sdltiles.h"
+#endif
 
 static const std::string flag_FORGIVING( "FORGIVING" );
 static const std::string flag_STANDARD( "STANDARD" );
@@ -2840,8 +2847,102 @@ void character_creator_ui_impl::draw_controls()
     cc_uistate.previous_tab = cc_uistate.selected_tab;
 }
 
+// Xbro10 fork: the character's tileset sprite (base, traits such as hair and eyes,
+// profession clothes), as the map would draw it. Nothing in curses builds or without tiles.
+// @param top_right screen position of the top-right corner, or nullopt to draw at the ImGui cursor
+// @param max_height shrinks the scale so the picture fits (0 = no limit)
+// @return the size drawn (zero if nothing was drawn)
+// NOLINTBEGIN(unused-parameter)
+static ImVec2 draw_character_sprite_preview( const avatar &u, float scale,
+        std::optional<ImVec2> top_right = std::nullopt, float max_height = 0.0f )
+{
+#if defined(TILES)
+    if( !use_tiles || !tilecontext || !tilecontext->is_valid() ) {
+        return ImVec2();
+    }
+    // The avatar wears nothing until the game starts, so dress the preview in the
+    // profession's clothes. Item groups can be random: roll once per profession,
+    // outfit and trait set.
+    static std::string clothes_key;
+    static std::vector<std::pair<std::string, std::string>> clothes_overlays;
+    const std::vector<trait_id> traits = u.get_mutations();
+    std::string key = ( u.prof ? u.prof->ident().str() : std::string() ) + ( outfit ? "|m" : "|f" );
+    for( const trait_id &t : traits ) {
+        key += "|" + t.str();
+    }
+    if( key != clothes_key ) {
+        clothes_key = key;
+        clothes_overlays.clear();
+        if( u.prof ) {
+            std::list<item> clothes;
+            for( item &it : u.prof->items( outfit, traits ) ) {
+                if( it.is_armor() ) {
+                    clothes.push_back( it );
+                }
+            }
+            // innermost layer first, as when worn
+            clothes.sort( []( const item & a, const item & b ) {
+                return a.get_layer() < b.get_layer();
+            } );
+            // `class`: the file-level bool `outfit` hides the type's name
+            const class outfit worn( clothes );
+            worn.get_overlay_ids( clothes_overlays );
+        }
+    }
+    std::vector<std::pair<std::string, std::string>> overlays = u.get_overlay_ids();
+    overlays.insert( overlays.end(), clothes_overlays.begin(), clothes_overlays.end() );
+
+    const character_preview preview = tilecontext->get_character_preview( u.male, overlays );
+    if( preview.layers.empty() ) {
+        return ImVec2();
+    }
+    // bounding box of all layers, in tileset pixels (tall sprites reach above the tile)
+    float min_x = 0.0f;
+    float min_y = 0.0f;
+    float max_x = static_cast<float>( preview.tile_size.x );
+    float max_y = static_cast<float>( preview.tile_size.y );
+    for( const character_preview_layer &l : preview.layers ) {
+        min_x = std::min( min_x, static_cast<float>( l.offset.x ) );
+        min_y = std::min( min_y, static_cast<float>( l.offset.y ) );
+        max_x = std::max( max_x, l.offset.x + l.data.dimensions.w * l.pixelscale );
+        max_y = std::max( max_y, l.offset.y + l.data.dimensions.h * l.pixelscale );
+    }
+    const float pad = 4.0f;
+    if( max_height > 0.0f && ( max_y - min_y ) * scale + 2 * pad > max_height ) {
+        scale = std::max( 1.0f, std::floor( ( max_height - 2 * pad ) / ( max_y - min_y ) ) );
+    }
+    const ImVec2 size( ( max_x - min_x ) * scale + 2 * pad, ( max_y - min_y ) * scale + 2 * pad );
+    const ImVec2 origin = top_right ? ImVec2( top_right->x - size.x, top_right->y ) :
+                          ImGui::GetCursorScreenPos();
+    ImDrawList *draw_list = ImGui::GetWindowDrawList();
+    draw_list->AddRectFilled( origin, ImVec2( origin.x + size.x, origin.y + size.y ),
+                              IM_COL32( 40, 40, 40, 255 ) );
+    draw_list->AddRect( origin, ImVec2( origin.x + size.x, origin.y + size.y ),
+                        IM_COL32( 90, 90, 90, 255 ) );
+    for( const character_preview_layer &l : preview.layers ) {
+        const ImVec2 p0( origin.x + pad + ( l.offset.x - min_x ) * scale,
+                         origin.y + pad + ( l.offset.y - min_y ) * scale );
+        const ImVec2 p1( p0.x + l.data.dimensions.w * l.pixelscale * scale,
+                         p0.y + l.data.dimensions.h * l.pixelscale * scale );
+        draw_list->AddImage( reinterpret_cast<ImTextureID>( l.data.texture ), p0, p1,
+                             ImVec2( l.data.uv0.first, l.data.uv0.second ),
+                             ImVec2( l.data.uv1.first, l.data.uv1.second ) );
+    }
+    if( !top_right ) {
+        ImGui::Dummy( size );
+    }
+    return size;
+#else
+    return ImVec2();
+#endif
+}
+// NOLINTEND(unused-parameter)
+
 void character_creator_ui_impl::draw_top_bar( const avatar &u ) const
 {
+    // Xbro10 fork: remember where the bar starts, for the small sprite preview
+    const ImVec2 top_bar_start = ImGui::GetCursorScreenPos();
+
     auto draw_separator = []() {
         ImGui::SameLine();
         draw_colored_text_wrap( " | ", c_white );
@@ -2894,6 +2995,11 @@ void character_creator_ui_impl::draw_top_bar( const avatar &u ) const
     cataimgui::draw_colored_text( string_format(
                                       _( "Press <color_light_green>%s</color> to view and alter keybindings." ),
                                       ui_parent->get_current_tab_input().get_desc( "HELP_KEYBINDINGS" ) ) );
+
+    // Xbro10 fork: small sprite preview at the bar's right end, on every tab
+    const float bar_height = ImGui::GetCursorScreenPos().y - top_bar_start.y;
+    const float preview_right = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+    draw_character_sprite_preview( u, 2.0f, ImVec2( preview_right, top_bar_start.y ), bar_height );
 }
 
 bool character_creator_ui::display()
@@ -3064,6 +3170,10 @@ void character_creator_ui_impl::draw_traits()
             }
             setup_list_detail_ui( trait_name );
             draw_spacer();
+            // Xbro10 fork: large sprite preview, so cosmetic choices can be seen
+            if( draw_character_sprite_preview( u, 4.0f ).x > 0.0f ) {
+                draw_spacer();
+            }
             draw_colored_text_wrap( selected_trait->desc(), c_white );
         } else {
             setup_list_detail_ui();

@@ -689,8 +689,12 @@ void Character::randomize_cosmetics()
     //arbitrary 50% chance to add beard to male characters
     if( male && one_in( 2 ) ) {
         randomize_cosmetic_trait( type_facial_hair );
-    } else {
-        set_mutation( trait_FACIAL_HAIR_NONE );
+    } else if( !has_trait( trait_FACIAL_HAIR_NONE ) &&
+               !has_conflicting_trait( trait_FACIAL_HAIR_NONE ) ) {
+        // Xbro10 fork: a starting trait like the others (toggle_trait), not a bare mutation.
+        // set_mutation left it out of my_traits, so swapping it for a beard in the character
+        // creator failed ("my_traits and my_mutations were out of sync for FACIAL_HAIR_NONE").
+        toggle_trait( trait_FACIAL_HAIR_NONE );
     }
 }
 
