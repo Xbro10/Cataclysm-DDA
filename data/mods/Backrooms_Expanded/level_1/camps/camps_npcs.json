@@ -180,11 +180,15 @@
     "weapon_override": "NC_BR1_ARCHER_weapon",
     "carry_override": "NC_BR1_ARCHER_carry",
     "traits": [ { "group": "Appearance_demographics" } ],
+    "//": "Every bow they carry needs Strength 9 and NPC Strength rolls 4-12, so +5 makes it 9-17: always enough to draw it. Stabbing and melee bonuses meet the combat knife's needs (stabbing 2, melee 1).",
+    "bonus_str": { "constant": 5 },
     "bonus_dex": { "rng": [ 1, 3 ] },
     "bonus_per": { "rng": [ 1, 3 ] },
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
       { "skill": "archery", "bonus": { "rng": [ 3, 5 ] } },
+      { "skill": "stabbing", "bonus": { "rng": [ 1, 2 ] } },
+      { "skill": "melee", "bonus": { "rng": [ 1, 2 ] } },
       { "skill": "gun", "bonus": { "rng": [ 2, 4 ] } },
       { "skill": "dodge", "bonus": { "rng": [ 1, 2 ] } }
     ]
