@@ -58,6 +58,8 @@ class character_oracle_t : public oracle_t
         status_t autonomy_wants_food( std::string_view ) const;
         status_t autonomy_wants_warmth( std::string_view ) const;
         status_t autonomy_wants_meal_at_post( std::string_view ) const;
+        status_t autonomy_wants_safety( std::string_view ) const;
+        status_t autonomy_wants_return_home( std::string_view ) const;
         /**
          * Score predicates for utility strategy (return 0-1 urgency).
          */
@@ -79,6 +81,8 @@ class character_oracle_t : public oracle_t
         float autonomy_weight( std::string_view weight ) const;
         /** Xbro10 fork: autonomy_weight, raised to the game's own temperature urgency when colder (it replaces it). */
         float autonomy_warmth_urgency( std::string_view weight ) const;
+        /** Xbro10 fork: autonomy_weight times Safety (at least 0.5), for seeking safety. */
+        float autonomy_safety_urgency( std::string_view weight ) const;
     private:
         const Character *subject;
 };

@@ -4450,6 +4450,12 @@ void options_manager::update_options_cache()
     }
 }
 
+#if defined(SDL_SOUND)
+// Xbro10 fork: the ambient and effect volumes in use, so save() can tell when they change.
+static int last_ambient_volume = -1;
+static int last_effect_volume = -1;
+#endif
+
 bool options_manager::save() const
 {
     const cata_path savefile = PATH_INFO::options();
@@ -4457,6 +4463,21 @@ bool options_manager::save() const
     update_options_cache();
 
     update_music_volume();
+
+    // Xbro10 fork: ambient loops (weather, indoors, night, danger) only take their volume when they
+    // start, and a loop may never restart, so lowering "Ambient sound volume" or "Sound effect
+    // volume" in game left them at the old level until a restart. When either changes, fade them
+    // out; sfx::do_ambient starts them again at the new volume.
+#if defined(SDL_SOUND)
+    const int ambient_volume = ::get_option<int>( "AMBIENT_SOUND_VOLUME" );
+    const int effect_volume = ::get_option<int>( "SOUND_EFFECT_VOLUME" );
+    if( last_ambient_volume >= 0 && ( ambient_volume != last_ambient_volume ||
+                                      effect_volume != last_effect_volume ) ) {
+        sfx::fade_audio_channel( sfx::channel::any, 300 );
+    }
+    last_ambient_volume = ambient_volume;
+    last_effect_volume = effect_volume;
+#endif
 
     return write_to_file( savefile, [&]( std::ostream & fout ) {
         JsonOut jout( fout, true );
@@ -4476,6 +4497,8 @@ void options_manager::load()
 
 #if defined(SDL_SOUND)
     sounds::sound_enabled = ::get_option<bool>( "SOUND_ENABLED" );
+    last_ambient_volume = ::get_option<int>( "AMBIENT_SOUND_VOLUME" );
+    last_effect_volume = ::get_option<int>( "SOUND_EFFECT_VOLUME" );
 #endif
 #if defined(__ANDROID__)
     android_apply_system_ui_mode();

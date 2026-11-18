@@ -658,6 +658,26 @@ float character_oracle_t::autonomy_weight( std::string_view weight ) const
     return std::clamp( value, 0.0f, 1.0f );
 }
 
+status_t character_oracle_t::autonomy_wants_return_home( std::string_view ) const
+{
+    const npc *n = dynamic_cast<const npc *>( subject );
+    return n && npc_autonomy::wants_return_home( *n ) ? status_t::running : status_t::failure;
+}
+
+status_t character_oracle_t::autonomy_wants_safety( std::string_view ) const
+{
+    const npc *n = dynamic_cast<const npc *>( subject );
+    return n && npc_autonomy::wants_safety( *n ) ? status_t::running : status_t::failure;
+}
+
+float character_oracle_t::autonomy_safety_urgency( std::string_view weight ) const
+{
+    // Scaled by how scared they are; holding on while calming down counts as Safety 50.
+    const npc *n = dynamic_cast<const npc *>( subject );
+    const float base = autonomy_weight( weight );
+    return n && base > 0.0f ? base * std::max( npc_autonomy::safety_need( *n ), 0.5f ) : 0.0f;
+}
+
 float character_oracle_t::autonomy_warmth_urgency( std::string_view weight ) const
 {
     // The game's own warming branch steps aside while ours has a way (npc_behavior.json),

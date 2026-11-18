@@ -11,10 +11,41 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 | **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
 | **[Launcher]** | The launcher in `tools/launcher/` |
 
-**Jump to:** [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
+**Jump to:** [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
 [Nov 12–14, the first version](#november-1214-2026-the-first-version) · [How to add an entry](#how-to-add-an-entry)
 
 ---
+
+## November 18, 2026
+
+### Backrooms
+- [BE] **Flamero-Mado spear:** a rare end-game spear you fill with kerosene or gasoline and light; lit, it burns as
+  well as pierces. Found in Level 2 crew stores, at the Exchange, on the Redeemer, and in museums and mansions; crafted
+  only from its schematic. Sprites for UltiCa and UndeadPeople.
+- [BE] **Loot comes packed:** the All-Nite serves chili and soup in a bowl and coffee in a cup (chili used to spawn
+  as a loose puddle), and the security office pistol has its magazine in it. A new test spawns every mod loot table
+  and fails on anything loose that should be packed.
+- [BE] **Trading overhaul (the Exchange and the All-Nite diner):** traders and the cook sell only their stall stock,
+  never the gun or gear they carry; each has a clear trade with a few kinds of goods in deep piles, says what they
+  sell ("What do you sell?", "What's cooking today?"), has a sign or menu board, buys only their own kind of goods
+  and pays extra for it.
+- [BE] **Breakroom archers can draw their bows:** every bow needs Strength 9 and some archers rolled less, so they
+  kept trying to wield it ("needs at least strength 9"). Archers get +5 Strength, and enough skill for their knife.
+- [BE] **Exchange stalls keep their own stock:** each trader has a stall faction and their own loot zone, so the
+  supplies trader no longer lists the gear stall's tools; stall crates no longer roll camp loot; the diner cook sells
+  from the counter. **Stronger runners:** top combat skills, a machete, a Glock 19 with spare magazines and a first aid
+  kit; a badly hurt runner heads home early.
+
+### NPCs
+- [C++] **Shopkeepers go back to their booth:** with NPC autonomy on, a shopkeeper (like the Exchange traders) or a
+  sheltering stranger scared off their spot looks for safety only within 6 tiles of it, and walks back once calm,
+  as guards return to their post. They remember the spot where they first stood calm, so a trader already standing
+  in the aisle in an old save takes the aisle as their spot.
+
+### Bug fixes
+- [C++] **Ambient volume changes apply in game:** lowering Ambient sound volume or Sound effect volume and leaving
+  Options fades the playing ambient loops (rain, wind, night) so they come back at the new volume; before, they kept
+  the old volume until a restart.
 
 ## November 17, 2026
 
@@ -27,11 +58,37 @@ built so far.
   depot of food, water, medicine and tools fills back up every time a runner gets home.
 - [BE] **Backrooms entities are their own faction:** they never fight each other, always attack zombies and other
   outsiders, and leave Facelings alone.
+- [BE] **Breakroom fixes from play:** runners really leave now (they looked only 12 squares away for a camp, lobby or
+  generator room, found nothing and stayed home; now 30 squares, or a scavenging run through the lanes). The Bunker's
+  archers stand in sandbag nests, and archers draw a knife and sling the bow when something gets close instead of
+  dropping the bow.
 
+### NPCs
+- [C++] **Scared NPCs head for safety (step 5.2):** with NPC autonomy on, an NPC who is scared (Safety 50+) but not
+  fighting or fleeing yet walks to the safest spot it may reach: a lit one (where Smilers won't follow), near friendly
+  people and away from the hostiles it can see. "Name backs into the light." It holds there until calm again (Safety
+  under 25, at least two minutes). Followers stay within follow distance, guards near their post. The look-around
+  panel shows "Plan: stay safe (…)".
+- [C++] **Safety notices more, but sizes things up:** hostiles an NPC can see within 10 tiles (it was 3) make Safety 50+
+  when together they match or beat what the NPC could fight on their own (armour, dodge and the weapon in hand, by
+  the game's own ratings). Unarmed, a zombie 8 tiles off is scary; with a katana it isn't, but three are, and a zombie
+  brute is until they're skilled; a hulk always is. Anything within 3 tiles still counts. Meals, chats and trips wait
+  while scared.
+- [C++] **No more pacing back and forth** between two hostiles: once an NPC heads for a safe spot it keeps going until
+  calm (Safety under 25 and two minutes since it was last scared), and only switches to a clearly better spot.
+- [C++] **Gunners stand and shoot:** with NPC autonomy on, an NPC holding a gun it may fire (loaded, or ammo to
+  reload) that outguns what it sees no longer backs away from walkers it should be shooting. It aims at the nearest
+  hostile within its gun's sure range and 10 tiles (a follower within your engagement rules) and fires before it gets
+  close; it only takes a short step back from something slower within 2 tiles. Out of ammo, too slow, or
+  outgunned (a rifle beats zombies and brutes, not a hulk), it fights or flees as before. Followers still only use
+  loud guns when your rules allow it.
 ### Launcher
 - [C++] **Discord status card:** while you play, Discord shows which level or world you're in (with the launcher picture),
   how long you've played and a **Get the fork** button. Options > General > Discord: Off, Basic or Detailed (adds
   the day, your followers, and sleeping or driving). Needs the Discord desktop app.
+- [Launcher] **Sound packs:** a new **Sound** page downloads and updates **CC-Sounds** (music and effects) and
+  **@'s soundpack** into `UserData\sound`, where game updates never touch them, and **Use this pack** makes the game
+  use it. **Menu sounds only** switches back. Launcher version 2026-11-17.
 
 ### Bug fixes
 - [BE] **Breakroom runners** now really leave at the time on the runner board (the schedule couldn't find them).

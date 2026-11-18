@@ -48,7 +48,9 @@
       "npc_autonomy_socialize",
       "npc_autonomy_get_water",
       "npc_autonomy_get_food",
-      "npc_autonomy_get_warm"
+      "npc_autonomy_get_warm",
+      "npc_autonomy_seek_safety",
+      "npc_autonomy_return_home"
     ]
   },
   {

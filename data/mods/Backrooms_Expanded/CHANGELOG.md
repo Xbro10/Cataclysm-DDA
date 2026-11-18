@@ -5,6 +5,20 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ## Unreleased
 
+### Changed
+
+- Breakroom runners are the camp's best fighters: high melee, cutting, dodge and pistol skills, a machete in a scabbard, a Glock 19 with three loaded magazines, a leather jacket, a first aid kit, bandages and painkillers. A runner badly hurt on a run (torso or head under half, or in a lot of pain) cuts it short and heads home; otherwise a run lasts until 1-2 days after leaving. The diner server and the Exchange traders keep the runners' old everyday clothes.
+- Trading overhaul at the Exchange and the All-Nite diner. Traders and the cook only sell their stall stock, never the gun, magazines, clothes or flashlight they carry. Each has a clear trade with fewer kinds of goods in deeper piles: supplies (almond water, beans, granola, crackers, bandages, aspirin, disinfectant, purifying tablets), gear (battery cells, flashlights, glowsticks, lighters, tape, rope, a few tools), oddities (maps, guides, generator notes, markers, plus one rare find each restock), and the cook (about five dishes a day, three or four portions each, plus coffee and almond water). The crates behind the Exchange stalls no longer start full of random camp stores.
+- Each trader says what they sell ("What do you sell?", or "What's cooking today?" for the cook), and a sign at each stall and a menu board in the diner list it. Traders buy only their own kind of goods ("only deals in food, water and medicine"), pay a quarter or more extra for it, and sell it a little cheaper.
+
+### Fixed
+
+- Breakroom runners really leave now. They looked for a squatter camp, lobby or generator room only 12 squares away, and those are rare, so most days they found nothing and the board said "Done for today". They now look 30 squares out, and if there is still nothing they go scavenging in the lanes ("OUT, scavenging the lanes").
+- Breakroom Bunker: the two archers now stand in half-sandbag nests either side of the airlock instead of in the open at the ends of the sandbag wall.
+- Breakroom archers carry a combat knife in a sheath and wear a bow sling. When something gets close they draw the knife and sling the bow, instead of dropping the bow and fighting with an arrow.
+- Breakroom archers are always strong enough to draw their bow. Every bow they carry needs Strength 9, and some archers rolled less, so they tried to wield it over and over ("needs at least strength 9 to use this"). They get +5 Strength now, and a little stabbing and melee skill for their knife.
+- Exchange stalls no longer mix their stock. All three traders shared one faction, so restocks and the trade window used the same loot zones: the supplies trader listed the gear stall's tools, and his food landed elsewhere. Each trader now has their own stall faction and loot zone (the stall crates and counter), and the stall crates and counters no longer get random camp loot. The diner cook trades from the counter, not the fridge and cupboards. The free field guide is no longer sold.
+
 ## v0.1.0 - 2026-11-17
 
 ### Added
@@ -65,6 +79,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Mod skeleton: modinfo.json, README and this changelog.
 
 ### Changed
+
+- Breakroom runners are the camp's best fighters: high melee, cutting, dodge and pistol skills, a machete in a scabbard, a Glock 19 with three loaded magazines, a leather jacket, a first aid kit, bandages and painkillers. A runner badly hurt on a run (torso or head under half, or in a lot of pain) cuts it short and heads home; otherwise a run lasts until 1-2 days after leaving. The diner server and the Exchange traders keep the runners' old everyday clothes.
 - Level 0 runs faster: its ceiling lights shine at brightness 40 instead of 120 (overriding the upstream Backrooms terrain). Light barely fades in open air, so each light reached about 92 tiles and the thousands of them took most of each turn's map update. The floor still reads as brightly lit everywhere, and lighting takes about 40% less time.
 - Breakroom lockers no longer crowd the doorways: the stores room has three lockers and Dot's supply locker, and its door to the back rooms moved two tiles over; the Checkpoint guard room's lockers moved to the side wall.
 - Level 0 ceiling lights are in order now: rows and columns of lights every 4 tiles across rooms and halls, with about 1 in 7 dead, instead of a random 1 in 20 floor tiles. Only newly generated areas change. (The first version of this placed the grid before the rooms, which painted over it and left Level 0 with no lights at all.)

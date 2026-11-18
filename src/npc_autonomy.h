@@ -117,6 +117,48 @@ bool wants_food( const npc &guy );
 
 /** Warmth 50+ (or 25+ beside a fire), safe, awake, not given up, and a way to warm up. */
 bool wants_warmth( const npc &guy );
+
+// ---- Seeking safety (step 5.2) ----
+// Goal autonomy_seek_safety. Scared (Safety 50+) but not in the game's own fight-or-flee
+// branch (which the behavior tree tries first): walk to the safest spot in reach (lit, near
+// friendly people, away from the hostiles they can see; followers within follow reach,
+// guards near their post, others 20 tiles) and keep at it until Safety is under 25 and two
+// minutes after they were last scared. Hostiles 4-10 tiles off only scare them when together
+// they match the NPC's side (the game's own ratings); any within 3 tiles always does.
+
+/** Scared and a spot to go to or hold, or seeking safety and not yet calm. */
+bool wants_safety( const npc &guy );
+
+// ---- Back to their spot (reported 2026-11-18) ----
+// The game keeps shopkeepers (and sheltering strangers) standing still but never remembers
+// where, so a trader scared off their booth stayed in the aisle. With NPC autonomy on, they
+// remember the tile where they first stood calm (NPC var autonomy_home_spot), look for safety
+// only within 6 tiles of it, and walk back once calm (goal autonomy_return_home).
+
+/** A shopkeeper, or a stranger on a shelter mission: the game keeps them in one place. */
+bool stays_put( const npc &guy );
+/** Every turn: note where a stays-put NPC belongs, the first time they're calm and still. */
+void remember_home_spot( npc &guy );
+/** Calm, awake, away from their spot and able to get there. */
+bool wants_return_home( const npc &guy );
+
+// ---- Gunners hold their ground (step 5.2, reported 2026-11-17) ----
+// The game's own combat backs an NPC with a gun away from anything within about 7 tiles,
+// and it doesn't shoot while backing away, so a walking zombie kept it retreating and it
+// never fired. With NPC autonomy on, a ready gunner (a gun in hand it may fire, loaded or
+// with ammo to reload) that outguns the hostiles it can see (their threat ratings against
+// own_strength(), the gun included) stands and shoots instead.
+
+enum class gunner_stance {
+    // Not a ready gunner, or outgunned: the game's own fight-or-flee.
+    none,
+    // Nothing within 2 tiles: no backing away at all, shoot.
+    hold,
+    // Something within 2 tiles that's slower than them: the game's short step back is
+    // fine, then shoot again; never the long retreat.
+    step_back
+};
+gunner_stance gunner_stance_for( npc &guy );
 /**
  * For the look-around panel: why a cold NPC (Warmth 50+) can't warm up, e.g. "Cold: no room
  * to carry the firewood"; "" when they aren't cold or have a way.

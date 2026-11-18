@@ -54,6 +54,24 @@
     "score_argument": "0.45"
   },
   {
+    "type": "behavior",
+    "id": "npc_autonomy_seek_safety",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 5.2. Safety 50+ (a hostile they can see within 3 tiles, hostiles within 10 that together match their side, outmatched, or badly hurt) while the game's own fight-or-flee branch (npc_combat, tried first) isn't acting: walk to the safest spot in reach, judged by light (the same test Smilers avoid), friendly people within 3 tiles and distance from the hostiles they can see, and keep at it (heading there or holding it) until Safety is under 25 and two minutes after they were last scared. Followers stay within follow reach, guards near their post, others 20 tiles. Scores score_argument times Safety (0.4 at Safety 50, 0.8 at 100).",
+    "conditions": [ { "predicate": "npc_autonomy_wants_safety" } ],
+    "goal": "autonomy_seek_safety",
+    "score": "npc_autonomy_safety_urgency",
+    "score_argument": "0.8"
+  },
+  {
+    "type": "behavior",
+    "id": "npc_autonomy_return_home",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). Shopkeepers and sheltering strangers, whom the game keeps standing still without remembering where: once calm and away from the tile where they first stood calm (NPC var autonomy_home_spot), walk back to it. Seeking safety keeps them within 6 tiles of it. 30 minutes off after a failed walk. score_argument is the weight (0-1); seeking safety (0.4+) wins while scared.",
+    "conditions": [ { "predicate": "npc_autonomy_wants_return_home" } ],
+    "goal": "autonomy_return_home",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.35"
+  },
+  {
     "type": "snippet",
     "category": "<ally_rule_no_self_care_true_text>",
     "//": "Xbro10 fork, follower rule no_self_care (NPC autonomy option).",

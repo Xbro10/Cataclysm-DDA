@@ -45,29 +45,55 @@
     "name": { "str": "Runner" },
     "job_description": "I run errands for Dot.  Out to the camps and the lobbies, and back again.",
     "common": false,
+    "//": "Only two runners keep the Breakroom supplied, so they are its best fighters: high melee, cutting, dodge and pistol skills, a machete in a scabbard and a Glock 19 with spare magazines, a leather jacket, and a first aid kit with plenty of bandages and painkillers. +2 Strength and Dexterity (nothing they carry needs more than the base roll).",
     "worn_override": "NC_BR1_RUNNER_worn",
+    "weapon_override": "NC_BR1_RUNNER_weapon",
     "carry_override": "NC_BR1_RUNNER_carry",
     "traits": [ { "group": "Appearance_demographics" } ],
-    "bonus_dex": { "rng": [ 1, 3 ] },
+    "bonus_str": { "constant": 2 },
+    "bonus_dex": { "rng": [ 2, 3 ] },
     "bonus_per": { "rng": [ 0, 2 ] },
     "skills": [
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
-      { "skill": "survival", "bonus": { "rng": [ 2, 4 ] } },
-      { "skill": "dodge", "bonus": { "rng": [ 2, 4 ] } },
-      { "skill": "melee", "bonus": { "rng": [ 1, 2 ] } }
+      { "skill": "melee", "bonus": { "rng": [ 5, 6 ] } },
+      { "skill": "cutting", "bonus": { "rng": [ 5, 6 ] } },
+      { "skill": "dodge", "bonus": { "rng": [ 5, 6 ] } },
+      { "skill": "gun", "bonus": { "rng": [ 3, 4 ] } },
+      { "skill": "pistol", "bonus": { "rng": [ 3, 5 ] } },
+      { "skill": "firstaid", "bonus": { "rng": [ 3, 4 ] } },
+      { "skill": "survival", "bonus": { "rng": [ 2, 4 ] } }
     ]
   },
   {
     "type": "item_group",
     "id": "NC_BR1_RUNNER_worn",
     "subtype": "collection",
+    "items": [ "pants_cargo", "tshirt", "jacket_leather", "socks", "boots", "gloves_work", "backpack", "scabbard", "holster" ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_CIVILIAN_worn",
+    "//": "Everyday clothes for Level 1 people who don't fight (the diner server, Exchange traders). The runners' old outfit.",
+    "subtype": "collection",
     "items": [ "pants_cargo", "tshirt", "hoodie", "socks", "sneakers", "backpack" ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_RUNNER_weapon",
+    "subtype": "collection",
+    "items": [ "machete" ]
   },
   {
     "type": "item_group",
     "id": "NC_BR1_RUNNER_carry",
     "subtype": "collection",
     "entries": [
+      { "item": "glock_19" },
+      { "item": "glockmag", "ammo-item": "9mm", "charges": 15, "count": 3 },
+      { "group": "full_1st_aid" },
+      { "item": "bandages", "count": [ 4, 6 ] },
+      { "item": "aspirin" },
+      { "item": "disinfectant" },
       { "item": "flashlight", "charges": [ 50, 100 ] },
       { "item": "almond_water", "container-item": "bottle_almond_water" }
     ]
@@ -135,7 +161,7 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_RUNNER_TICK",
-    "//": "Run as a runner. u_br1_run_state: 0 home, 1 out on a run, 2 heading home, 3 missing (waiting to be found). Off-screen, an NPC that reaches its goal soon picks a random new one, so every tick re-aims a runner who has strayed more than a square from where it should be. Only one runner is out at a time (global br1_runner_out). Blocks run in the order 3, 2, 1, 0 so one tick never does two steps.",
+    "//": "Run as a runner. u_br1_run_state: 0 home, 1 out on a run, 2 heading home, 3 missing (waiting to be found). A run lasts until 1-2 days after leaving (u_br1_run_turn; the runner waits at the destination till then), or ends early when the runner is badly hurt; it doesn't depend on how full their pack is. Off-screen, an NPC that reaches its goal soon picks a random new one, so every tick re-aims a runner who has strayed more than a square from where it should be. Only one runner is out at a time (global br1_runner_out). Blocks run in the order 3, 2, 1, 0 so one tick never does two steps.",
     "effect": [
       {
         "if": { "math": [ "u_br1_run_state == 3" ] },
@@ -145,6 +171,22 @@
             "then": [ { "u_set_goal": { "om_terrain": "br1_garage", "var": { "global_val": "br1_missing_point" } } } ]
           }
         ]
+      },
+      {
+        "//": "Badly hurt on a run (torso or head under half, or in a lot of pain): cut it short and head home now.",
+        "if": {
+          "and": [
+            { "math": [ "u_br1_run_state == 1" ] },
+            {
+              "or": [
+                { "math": [ "u_hp('torso') < u_hp_max('torso') / 2" ] },
+                { "math": [ "u_hp('head') < u_hp_max('head') / 2" ] },
+                { "math": [ "u_pain() > 40" ] }
+              ]
+            }
+          ]
+        },
+        "then": [ { "math": [ "u_br1_run_state = 2" ] }, { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } } ]
       },
       {
         "if": { "math": [ "u_br1_run_state == 2" ] },
@@ -246,65 +288,31 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_RUNNER_SEND",
-    "//": "Run as a runner at home at their departure hour: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-12 squares away (falling back to the other kinds) and set off. u_br1_dest starts as the runner's own spot, so if nothing is found it stays close and there is no run today (u_br1_left_day marks today either way). Goals and mission targets that use a var also name an om_terrain: the game ignores the var when om_terrain is empty and uses the NPC's own square. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
+    "//": "Run as a runner at home at their departure hour: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-30 squares away (EOC_BR1_RUNNER_FIND_*, falling back to the other kinds; these are rare, 3-8 of each per overmap, so a 12-square search usually found nothing and the runner stayed home) and set off. If none is found, the runner goes scavenging (4) at an ordinary garage square 4-10 squares away. u_br1_dest starts as the runner's own spot, so if even that fails it stays close and there is no run today (u_br1_left_day marks today either way). Goals and mission targets that use a var also name an om_terrain: the game ignores the var when om_terrain is empty and uses the NPC's own square. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
     "effect": [
       { "math": [ "u_br1_run_dest = rand(2) + 1" ] },
       { "u_location_variable": { "u_val": "br1_dest" } },
       {
+        "//": "Each search only runs when the map has such a place 3-30 squares away (u_near_om_location), because a target search that finds nothing pops a debug error.",
         "if": { "math": [ "u_br1_run_dest == 1" ] },
-        "then": [
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
-          }
-        ]
+        "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_CAMP" } ]
       },
+      { "if": { "math": [ "u_br1_run_dest == 2" ] }, "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_LOBBY" } ] },
+      { "if": { "math": [ "u_br1_run_dest == 3" ] }, "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_GENERATOR" } ] },
       {
-        "if": { "math": [ "u_br1_run_dest == 2" ] },
-        "then": [
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
-          }
-        ]
-      },
-      {
-        "if": { "math": [ "u_br1_run_dest == 3" ] },
-        "then": [
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
-          }
-        ]
-      },
-      {
-        "//": "Nothing of the chosen kind nearby: try the other two kinds.",
+        "//": "Nothing of the chosen kind nearby: try the other kinds, then a scavenging run through the lanes.",
         "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
-        "then": [
-          { "math": [ "u_br1_run_dest = 1" ] },
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
-          }
-        ]
+        "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_CAMP" } ]
       },
+      { "if": { "math": [ "distance('u', u_br1_dest) < 48" ] }, "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_LOBBY" } ] },
+      { "if": { "math": [ "distance('u', u_br1_dest) < 48" ] }, "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_GENERATOR" } ] },
       {
-        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
+        "if": { "and": [ { "math": [ "distance('u', u_br1_dest) < 48" ] }, { "u_near_om_location": "br1_garage", "range": 10 } ] },
         "then": [
-          { "math": [ "u_br1_run_dest = 2" ] },
+          { "math": [ "u_br1_run_dest = 4" ] },
           {
             "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
-          }
-        ]
-      },
-      {
-        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
-        "then": [
-          { "math": [ "u_br1_run_dest = 3" ] },
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 12, "min_distance": 3, "z": 0 }
+            "target_params": { "om_terrain": "br1_garage", "random": true, "search_range": 10, "min_distance": 4, "z": 0 }
           }
         ]
       },
@@ -326,6 +334,60 @@
     ]
   },
   {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_FIND_CAMP",
+    "//": "Run as a runner from EOC_BR1_RUNNER_SEND: aim u_br1_dest at a squatter camp 3-30 squares away, if the map has one there (destination kind 1).",
+    "condition": {
+      "and": [
+        { "u_near_om_location": "br1_squatter_camp", "range": 30 },
+        { "not": { "u_near_om_location": "br1_squatter_camp", "range": 2 } }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_br1_run_dest = 1" ] },
+      {
+        "u_location_variable": { "u_val": "br1_dest" },
+        "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_FIND_LOBBY",
+    "//": "As EOC_BR1_RUNNER_FIND_CAMP, for an elevator lobby (kind 2).",
+    "condition": {
+      "and": [
+        { "u_near_om_location": "br1_elevator_lobby", "range": 30 },
+        { "not": { "u_near_om_location": "br1_elevator_lobby", "range": 2 } }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_br1_run_dest = 2" ] },
+      {
+        "u_location_variable": { "u_val": "br1_dest" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_FIND_GENERATOR",
+    "//": "As EOC_BR1_RUNNER_FIND_CAMP, for a generator room (kind 3).",
+    "condition": {
+      "and": [
+        { "u_near_om_location": "br1_generator_site", "range": 30 },
+        { "not": { "u_near_om_location": "br1_generator_site", "range": 2 } }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_br1_run_dest = 3" ] },
+      {
+        "u_location_variable": { "u_val": "br1_dest" },
+        "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
+      }
+    ]
+  },
+  {
     "type": "talk_topic",
     "id": "TALK_BR1_RUNNER",
     "dynamic_line": {
@@ -339,7 +401,11 @@
           "no": {
             "math": [ "n_br1_run_dest == 2" ],
             "yes": "On a run for Dot.  Checking a lobby for Marcus: is it still there, do the lifts still come, did anything turn up in the bin.",
-            "no": "On a run for Dot.  There's a generator room out this way.  If somebody's left a can of gas there, it's coming home with me."
+            "no": {
+              "math": [ "n_br1_run_dest == 3" ],
+              "yes": "On a run for Dot.  There's a generator room out this way.  If somebody's left a can of gas there, it's coming home with me.",
+              "no": "On a run for Dot.  Nothing on the list this week, so I'm working the lanes: car trunks, glove boxes, whatever the last lot missed."
+            }
           }
         },
         "no": {
@@ -580,9 +646,21 @@
                         ],
                         "else": [
                           {
-                            "set_string_var": "<global_val:br1_bl_name>: OUT, to a generator room.  Back in a day or two.",
-                            "target_var": { "global_val": "br1_bl_line" },
-                            "parse_tags": true
+                            "if": { "math": [ "br1_bl_dest == 3" ] },
+                            "then": [
+                              {
+                                "set_string_var": "<global_val:br1_bl_name>: OUT, to a generator room.  Back in a day or two.",
+                                "target_var": { "global_val": "br1_bl_line" },
+                                "parse_tags": true
+                              }
+                            ],
+                            "else": [
+                              {
+                                "set_string_var": "<global_val:br1_bl_name>: OUT, scavenging the lanes.  Back in a day or two.",
+                                "target_var": { "global_val": "br1_bl_line" },
+                                "parse_tags": true
+                              }
+                            ]
                           }
                         ]
                       }
