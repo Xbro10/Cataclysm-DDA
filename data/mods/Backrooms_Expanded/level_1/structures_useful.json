@@ -25,14 +25,28 @@
   {
     "type": "item_group",
     "id": "br1_security_guns",
-    "//": "The gun safe in the guard office: a duty sidearm with a little ammo. Usually empty or already taken.",
+    "//": "The gun safe in the guard office: a duty sidearm with a little ammo. Usually empty or already taken. The magazine is in the gun, part loaded; spare rounds lie beside it.",
     "subtype": "distribution",
     "entries": [
-      { "collection": [ { "item": "glock_19" }, { "item": "glockmag", "ammo-item": "9mm", "charges": [ 3, 15 ] }, { "item": "9mm", "charges": [ 5, 20 ] } ], "prob": 40 },
-      { "collection": [ { "item": "m1911" }, { "item": "m1911mag", "ammo-item": "45_acp", "charges": [ 2, 7 ] }, { "item": "45_acp", "charges": [ 4, 14 ] } ], "prob": 25 },
+      { "collection": [ { "item": "glock_19", "contents-group": "br1_security_glockmag" }, { "item": "9mm", "charges": [ 5, 20 ] } ], "prob": 40 },
+      { "collection": [ { "item": "m1911", "contents-group": "br1_security_m1911mag" }, { "item": "45_acp", "charges": [ 4, 14 ] } ], "prob": 25 },
       { "collection": [ { "item": "sw_619", "ammo-item": "38_special", "charges": [ 0, 7 ] }, { "item": "38_special", "charges": [ 6, 18 ] } ], "prob": 25 },
       { "item": "9mm", "charges": [ 5, 20 ], "prob": 10 }
     ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_security_glockmag",
+    "//": "The magazine that goes inside the guard's Glock (contents-group of br1_security_guns).",
+    "subtype": "collection",
+    "entries": [ { "item": "glockmag", "ammo-item": "9mm", "charges": [ 3, 15 ] } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_security_m1911mag",
+    "//": "The magazine that goes inside the guard's M1911 (contents-group of br1_security_guns).",
+    "subtype": "collection",
+    "entries": [ { "item": "m1911mag", "ammo-item": "45_acp", "charges": [ 2, 7 ] } ]
   },
   {
     "type": "mapgen",

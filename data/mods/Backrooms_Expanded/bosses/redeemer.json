@@ -26,6 +26,7 @@
     "armor": { "bash": 8, "cut": 10, "electric": 100 },
     "vision_day": 40,
     "vision_night": 20,
+    "death_drops": "br_redeemer_drops",
     "special_attacks": [ [ "SHOCKSTORM", 15 ] ],
     "anger_triggers": [ "HOSTILE_SEEN", "PLAYER_CLOSE" ],
     "flags": [ "SEES", "HEARS", "SMELLS", "WARM", "ELECTRIC", "NO_BREATHE", "PUSH_MON", "DESTROYS", "PATH_AVOID_DANGER" ]
