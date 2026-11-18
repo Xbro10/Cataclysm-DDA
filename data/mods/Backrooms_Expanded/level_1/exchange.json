@@ -26,6 +26,9 @@
         "defends your space": true,
         "knows your voice": true
       },
+      "br1_exchange_supplies": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_gear": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_curios": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
       "br_breakroom": {
         "kill on sight": false,
         "watch your back": true,
@@ -46,6 +49,75 @@
       }
     },
     "description": "Traders who decided the Backrooms needed a market more than it needed another camp.  They hold a fenced corner of Level 1 they call the Exchange, buy whatever survivors drag in and sell it on, and value almond water above everything."
+  },
+  {
+    "type": "faction",
+    "id": "br1_exchange_supplies",
+    "//": "One Exchange stall (food, water and medicine). Each trader has their own faction so their loot zones and stock stay at their own booth: shopkeepers restock into, and trade from, their faction's zones within 6 tiles, and the stalls are only 4-5 tiles apart. Trusts the Exchange and the other stalls fully.",
+    "name": "Exchange: Supplies Stall",
+    "likes_u": 5,
+    "respects_u": 0,
+    "known_by_u": false,
+    "size": 1,
+    "power": 5,
+    "fac_food_supply": [ [ 0, { "calories": 19200, "vitamins": {  } } ] ],
+    "wealth": 3000,
+    "price_rules": [ { "item": "almond_water", "price": 2500 }, { "item": "bottle_almond_water", "price": 50 } ],
+    "relations": {
+      "br1_exchange": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_supplies": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_gear": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_curios": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br_breakroom": { "kill on sight": false, "watch your back": true, "share my stuff": false, "guard your stuff": false, "lets you in": true, "defends your space": false, "knows your voice": true },
+      "br_lost": { "kill on sight": false, "watch your back": false, "share my stuff": false, "guard your stuff": false, "lets you in": true, "defends your space": false, "knows your voice": false }
+    },
+    "description": "A stall at the Exchange selling food, water and medicine."
+  },
+  {
+    "type": "faction",
+    "id": "br1_exchange_gear",
+    "//": "One Exchange stall (batteries, lights and tools). Each trader has their own faction so their loot zones and stock stay at their own booth: shopkeepers restock into, and trade from, their faction's zones within 6 tiles, and the stalls are only 4-5 tiles apart. Trusts the Exchange and the other stalls fully.",
+    "name": "Exchange: Gear Stall",
+    "likes_u": 5,
+    "respects_u": 0,
+    "known_by_u": false,
+    "size": 1,
+    "power": 5,
+    "fac_food_supply": [ [ 0, { "calories": 19200, "vitamins": {  } } ] ],
+    "wealth": 3000,
+    "price_rules": [ { "item": "almond_water", "price": 2500 }, { "item": "bottle_almond_water", "price": 50 } ],
+    "relations": {
+      "br1_exchange": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_supplies": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_gear": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_curios": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br_breakroom": { "kill on sight": false, "watch your back": true, "share my stuff": false, "guard your stuff": false, "lets you in": true, "defends your space": false, "knows your voice": true },
+      "br_lost": { "kill on sight": false, "watch your back": false, "share my stuff": false, "guard your stuff": false, "lets you in": true, "defends your space": false, "knows your voice": false }
+    },
+    "description": "A stall at the Exchange selling batteries, lights and tools."
+  },
+  {
+    "type": "faction",
+    "id": "br1_exchange_curios",
+    "//": "One Exchange stall (maps, guides and notes). Each trader has their own faction so their loot zones and stock stay at their own booth: shopkeepers restock into, and trade from, their faction's zones within 6 tiles, and the stalls are only 4-5 tiles apart. Trusts the Exchange and the other stalls fully.",
+    "name": "Exchange: Oddities Stall",
+    "likes_u": 5,
+    "respects_u": 0,
+    "known_by_u": false,
+    "size": 1,
+    "power": 5,
+    "fac_food_supply": [ [ 0, { "calories": 19200, "vitamins": {  } } ] ],
+    "wealth": 3000,
+    "price_rules": [ { "item": "almond_water", "price": 2500 }, { "item": "bottle_almond_water", "price": 50 } ],
+    "relations": {
+      "br1_exchange": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_supplies": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_gear": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br1_exchange_curios": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
+      "br_breakroom": { "kill on sight": false, "watch your back": true, "share my stuff": false, "guard your stuff": false, "lets you in": true, "defends your space": false, "knows your voice": true },
+      "br_lost": { "kill on sight": false, "watch your back": false, "share my stuff": false, "guard your stuff": false, "lets you in": true, "defends your space": false, "knows your voice": false }
+    },
+    "description": "A stall at the Exchange selling maps, guides and notes."
   },
   {
     "type": "overmap_terrain",
@@ -89,9 +161,9 @@
       "rows": [
         "                        ",
         "  ####################  ",
-        "  #XXXX#XXXX#XXXX#XXX#  ",
+        "  #QQQQ#QQQQ#QQQQ#XXX#  ",
         "  #.!..#..!.#.!..#k..#  ",
-        "  #cccc#cccc#cccc##+##  ",
+        "  #qqqq#qqqq#qqqq##+##  ",
         "  |..................|  ",
         "  |..!.....!.....!...|  ",
         "  |..................|  ",
@@ -113,6 +185,9 @@
         "                        "
       ],
       "palettes": [ "br1_camp_palette" ],
+      "//": "Q and q are the stall crates and counters: like the palette's X and c, but with no random camp loot, so a stall shows only its trader's stock. The storeroom keeps X.",
+      "terrain": { "Q": "t_thconc_floor", "q": "t_thconc_floor" },
+      "furniture": { "Q": "f_crate_c", "q": "f_counter" },
       "place_terrain": [ { "ter": "t_door_metal_locked", "x": 19, "y": 4 } ],
       "place_npcs": [
         { "class": "BR1_trader_supplies", "x": 5, "y": 3 },
@@ -120,11 +195,19 @@
         { "class": "BR1_trader_curios", "x": 15, "y": 3 },
         { "class": "BR1_exchange_guard", "x": 11, "y": 9 }
       ],
+      "place_zones": [
+        { "type": "LOOT_UNSORTED", "faction": "br1_exchange_supplies", "x": [ 3, 6 ], "y": 2 },
+        { "type": "LOOT_UNSORTED", "faction": "br1_exchange_supplies", "x": [ 3, 6 ], "y": 4 },
+        { "type": "LOOT_UNSORTED", "faction": "br1_exchange_gear", "x": [ 8, 11 ], "y": 2 },
+        { "type": "LOOT_UNSORTED", "faction": "br1_exchange_gear", "x": [ 8, 11 ], "y": 4 },
+        { "type": "LOOT_UNSORTED", "faction": "br1_exchange_curios", "x": [ 13, 16 ], "y": 2 },
+        { "type": "LOOT_UNSORTED", "faction": "br1_exchange_curios", "x": [ 13, 16 ], "y": 4 }
+      ],
       "place_signs": [
         { "x": 12, "y": 11, "signage": "THE EXCHANGE.  FAIR TRADES.  NO FIGHTING INSIDE THE WIRE.  WE BUY ALMOND WATER." },
         { "x": 6, "y": 5, "signage": "SUPPLIES.  FOOD - WATER - MEDICINE.  WE BUY THE SAME.  NO SCRAP." },
         { "x": 11, "y": 5, "signage": "GEAR.  BATTERIES - LIGHTS - TOOLS - TAPE - ROPE.  WE BUY TOOLS AND PARTS." },
-        { "x": 16, "y": 5, "signage": "ODDITIES.  MAPS - GUIDES - NOTES - ONE RARE FIND EVERY FEW DAYS.  WE BUY STORIES." }
+        { "x": 16, "y": 5, "signage": "ODDITIES.  MAPS - ROAD MAPS - NOTES - ONE RARE FIND EVERY FEW DAYS.  WE BUY STORIES." }
       ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
@@ -171,7 +254,6 @@
     "entries": [
       { "item": "survivormap", "count": [ 2, 3 ] },
       { "item": "roadmap", "count": [ 1, 2 ] },
-      { "item": "br_level_guide", "count": [ 1, 2 ] },
       { "item": "br1_note_generator", "count": [ 1, 2 ] },
       { "item": "permanent_marker", "count": [ 2, 3 ] },
       { "group": "br1_exchange_rare_find" }
@@ -235,7 +317,7 @@
     "name": { "str": "Supplies Trader" },
     "job_description": "Food, water, bandages.  The things that keep you alive till tomorrow.",
     "common": false,
-    "worn_override": "NC_BR1_RUNNER_worn",
+    "worn_override": "NC_BR1_CIVILIAN_worn",
     "traits": [ { "group": "Appearance_demographics" } ],
     "bonus_int": { "rng": [ 0, 2 ] },
     "shopkeeper_item_group": [ { "group": "br1_exchange_supplies", "rigid": true } ],
@@ -280,7 +362,7 @@
     "name": { "str": "Oddities Trader" },
     "job_description": "Maps, notes, things people found and didn't understand.  I buy stories.  Some of them are true.",
     "common": false,
-    "worn_override": "NC_BR1_RUNNER_worn",
+    "worn_override": "NC_BR1_CIVILIAN_worn",
     "traits": [ { "group": "Appearance_demographics" } ],
     "bonus_per": { "rng": [ 0, 2 ] },
     "shopkeeper_item_group": [ { "group": "br1_exchange_curios", "rigid": true } ],
@@ -302,7 +384,7 @@
     "attitude": 0,
     "mission": "SHOPKEEP",
     "chat": "TALK_BR1_TRADER",
-    "faction": "br1_exchange"
+    "faction": "br1_exchange_supplies"
   },
   {
     "type": "npc",
@@ -312,7 +394,7 @@
     "attitude": 0,
     "mission": "SHOPKEEP",
     "chat": "TALK_BR1_TRADER",
-    "faction": "br1_exchange"
+    "faction": "br1_exchange_gear"
   },
   {
     "type": "npc",
@@ -322,7 +404,7 @@
     "attitude": 0,
     "mission": "SHOPKEEP",
     "chat": "TALK_BR1_TRADER",
-    "faction": "br1_exchange"
+    "faction": "br1_exchange_curios"
   },
   {
     "type": "npc",
@@ -361,7 +443,7 @@
       "no": {
         "npc_has_class": "NC_BR1_TRADER_GEAR",
         "yes": "Batteries first, lights second.  Cells, flashlights, glowsticks, lighters, duct tape, rope, and a few real tools when the runners find them.  The stall's for sale; my own kit isn't.  Bring me tools, parts and batteries and I'll pay a quarter over the odds.",
-        "no": "Maps, guides, notes.  Things that tell you where you are, which down here is worth more than food.  And one odd find every few days, whatever turned up.  Bring me books, maps, scraps of paper with writing on: I buy stories.  Everything else, try my neighbours."
+        "no": "Maps, road maps, notes.  Things that tell you where you are, which down here is worth more than food.  And one odd find every few days, whatever turned up.  Bring me books, maps, scraps of paper with writing on: I buy stories.  Everything else, try my neighbours."
       }
     },
     "responses": [ { "text": "Let's trade.", "effect": "start_trade", "topic": "TALK_BR1_TRADER" }, { "text": "Thanks.", "topic": "TALK_BR1_TRADER" } ]
