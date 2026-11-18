@@ -269,6 +269,9 @@ TEST_CASE( "breakroom_layouts_generate", "[.][backrooms_runner]" )
                 archers++;
                 REQUIRE( guy.get_wielded_item() );
                 CHECK( guy.get_wielded_item()->is_gun() ); // bows are guns that fire arrows
+                // Strong and skilled enough for the bow (Strength 9) and the knife (stabbing 2, melee 1).
+                CHECK( guy.meets_requirements( *guy.get_wielded_item() ) );
+                CHECK( guy.meets_requirements( item( itype_id( "knife_combat" ) ) ) );
                 // Half sandbags in front of every archer (the Bunker's used to stand in the open).
                 CHECK( here.furn( guy.pos_bub() + point( 0, 1 ) ) == furn_str_id( "f_sandbag_half" ) );
                 // A knife for close fights; drawing it puts the bow in the bow sling, not on the floor.
