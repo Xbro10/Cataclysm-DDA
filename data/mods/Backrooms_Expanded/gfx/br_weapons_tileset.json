@@ -1,7 +1,7 @@
 [
   {
     "type": "mod_tileset",
-    "//": "Backrooms Expanded weapons (the Flamero-Mado spear, unlit and lit, and its schematic), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br_weapons.ps1 in UndeadPeople style.",
+    "//": "Backrooms Expanded weapons (the Flamero-Mado spear, unlit and lit, its schematic, and the spear in your hands), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br_weapons.ps1 and draw_br_held.ps1 in UndeadPeople style.",
     "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
     "tiles-new": [
       {
@@ -14,6 +14,18 @@
           { "id": "br_flamero_mado_off", "fg": 0, "rotates": false },
           { "id": "br_flamero_mado_on", "fg": 1, "rotates": false },
           { "id": "br_flamero_schematic", "fg": 2, "rotates": false }
+        ]
+      },
+      {
+        "file": "gfx/br_held.png",
+        "//": "Held weapons: 32x64 like UltiCa's tall overlays, the bottom half on the character's tile.",
+        "sprite_width": 32,
+        "sprite_height": 64,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": -32,
+        "tiles": [
+          { "id": "overlay_wielded_br_flamero_mado_off", "fg": 0, "rotates": false },
+          { "id": "overlay_wielded_br_flamero_mado_on", "fg": 1, "rotates": false }
         ]
       }
     ]
