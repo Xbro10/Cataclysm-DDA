@@ -225,7 +225,9 @@
       { "item": "bandages", "count": [ 6, 10 ] },
       { "item": "aspirin", "count": [ 2, 4 ] },
       { "item": "disinfectant", "count": [ 2, 4 ] },
-      { "item": "pur_tablets", "count": [ 2, 4 ] }
+      { "item": "pur_tablets", "count": [ 2, 4 ] },
+      { "item": "br_moth_jelly", "count": [ 2, 4 ], "prob": 50 },
+      { "item": "br_royal_ration", "count": [ 1, 2 ], "prob": 35 }
     ]
   },
   {
@@ -243,7 +245,8 @@
       { "item": "hammer" },
       { "item": "screwdriver" },
       { "item": "crowbar", "prob": 60 },
-      { "item": "wrench", "prob": 50 }
+      { "item": "wrench", "prob": 50 },
+      { "item": "br_firesalt", "charges": 50, "count": [ 2, 4 ] }
     ]
   },
   {
@@ -294,6 +297,7 @@
       { "group": "br_cat_power" },
       { "group": "br_cat_car" },
       { "item": "rope_30" },
+      { "item": "br_firesalt" },
       { "item": "bottle_almond_water" },
       { "item": "almond_water" }
     ]
@@ -325,10 +329,12 @@
     "//": "Sells only the stall stock, never their own gear (sells_belongings). Their trade (food, medicine) sells a little under the Exchange price and they pay full price for it; they buy nothing else.",
     "sells_belongings": false,
     "shopkeeper_whitelist": "br1_buys_supplies",
+    "shopkeeper_blacklist": "br_never_buys",
     "shopkeeper_price_rules": [
       { "category": "food", "premium": 1.5, "markup": 0.8 },
       { "category": "drugs", "premium": 1.3, "markup": 0.8 },
-      { "item": "almond_water", "price": 2500 }
+      { "item": "almond_water", "price": 2500 },
+      { "item": "br_royal_ration", "price": 4000 }
     ],
     "restock_interval": "3 days",
     "skills": [
@@ -349,6 +355,7 @@
     "//": "Sells only the stall stock, never their own gear. Pays a quarter extra for what they sell, and sells it a little cheaper than that.",
     "sells_belongings": false,
     "shopkeeper_whitelist": "br1_buys_gear",
+    "shopkeeper_blacklist": "br_never_buys",
     "shopkeeper_price_rules": [ { "group": "br1_exchange_gear", "premium": 1.25, "markup": 0.8 } ],
     "restock_interval": "3 days",
     "skills": [
@@ -370,6 +377,7 @@
     "//": "Sells only the stall stock, never their own gear. Pays a quarter extra for maps, guides and notes.",
     "sells_belongings": false,
     "shopkeeper_whitelist": "br1_buys_curios",
+    "shopkeeper_blacklist": "br_never_buys",
     "shopkeeper_price_rules": [ { "group": "br1_exchange_curios", "premium": 1.25, "markup": 0.8 } ],
     "restock_interval": "4 days",
     "skills": [

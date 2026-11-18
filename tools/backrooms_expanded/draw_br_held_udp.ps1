@@ -26,14 +26,19 @@ OutlineT 0 $INK
 DrawSpear 1 $held $true 4.0
 HandGap 1
 OutlineT 1 $INK
-# Flames curl out of the collar (about x 33, y 46) and rise past the blade.
-Ribbon 1 @(@(32, 46), @(30, 45), @(28, 43), @(28, 40), @(29, 37)) 1.8 $false
-Ribbon 1 @(@(35, 47), @(37, 46), @(39, 44), @(39, 41), @(38, 38)) 1.8 $false
-Ribbon 1 @(@(33, 44), @(33, 41), @(34, 38), @(33, 35)) 1.3 $false
-Ribbon 1 @(@(31, 48), @(29, 49), @(27, 48)) 1.1 $false
-# One thin strand wraps in front of the collar.
-Ribbon 1 @(@(31, 48), @(33, 46), @(35, 44)) 0.8 $true
-Embers 1 @(@(27, 35), @(40, 36), @(30, 32), @(37, 31), @(25, 41))
+# Flames: big, bright tongues curl out of the collar (about x 33, y 46) on both sides and climb the blade, with
+# a white-hot core; the held sprite is small on screen, so they need to be bolder than on the ground sprite.
+$script:flameLayers = $FlameBright
+Ribbon 1 @(@(32, 47), @(29, 46), @(27, 43), @(26, 39), @(27, 35), @(26, 31), @(27, 28)) 3.0 $false
+Ribbon 1 @(@(35, 48), @(38, 47), @(40, 44), @(41, 40), @(40, 36), @(41, 32), @(40, 29)) 3.0 $false
+Ribbon 1 @(@(33, 44), @(32, 40), @(34, 36), @(33, 32), @(35, 28), @(34, 25)) 2.2 $false
+Ribbon 1 @(@(37, 45), @(39, 41), @(38, 37), @(40, 33), @(39, 29), @(41, 26)) 2.0 $false
+Ribbon 1 @(@(31, 49), @(28, 50), @(25, 49), @(24, 46)) 1.6 $false
+Ribbon 1 @(@(36, 49), @(39, 50), @(42, 48)) 1.4 $false
+# Strands wrap in front of the collar and the blade's base.
+Ribbon 1 @(@(31, 49), @(33, 46), @(36, 43), @(37, 40)) 1.2 $true
+Ribbon 1 @(@(35, 47), @(34, 44), @(36, 41)) 0.9 $true
+Embers 1 @(@(24, 33), @(43, 30), @(29, 25), @(38, 22), @(23, 40), @(45, 38), @(32, 21), @(26, 28), @(44, 25))
 
 # Save, plus a 6x preview with a gap between tiles and the character's tile marked.
 $bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)

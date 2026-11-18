@@ -1,0 +1,89 @@
+[
+  {
+    "type": "ITEM",
+    "id": "br_firesalt_torch",
+    "copy-from": "torch",
+    "//": "A torch packed with firesalt: burns twice as long as a plain torch (40 charges, one a minute) and a little brighter.",
+    "subtypes": [ "TOOL" ],
+    "name": { "str": "firesalt torch" },
+    "description": "A stick wrapped in rags with crushed firesalt worked into the cloth.  It burns hotter and much longer than a torch soaked in fuel.  Use it to light it.",
+    "looks_like": "torch",
+    "color": "light_red",
+    "initial_charges": 40,
+    "max_charges": 40,
+    "use_action": {
+      "target": "br_firesalt_torch_lit",
+      "msg": "The firesalt catches with a crackle and a red glow.",
+      "need_fire": 1,
+      "menu_text": { "str": "Light", "ctxt": "verb" },
+      "type": "transform"
+    }
+  },
+  {
+    "type": "ITEM",
+    "id": "br_firesalt_torch_lit",
+    "copy-from": "torch_lit",
+    "//": "Lit firesalt torch: 40 minutes of light (light 70 against a torch's 60); burns down to a plain burnt-out torch.",
+    "subtypes": [ "TOOL" ],
+    "name": { "str": "firesalt torch (lit)", "str_pl": "firesalt torches (lit)" },
+    "description": "A torch packed with firesalt, burning with a steady red-orange flame.  It throws more light than a fuel torch and lasts far longer.",
+    "looks_like": "torch_lit",
+    "color": "light_red",
+    "initial_charges": 40,
+    "max_charges": 40,
+    "light": 70,
+    "use_action": [
+      { "type": "firestarter", "moves": 500, "moves_slow": 6000 },
+      { "target": "br_firesalt_torch", "msg": "You smother the torch.  The salt keeps glowing for a moment.", "menu_text": "Extinguish", "type": "transform" }
+    ]
+  },
+  {
+    "type": "ITEM",
+    "id": "br_firesalt_twist",
+    "//": "A quick fire-starter: a paper twist of crushed firesalt, five uses. FIRESTARTER, so NPCs who light fires can use it too.",
+    "subtypes": [ "TOOL" ],
+    "name": { "str": "firesalt twist" },
+    "description": "A twist of paper holding a pinch of crushed firesalt.  Rub it between your fingers over some tinder and it flares up on its own, wet weather or not.  Good for about five fires.",
+    "looks_like": "matches",
+    "weight": "20 g",
+    "volume": "20 ml",
+    "price": "2 USD",
+    "price_postapoc": "3 USD",
+    "material": [ "paper", "salt" ],
+    "symbol": ",",
+    "color": "light_red",
+    "initial_charges": 5,
+    "max_charges": 5,
+    "charges_per_use": 1,
+    "use_action": { "type": "firestarter", "moves": 200, "moves_slow": 3000 },
+    "flags": [ "FIRESTARTER", "NO_RELOAD" ]
+  },
+  {
+    "type": "recipe",
+    "result": "br_firesalt_torch",
+    "//": "Like the fuel torch, but firesalt instead of a flammable liquid.",
+    "activity_level": "NO_EXERCISE",
+    "category": "CC_OTHER",
+    "subcategory": "CSC_OTHER_TOOLS",
+    "skill_used": "fabrication",
+    "time": "3 m",
+    "autolearn": true,
+    "components": [
+      [ [ "br_firesalt", 15 ] ],
+      [ [ "rag", 2 ], [ "sheet_cotton", 1 ], [ "sheet_cotton_patchwork", 1 ] ],
+      [ [ "stick", 1 ], [ "2x4", 1 ], [ "pool_cue", 1 ], [ "torch_done", 1 ] ]
+    ],
+    "flags": [ "BLIND_HARD" ]
+  },
+  {
+    "type": "recipe",
+    "result": "br_firesalt_twist",
+    "activity_level": "NO_EXERCISE",
+    "category": "CC_OTHER",
+    "subcategory": "CSC_OTHER_TOOLS",
+    "skill_used": "survival",
+    "time": "2 m",
+    "autolearn": true,
+    "components": [ [ [ "br_firesalt", 10 ] ], [ [ "paper", 1 ] ] ]
+  }
+]
