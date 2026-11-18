@@ -246,71 +246,26 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_RUNNER_SEND",
-    "//": "Run as a runner at home at their departure hour: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-30 squares away (falling back to the other kinds; these are rare, 3-8 of each per overmap, so a 12-square search usually found nothing and the runner stayed home) and set off. If none is found, the runner goes scavenging (4) at an ordinary garage square 4-10 squares away. u_br1_dest starts as the runner's own spot, so if even that fails it stays close and there is no run today (u_br1_left_day marks today either way). Goals and mission targets that use a var also name an om_terrain: the game ignores the var when om_terrain is empty and uses the NPC's own square. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
+    "//": "Run as a runner at home at their departure hour: pick a squatter camp (1), an elevator lobby (2) or a generator room (3) 3-30 squares away (EOC_BR1_RUNNER_FIND_*, falling back to the other kinds; these are rare, 3-8 of each per overmap, so a 12-square search usually found nothing and the runner stayed home) and set off. If none is found, the runner goes scavenging (4) at an ordinary garage square 4-10 squares away. u_br1_dest starts as the runner's own spot, so if even that fails it stays close and there is no run today (u_br1_left_day marks today either way). Goals and mission targets that use a var also name an om_terrain: the game ignores the var when om_terrain is empty and uses the NPC's own square. 1 run in 10 goes wrong (u_br1_doomed): the runner reaches the place and doesn't come back.",
     "effect": [
       { "math": [ "u_br1_run_dest = rand(2) + 1" ] },
       { "u_location_variable": { "u_val": "br1_dest" } },
       {
+        "//": "Each search only runs when the map has such a place 3-30 squares away (u_near_om_location), because a target search that finds nothing pops a debug error.",
         "if": { "math": [ "u_br1_run_dest == 1" ] },
-        "then": [
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
-          }
-        ]
+        "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_CAMP" } ]
       },
+      { "if": { "math": [ "u_br1_run_dest == 2" ] }, "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_LOBBY" } ] },
+      { "if": { "math": [ "u_br1_run_dest == 3" ] }, "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_GENERATOR" } ] },
       {
-        "if": { "math": [ "u_br1_run_dest == 2" ] },
-        "then": [
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
-          }
-        ]
-      },
-      {
-        "if": { "math": [ "u_br1_run_dest == 3" ] },
-        "then": [
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
-          }
-        ]
-      },
-      {
-        "//": "Nothing of the chosen kind nearby: try the other two kinds.",
+        "//": "Nothing of the chosen kind nearby: try the other kinds, then a scavenging run through the lanes.",
         "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
-        "then": [
-          { "math": [ "u_br1_run_dest = 1" ] },
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
-          }
-        ]
+        "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_CAMP" } ]
       },
+      { "if": { "math": [ "distance('u', u_br1_dest) < 48" ] }, "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_LOBBY" } ] },
+      { "if": { "math": [ "distance('u', u_br1_dest) < 48" ] }, "then": [ { "run_eocs": "EOC_BR1_RUNNER_FIND_GENERATOR" } ] },
       {
-        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
-        "then": [
-          { "math": [ "u_br1_run_dest = 2" ] },
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
-          }
-        ]
-      },
-      {
-        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
-        "then": [
-          { "math": [ "u_br1_run_dest = 3" ] },
-          {
-            "u_location_variable": { "u_val": "br1_dest" },
-            "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
-          }
-        ]
-      },
-      {
-        "//": "Still nothing: a scavenging run through the lanes.",
-        "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
+        "if": { "and": [ { "math": [ "distance('u', u_br1_dest) < 48" ] }, { "u_near_om_location": "br1_garage", "range": 10 } ] },
         "then": [
           { "math": [ "u_br1_run_dest = 4" ] },
           {
@@ -333,6 +288,60 @@
             "then": [ { "math": [ "u_br1_doomed = 1" ] } ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_FIND_CAMP",
+    "//": "Run as a runner from EOC_BR1_RUNNER_SEND: aim u_br1_dest at a squatter camp 3-30 squares away, if the map has one there (destination kind 1).",
+    "condition": {
+      "and": [
+        { "u_near_om_location": "br1_squatter_camp", "range": 30 },
+        { "not": { "u_near_om_location": "br1_squatter_camp", "range": 2 } }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_br1_run_dest = 1" ] },
+      {
+        "u_location_variable": { "u_val": "br1_dest" },
+        "target_params": { "om_terrain": "br1_squatter_camp", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_FIND_LOBBY",
+    "//": "As EOC_BR1_RUNNER_FIND_CAMP, for an elevator lobby (kind 2).",
+    "condition": {
+      "and": [
+        { "u_near_om_location": "br1_elevator_lobby", "range": 30 },
+        { "not": { "u_near_om_location": "br1_elevator_lobby", "range": 2 } }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_br1_run_dest = 2" ] },
+      {
+        "u_location_variable": { "u_val": "br1_dest" },
+        "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_RUNNER_FIND_GENERATOR",
+    "//": "As EOC_BR1_RUNNER_FIND_CAMP, for a generator room (kind 3).",
+    "condition": {
+      "and": [
+        { "u_near_om_location": "br1_generator_site", "range": 30 },
+        { "not": { "u_near_om_location": "br1_generator_site", "range": 2 } }
+      ]
+    },
+    "effect": [
+      { "math": [ "u_br1_run_dest = 3" ] },
+      {
+        "u_location_variable": { "u_val": "br1_dest" },
+        "target_params": { "om_terrain": "br1_generator_site", "random": true, "search_range": 30, "min_distance": 3, "z": 0 }
       }
     ]
   },
