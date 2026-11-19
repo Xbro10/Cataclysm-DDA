@@ -27,6 +27,8 @@
 #include "map.h"
 #include "magic.h"
 #include "map_helpers.h"
+#include "map_helpers_tests.h"
+#include "monster.h"
 #include "harvest.h"
 #include "monstergenerator.h"
 #include "mtype.h"
@@ -412,5 +414,50 @@ TEST_CASE( "shock_lance_switches_on_shocks_and_drains_its_battery", "[.][backroo
             }
         }
         CHECK( found );
+    }
+}
+
+TEST_CASE( "uv_torch_doubles_the_burn_on_a_smiler", "[.][backrooms_items]" )
+{
+    const mtype_id smiler_id( "mon_br_smiler" );
+    const itype_id uv_on( "br_uv_torch_on" );
+    if( !smiler_id.is_valid() || !uv_on.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    // Midnight: the Smiler is placed in the dark, then the held light is switched on.
+    set_time( calendar::turn_zero );
+    map &here = get_map();
+    avatar &you = get_avatar();
+    const tripoint_bub_ms pos = you.pos_bub() + point( 2, 0 );
+    monster &smiler = spawn_test_monster( smiler_id.str(), pos );
+    const int full = smiler.get_hp_max();
+    const auto light_up = [&]( const itype_id & what ) {
+        item light( what );
+        light.active = true;
+        you.wield( light );
+        REQUIRE( you.get_wielded_item() );
+        REQUIRE( you.get_wielded_item()->active );
+        // A floor light of brightness 120 under it, as in smiler_burns_in_bright_light.
+        here.ter_set( pos, ter_str_id( "t_thconc_y_olight" ) );
+        here.build_map_cache( pos.z() );
+        you.recalc_sight_limits();
+        CAPTURE( here.ambient_light_at( pos ) );
+        REQUIRE( here.ambient_light_at( pos ) >= 50.0f );
+        REQUIRE( you.sees( here, smiler ) );
+    };
+
+    SECTION( "a plain flashlight burns it for at most 30% a turn" ) {
+        light_up( itype_id( "flashlight_on" ) );
+        smiler.process_turn();
+        CHECK( smiler.get_hp() < full );
+        CHECK( full - smiler.get_hp() <= full * 30 / 100 + 1 );
+    }
+    SECTION( "a switched-on UV torch burns it twice as hard" ) {
+        light_up( uv_on );
+        smiler.process_turn();
+        CHECK( full - smiler.get_hp() >= full * 40 / 100 );
     }
 }

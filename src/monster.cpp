@@ -3011,6 +3011,33 @@ void monster::explode()
 static const mon_flag_str_id mon_flag_BURNS_IN_LIGHT( "BURNS_IN_LIGHT" );
 static constexpr float burning_light_level = 50.0f;
 
+// Xbro10 fork: UV_LIGHT (Backrooms Expanded's UV torch). Someone within 10 tiles who sees the monster
+// and wields a switched-on item with this flag holds it in the beam: it burns there however dim the tile,
+// and twice as hard. The flag is defined by the mod and checked lazily.
+static const flag_id json_flag_UV_LIGHT( "UV_LIGHT" );
+static constexpr int uv_beam_range = 10;
+
+static bool in_uv_beam( const monster &mon, map &here )
+{
+    if( !json_flag_UV_LIGHT.is_valid() ) {
+        return false;
+    }
+    const auto holds_uv = [&]( const Character &who ) {
+        const item_location held = who.get_wielded_item();
+        return held && held->active && held->has_flag( json_flag_UV_LIGHT ) &&
+               rl_dist( who.pos_abs(), mon.pos_abs() ) <= uv_beam_range && who.sees( here, mon );
+    };
+    if( holds_uv( get_avatar() ) ) {
+        return true;
+    }
+    for( const npc &guy : g->all_npcs() ) {
+        if( holds_uv( guy ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static void burn_in_light( monster &mon, map &here )
 {
     if( !mon_flag_BURNS_IN_LIGHT.is_valid() || !mon.has_flag( mon_flag_BURNS_IN_LIGHT.id() ) ||
@@ -3018,15 +3045,23 @@ static void burn_in_light( monster &mon, map &here )
         return;
     }
     const tripoint_bub_ms pos = mon.pos_bub( here );
-    if( here.ambient_light_at( pos ) < burning_light_level ) {
+    const bool uv = in_uv_beam( mon, here );
+    if( !uv && here.ambient_light_at( pos ) < burning_light_level ) {
         return;
     }
-    const int dam = std::max( 1, mon.get_hp_max() * rng( 20, 30 ) / 100 );
+    int dam = std::max( 1, mon.get_hp_max() * rng( 20, 30 ) / 100 );
+    if( uv ) {
+        dam *= 2;
+    }
     mon.apply_damage( nullptr, bodypart_id( "torso" ), dam );
     if( one_in( 2 ) ) {
         here.add_field( pos, fd_smoke, 1 );
     }
-    add_msg_if_player_sees( mon, m_good, _( "The %s sizzles and smokes in the light!" ), mon.name() );
+    if( uv ) {
+        add_msg_if_player_sees( mon, m_good, _( "The %s shrieks and blisters in the violet beam!" ), mon.name() );
+    } else {
+        add_msg_if_player_sees( mon, m_good, _( "The %s sizzles and smokes in the light!" ), mon.name() );
+    }
 }
 
 // Xbro10 fork: FEARS_LIGHT (Backrooms Expanded's Skin-stealer and Hounds). The game's BRIGHT_LIGHT fear

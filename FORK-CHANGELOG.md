@@ -28,6 +28,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   built-in effects, so the lit Flamero-Mado never actually set things on fire. Now it does, and the shock lance stuns.
 
 ### Backrooms
+- [BE] **Light tools against the dark things:** a **work lamp** (a battery floodlight to set down, far brighter than a
+  flashlight), a **lightstick bundle** (five glowsticks taped together: about ten minutes of very bright light) and a
+  **UV torch** whose violet beam [C++] doubles the burn on a Smiler (wielded, switched on, within 10 squares and in
+  view). All three are craftable, sold at the Exchange's gear stall and found with other lights; sprites for both
+  tilesets, the lit bundle and the UV beam animated. A plain flashlight still burns Smilers too.
 - [BE] **Weaknesses that work in play:** [C++] Skin-stealers and Hounds back off from a flashlight, lamp or fire
   (`FEARS_LIGHT`; the game's bright-light fear only counted near-daylight). Deathmoths really burn in fire (powdery
   wings, and no insect fire fear; a ground fire barely hurt flyers). Fewer brown rats on Level 1, which slowed it
