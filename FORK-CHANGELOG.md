@@ -17,6 +17,14 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ---
 
+## November 19, 2026
+
+### Backrooms
+- [BE] **Hound dens and Breakroom job fixes:** Hound dens are a Level 1 place with four layouts (den, abandoned, a
+  survivor's last stand, feeding ground); the den job no longer errors, "Who they were" always has its body, the
+  3- and 6-job rewards wait for Dot, door guards spear zombies over the fence, the board shows a runner resting at
+  home, and almond water rewards no longer error.
+
 ## November 18, 2026
 
 ### Backrooms
