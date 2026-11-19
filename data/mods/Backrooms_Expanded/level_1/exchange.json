@@ -448,7 +448,7 @@
     "worn_override": "NC_BR1_EXCHANGE_GUARD_worn",
     "weapon_override": "NC_BR1_EXCHANGE_GUARD_weapon",
     "carry_override": "NC_BR1_EXCHANGE_GUARD_carry",
-    "traits": [ { "group": "Appearance_demographics" } ],
+    "traits": [ { "group": "Appearance_demographics" }, { "trait": "RETURN_TO_START_POS" } ],
     "bonus_str": { "constant": 3 },
     "bonus_dex": { "rng": [ 1, 2 ] },
     "bonus_per": { "rng": [ 0, 2 ] },
