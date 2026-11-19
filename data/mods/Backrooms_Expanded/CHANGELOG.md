@@ -21,6 +21,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Changed
 
+- Breakroom and Exchange guards (the door guard, the archers and the Exchange guards) go back to their own post after a fight, a meal or a scare, instead of staying wherever they ended up (new guards only: those already in a world keep their old post).
+- A runner back from a run goes back inside to its own spot, where it rests and heals, instead of standing in the yard (often badly hurt).
 - **Tally tokens are the Backrooms' money.** Brass tokens stamped with tally marks (each with a sprite), worth a fifth of a bottle of almond water: every Exchange stall, the diner, the Breakroom and the Level 2 tunnel crews deal in them, keep a stack to pay you with, and value them at full price. Breakroom jobs and standing rewards pay in tokens instead of almond water (5 per bottle they used to give). Level 1 elevator lobbies and useful rooms hold a few loose tokens where they had cash cards. Almond water is still a good trade, and the newcomer's gift and runners' hauls are unchanged.
 - **Breakroom jobs are handed in.** A job no longer finishes out in the lanes: go back and pick "About that job..." with Dot (fuel, Hounds, the den, the roster, the missing runner) or Marcus (the supply crate, the lifts) to hand it in and get the reward. The fuel stays in your pack until you hand it over. Hound kills count from when you take the job, and "The Hound den" counts only the den's own pack.
 - Fewer brown rats on Level 1: they were the most common spawn, in packs of up to five, and slowed the level down. Now a smaller share, in packs of one to three (one or two in dead zones).

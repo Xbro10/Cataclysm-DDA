@@ -212,7 +212,11 @@
               { "math": [ "br1_runs_done += 1" ] },
               { "math": [ "br1_stores_bonus = min(br1_stores_bonus + 1, 3)" ] },
               { "mapgen_update": "br1_breakroom_restock", "target_var": { "u_val": "br1_home" } },
-              { "run_eocs": "EOC_BR1_DEPOT_RESTOCK" }
+              { "run_eocs": "EOC_BR1_DEPOT_RESTOCK" },
+              {
+                "//": "Arriving from a trip makes the game post an NPC wherever it stopped (often out in the yard, hurt). Post the runner back at its own spot inside, where it rests and heals.",
+                "u_set_guard_pos": { "u_val": "br1_home" }
+              }
             ],
             "else": [ { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } } ]
           }
@@ -262,6 +266,7 @@
                 "if": { "math": [ "distance('u', u_br1_home) > 24" ] },
                 "then": [ { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } } ],
                 "else": [
+                  { "//": "Home: keep the runner posted at its spot inside (see the arrival step above).", "u_set_guard_pos": { "u_val": "br1_home" } },
                   {
                     "if": {
                       "and": [
