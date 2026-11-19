@@ -117,7 +117,7 @@
   {
     "type": "talk_topic",
     "id": "TALK_BR1_JOB_LIFTS",
-    "dynamic_line": "The lifts.  I can't ride them, they make me sick, and I can't map what I can't see.  Ride them for me.  Three times, lobby to lobby, and tell me where you came out.  I'll pay in water and in map.",
+    "dynamic_line": "The lifts.  I can't ride them, they make me sick, and I can't map what I can't see.  Ride them for me.  Three times, lobby to lobby, and tell me where you came out.  I'll pay in tallies and in map.",
     "responses": [
       { "text": "I'll ride them.", "effect": { "assign_mission": "MISSION_BR1_RIDE_LIFTS" }, "topic": "TALK_BR1_JOB_TAKEN_MARCUS" },
       { "text": "Not right now.", "topic": "TALK_BR1_CARTOGRAPHER_WORK" }

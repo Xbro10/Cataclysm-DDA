@@ -10,6 +10,7 @@
     "power": 20,
     "fac_food_supply": [ [ 0, { "calories": 115200, "vitamins": {  } } ] ],
     "wealth": 1000,
+    "currency": "br_tally_token",
     "relations": {
       "br_breakroom": {
         "kill on sight": false,

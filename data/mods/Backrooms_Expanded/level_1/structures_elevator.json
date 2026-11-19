@@ -58,7 +58,7 @@
       { "group": "cannedfood", "prob": 12 },
       { "item": "water_clean", "container-item": "bottle_plastic", "prob": 10 },
       { "group": "almond_water_sealed", "prob": 3 },
-      { "item": "cash_card", "charges": [ 200, 1500 ], "prob": 8 },
+      { "item": "br_tally_token", "count": [ 3, 12 ], "prob": 8 },
       { "item": "umbrella", "prob": 5 },
       { "item": "gloves_light", "prob": 6 },
       { "item": "hat_ball", "prob": 6 },

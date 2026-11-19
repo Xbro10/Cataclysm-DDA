@@ -10,6 +10,7 @@
     "power": 5,
     "fac_food_supply": [ [ 0, { "calories": 172800, "vitamins": {  } } ] ],
     "wealth": 800,
+    "currency": "br_tally_token",
     "price_rules": [ { "item": "almond_water", "price": 2000 }, { "category": "food", "premium": 1.2 } ],
     "relations": {
       "br1_diner": {
@@ -194,6 +195,7 @@
     "subtype": "collection",
     "//": "The cook's shop stock: about five of the dishes on today's grill, three or four portions of each, plus coffee and almond water. Restocks every day, so the menu changes.",
     "entries": [
+      { "item": "br_tally_token", "count": [ 20, 30 ] },
       { "item": "hamburger", "prob": 50, "count": [ 3, 4 ] },
       { "item": "sandwich_cheese_grilled", "prob": 50, "count": [ 3, 4 ] },
       { "item": "pancakes", "prob": 50, "count": [ 3, 4 ] },
