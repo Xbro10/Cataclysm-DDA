@@ -3004,11 +3004,37 @@ void monster::explode()
     hp = INT_MIN + 1;
 }
 
+// Xbro10 fork: BURNS_IN_LIGHT (Backrooms Expanded's Smiler). Bright light at its tile (a flashlight,
+// a lamp, a fire: brighter than Level 0's ceiling lights, which shine at 40) burns it every turn it
+// stays lit, about a quarter of its health, so a flashlight switched on mid-fight kills it in a few
+// turns. The flag is defined by the mod and checked lazily, so official builds just skip it.
+static const mon_flag_str_id mon_flag_BURNS_IN_LIGHT( "BURNS_IN_LIGHT" );
+static constexpr float burning_light_level = 50.0f;
+
+static void burn_in_light( monster &mon, map &here )
+{
+    if( !mon_flag_BURNS_IN_LIGHT.is_valid() || !mon.has_flag( mon_flag_BURNS_IN_LIGHT.id() ) ||
+        mon.is_dead() ) {
+        return;
+    }
+    const tripoint_bub_ms pos = mon.pos_bub( here );
+    if( here.ambient_light_at( pos ) < burning_light_level ) {
+        return;
+    }
+    const int dam = std::max( 1, mon.get_hp_max() * rng( 20, 30 ) / 100 );
+    mon.apply_damage( nullptr, bodypart_id( "torso" ), dam );
+    if( one_in( 2 ) ) {
+        here.add_field( pos, fd_smoke, 1 );
+    }
+    add_msg_if_player_sees( mon, m_good, _( "The %s sizzles and smokes in the light!" ), mon.name() );
+}
+
 void monster::process_turn()
 {
     blocks_left = type->block.count;
 
     map &here = get_map();
+    burn_in_light( *this, here );
     if( !is_hallucination() ) {
         for( const std::pair<const emit_id, time_duration> &e : type->emit_fields ) {
             if( !calendar::once_every( e.second ) ) {

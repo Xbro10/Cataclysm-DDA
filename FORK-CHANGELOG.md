@@ -20,6 +20,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 18, 2026
 
 ### Backrooms
+- [BE] **Backrooms entities have weaknesses:** [C++] Smilers burn in bright light (switch on a flashlight mid-fight
+  and one dies in a few turns; Level 0's ceiling lights are too dim). Hounds break when you stand your ground,
+  Deathmoths fly into fires and burn, Wretches take double damage from burning weapons, Skin-stealers back off from light.
 - [AD] **Additions, a new mod on by default:** additions to the regular world, no Backrooms needed. First in it is the
   **Flamero-Mado spear**, a rare end-game spear you fill with kerosene or gasoline and light; lit, it burns as well as
   pierces and about one hit in three sets the target on fire. Found in museums and mansion collections; crafted only
