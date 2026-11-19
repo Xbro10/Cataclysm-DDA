@@ -28,6 +28,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   survivor's last stand, feeding ground); the den job no longer errors, "Who they were" always has its body, the
   3- and 6-job rewards wait for Dot, door guards spear zombies over the fence, the board shows a runner resting at
   home, and almond water rewards no longer error.
+- [BE] **Breakroom jobs are handed in:** a job no longer finishes out in the lanes (the Fuel run took the gas from
+  your pack on the spot). Go back and pick "About that job..." with Dot or Marcus to hand it in and get the reward;
+  Hound kills count from when you take the job.
 
 ### Launcher
 - [C++] **Discord card: days survived and party size:** every card now says how long you've survived
