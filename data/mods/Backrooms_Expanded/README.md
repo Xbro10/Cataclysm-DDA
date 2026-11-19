@@ -81,7 +81,7 @@ level plays (how many entities, how much food, what goes wrong):
 - The Backrooms mod (included with the game).
 - Made with the UltiCa tileset in mind, with sprites for UltiCa and
   UndeadPeople; every new ID has a `looks_like` fallback, so other tilesets work.
-- Works well with **Survivor Minds** (followers have Backrooms lines).
+- Works well with **Survivor Minds** (followers have Backrooms lines; overrun camps hold a dead survivor's journal, and chalk marks show camps, water, danger and looted rooms). Neither mod needs the other.
 
 ## Credits
 

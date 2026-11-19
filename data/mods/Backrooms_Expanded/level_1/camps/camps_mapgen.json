@@ -201,7 +201,12 @@
       "predecessor_mapgen": "br1_garage",
       "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 6, 17 ] } ],
       "faction_owner": [ { "id": "br_lost", "x": [ 6, 17 ], "y": [ 8, 14 ] } ],
-      "place_nested": [ { "chunks": [ "br1_squatter_camp_core" ], "x": 6, "y": 8 } ]
+      "place_nested": [
+        { "chunks": [ "br1_squatter_camp_core" ], "x": 6, "y": 8 },
+        { "//": "Survivor Minds hooks: CAMP and WATER (south, to the drip pool) by the gap in the sandbags, CAMP again below the camp.", "chunks": [ "br_sm_mark_camp" ], "x": 10, "y": 7 },
+        { "chunks": [ "br_sm_mark_water_s" ], "x": 13, "y": 7 },
+        { "chunks": [ "br_sm_mark_camp" ], "x": [ 8, 15 ], "y": 19 }
+      ]
     }
   },
   {

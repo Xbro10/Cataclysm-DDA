@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_maintenance",
+    "//": "Loaded only with Survivor Minds: a picked-over copy of Level 1's maintenance room (level_1/chunks.json), lockers and racks empty, a LOOTED mark inside the door. Weight 250 against the original's 1000: about 1 room in 5. If the original's layout changes, change this copy too.",
+    "weight": 250,
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "########", "#11...2#", "#.....2#", "#......#", "#..3...#", "#..L...#", "#11x...#", "###D####" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "1": "t_thconc_floor", "2": "t_thconc_floor", "3": "t_thconc_floor", "x": "t_thconc_floor" },
+      "furniture": { "1": "f_locker", "2": "f_rack", "3": "f_workbench", "x": "f_sm_mark_looted" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_booth",
+    "//": "Loaded only with Survivor Minds: the attendant booth (level_1/chunks.json) after someone got there first. No food or drink, a LOOTED mark on the floor. About 1 booth in 5.",
+    "weight": 250,
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "        ", " ###### ", " #cc..# ", " #.bx.# ", " #.!..D ", " ###### ", "        ", "        " ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "x": "t_thconc_floor" },
+      "furniture": { "x": "f_sm_mark_looted" },
+      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_room_security",
+    "//": "Loaded only with Survivor Minds: the security office (level_1/structures_useful.json) after someone pried the door: lockers empty, gun safe open and bare, the logbook page still there, a LOOTED mark inside the door. About 1 office in 5.",
+    "weight": 250,
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "########", "#MMMM.1#", "#.h....#", "#.dd..1#", "#......#", "#....L.#", "#G.x...#", "###D####" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": {
+        "M": "t_thconc_floor",
+        "h": "t_thconc_floor",
+        "d": "t_thconc_floor",
+        "1": "t_thconc_floor",
+        "G": "t_thconc_floor",
+        "x": "t_thconc_floor",
+        "D": "t_door_metal_o"
+      },
+      "furniture": {
+        "M": "f_br1_cctv",
+        "h": "f_chair",
+        "d": "f_desk",
+        "1": "f_locker",
+        "G": "f_gunsafe_o",
+        "x": "f_sm_mark_looted"
+      },
+      "place_item": [ { "item": "br1_security_log", "x": [ 2, 3 ], "y": 3, "chance": 100 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]

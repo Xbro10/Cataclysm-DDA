@@ -101,7 +101,18 @@
           "y": [ 0, 18 ],
           "repeat": [ 1, 2 ]
         },
-        { "chunks": [ [ "null", 60 ], [ "br1_dark_stash", 40 ] ], "x": [ 1, 16 ], "y": [ 7, 9 ] }
+        { "chunks": [ [ "null", 60 ], [ "br1_dark_stash", 40 ] ], "x": [ 1, 16 ], "y": [ 7, 9 ] },
+        {
+          "//": "Survivor Minds hook: a DANGER mark on each side that borders ordinary garage (never between two dead-zone squares).",
+          "neighbors": { "north": [ "br1_dead_zone" ] },
+          "chunks": [ "null" ],
+          "else_chunks": [ "br_sm_mark_danger" ],
+          "x": [ 8, 15 ],
+          "y": 0
+        },
+        { "neighbors": { "south": [ "br1_dead_zone" ] }, "chunks": [ "null" ], "else_chunks": [ "br_sm_mark_danger" ], "x": [ 8, 15 ], "y": 23 },
+        { "neighbors": { "west": [ "br1_dead_zone" ] }, "chunks": [ "null" ], "else_chunks": [ "br_sm_mark_danger" ], "x": 0, "y": [ 6, 11 ] },
+        { "neighbors": { "east": [ "br1_dead_zone" ] }, "chunks": [ "null" ], "else_chunks": [ "br_sm_mark_danger" ], "x": 23, "y": [ 18, 23 ] }
       ]
     }
   },
@@ -176,9 +187,11 @@
       "items": {
         "X": { "item": "br1_camp_stores", "chance": 25 },
         "x": { "item": "br1_camp_stores", "chance": 10 },
-        "C": [ { "item": "corpse_bloody", "chance": 100 }, { "item": "br1_camp_lockers", "chance": 70 } ]
+        "C": [ { "item": "corpse_bloody", "chance": 100 }, { "item": "br1_overrun_body", "chance": 100 } ]
       },
       "place_item": [ { "item": "br1_note_last", "x": 4, "y": 3, "chance": 100 } ],
+      "//": "Survivor Minds hooks: br1_overrun_body gets the dead survivor's journal, and the picked-over crates a LOOTED mark (survivor_minds_hooks.json).",
+      "place_nested": [ { "chunks": [ "br_sm_mark_looted" ], "x": 9, "y": 2 } ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
