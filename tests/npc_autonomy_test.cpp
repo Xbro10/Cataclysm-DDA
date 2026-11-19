@@ -1814,3 +1814,45 @@ TEST_CASE( "npc_autonomy_chats_respect_follow_and_guard", "[npc][autonomy]" )
         CHECK( npc_autonomy::should_catch_up( guy, "autonomy_socialize" ) );
     }
 }
+
+// Reported 2026-11-18: guards never chatted, even with another guard beside them, because guard
+// duty (0.45) always beat a plain chat (0.25).
+TEST_CASE( "npc_autonomy_guards_chat_at_their_post", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guard = spawn_follower( player_pos + point( 20, 0 ) );
+    npc &other = spawn_follower( player_pos + point( 21, 0 ) );
+    for( npc *who : { &guard, &other } ) {
+        who->set_attitude( NPCATT_NULL );
+        who->set_fac( faction_your_followers );
+        who->set_mission( NPC_MISSION_GUARD );
+        who->set_guard_pos( who->pos_abs() );
+    }
+    get_avatar().setpos( here, tripoint_bub_ms( player_pos + point( -20, 0 ), 0 ) );
+    guard.set_value( "autonomy_need_social", 80.0 );
+    REQUIRE( guard.is_on_shift() );
+    behavior::character_oracle_t oracle( &guard );
+    behavior::tree priorities;
+    priorities.add( &behavior_node_t_npc_priorities.obj() );
+
+    SECTION( "autonomy on: a lonely guard chats with the guard beside them" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        REQUIRE( npc_autonomy::wants_company_at_post( guard ) );
+        CHECK( priorities.tick( &oracle ) == "autonomy_socialize" );
+    }
+    SECTION( "nobody in their post area: they hold the post" ) {
+        override_option autonomy( "NPC_AUTONOMY", "true" );
+        other.setpos( here, guard.pos_bub() + tripoint( 0, 12, 0 ) );
+        CHECK_FALSE( npc_autonomy::wants_company_at_post( guard ) );
+        CHECK( priorities.tick( &oracle ) != "autonomy_socialize" );
+    }
+    SECTION( "autonomy off: the game's own" ) {
+        override_option autonomy( "NPC_AUTONOMY", "false" );
+        CHECK( priorities.tick( &oracle ) != "autonomy_socialize" );
+    }
+}

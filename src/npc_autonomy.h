@@ -69,6 +69,8 @@ bool is_goal( const std::string &goal );
 bool wants_meal( const npc &guy );
 /** wants_meal() for a guard standing on their post during their shift: they eat from their pack there. */
 bool wants_meal_at_post( const npc &guy );
+/** wants_company() for a guard during their shift: they chat with someone within their post area. */
+bool wants_company_at_post( const npc &guy );
 /** A follower eating while the player has walked beyond their follow distance: drop the meal and follow. */
 bool should_leave_meal( const npc &guy );
 /**

@@ -19,6 +19,15 @@
   },
   {
     "type": "behavior",
+    "id": "npc_autonomy_post_socialize",
+    "//": "Xbro10 fork, NPC autonomy. A lonely guard during their shift chats with someone within their post area (step 5.3 keeps chat partners there). Weight 0.5 beats holding the post (0.45); the plain chat (0.25) doesn't, so guards never chatted before.",
+    "conditions": [ { "predicate": "npc_autonomy_wants_company_at_post" } ],
+    "goal": "autonomy_socialize",
+    "score": "npc_autonomy_weight",
+    "score_argument": "0.5"
+  },
+  {
+    "type": "behavior",
     "id": "npc_autonomy_socialize",
     "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY). Social 50+: walk over to a friendly person within 15 tiles and chat (at most every 30 minutes). score_argument is the weight (0-1).",
     "conditions": [ { "predicate": "npc_autonomy_wants_company" } ],

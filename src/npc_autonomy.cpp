@@ -2229,6 +2229,15 @@ bool wants_company( const npc &guy )
     return chat_partner( guy ) != nullptr;
 }
 
+bool wants_company_at_post( const npc &guy )
+{
+    // Guard duty (0.45) always beat a plain chat (0.25), so guards never chatted, even with
+    // another guard beside them (reported 2026-11-18). The partner is already limited to the
+    // post area (may_walk_over_to_chat).
+    const std::optional<tripoint_abs_ms> post = guy.get_guard_post();
+    return post && guy.is_on_shift() && wants_company( guy );
+}
+
 goal_result run_goal( npc &guy, const std::string &goal )
 {
     if( goal == goal_seek_safety ) {
