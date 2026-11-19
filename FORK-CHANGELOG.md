@@ -47,6 +47,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [BE] **Breakroom jobs are handed in:** a job no longer finishes out in the lanes (the Fuel run took the gas from
   your pack on the spot). Go back and pick "About that job..." with Dot or Marcus to hand it in and get the reward;
   Hound kills count from when you take the job.
+- [BE] **Guards hold their posts, runners rest indoors:** the Breakroom's door guard and archers and the Exchange's
+  guards go back to their own post after a fight or a meal; a runner back from a run goes inside to its own spot to
+  rest and heal instead of standing in the yard. [C++] Arrows, bolts and thrown things fly through chain-link, bars
+  and arrow slits (bullets already did), and NPCs shoot through them instead of walking round or climbing the fence:
+  the Breakroom archers can fire out of the fenced yard. Jobs that send you somewhere you haven't seen (the Hound
+  den, "Who they were") no longer fail on a revealed map ("Unable to find and assign mission target").
 
 ### Launcher
 - [C++] **Discord card: days survived and party size:** every card now says how long you've survived

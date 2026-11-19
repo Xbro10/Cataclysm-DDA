@@ -236,6 +236,17 @@ projectile_attack_aim projectile_attack_roll( const dispersion_sources &dispersi
     return aim;
 }
 
+// Xbro10 fork: see ballistics.h.
+bool projectile_passes_mesh( const map &here, const tripoint_bub_ms &p )
+{
+    if( here.has_furn( p ) || here.veh_at( p ) ) {
+        return false;
+    }
+    const ter_t &ter = here.ter( p ).obj();
+    return ter.has_flag( ter_furn_flag::TFLAG_TRANSPARENT ) && ter.has_flag( ter_furn_flag::TFLAG_PERMEABLE ) &&
+           ter.has_flag( ter_furn_flag::TFLAG_THIN_OBSTACLE );
+}
+
 void projectile_attack( dealt_projectile_attack &attack, const projectile &proj_arg,
                         const tripoint_bub_ms &source, const tripoint_bub_ms &target_arg,
                         const dispersion_sources &dispersion, Creature *origin, const vehicle *in_veh,
@@ -644,7 +655,9 @@ void projectile_attack( dealt_projectile_attack &attack, const projectile &proj_
                 proj.count = 1;
             }
 
-            if( ( !has_momentum || !is_bullet ) && here->impassable( tp ) ) {
+            // Xbro10 fork: slow projectiles still fly through chain-link and bars (projectile_passes_mesh).
+            if( ( !has_momentum || ( !is_bullet && !projectile_passes_mesh( *here, tp ) ) ) &&
+                here->impassable( tp ) ) {
                 // Don't let flamethrowers go through walls
                 // TODO: Let them go through bars
                 traj_len = i;

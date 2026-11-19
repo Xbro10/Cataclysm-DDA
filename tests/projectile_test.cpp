@@ -88,7 +88,11 @@ TEST_CASE( "projectiles_through_obstacles", "[projectile]" )
     // Check that a bullet with the correct amount of speed can through obstacles
     CHECK( projectile_end_point( range, gun, 1000, 3 ) == range[2] );
 
-    // But that a bullet without the correct amount cannot
+    // Xbro10 fork: a slow projectile (an arrow) also flies through chain-link (projectile_passes_mesh)...
+    CHECK( projectile_end_point( range, gun, 10, 3 ) == range[2] );
+
+    // ...but not through a solid obstacle
+    here.ter_set( range[1], ter_id( "t_wall" ) );
     CHECK( projectile_end_point( range, gun, 10, 3 ) == range[0] );
 }
 

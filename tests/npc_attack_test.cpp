@@ -331,3 +331,61 @@ TEST_CASE( "NPC_faces_zombies", "[npc_attack]" )
 // TODO: Add scenarios for:
 // - NPCs carrying a mix of weapons
 // - NPCs trying to shoot through allies
+
+// Xbro10 fork: an NPC behind a chain-link fence shoots through it (arrows and bullets fly through chain-link,
+// projectile_passes_mesh) instead of walking round or climbing over to fight; a wall still blocks the shot.
+TEST_CASE( "NPC_shoots_through_chain_link", "[npc_attack]" )
+{
+    map &here = get_map();
+    get_player_character().setpos( here, main_npc_start_tripoint );
+    clear_map_and_put_player_underground();
+    clear_vehicles();
+    scoped_weather_override sunny_weather( weather_sunny );
+    npc &main_npc = npc_attack_setup::respawn_main_npc();
+    main_npc.set_fac( faction_your_followers );
+    main_npc.set_str_base( 14 );
+    main_npc.reset_stats();
+    main_npc.rules.set_flag( ally_rule::use_guns );
+    main_npc.rules.clear_flag( ally_rule::use_silent );
+
+    const std::string weapon = GENERATE( "compbow", "modular_m16a4" );
+    CAPTURE( weapon );
+    arm_shooter( main_npc, itype_id( weapon ) );
+    monster *zombie = npc_attack_setup::spawn_zombie_at_range( 4 );
+    REQUIRE( zombie );
+    // Tough enough to take every shot, so it is still there for the wall half.
+    zombie->set_hp( 100000 );
+    const tripoint_bub_ms fence = main_npc_start_tripoint + tripoint( 2, 0, 0 );
+
+    // Play the NPC's turns: count it as firing once the loaded ammo goes down.
+    const auto fires_within_ten_turns = [&]() {
+        main_npc.evaluate_best_attack( zombie );
+        npc_attack_gun *gun = dynamic_cast<npc_attack_gun *>( main_npc.get_current_attack().get() );
+        if( !gun ) {
+            return false;
+        }
+        const int loaded = main_npc.get_wielded_item()->ammo_remaining();
+        for( int turn = 0; turn < 10; turn++ ) {
+            main_npc.set_moves( 100 );
+            gun->use( main_npc, zombie->pos_bub() );
+            if( main_npc.get_wielded_item()->ammo_remaining() < loaded ) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // A wall counts as blocking (the NPC would go looking for a clear shot): the shot rates lower than through chain-link.
+    const auto shot_rating = [&]( const char *ter ) {
+        here.ter_set( fence, ter_id( ter ) );
+        main_npc.evaluate_best_attack( zombie );
+        REQUIRE( dynamic_cast<npc_attack_gun *>( main_npc.get_current_attack().get() ) );
+        return main_npc.get_current_attack_evaluation().value().value_or( 0 );
+    };
+    const int through_wall = shot_rating( "t_wall" );
+    const int through_fence = shot_rating( "t_chainfence" );
+    CHECK( through_wall < through_fence );
+
+    CHECK( fires_within_ten_turns() );
+    CHECK( main_npc.pos_bub() == main_npc_start_tripoint );
+}

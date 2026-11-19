@@ -20,6 +20,9 @@
 #include "math_parser_diag_value.h"
 #include "mission.h"
 #include "npc.h"
+#include "omdata.h"
+#include "overmap.h"
+#include "overmapbuffer.h"
 #include "monster.h"
 #include "player_helpers.h"
 #include "pocket_type.h"
@@ -130,6 +133,38 @@ TEST_CASE( "hound_kills_count_for_the_job", "[.][backrooms_jobs]" )
     CHECK( kills() == 2 );
     m->process();
     CHECK( u.get_active_missions().size() == 1 );
+}
+
+// On a revealed map (nothing unseen) the Hound den job still finds a spot: a garage square whose map isn't made yet,
+// turned into a den. It used to fail with "Unable to find and assign mission target br1_hound_den".
+TEST_CASE( "hound_den_job_on_a_revealed_map", "[.][backrooms_jobs]" )
+{
+    const mission_type_id den( "MISSION_BR1_HOUND_DEN" );
+    if( !den.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    avatar &u = get_avatar();
+    const tripoint_abs_omt home = u.pos_abs_omt();
+    for( const tripoint_abs_omt &p : points_in_radius( home, 30 ) ) {
+        overmap_buffer.set_seen( p, om_vision_level::full );
+        if( overmap_buffer.ter( p ).id().str().rfind( "br1_hound_den", 0 ) == 0 ) {
+            overmap_buffer.ter_set( p, oter_id( "field" ) );
+        }
+    }
+    for( int x = 10; x < 14; x++ ) {
+        overmap_buffer.ter_set( home + point( x, 0 ), oter_id( "br1_garage" ) );
+    }
+
+    mission *m = mission::reserve_new( den, character_id() );
+    m->assign( u );
+    REQUIRE( u.get_active_missions().size() == 1 );
+    const tripoint_abs_omt target = m->get_target();
+    REQUIRE_FALSE( target.is_invalid() );
+    CHECK( overmap_buffer.ter( target ).id().str().rfind( "br1_hound_den", 0 ) == 0 );
+    CHECK( rl_dist( target, home ) >= 10 );
 }
 
 // All four Hound den layouts build without errors.

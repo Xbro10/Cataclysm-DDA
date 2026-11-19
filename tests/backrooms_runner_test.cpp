@@ -85,14 +85,15 @@ static int owned_stock_near( const npc &guy )
 }
 
 // How many different kinds of item are on a shopkeeper's own booth (2 tiles; the Exchange stalls sit 4 apart).
-// Concentrated stock = few kinds, deep piles.
+// Concentrated stock = few kinds, deep piles. The faction's currency (tally tokens) is cash to pay with, not stock.
 static int stock_kinds_near( const npc &guy )
 {
     map &here = get_map();
+    const faction *fac = guy.get_faction();
     std::set<itype_id> kinds;
     for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), 2 ) ) {
         for( const item &it : here.i_at( p ) ) {
-            if( it.get_owner() == guy.get_fac_id() ) {
+            if( it.get_owner() == guy.get_fac_id() && !( fac && it.typeId() == fac->currency ) ) {
                 kinds.insert( it.typeId() );
             }
         }

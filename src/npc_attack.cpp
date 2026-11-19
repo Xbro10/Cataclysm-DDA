@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 
+#include "ballistics.h"
 #include "cata_utility.h"
 #include "character.h"
 #include "creature.h"
@@ -64,7 +65,10 @@ static bool has_obstruction( const tripoint_bub_ms &from, const tripoint_bub_ms 
     const map &here = get_map();
     creature_tracker &creatures = get_creature_tracker();
     for( const tripoint_bub_ms &line_point : line ) {
-        if( here.impassable( line_point ) || ( check_ally && creatures.creature_at( line_point ) ) ) {
+        // Xbro10 fork: shots and throws go through chain-link and bars (projectile_passes_mesh), so an NPC behind a
+        // fence fires through it instead of walking round or climbing over.
+        if( ( here.impassable( line_point ) && !projectile_passes_mesh( here, line_point ) ) ||
+            ( check_ally && creatures.creature_at( line_point ) ) ) {
             return true;
         }
     }
