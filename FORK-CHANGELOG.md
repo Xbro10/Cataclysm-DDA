@@ -58,9 +58,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   cot; 3 and 10 after 3 jobs), and while one of hers is badly hurt she only patches you up.
 
 ### Launcher
-- [C++] **Discord card: days survived and party size:** every card now says how long you've survived
-  ("First day", "Survived 12 days"), and with followers Discord shows your party, you plus them ("3 of 3").
-  Detailed still adds sleeping or driving.
+- [C++] **Discord card: days survived and followers:** every card now says how long you've survived
+  ("First day", "Survived 12 days") and, with followers, how many ("Survived 2 days · 1 follower"). Detailed still
+  adds sleeping or driving.
 
 ### Bug fixes
 - [C++] **A weapon's melee damage always lists Bash, Cut, Pierce in order:** the order depended on how the game

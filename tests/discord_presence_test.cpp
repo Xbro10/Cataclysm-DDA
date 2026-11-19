@@ -42,7 +42,7 @@ TEST_CASE( "discord_presence_card_text", "[discord_presence]" )
         CHECK( a.find( "\"state\"" ) == std::string::npos );
         CHECK( a.find( "party" ) == std::string::npos );
     }
-    SECTION( "basic, Level 2: level line, timer, button, days survived, party size" ) {
+    SECTION( "basic, Level 2: level line, timer, button, days survived, followers" ) {
         s.dimension = "backrooms_level_2";
         s.started_at = 1000;
         s.day = 4;
@@ -55,15 +55,16 @@ TEST_CASE( "discord_presence_card_text", "[discord_presence]" )
         CHECK( a.find( "\"start\":1000" ) != std::string::npos );
         CHECK( a.find( "\"small_text\":\"Pipe Rat\"" ) != std::string::npos );
         CHECK( a.find( "\"label\":\"Get the fork\"" ) != std::string::npos );
-        CHECK( a.find( "\"state\":\"Survived 3 days\"" ) != std::string::npos );
-        // You and two followers: Discord shows "(3 of 3)".
-        CHECK( a.find( "\"party\":{\"id\":\"cdda-party\",\"size\":[3,3]}" ) != std::string::npos );
+        CHECK( a.find( "\"state\":\"Survived 3 days · 2 followers\"" ) != std::string::npos );
+        CHECK( a.find( "party" ) == std::string::npos );
     }
-    SECTION( "first day, alone: no party counter" ) {
+    SECTION( "first day, alone: no followers" ) {
         s.day = 1;
         const std::string a = discord_presence::activity_json( cfg, s );
         CHECK( a.find( "\"state\":\"First day\"" ) != std::string::npos );
         CHECK( a.find( "party" ) == std::string::npos );
+        s.followers = 1;
+        CHECK( discord_presence::activity_json( cfg, s ).find( "\"state\":\"First day · 1 follower\"" ) != std::string::npos );
     }
     SECTION( "detailed adds what you're doing" ) {
         s.dimension = "default:backrooms";
@@ -73,8 +74,7 @@ TEST_CASE( "discord_presence_card_text", "[discord_presence]" )
         s.doing = "Sleeping";
         const std::string a = discord_presence::activity_json( cfg, s );
         CHECK( a.find( "\"details\":\"Level 0\"" ) != std::string::npos );
-        CHECK( a.find( "\"state\":\"Survived 11 days · Sleeping\"" ) != std::string::npos );
-        CHECK( a.find( "\"size\":[4,4]" ) != std::string::npos );
+        CHECK( a.find( "\"state\":\"Survived 11 days · 3 followers · Sleeping\"" ) != std::string::npos );
     }
     SECTION( "an unknown dimension falls back to the normal world" ) {
         s.dimension = "some_other_mod_dimension";
