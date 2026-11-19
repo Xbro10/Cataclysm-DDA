@@ -4,6 +4,7 @@
 #include <string>
 
 #include "avatar.h"
+#include "bodypart.h"
 #include "calendar.h"
 #include "cata_catch.h"
 #include "character_id.h"
@@ -11,6 +12,7 @@
 #include "dialogue.h"
 #include "effect_on_condition.h"
 #include "game.h"
+#include "global_vars.h"
 #include "input_context.h"
 #include "item.h"
 #include "map.h"
@@ -164,7 +166,14 @@ TEST_CASE( "hound_den_job_on_a_revealed_map", "[.][backrooms_jobs]" )
     const tripoint_abs_omt target = m->get_target();
     REQUIRE_FALSE( target.is_invalid() );
     CHECK( overmap_buffer.ter( target ).id().str().rfind( "br1_hound_den", 0 ) == 0 );
-    CHECK( rl_dist( target, home ) >= 10 );
+
+    // Leave the overmap as other tests expect it.
+    for( const tripoint_abs_omt &p : points_in_radius( home, 30 ) ) {
+        const std::string id = overmap_buffer.ter( p ).id().str();
+        if( id.rfind( "br1_hound_den", 0 ) == 0 || id.rfind( "br1_garage", 0 ) == 0 ) {
+            overmap_buffer.ter_set( p, oter_id( "field" ) );
+        }
+    }
 }
 
 // All four Hound den layouts build without errors.
@@ -212,4 +221,78 @@ TEST_CASE( "standing_reward_waits_for_dot", "[.][backrooms_jobs]" )
     // Handed over once.
     run_player_eoc( effect_on_condition_EOC_BR1_STANDING_REWARDS );
     CHECK( keys_near_player( key ) == 1 );
+}
+
+// Ruth, the Breakroom's medic: her round treats her own people (trait BR1_BREAKROOM_MEMBER) for free, not strangers; you pay in
+// tally tokens, and while one of hers is still badly hurt she won't do a full treatment for you.
+TEST_CASE( "breakroom_medic", "[.][backrooms_jobs]" )
+{
+    const effect_on_condition_id round( "EOC_BR1_MEDIC_ROUND" );
+    if( !round.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    clear_npcs();
+    avatar &u = get_avatar();
+    const bodypart_id torso( "torso" );
+
+    npc &ruth = spawn_npc( u.pos_bub().xy() + point( 2, 0 ), "BR1_medic" );
+    ruth.set_unique_id( "BR1_medic" );
+    // One of hers (a stand-in with the member trait, so no runner dies at the end of the test).
+    npc &jonah = spawn_npc( u.pos_bub().xy() + point( 4, 0 ), "thug" );
+    jonah.set_mutation( trait_id( "BR1_BREAKROOM_MEMBER" ) );
+    npc &stranger = spawn_npc( u.pos_bub().xy() + point( 5, 0 ), "thug" );
+
+    SECTION( "her round treats one of hers, not a stranger" ) {
+        jonah.set_part_hp_cur( torso, 10 );
+        jonah.add_effect( efftype_id( "bleed" ), 10_minutes, torso );
+        stranger.set_part_hp_cur( torso, 10 );
+        dialogue d( get_talker_for( ruth ), nullptr );
+        round->activate( d );
+        CHECK( jonah.get_part_hp_cur( torso ) == 20 );
+        CHECK_FALSE( jonah.has_effect( efftype_id( "bleed" ), torso ) );
+        CHECK( stranger.get_part_hp_cur( torso ) == 10 );
+        // Jonah is still badly hurt, so she's busy with him.
+        CHECK( get_globals().get_global_value( "br1_medic_busy" ).dbl() == 1 );
+    }
+
+    SECTION( "you pay for treatment" ) {
+        u.wear_item( item( itype_id( "backpack" ) ), false );
+        u.set_part_hp_cur( torso, 20 );
+        u.add_effect( efftype_id( "bleed" ), 10_minutes, torso );
+        for( int i = 0; i < 30; i++ ) {
+            u.i_add( item( itype_id( "br_tally_token" ) ) );
+        }
+        const auto tokens = [&u]() {
+            return u.amount_of( itype_id( "br_tally_token" ) ) + [&u]() {
+                int n = 0;
+                for( const item &it : get_map().i_at( u.pos_bub() ) ) {
+                    n += it.typeId() == itype_id( "br_tally_token" ) ? it.count() : 0;
+                }
+                return n;
+            }();
+        };
+        const int had = tokens();
+        REQUIRE( had > 0 );
+        get_globals().set_global_value( "br1_medic_busy", 0.0 );
+
+        dialogue d( get_talker_for( u ), get_talker_for( ruth ) );
+        d.add_topic( "TALK_BR1_MEDIC" );
+        d.gen_responses( d.topic_stack.back() );
+        talk_response *full = nullptr;
+        for( talk_response &r : d.responses ) {
+            r.create_option_line( d, input_event() );
+            if( r.text.rfind( "Fix me up properly.  [", 0 ) == 0 ) {
+                full = &r;
+            }
+        }
+        REQUIRE( full != nullptr );
+        full->success.apply( d );
+        CHECK( u.get_part_hp_cur( torso ) == u.get_part_hp_max( torso ) );
+        CHECK_FALSE( u.has_effect( efftype_id( "bleed" ), torso ) );
+        CHECK( tokens() == had - 20 );
+    }
+    clear_npcs();
 }

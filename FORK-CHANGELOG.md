@@ -53,6 +53,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   and arrow slits (bullets already did), and NPCs shoot through them instead of walking round or climbing the fence:
   the Breakroom archers can fire out of the fenced yard. Jobs that send you somewhere you haven't seen (the Hound
   den, "Who they were") no longer fail on a revealed map ("Unable to find and assign mission target").
+- [BE] **Ruth, the Breakroom's medic:** in the infirmary (or by the Bunker's bunks). Every 10 minutes she treats the
+  Breakroom's own people for free; you pay in tally tokens (5 to patch up, 20 for a full treatment with 2 hours on her
+  cot; 3 and 10 after 3 jobs), and while one of hers is badly hurt she only patches you up.
 
 ### Launcher
 - [C++] **Discord card: days survived and party size:** every card now says how long you've survived
