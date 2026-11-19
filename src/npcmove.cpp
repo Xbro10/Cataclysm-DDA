@@ -7410,7 +7410,7 @@ bool npc::autonomy_has_firestarter() const
 {
     bool found = false;
     visit_items( [this, &found]( const item_location & it ) -> VisitResponse {
-        if( craft_reservation::usable_by_automation( *it ) && is_usable_npc_firestarter( *this, *it ) )
+        if( craft_reservation::usable_by_automation( *it ) && is_usable_npc_firestarter( *this, it ) )
         {
             found = true;
             return VisitResponse::ABORT;
@@ -7424,15 +7424,15 @@ bool npc::autonomy_has_firestarter() const
 // autonomy trip walked the NPC to.
 bool npc::autonomy_light_hearth( const tripoint_bub_ms &p )
 {
-    item *fire_tool = nullptr;
+    item_location fire_tool;
     const firestarter_actor *actor = nullptr;
     visit_items( [this, &fire_tool, &actor]( item_location it ) -> VisitResponse {
-        if( !craft_reservation::usable_by_automation( *it ) || !is_usable_npc_firestarter( *this, *it ) )
+        if( !craft_reservation::usable_by_automation( *it ) || !is_usable_npc_firestarter( *this, it ) )
         {
             return VisitResponse::NEXT;
         }
         const use_function *usef = it->type->get_use( "firestarter" );
-        fire_tool = it.get_item();
+        fire_tool = it;
         actor = dynamic_cast<const firestarter_actor *>( usef->get_actor_ptr() );
         return VisitResponse::ABORT;
     } );
@@ -7446,7 +7446,7 @@ bool npc::autonomy_light_hearth( const tripoint_bub_ms &p )
     if( spot.check == fire_spot_check::own_fuel ) {
         get_map().add_item_or_charges( p, i_rem( spot.firewood.get_item() ), false );
     }
-    return actor->npc_start_fire( *this, *fire_tool, p );
+    return actor->npc_start_fire( *this, fire_tool, p );
 }
 
 std::optional<tripoint_bub_ms> npc::find_fire_spot()

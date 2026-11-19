@@ -70,6 +70,13 @@ static bool additions_loaded()
     return true;
 }
 
+// Uses the wielded item, as the player would (switch a torch or the spear on or off).
+static void use_wielded( avatar &you )
+{
+    item_location held = you.get_wielded_item();
+    you.invoke_item( held );
+}
+
 TEST_CASE( "flamero_mado_spear_lights_burns_and_goes_out", "[.][backrooms_items]" )
 {
     if( !additions_loaded() ) {
@@ -87,7 +94,7 @@ TEST_CASE( "flamero_mado_spear_lights_burns_and_goes_out", "[.][backrooms_items]
 
     SECTION( "an empty tank won't light" ) {
         REQUIRE( you.wield( spear ) );
-        you.invoke_item( &*you.get_wielded_item() );
+        use_wielded( you );
         CHECK( you.get_wielded_item()->typeId() == itype_br_flamero_mado_off );
     }
 
@@ -95,7 +102,7 @@ TEST_CASE( "flamero_mado_spear_lights_burns_and_goes_out", "[.][backrooms_items]
         spear.ammo_set( itype_lamp_oil, 100 );
         REQUIRE( spear.ammo_remaining() == 100 );
         REQUIRE( you.wield( spear ) );
-        you.invoke_item( &*you.get_wielded_item() );
+        use_wielded( you );
         item_location lit = you.get_wielded_item();
         REQUIRE( lit->typeId() == itype_br_flamero_mado_on );
         CHECK( lit->active );
@@ -121,9 +128,9 @@ TEST_CASE( "flamero_mado_spear_lights_burns_and_goes_out", "[.][backrooms_items]
     SECTION( "using it again puts it out and keeps the fuel" ) {
         spear.ammo_set( itype_lamp_oil, 100 );
         REQUIRE( you.wield( spear ) );
-        you.invoke_item( &*you.get_wielded_item() );
+        use_wielded( you );
         REQUIRE( you.get_wielded_item()->typeId() == itype_br_flamero_mado_on );
-        you.invoke_item( &*you.get_wielded_item() );
+        use_wielded( you );
         CHECK( you.get_wielded_item()->typeId() == itype_br_flamero_mado_off );
         CHECK_FALSE( you.get_wielded_item()->active );
         CHECK( you.get_wielded_item()->ammo_remaining() == 100 );
@@ -239,7 +246,7 @@ TEST_CASE( "backrooms_wiki_finds_work", "[.][backrooms_items]" )
         spear.ammo_set( firesalt, 50 );
         REQUIRE( spear.ammo_remaining() == 50 );
         REQUIRE( you.wield( spear ) );
-        you.invoke_item( &*you.get_wielded_item() );
+        use_wielded( you );
         CHECK( you.get_wielded_item()->typeId() == itype_br_flamero_mado_on );
     }
 
@@ -379,7 +386,7 @@ TEST_CASE( "shock_lance_switches_on_shocks_and_drains_its_battery", "[.][backroo
     SECTION( "with no battery it won't switch on" ) {
         item off( lance_off );
         REQUIRE( you.wield( off ) );
-        you.invoke_item( &*you.get_wielded_item() );
+        use_wielded( you );
         CHECK( you.get_wielded_item()->typeId() == lance_off );
     }
 
@@ -390,7 +397,7 @@ TEST_CASE( "shock_lance_switches_on_shocks_and_drains_its_battery", "[.][backroo
         REQUIRE( lance.put_in( battery, pocket_type::MAGAZINE_WELL ).success() );
         REQUIRE( you.wield( lance ) );
         CHECK( you.get_wielded_item()->damage_melee( damage_electric ) == 0 );
-        you.invoke_item( &*you.get_wielded_item() );
+        use_wielded( you );
         item_location on = you.get_wielded_item();
         REQUIRE( on->typeId() == lance_on );
         CHECK( on->damage_melee( damage_electric ) > 0 );
@@ -403,7 +410,7 @@ TEST_CASE( "shock_lance_switches_on_shocks_and_drains_its_battery", "[.][backroo
         }
         CHECK( you.get_wielded_item()->energy_remaining( &you ) < before );
         // Switch it off again.
-        you.invoke_item( &*you.get_wielded_item() );
+        use_wielded( you );
         CHECK( you.get_wielded_item()->typeId() == lance_off );
     }
 
