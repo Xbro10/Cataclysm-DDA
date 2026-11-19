@@ -1,0 +1,18 @@
+[
+  {
+    "type": "item_group",
+    "id": "br1_exchange_rare_find",
+    "copy-from": "br1_exchange_rare_find",
+    "subtype": "distribution",
+    "//": "Loaded only when Additions is on too: the oddities trader's rare find is sometimes a shock lance (about 2 restocks in 100).",
+    "extend": { "items": [ { "group": "xa_shock_lance_cache", "prob": 2 } ] }
+  },
+  {
+    "type": "item_group",
+    "id": "br1_security_guns",
+    "copy-from": "br1_security_guns",
+    "subtype": "distribution",
+    "//": "Loaded only with Additions: now and then the guard office gun safe holds a crowd-control shock lance instead of a pistol (about 2 safes in 100).",
+    "extend": { "entries": [ { "group": "xa_shock_lance_cache", "prob": 2 } ] }
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "The shock lance in your hands, UndeadPeople: held steeply across the body, 64x80 like UndeadPeople's own spears (tools/backrooms_expanded/draw_xa_lance_held_udp.ps1).",
+    "compatibility": [ "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/xa_shock_lance_held_udp.png",
+        "sprite_width": 64,
+        "sprite_height": 80,
+        "sprite_offset_x": -16,
+        "sprite_offset_y": -48,
+        "tiles": [
+          { "id": "overlay_wielded_xa_shock_lance_off", "fg": 0, "rotates": false },
+          {
+            "id": "overlay_wielded_xa_shock_lance_on",
+            "//": "Animated: eight frames of crackling arcs, 4/60 s each (tiles 1-8 of the sheet).",
+            "fg": [ { "weight": 4, "sprite": 1 }, { "weight": 4, "sprite": 2 }, { "weight": 4, "sprite": 3 }, { "weight": 4, "sprite": 4 }, { "weight": 4, "sprite": 5 }, { "weight": 4, "sprite": 6 }, { "weight": 4, "sprite": 7 }, { "weight": 4, "sprite": 8 } ],
+            "animated": true,
+            "rotates": false
+          }
+        ]
+      }
+    ]
+  }
+]

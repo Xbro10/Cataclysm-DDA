@@ -6,6 +6,10 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- The **shock lance**, the Flamero-Mado's sibling: a rare end-game spear that runs on a medium battery. Switched on,
+  every hit adds electric damage, about one hit in three stuns, and blue arcs crackle over its head (animated, on the
+  ground and in your hands, UltiCa and UndeadPeople). Found in labs, military gear and prison armouries; crafted only
+  from its schematic (Electronics 7, Fabrication 6).
 - The mod itself: additions to the regular world, no Backrooms needed, on by default in new worlds.
 - The **Flamero-Mado spear** (moved here from Backrooms Expanded, same item ids, so existing saves keep theirs): a rare
   end-game spear with a fuel tank in its shaft. Fill it with kerosene or gasoline and light it: every hit burns as

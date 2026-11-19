@@ -1,0 +1,154 @@
+[
+  {
+    "type": "ITEM",
+    "subtypes": [ "TOOL" ],
+    "id": "xa_shock_lance_off",
+    "//": "Rare end-game spear that runs on a medium battery. Use it to switch it on (xa_shock_lance_on): electric damage on every hit and a 1-in-3 stun. Sibling of the Flamero-Mado spear. Found in labs, military gear and prison armouries; crafted only from xa_shock_lance_schematic.",
+    "name": { "str": "shock lance (off)", "str_pl": "shock lances (off)" },
+    "description": "A long steel lance with a slim point flanked by two short copper electrodes.  Copper coils ring the pale enamelled shaft, a battery pack with a little green light sits under your rear hand, and white ceramic insulators guard the grip from the business end.  Switch it on and the head crackles with current that leaps into whatever you stab.  Switched off, it is still a fine spear.",
+    "weight": "2600 g",
+    "volume": "1750 ml",
+    "longest_side": "190 cm",
+    "price": "4500 USD",
+    "price_postapoc": "1000 USD",
+    "to_hit": { "grip": "weapon", "length": "long", "surface": "point", "balance": "good" },
+    "material": [ "steel", "plastic" ],
+    "symbol": "/",
+    "color": "light_cyan",
+    "looks_like": "spear_steel",
+    "techniques": [ "WBLOCK_1", "PENETRATE" ],
+    "weapon_category": [ "SPEARS" ],
+    "charges_per_use": 1,
+    "use_action": {
+      "target": "xa_shock_lance_on",
+      "msg": "You thumb the switch.  The coils whine and blue sparks snap between the electrodes.",
+      "menu_text": "Switch on",
+      "need_charges": 1,
+      "need_charges_msg": "The battery is dead.",
+      "type": "transform"
+    },
+    "pocket_data": [
+      { "pocket_type": "MAGAZINE_WELL", "rigid": true, "flag_restriction": [ "BATTERY_MEDIUM" ], "default_magazine": "medium_battery_cell" }
+    ],
+    "tool_ammo": [ "battery" ],
+    "flags": [ "DURABLE_MELEE", "SPEAR", "REACH_ATTACK", "SHEATH_SPEAR" ],
+    "melee_damage": { "bash": 6, "stab": 30 }
+  },
+  {
+    "type": "ITEM",
+    "subtypes": [ "TOOL", "ARTIFACT" ],
+    "id": "xa_shock_lance_on",
+    "copy-from": "xa_shock_lance_off",
+    "//": "On: electric damage on every hit, about 1 hit in 3 stuns (on-hit spell xa_shock_lance_stun, once_in 3), a faint blue light, 25 W from its battery; switches itself off when the battery runs flat. SPAWN_ACTIVE: a transformed item is only processed (draws power) with it.",
+    "name": { "str": "shock lance (on)", "str_pl": "shock lances (on)" },
+    "description": "A long steel lance with blue current crawling between the electrodes at its head.  Every thrust shocks as well as pierces, and now and then the jolt locks up whatever you hit.  Use it to switch it off.",
+    "looks_like": "spear_steel",
+    "power_draw": "25 W",
+    "revert_to": "xa_shock_lance_off",
+    "light": 15,
+    "use_action": {
+      "ammo_scale": 0,
+      "target": "xa_shock_lance_off",
+      "msg": "You thumb the switch and the crackle dies away.",
+      "menu_text": "Switch off",
+      "type": "transform"
+    },
+    "flags": [ "DURABLE_MELEE", "SPEAR", "REACH_ATTACK", "TRADER_AVOID", "SPAWN_ACTIVE" ],
+    "passive_effects": [ { "has": "WIELD", "condition": "ALWAYS", "hit_you_effect": [ { "id": "xa_shock_lance_stun", "once_in": 3 } ] } ],
+    "melee_damage": { "bash": 6, "stab": 30, "electric": 14 }
+  },
+  {
+    "type": "SPELL",
+    "id": "xa_shock_lance_stun",
+    "//": "Cast by a switched-on shock lance on what it hits (about 1 hit in 3): stuns it for 1-2 turns. Not learnable; no Magiclysm needed. Things immune to electricity (the Redeemer, robots) shrug it off.",
+    "name": { "str": "Shock lance jolt", "//~": "NO_I18N" },
+    "description": { "str": "The jolt locks up whatever you hit.  You should never see this as a spell.", "//~": "NO_I18N" },
+    "message": "The jolt locks it up!",
+    "valid_targets": [ "hostile", "ally" ],
+    "flags": [ "SILENT", "NO_FAIL", "NO_EXPLOSION_SFX" ],
+    "effect": "attack",
+    "effect_str": "stunned",
+    "shape": "blast",
+    "min_damage": 0,
+    "max_damage": 0,
+    "damage_type": "electric",
+    "min_duration": 100,
+    "max_duration": 200,
+    "min_range": 1,
+    "max_range": 1
+  },
+  {
+    "type": "ITEM",
+    "subtypes": [ "BOOK" ],
+    "id": "xa_shock_lance_schematic",
+    "//": "The only way to learn the shock lance recipe. Spawns with the lance's caches.",
+    "category": "manuals",
+    "name": { "str": "shock lance schematic" },
+    "description": "A thick wad of wiring diagrams in a static bag, stamped PROTOTYPE - CROWD CONTROL - DO NOT DUPLICATE.  The coils, the capacitor bank and the two electrodes are drawn in loving detail; someone has written \"why is it a SPEAR\" in the margin.",
+    "weight": "80 g",
+    "volume": "100 ml",
+    "price": "300 USD",
+    "price_postapoc": "150 USD",
+    "material": [ "paper", "plastic" ],
+    "symbol": "?",
+    "color": "light_cyan",
+    "looks_like": "recipe_lab_elec",
+    "intelligence": 10,
+    "time": "40 m"
+  },
+  {
+    "type": "recipe",
+    "result": "xa_shock_lance_off",
+    "//": "End-game: Electronics 7, Fabrication 6 and soldering, and only from the schematic. The battery is not used up; it comes as the lance's default magazine slot (empty).",
+    "category": "CC_WEAPON",
+    "subcategory": "CSC_WEAPON_PIERCING",
+    "skill_used": "electronics",
+    "skills_required": [ [ "fabrication", 6 ] ],
+    "difficulty": 7,
+    "time": "5 h",
+    "activity_level": "MODERATE_EXERCISE",
+    "autolearn": false,
+    "book_learn": [ [ "xa_shock_lance_schematic", 6 ] ],
+    "using": [ [ "soldering_standard", 20 ] ],
+    "qualities": [ { "id": "SCREW_FINE", "level": 1 }, { "id": "SAW_M", "level": 1 }, { "id": "DRILL", "level": 1 } ],
+    "components": [
+      [ [ "spear_steel", 1 ], [ "qiang", 1 ] ],
+      [ [ "power_supply", 1 ] ],
+      [ [ "amplifier", 2 ] ],
+      [ [ "cable", 20 ] ],
+      [ [ "e_scrap", 4 ] ],
+      [ [ "pipe", 1 ] ]
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "xa_shock_lance_cache",
+    "//": "A found shock lance: a part-charged battery in it, and usually its schematic with it.",
+    "subtype": "collection",
+    "entries": [
+      { "item": "xa_shock_lance_off", "contents-item": "medium_battery_cell", "prob": 100 },
+      { "item": "xa_shock_lance_schematic", "prob": 60 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "science",
+    "copy-from": "science",
+    "//": "Additions: a shock lance in a lab, about 1 roll in 200.",
+    "extend": { "items": [ { "group": "xa_shock_lance_cache", "prob": 6 } ] }
+  },
+  {
+    "type": "item_group",
+    "id": "mil_accessories",
+    "copy-from": "mil_accessories",
+    "//": "Additions: a shock lance with military gear, about 1 roll in 200.",
+    "extend": { "items": [ { "group": "xa_shock_lance_cache", "prob": 2 } ] }
+  },
+  {
+    "type": "item_group",
+    "id": "prison_weapons",
+    "copy-from": "prison_weapons",
+    "//": "Additions: a crowd-control prototype in a prison armoury, about 1 roll in 200.",
+    "extend": { "items": [ { "group": "xa_shock_lance_cache", "prob": 1 } ] }
+  }
+]

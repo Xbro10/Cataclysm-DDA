@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "The shock lance on the ground (off, on, and its schematic), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_xa_lance.ps1 in UndeadPeople style. One mod_tileset per file.",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/xa_shock_lance.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          { "id": "xa_shock_lance_off", "fg": 0, "rotates": false },
+          {
+            "id": "xa_shock_lance_on",
+            "//": "Animated: eight frames of crackling arcs, 4/60 s each (tiles 1, 3-9 of the sheet).",
+            "fg": [ { "weight": 4, "sprite": 1 }, { "weight": 4, "sprite": 3 }, { "weight": 4, "sprite": 4 }, { "weight": 4, "sprite": 5 }, { "weight": 4, "sprite": 6 }, { "weight": 4, "sprite": 7 }, { "weight": 4, "sprite": 8 }, { "weight": 4, "sprite": 9 } ],
+            "animated": true,
+            "rotates": false
+          },
+          { "id": "xa_shock_lance_schematic", "fg": 2, "rotates": false }
+        ]
+      }
+    ]
+  }
+]
