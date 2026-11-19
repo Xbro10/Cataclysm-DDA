@@ -524,10 +524,21 @@ TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
             }
         } else {
             guards++;
+            // Real protection: armour, a helmet, a weapon they can use and a loaded sidearm.
+            CHECK( guy.myclass == npc_class_id( "NC_BR1_EXCHANGE_GUARD" ) );
+            REQUIRE( guy.get_wielded_item() );
+            CHECK( guy.meets_requirements( *guy.get_wielded_item() ) );
+            CHECK( guy.is_wearing( itype_id( "kevlar" ) ) );
+            CHECK( guy.is_wearing( itype_id( "helmet_army" ) ) );
+            const std::vector<item *> guns = guy.items_with( []( const item &it ) {
+                return it.typeId() == itype_id( "glock_19" );
+            } );
+            REQUIRE( !guns.empty() );
+            CHECK( guns.front()->ammo_remaining() > 0 );
         }
     }
     CHECK( traders == 3 );
-    CHECK( guards == 1 );
+    CHECK( guards == 3 );
 }
 
 // Level 1's All-Nite diner builds with a cook who sells meals, a server, a stocked fridge and cupboards.
