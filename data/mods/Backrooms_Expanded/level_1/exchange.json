@@ -271,8 +271,7 @@
       { "item": "two_way_radio", "prob": 25 },
       { "item": "binoculars", "prob": 25 },
       { "item": "heavy_flashlight", "charges": 16, "prob": 25 },
-      { "item": "handflare", "charges": 300, "count": [ 3, 4 ], "prob": 25 },
-      { "group": "br_flamero_cache", "prob": 2 }
+      { "item": "handflare", "charges": 300, "count": [ 3, 4 ], "prob": 25 }
     ]
   },
   {

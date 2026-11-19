@@ -3,7 +3,7 @@
     "type": "ITEM",
     "subtypes": [ "TOOL" ],
     "id": "br_flamero_mado_off",
-    "//": "Rare end-game spear with a fuel tank in the shaft. Use it to light the head (br_flamero_mado_on), like the chainsaw's on/off pair. Found in Level 2 crew stores, on the Redeemer, at the Exchange's curios trader, and in museums and mansions; crafted only from br_flamero_schematic.",
+    "//": "Rare end-game spear with a fuel tank in the shaft. Use it to light the head (br_flamero_mado_on), like the chainsaw's on/off pair. Part of Xbro10's Armory (no Backrooms needed): found in museums and mansions; Backrooms Expanded adds Level 2 crew stores, the Exchange's rare find and the Redeemer. Item ids keep their old br_ prefix so saves from when it lived in Backrooms Expanded keep their spears. Crafted only from br_flamero_schematic.",
     "name": { "str": "Flamero-Mado spear (unlit)", "str_pl": "Flamero-Mado spears (unlit)" },
     "description": "A long steel spear with a blackened, finned head.  A narrow fuel tank runs inside the shaft, feeding a ring of tiny jets behind the blade, and a brass valve sits under your forward hand.  Fill it with kerosene or gasoline and open the valve to wreathe the head in flame.  Unlit, it is still a fine spear.",
     "weight": "2400 g",
@@ -161,13 +161,6 @@
       { "item": "br_flamero_mado_off", "charges": [ 0, 250 ] },
       { "item": "br_flamero_schematic", "prob": 60 }
     ]
-  },
-  {
-    "type": "item_group",
-    "id": "br_redeemer_drops",
-    "//": "What the Redeemer leaves behind: once in a while the spear it took from someone who came to kill it.",
-    "subtype": "collection",
-    "entries": [ { "group": "br_flamero_cache", "prob": 20 }, { "item": "br_flamero_schematic", "prob": 15 } ]
   },
   {
     "type": "item_group",
