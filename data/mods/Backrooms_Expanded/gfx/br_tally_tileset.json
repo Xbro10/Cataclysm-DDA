@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "The tally token, original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br_tally.ps1 in UndeadPeople style.",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br_tally.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [ { "id": "br_tally_token", "fg": 0, "rotates": false } ]
+      }
+    ]
+  }
+]

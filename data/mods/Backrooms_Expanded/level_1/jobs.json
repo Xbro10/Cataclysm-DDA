@@ -281,7 +281,7 @@
     "start": { "effect": [ { "math": [ "u_br1_handed_fuel = 0" ] } ] },
     "end": {
       "effect": [
-        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "u_spawn_item": "br_tally_token", "count": 5 },
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 2 },
         { "math": [ "faction_like('br_breakroom') += 5" ] },
         { "math": [ "u_br1_fuel_next = time('now') + time('2 d')" ] },
@@ -372,7 +372,7 @@
       "effect": [
         { "u_spawn_item": "tools_lighting", "use_item_group": true },
         { "u_spawn_item": "br_cat_power", "use_item_group": true, "count": 4 },
-        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "u_spawn_item": "br_tally_token", "count": 5 },
         { "math": [ "faction_like('br_breakroom') += 10" ] },
         { "math": [ "faction_trust('br_breakroom') += 5" ] },
         { "math": [ "u_br1_den_done = 1" ] },
@@ -419,8 +419,7 @@
     },
     "end": {
       "effect": [
-        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
-        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "u_spawn_item": "br_tally_token", "count": 10 },
         { "math": [ "faction_trust('br_breakroom') += 10" ] },
         { "u_spawn_item": "br_cat_medical", "use_item_group": true, "count": 3 },
         { "math": [ "u_br1_roster_done = 1" ] },
@@ -468,7 +467,7 @@
       "effect": [
         { "u_spawn_item": "br_cat_power", "use_item_group": true, "count": 4 },
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 3 },
-        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "u_spawn_item": "br_tally_token", "count": 5 },
         { "math": [ "faction_like('br_breakroom') += 5" ] },
         { "u_spawn_item": "br_cat_tools", "use_item_group": true, "count": 2 },
         { "math": [ "u_br1_supply_done = 1" ] },
@@ -502,7 +501,7 @@
     "start": { "effect": [ { "math": [ "u_br1_handed_lifts = 0" ] }, { "math": [ "u_br1_lifts_mark = u_br1_lobby_arrivals" ] } ] },
     "end": {
       "effect": [
-        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "u_spawn_item": "br_tally_token", "count": 5 },
         {
           "u_location_variable": { "context_val": "br1_lobby_hint" },
           "target_params": { "om_terrain": "br1_elevator_lobby", "random": true, "search_range": 40, "reveal_radius": 1, "z": 0 }
@@ -518,12 +517,12 @@
     },
     "dialogue": {
       "describe": "I need eyes in the lobbies.",
-      "offer": "The lifts.  I can't ride them, they make me sick, and I can't map what I can't see.  Ride them for me.  Three times, lobby to lobby, and tell me where you came out.  I'll pay in water and in map.",
+      "offer": "The lifts.  I can't ride them, they make me sick, and I can't map what I can't see.  Ride them for me.  Three times, lobby to lobby, and tell me where you came out.  I'll pay in tallies and in map.",
       "accepted": "Count the doors.  Count the benches.  Tell me if anything's different.",
       "rejected": "Can't say I blame you.  I won't ride them either.",
       "advice": "Only rides that end in a lobby count.  If the doors open somewhere dark, walk, and try again from the next lobby you find.",
       "inquire": "Been riding?",
-      "success": "That one, and that one, and there.  Good.  Here's water, and here's two more lobbies I've had word of.",
+      "success": "That one, and that one, and there.  Good.  Here's your tallies, and here's two more lobbies I've had word of.",
       "success_lie": "You've not been near a lift.",
       "failure": "Fair enough.  They're not for everyone."
     }

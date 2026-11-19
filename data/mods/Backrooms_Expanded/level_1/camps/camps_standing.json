@@ -167,9 +167,7 @@
         "then": [
           { "math": [ "u_br1_map_due = 0" ] },
           { "u_spawn_item": "br1_marcus_map" },
-          { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
-          { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
-          { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+          { "u_spawn_item": "br_tally_token", "count": 15 },
           { "math": [ "faction_trust('br_breakroom') += 20" ] },
           {
             "message": "One of us.\n\nMarcus hands you a folded square of graph paper as thick as a book.  \"Copy of the big map.  Don't lose it.  Don't show it to the sandbag lot.\"  Dot gives you three bottles from her own ration tin and won't hear a word about it.",
