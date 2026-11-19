@@ -102,16 +102,28 @@ std::string activity_json( const config &cfg, const snapshot &s )
     JsonOut jsout( os );
     jsout.start_object();
     jsout.member( "details", where.text.empty() ? std::string( "Playing" ) : where.text );
-    if( !s.in_menu && s.detailed ) {
+    if( !s.in_menu ) {
+        // Days survived on every card (user request); Detailed adds what you're doing.
         std::vector<std::string> state;
-        state.push_back( string_format( "Day %d", s.day ) );
-        if( s.followers == 1 ) {
-            state.emplace_back( "1 follower" );
-        } else if( s.followers > 1 ) {
-            state.push_back( string_format( "%d followers", s.followers ) );
+        const int survived = std::max( 0, s.day - 1 );
+        state.push_back( survived == 0 ? std::string( "First day" ) : survived == 1 ?
+                         std::string( "Survived 1 day" ) : string_format( "Survived %d days", survived ) );
+        if( s.detailed ) {
+            state.push_back( s.doing );
         }
-        state.push_back( s.doing );
         jsout.member( "state", join_dot( state ) );
+        // Party size: you and your followers, shown by Discord as "(3 of 3)" after the state line.
+        if( s.followers > 0 ) {
+            jsout.member( "party" );
+            jsout.start_object();
+            jsout.member( "id", std::string( "cdda-party" ) );
+            jsout.member( "size" );
+            jsout.start_array();
+            jsout.write( s.followers + 1 );
+            jsout.write( s.followers + 1 );
+            jsout.end_array();
+            jsout.end_object();
+        }
     }
     if( !s.in_menu && s.started_at > 0 ) {
         jsout.member( "timestamps" );

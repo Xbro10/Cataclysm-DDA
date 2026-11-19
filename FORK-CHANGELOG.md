@@ -25,6 +25,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   3- and 6-job rewards wait for Dot, door guards spear zombies over the fence, the board shows a runner resting at
   home, and almond water rewards no longer error.
 
+### Launcher
+- [C++] **Discord card: days survived and party size:** every card now says how long you've survived
+  ("First day", "Survived 12 days"), and with followers Discord shows your party, you plus them ("3 of 3").
+  Detailed still adds sleeping or driving.
+
 ## November 18, 2026
 
 ### Backrooms
