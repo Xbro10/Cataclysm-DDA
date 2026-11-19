@@ -5,7 +5,8 @@
     "name": "default",
     "description": "contains all the mods recommended by the developers",
     "//": "Not really obsolete! Marked as such to prevent it from showing in the main list",
+    "//2": "Xbro10 fork: xbro_armory (Xbro10's Armory) is on by default in new worlds.",
     "obsolete": true,
-    "dependencies": [ "dda", "no_npc_food", "personal_portal_storms" ]
+    "dependencies": [ "dda", "no_npc_food", "personal_portal_storms", "xbro_armory" ]
   }
 ]

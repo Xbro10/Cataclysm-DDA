@@ -1,0 +1,26 @@
+[
+  {
+    "type": "item_group",
+    "id": "br1_exchange_rare_find",
+    "copy-from": "br1_exchange_rare_find",
+    "subtype": "distribution",
+    "//": "Loaded only when Xbro10's Armory is on too: the oddities trader's rare find is sometimes the Flamero-Mado spear (about 2 restocks in 100).",
+    "extend": { "items": [ { "group": "br_flamero_cache", "prob": 2 } ] }
+  },
+  {
+    "type": "item_group",
+    "id": "br2_worker_stores",
+    "copy-from": "br2_worker_stores",
+    "subtype": "distribution",
+    "//": "Loaded only with Xbro10's Armory: Level 2 tunnel crew stores now and then hold a Flamero-Mado spear (about 1 roll in 100).",
+    "extend": { "entries": [ { "group": "br_flamero_cache", "prob": 1 } ] }
+  },
+  {
+    "type": "item_group",
+    "id": "br_redeemer_drops",
+    "copy-from": "br_redeemer_drops",
+    "subtype": "collection",
+    "//": "Loaded only with Xbro10's Armory: the Redeemer sometimes leaves the spear it took from someone, or its schematic.",
+    "extend": { "entries": [ { "group": "br_flamero_cache", "prob": 20 }, { "item": "br_flamero_schematic", "prob": 15 } ] }
+  }
+]
