@@ -190,6 +190,13 @@ bool game::check_mod_data( const std::vector<mod_id> &opts )
             // Load any dependencies and de-duplicate them
             std::vector<mod_id> dep_vector = tree.get_dependencies_of_X_as_strings( mod.ident );
             std::set<mod_id> dep_set( dep_vector.begin(), dep_vector.end() );
+            // Xbro10 fork: the throwaway world was made with the default mods, and a mod's
+            // mod_interactions folders load when their mod is in the world's list. So a folder for a
+            // default mod (Backrooms Expanded's for xbro_armory) loaded although that mod wasn't, and
+            // reported its items as unknown. List exactly the mods being checked.
+            std::vector<mod_id> &active_order = world_generator->active_world->active_mod_order;
+            active_order = dep_vector;
+            active_order.push_back( mod.ident );
             for( const auto &dep : dep_set ) {
                 load_data_from_dir( dep->path, dep->ident.str() );
             }

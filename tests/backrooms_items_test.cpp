@@ -1,6 +1,6 @@
 // Xbro10 fork: Backrooms Expanded's items.
-// Hidden test; run with the Backrooms mods loaded:
-//   Cataclysm-test-vcpkg-static-Release-x64.exe --mods=backrooms,backrooms_expanded "[backrooms_items]"
+// Hidden test; run with the Backrooms mods loaded (and xbro_armory for the Flamero-Mado spear):
+//   Cataclysm-test-vcpkg-static-Release-x64.exe --mods=xbro_armory,backrooms,backrooms_expanded "[backrooms_items]"
 // The Flamero-Mado spear: a fuel-fed spear you light and put out like the chainsaw. Lit, it adds heat
 // damage, burns its fuel and goes out by itself when the tank is empty.
 // The spawn check: every Backrooms Expanded and Survivor Minds item group (ids starting br, NC_BR or NC_SM) is
@@ -47,8 +47,18 @@ static const itype_id itype_lamp_oil( "lamp_oil" );
 
 static bool backrooms_items_loaded()
 {
-    if( !itype_br_flamero_mado_off.is_valid() ) {
+    if( !itype_id( "br_moth_jelly" ).is_valid() ) {
         WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return false;
+    }
+    return true;
+}
+
+// The Flamero-Mado spear lives in Xbro10's Armory (xbro_armory), which works without the Backrooms.
+static bool armory_loaded()
+{
+    if( !itype_br_flamero_mado_off.is_valid() ) {
+        WARN( "Needs --mods=xbro_armory" );
         return false;
     }
     return true;
@@ -56,7 +66,7 @@ static bool backrooms_items_loaded()
 
 TEST_CASE( "flamero_mado_spear_lights_burns_and_goes_out", "[.][backrooms_items]" )
 {
-    if( !backrooms_items_loaded() ) {
+    if( !armory_loaded() ) {
         return;
     }
     clear_avatar();
@@ -114,7 +124,7 @@ TEST_CASE( "flamero_mado_spear_lights_burns_and_goes_out", "[.][backrooms_items]
 
 TEST_CASE( "flamero_mado_cache_spawns_a_spear_with_some_fuel", "[.][backrooms_items]" )
 {
-    if( !backrooms_items_loaded() ) {
+    if( !armory_loaded() ) {
         return;
     }
     for( int i = 0; i < 50; i++ ) {
@@ -214,6 +224,9 @@ TEST_CASE( "backrooms_wiki_finds_work", "[.][backrooms_items]" )
     const bodypart_id torso( "torso" );
 
     SECTION( "firesalt fuels the Flamero-Mado spear" ) {
+        if( !armory_loaded() ) {
+            return;
+        }
         item spear( itype_br_flamero_mado_off );
         spear.ammo_set( firesalt, 50 );
         REQUIRE( spear.ammo_remaining() == 50 );
@@ -276,6 +289,9 @@ TEST_CASE( "firesalt_tools_and_the_burning_spear", "[.][backrooms_items]" )
         return;
     }
     SECTION( "the lit spear carries its on-hit fire spell, the unlit one doesn't" ) {
+        if( !armory_loaded() ) {
+            return;
+        }
         const item lit( itype_br_flamero_mado_on );
         const item unlit( itype_br_flamero_mado_off );
         CHECK( lit.is_relic() );
