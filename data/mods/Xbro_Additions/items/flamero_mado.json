@@ -95,19 +95,25 @@
     "//": "Cast by a lit Flamero-Mado spear on what it hits (about 1 hit in 3): sets it burning for a few turns. Not learnable; no Magiclysm needed.",
     "name": { "str": "Flamero-Mado flames", "//~": "NO_I18N" },
     "description": { "str": "Flame leaps from the spear and catches.  You should never see this as a spell.", "//~": "NO_I18N" },
-    "message": "Flame leaps from the spearhead and catches!",
-    "valid_targets": [ "hostile", "ally", "ground" ],
+    "message": "",
+    "//2": "It runs EOC_br_flamero_ignite, which only sets the target alight while the caster's weapon is lit (FLAMING, which only br_flamero_mado_on has). The on-hit spell can stay cached on the wielder for a while after the spear is put out, so the check happens at the moment of the hit.",
+    "valid_targets": [ "hostile", "ally" ],
     "flags": [ "SILENT", "NO_FAIL", "NO_EXPLOSION_SFX" ],
-    "effect": "attack",
-    "effect_str": "onfire",
+    "effect": "effect_on_condition",
+    "effect_str": "EOC_br_flamero_ignite",
     "shape": "blast",
-    "min_damage": 0,
-    "max_damage": 0,
-    "damage_type": "heat",
-    "min_duration": 500,
-    "max_duration": 500,
     "min_range": 1,
     "max_range": 1
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_br_flamero_ignite",
+    "//": "Run by the br_flamero_ignite spell: u is the creature hit, npc the wielder. Only a lit spear (FLAMING) sets it burning for 5 turns.",
+    "condition": { "npc_has_wielded_with_flag": "FLAMING" },
+    "effect": [
+      { "u_add_effect": "onfire", "duration": "5 turns" },
+      { "message": "Flame leaps from the spearhead and catches!", "type": "good" }
+    ]
   },
   {
     "type": "ITEM",

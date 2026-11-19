@@ -1,6 +1,11 @@
 [
   {
     "type": "monster_flag",
+    "id": "FEARS_LIGHT",
+    "//": "Bright light at its tile (50 or more: a flashlight, lamp or fire) breaks its nerve, so it backs off while lit; the game's BRIGHT_LIGHT fear only counts near-daylight. Needs the Xbro10 fork build (src/monster.cpp, fear_light); in an official build the flag does nothing."
+  },
+  {
+    "type": "monster_flag",
     "id": "BURNS_IN_LIGHT",
     "//": "Bright light at its tile (50 or more: a flashlight, a lamp or a fire, not Level 0's ceiling lights) burns it every turn, about a quarter of its health, with smoke and a message. Needs the Xbro10 fork build (src/monster.cpp, burn_in_light); in an official build the flag does nothing."
   },
@@ -74,7 +79,7 @@
     "fear_triggers": [ "HURT", "FRIEND_DIED", "FIRE", "BRIGHT_LIGHT" ],
     "harvest": "br_hound",
     "death_drops": "br_hound_drops",
-    "flags": [ "SEES", "HEARS", "GOODHEARING", "SMELLS", "WARM", "PATH_AVOID_DANGER" ]
+    "flags": [ "SEES", "HEARS", "GOODHEARING", "SMELLS", "WARM", "PATH_AVOID_DANGER", "FEARS_LIGHT" ]
   },
   {
     "type": "MONSTER",
@@ -84,12 +89,12 @@
     "default_faction": "br_entity",
     "looks_like": "mon_dragonfly_giant",
     "bodytype": "flying insect",
-    "species": [ "INSECT" ],
+    "species": [ "INSECT_FLYING" ],
     "volume": "20 L",
     "weight": "6 kg",
     "hp": 25,
     "speed": 90,
-    "material": [ "iflesh" ],
+    "material": [ "iflesh", "powder" ],
     "symbol": "m",
     "color": "dark_gray",
     "aggression": 0,
@@ -101,7 +106,7 @@
     "vision_day": 15,
     "vision_night": 15,
     "anger_triggers": [ "PLAYER_CLOSE" ],
-    "//": "Weakness: a moth to a flame. Fire does not scare it, so SEEKS_LIGHT flies it into flares and fires, and burning weapons do triple damage to its powdery wings.",
+    "//": "Weakness: a moth to a flame. Fire does not scare it (species INSECT_FLYING: the INSECT species adds a FIRE fear), and its powdery wings burn (material powder: a ground fire otherwise barely hurts anything that flies), so SEEKS_LIGHT flies it into flares and fires, and burning weapons do triple damage to its powdery wings.",
     "fear_triggers": [ "HURT" ],
     "weakpoints": [ { "name": "its powdery wings", "coverage": 100, "damage_mult": { "heat": 3.0 } } ],
     "harvest": "br_deathmoth",
@@ -230,11 +235,11 @@
     "vision_night": 20,
     "special_attacks": [ [ "PARROT", 40 ] ],
     "anger_triggers": [ "HOSTILE_SEEN", "PLAYER_CLOSE" ],
-    "//": "Weakness: light shows what it is. Bright light makes it back off, like fire.",
+    "//": "Weakness: light shows what it is. A flashlight, lamp or fire on it (FEARS_LIGHT, fork C++) makes it back off, like fire.",
     "fear_triggers": [ "FIRE", "BRIGHT_LIGHT" ],
     "death_function": { "corpse_type": "NO_CORPSE", "message": "The %s slumps, and the skin it wore slides off it in a heap." },
     "death_drops": "br_skin_stealer_drops",
-    "flags": [ "SEES", "HEARS", "SMELLS", "WARM", "PATH_AVOID_DANGER" ]
+    "flags": [ "SEES", "HEARS", "SMELLS", "WARM", "PATH_AVOID_DANGER", "FEARS_LIGHT" ]
   },
   {
     "type": "MONSTER",

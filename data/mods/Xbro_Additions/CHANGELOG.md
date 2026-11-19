@@ -14,3 +14,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
   UndeadPeople, on the ground and in your hands.
 - The lit Flamero-Mado spear's flames are animated: they sway and flicker and embers rise, on the ground and in your
   hands, in UltiCa and UndeadPeople (8 frames looping about every half second).
+
+### Fixed
+
+- The Flamero-Mado spear only sets things on fire while it's lit. After putting it out, its fire chance could stay on your hits for a while; the hit now checks that the spear is burning.
