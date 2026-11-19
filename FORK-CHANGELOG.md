@@ -103,7 +103,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   scenario.
 - [C++] **A stranger who ran from monsters no longer flees from you for a day:** running from zombies switched them
   to the game's "fleeing" attitude, which also meant fleeing the player for 24 hours, so they kept running from you
-  after you had killed what scared them. Now it lasts as long as that run (unless they already feared you).
+  after you had killed what scared them. Now they just run from the monsters for that run, without the "fleeing"
+  attitude, so no more "is no longer afraid" over and over while they keep running (unless they already feared you).
 
 ### For developers
 - [BE] **Optional hooks for another mod:** `survivor_minds_hooks.json` defines empty nested chunks (`br_sm_mark_*`, weight 0, so

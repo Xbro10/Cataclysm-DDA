@@ -1602,9 +1602,56 @@ TEST_CASE( "stranger_running_from_monsters_doesnt_flee_the_player_for_a_day", "[
     guy.mem_combat.assess_ally = 1.0f;
     guy.mem_combat.panic = 5;
     guy.act_on_danger_assessment();
-    REQUIRE( guy.get_attitude() == NPCATT_FLEE_TEMP );
-    REQUIRE( guy.has_effect( effect_npc_flee_player ) );
-    CHECK( guy.get_effect_dur( effect_npc_flee_player ) <= 1_hours );
+    // They run (npc_run_away) for this run only, without the "flee" attitude, which is about the
+    // player: it brought "is no longer afraid" messages and a day of fleeing from you.
+    CHECK( guy.get_attitude() == NPCATT_NULL );
+    CHECK_FALSE( guy.has_effect( effect_npc_flee_player ) );
+    REQUIRE( guy.has_effect( effect_npc_run_away ) );
+    CHECK( guy.get_effect_dur( effect_npc_run_away ) <= 1_hours );
+}
+
+// Reported 2026-11-18 (again): a stranger kept running after the zombie was dead, saying "is no
+// longer afraid" over and over. Played out: unarmed and hurt, three zombies, then they're gone.
+TEST_CASE( "stranger_runs_from_zombies_then_stops", "[npc]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    map &here = get_map();
+    npc &guy = spawn_npc( get_avatar().pos_bub().xy() + point( 6, 0 ), "test_talker" );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    guy.personality.bravery = 0;
+    guy.remove_weapon();
+    guy.mod_str_bonus( -4 );
+    guy.set_all_parts_hp_cur( 20 );
+    std::vector<monster *> zeds;
+    for( int x = -1; x <= 1; ++x ) {
+        zeds.push_back( &spawn_test_monster( "mon_zombie", guy.pos_bub() + point( x, 3 ) ) );
+    }
+    here.build_map_cache( 0 );
+    bool ran = false;
+    bool fled_you = false;
+    const auto turns = [&]( int n ) {
+        for( int t = 0; t < n; ++t ) {
+            calendar::turn += 1_turns;
+            guy.set_moves( guy.get_speed() );
+            guy.move();
+            guy.process_effects();
+            ran = ran || guy.has_effect( effect_npc_run_away );
+            fled_you = fled_you || guy.get_attitude() == NPCATT_FLEE_TEMP;
+        }
+    };
+    turns( 10 );
+    CHECK( ran );
+    for( monster *zed : zeds ) {
+        g->remove_zombie( *zed );
+    }
+    here.build_map_cache( 0 );
+    turns( 40 );
+    CHECK_FALSE( fled_you );
+    CHECK_FALSE( guy.has_effect( effect_npc_run_away ) );
+    CHECK_FALSE( guy.has_effect( effect_npc_flee_player ) );
 }
 
 // Reported 2026-11-18: NPCs who dropped their weapon in a fight didn't pick it back up.

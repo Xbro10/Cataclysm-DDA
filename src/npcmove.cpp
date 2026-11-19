@@ -1408,15 +1408,17 @@ void npc::act_on_danger_assessment()
                 mem_combat.repositioning = false; // we're not just moving, we're running.
                 warn_about( "run_away", run_away_for );
                 if( !is_player_ally() ) {
-                    // Xbro10 fork: running from monsters, not from the player. The attitude also
-                    // brought a 24-hour "flee the player" effect, so a stranger who ran from
-                    // zombies kept fleeing the player for a day after they were dead. Unless they
-                    // already feared the player, it now lasts as long as this run.
-                    const bool feared_player = has_effect( effect_npc_flee_player );
-                    set_attitude( NPCATT_FLEE_TEMP );
-                    if( !feared_player ) {
-                        remove_effect( effect_npc_flee_player );
-                        add_effect( effect_npc_flee_player, run_away_for );
+                    // Xbro10 fork: running from monsters, not from the player. Upstream set the
+                    // "flee" attitude, which is about the player: it brought a 24-hour "flee the
+                    // player" effect, and every time it lapsed while something hostile was still
+                    // in view the NPC said "is no longer afraid" and got scared again. A stranger
+                    // who doesn't already fear the player now just runs (npc_run_away, which the
+                    // flee branch and should_flee already follow) for as long as this run.
+                    if( attitude == NPCATT_FLEE_TEMP || has_effect( effect_npc_flee_player ) ) {
+                        set_attitude( NPCATT_FLEE_TEMP );
+                    } else {
+                        add_effect( effect_npc_run_away, run_away_for );
+                        path.clear();
                     }
                 }
                 if( mem_combat.panic > 5 && is_player_ally() && sees( here, player_character ) ) {
