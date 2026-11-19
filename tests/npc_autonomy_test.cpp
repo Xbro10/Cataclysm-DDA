@@ -42,6 +42,7 @@ static const efftype_id effect_hunger_hungry( "hunger_hungry" );
 static const efftype_id effect_hunger_very_hungry( "hunger_very_hungry" );
 static const efftype_id effect_npc_flee_player( "npc_flee_player" );
 static const efftype_id effect_npc_run_away( "npc_run_away" );
+static const efftype_id effect_sleep( "sleep" );
 
 static const activity_id ACT_CONSUME( "ACT_CONSUME" );
 
@@ -451,6 +452,11 @@ TEST_CASE( "npc_autonomy_socializing", "[npc][autonomy]" )
     const point_bub_ms player_pos = get_avatar().pos_bub().xy();
     npc &guy = spawn_follower( player_pos + point( 10, 0 ) );
     npc &friend_npc = spawn_follower( player_pos + point( 11, 0 ) );
+    // Strangers with no orders: they may walk anywhere within 15 tiles to chat.
+    for( npc *who : { &guy, &friend_npc } ) {
+        who->set_attitude( NPCATT_NULL );
+        who->set_fac( faction_your_followers );
+    }
     guy.set_value( "autonomy_need_social", 80.0 );
     friend_npc.set_value( "autonomy_need_social", 60.0 );
 
@@ -1751,5 +1757,60 @@ TEST_CASE( "npc_autonomy_grabs_a_dropped_weapon_straight_back", "[npc][autonomy]
         here.add_item_or_charges( guy.pos_bub() + tripoint( 1, 0, 0 ), other );
         npc_autonomy::grab_dropped_weapon( guy );
         CHECK_FALSE( guy.get_wielded_item() );
+    }
+}
+
+// Step 5.3: chats keep to the game's own follow and guard rules.
+TEST_CASE( "npc_autonomy_chats_respect_follow_and_guard", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( player_pos + point( 2, 0 ) );
+    npc &other = spawn_follower( player_pos + point( 2, 12 ) );
+    other.set_attitude( NPCATT_NULL );
+    other.set_fac( faction_your_followers );
+    guy.set_value( "autonomy_need_social", 80.0 );
+    REQUIRE( guy.is_walking_with() );
+
+    // You asleep, so the other NPC is the only one to chat with.
+    const auto you_sleep = []() {
+        get_avatar().add_effect( effect_sleep, 1_hours );
+    };
+
+    SECTION( "a follower won't walk 12 tiles off to chat" ) {
+        you_sleep();
+        CHECK( npc_autonomy::chat_partner( guy ) != &other );
+    }
+    SECTION( "but chats with someone close by" ) {
+        you_sleep();
+        other.setpos( here, guy.pos_bub() + tripoint( 0, 1, 0 ) );
+        CHECK( npc_autonomy::chat_partner( guy ) == &other );
+    }
+    SECTION( "a stranger with no orders still walks 12 tiles to chat" ) {
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_your_followers );
+        REQUIRE_FALSE( guy.is_walking_with() );
+        get_avatar().setpos( here, tripoint_bub_ms( player_pos + point( -20, 0 ), 0 ) );
+        CHECK( npc_autonomy::chat_partner( guy ) == &other );
+    }
+    SECTION( "a guard on their post won't leave it to chat" ) {
+        guy.set_attitude( NPCATT_NULL );
+        guy.set_fac( faction_your_followers );
+        guy.set_guard_pos( guy.pos_abs() );
+        guy.set_mission( NPC_MISSION_GUARD );
+        REQUIRE( guy.is_on_shift() );
+        get_avatar().setpos( here, tripoint_bub_ms( player_pos + point( -20, 0 ), 0 ) );
+        CHECK( npc_autonomy::chat_partner( guy ) == nullptr );
+        other.setpos( here, guy.pos_bub() + tripoint( 0, 1, 0 ) );
+        CHECK( npc_autonomy::chat_partner( guy ) == &other );
+    }
+    SECTION( "a follower on their way to chat follows you once you walk off" ) {
+        get_avatar().setpos( here, tripoint_bub_ms( player_pos + point( -15, 0 ), 0 ) );
+        CHECK( npc_autonomy::should_catch_up( guy, "autonomy_socialize" ) );
     }
 }

@@ -38,6 +38,7 @@
 #include "mtype.h"
 #include "gun_mode.h"
 #include "npc.h"
+#include "npc_arbitration.h"
 #include "npc_trip.h"
 #include "options.h"
 #include "pocket_type.h"
@@ -2160,8 +2161,10 @@ bool should_leave_meal( const npc &guy )
 
 bool should_catch_up( const npc &guy, const std::string &goal )
 {
-    static const std::array<std::string, 6> eat_or_drink{ {
-            "eat_food", "drink_water", goal_meal, goal_get_food, goal_get_water, goal_get_warm
+    // Step 5.3: a chat gives way too.
+    static const std::array<std::string, 7> eat_or_drink{ {
+            "eat_food", "drink_water", goal_meal, goal_get_food, goal_get_water, goal_get_warm,
+            goal_socialize
         }
     };
     if( std::find( eat_or_drink.begin(), eat_or_drink.end(), goal ) == eat_or_drink.end() ) {
@@ -2175,6 +2178,20 @@ bool should_catch_up( const npc &guy, const std::string &goal )
     return needs.food < 100 && needs.water < 100;
 }
 
+// Step 5.3: may they walk over to chat with someone there? The game's own rules for followers
+// and guards decide (npc::judge_option, with the reach from npc::obligation_reach): a chat
+// is never worth stretching them, so only "allowed" will do. A follower stays within follow
+// distance, a guard near their post, an NPC sent somewhere goes there first; anyone else
+// may walk the 15 tiles.
+static bool may_walk_over_to_chat( const npc &guy, const tripoint_abs_ms &where )
+{
+    npc_option_cost cost = npc_option_cost::located( where, npc_option_basis::destination );
+    cost.walks = rl_dist( guy.pos_abs(), where ) > 1;
+    const std::optional<npc_reach> reach = guy.obligation_reach();
+    cost.route_in_reach = !reach || reach->contains( where );
+    return guy.judge_option( cost ).permission == npc_permission::allowed;
+}
+
 Character *chat_partner( const npc &guy )
 {
     const map &here = get_map();
@@ -2186,7 +2203,7 @@ Character *chat_partner( const npc &guy )
         }
         const int dist = rl_dist( guy.pos_abs(), other.pos_abs() );
         if( dist < best_dist && guy.attitude_to( other ) == Creature::Attitude::FRIENDLY &&
-            guy.sees( here, other ) ) {
+            may_walk_over_to_chat( guy, other.pos_abs() ) && guy.sees( here, other ) ) {
             best = &other;
             best_dist = dist;
         }

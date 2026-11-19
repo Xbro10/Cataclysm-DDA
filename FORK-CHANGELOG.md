@@ -70,6 +70,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   fetched once the fight is over (within 10 tiles they can see and may go to, for 30 minutes), the weapon back into
   their hands. "Name picks their things back up." Things used up are just gone, and wood carried for a fire stays put.
   A weapon that lands right beside them is grabbed straight back, mid-fight too ("Name grabs their weapon back.").
+- [C++] **Chats keep to follow and guard rules (step 5.3):** with NPC autonomy on, a follower only walks over to chat
+  with someone within their follow distance, and follows you instead if you walk off on the way; a guard only chats
+  with someone by their post; an NPC you sent somewhere goes there first. Strangers with no orders still walk up to
+  15 tiles to chat. Meals, water and food trips, warmth and seeking safety already kept to these limits.
 - [C++] **Overloaded NPCs lighten their load (with NPC autonomy on):** an NPC carrying more than it can puts down
   the cheapest junk it picked up itself ("Too heavy.  Leaving the ... here."). It keeps its clothes, weapon, ammo,
   food, drink, medicine, firewood and favourites, and what you trade to a follower counts as a favourite, so a
