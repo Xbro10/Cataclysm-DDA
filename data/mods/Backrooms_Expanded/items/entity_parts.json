@@ -110,7 +110,7 @@
   {
     "type": "item_group",
     "id": "br_redeemer_drops",
-    "//": "What the Redeemer leaves behind: always the cracked insulator off its pole. With Xbro10's Armory on, also sometimes the Flamero-Mado spear or its schematic (mod_interactions/xbro_armory).",
+    "//": "What the Redeemer leaves behind: always the cracked insulator off its pole. With Additions on, also sometimes the Flamero-Mado spear or its schematic (mod_interactions/xbro_additions).",
     "subtype": "collection",
     "entries": [
       { "item": "br_redeemer_insulator" }

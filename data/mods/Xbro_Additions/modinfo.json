@@ -1,0 +1,14 @@
+[
+  {
+    "type": "MOD_INFO",
+    "id": "xbro_additions",
+    "name": "Additions",
+    "authors": [ "Xbro10" ],
+    "maintainers": [ "Xbro10" ],
+    "//": "Keep the counts in the description current: one line per kind of thing the mod adds (Items, Recipes, Structures, Monsters...).",
+    "description": "Additions to the regular world, no Backrooms needed.  On by default in new worlds.\nItems: 2 (Flamero-Mado spear, Flamero-Mado schematic)\nRecipes: 1",
+    "category": "items",
+    "dependencies": [ "dda" ],
+    "version": "0.1.0"
+  }
+]

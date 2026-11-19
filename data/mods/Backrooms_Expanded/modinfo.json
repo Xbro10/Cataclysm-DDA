@@ -5,7 +5,7 @@
     "name": "Backrooms Expanded",
     "authors": [ "Xbro10" ],
     "maintainers": [ "Xbro10" ],
-    "description": "An add-on for The Backrooms: new levels, structures and survival resources.  Requires The Backrooms mod.  Built on TGWeaver's original Backrooms mod.  With Xbro10's Armory on too, its Flamero-Mado spear turns up in the Backrooms.",
+    "description": "An add-on for The Backrooms: new levels, structures and survival resources.  Requires The Backrooms mod.  Built on TGWeaver's original Backrooms mod.  With Additions on too, its Flamero-Mado spear turns up in the Backrooms.",
     "category": "buildings",
     "dependencies": [ "dda", "backrooms" ],
     "version": "0.1.0"

@@ -6,7 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
-- The mod itself: weapons for the regular world, no Backrooms needed, on by default in new worlds.
+- The mod itself: additions to the regular world, no Backrooms needed, on by default in new worlds.
 - The **Flamero-Mado spear** (moved here from Backrooms Expanded, same item ids, so existing saves keep theirs): a rare
   end-game spear with a fuel tank in its shaft. Fill it with kerosene or gasoline and light it: every hit burns as
   well as pierces, about one hit in three sets the target on fire, and a full tank burns about 25 minutes. Found in
