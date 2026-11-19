@@ -13,4 +13,4 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
   museum displays and mansion weapon collections; crafted only from its schematic. Sprites for UltiCa and
   UndeadPeople, on the ground and in your hands.
 - The lit Flamero-Mado spear's flames are animated: they sway and flicker and embers rise, on the ground and in your
-  hands, in UltiCa and UndeadPeople (4 frames looping about every 0.4 s).
+  hands, in UltiCa and UndeadPeople (8 frames looping about every half second).

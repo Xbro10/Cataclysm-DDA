@@ -1,12 +1,12 @@
 param([string]$Out, [string]$Preview)
 # Draws held-weapon overlays (what your character holds), 32x64 tiles like UltiCa's tall overlays
 # (sprite_offset_y -32: the bottom 32 rows line up with the character's tile).
-# 0 overlay_wielded_br_flamero_mado_off   1-4 overlay_wielded_br_flamero_mado_on (four animation frames)
+# 0 overlay_wielded_br_flamero_mado_off   1-8 overlay_wielded_br_flamero_mado_on (eight animation frames)
 # The spear stands upright at the character's side, blade up, like UltiCa's own pikes and spears.
 # Its shape lives in spear_shape.ps1, shared with the ground sprites.
 Add-Type -AssemblyName System.Drawing
 $T = 32; $TW = 32; $TH = 64
-$Count = 5
+$Count = 9
 $bmp = New-Object System.Drawing.Bitmap ($Count * $TW), $TH, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 . "$PSScriptRoot\sprite_common.ps1"
 . "$PSScriptRoot\spear_shape.ps1"
@@ -16,7 +16,7 @@ $held = Layout 11.5 63 0 -1 62 -Split 66 -Width 0.55
 DrawSpear 0 $held $false 4.0
 OutlineT 0 $INK
 
-# Lit, four animation frames on tiles 1-4 (see FlameFrame in spear_shape.ps1).
+# Lit, eight animation frames on tiles 1-8 (see FlameFrame in spear_shape.ps1).
 function DrawLit($tile, $frame) {
   $script:FlameFrame = $frame; FlameFrameStart
   DrawSpear $tile $held $true 4.0
@@ -31,7 +31,7 @@ function DrawLit($tile, $frame) {
   Ribbon $tile @(@(9, 26), @(11, 24), @(13, 23), @(14, 21)) 1.0 $true
   Embers $tile @(@(4, 8), @(19, 7), @(7, 5), @(17, 3), @(3, 15), @(20, 16))
 }
-foreach ($fr in 0..3) { DrawLit (1 + $fr) $fr }
+foreach ($fr in 0..7) { DrawLit (1 + $fr) $fr }
 $script:FlameFrame = 0
 
 # Save, plus a 6x preview with a gap between tiles.
