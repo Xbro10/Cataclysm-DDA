@@ -34,8 +34,7 @@
       { "text": "Where do I stand with you lot?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_STANDING" },
       { "text": "Where are the runners?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_RUNNERS" },
       { "text": "Need a hand with anything?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_WORK" },
-      { "text": "About that job…", "condition": "has_assigned_mission", "topic": "TALK_MISSION_INQUIRE" },
-      { "text": "About one of those jobs…", "condition": "has_many_assigned_missions", "topic": "TALK_MISSION_LIST_ASSIGNED" },
+      { "text": "About that job…", "condition": { "or": [ { "u_has_mission": "MISSION_BR1_FUEL_RUN" }, { "u_has_mission": "MISSION_BR1_PEST_CONTROL" }, { "u_has_mission": "MISSION_BR1_HOUND_DEN" }, { "u_has_mission": "MISSION_BR1_OVERRUN_ROSTER" }, { "u_has_mission": "MISSION_BR1_FIND_RUNNER" } ] }, "topic": "TALK_BR1_HANDIN_DOT" },
       { "text": "I'll be going.", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_DONE" }
     ]
   },
@@ -116,8 +115,7 @@
         "topic": "TALK_BR1_CARTOGRAPHER_MAP"
       },
       { "text": "Got any work for me?", "effect": { "math": [ "u_br1_met_cartographer = 1" ] }, "topic": "TALK_BR1_CARTOGRAPHER_WORK" },
-      { "text": "About that job…", "condition": "has_assigned_mission", "topic": "TALK_MISSION_INQUIRE" },
-      { "text": "About one of those jobs…", "condition": "has_many_assigned_missions", "topic": "TALK_MISSION_LIST_ASSIGNED" },
+      { "text": "About that job…", "condition": { "or": [ { "u_has_mission": "MISSION_BR1_SUPPLY_DROP" }, { "u_has_mission": "MISSION_BR1_RIDE_LIFTS" } ] }, "topic": "TALK_BR1_HANDIN_MARCUS" },
       { "text": "I'll be going.", "effect": { "math": [ "u_br1_met_cartographer = 1" ] }, "topic": "TALK_DONE" }
     ]
   },

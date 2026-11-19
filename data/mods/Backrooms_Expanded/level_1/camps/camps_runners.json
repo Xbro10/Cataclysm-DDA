@@ -524,12 +524,14 @@
     "name": { "str": "Find the runner" },
     "description": "One of Dot's runners is overdue.  Go to the place marked on your map, find them, and talk to them to get them heading home.  Then tell Dot.",
     "goal": "MGOAL_CONDITION",
-    "goal_condition": { "math": [ "br1_runner_missing == 0" ] },
+    "//goal": "Handed in at the Breakroom (camps_handins.json), not completed out in the lanes.",
+    "goal_condition": { "math": [ "u_br1_handed_runner == 1" ] },
     "difficulty": 3,
     "value": 0,
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
     "start": {
+      "effect": [ { "math": [ "u_br1_handed_runner = 0" ] } ],
       "assign_mission_target": { "om_terrain": "br1_garage", "var": { "global_val": "br1_missing_point" }, "reveal_radius": 1 }
     },
     "end": {
