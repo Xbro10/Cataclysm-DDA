@@ -1,0 +1,34 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "Light tools (work lamp, lightstick bundle, UV torch; lit forms animated), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_br_lights.ps1 in UndeadPeople style.",
+    "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
+    "tiles-new": [
+      {
+        "file": "gfx/br_lights.png",
+        "sprite_width": 32,
+        "sprite_height": 32,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": 0,
+        "tiles": [
+          { "id": "br_work_lamp", "fg": 0, "rotates": false },
+          { "id": "br_work_lamp_on", "fg": 1, "rotates": false },
+          { "id": "br_lightstick_bundle", "fg": 2, "rotates": false },
+          {
+            "id": "br_lightstick_bundle_lit",
+            "animated": true,
+            "fg": [ { "weight": 20, "sprite": 3 }, { "weight": 20, "sprite": 4 }, { "weight": 20, "sprite": 5 } ],
+            "rotates": false
+          },
+          { "id": "br_uv_torch", "fg": 6, "rotates": false },
+          {
+            "id": "br_uv_torch_on",
+            "animated": true,
+            "fg": [ { "weight": 10, "sprite": 7 }, { "weight": 10, "sprite": 8 }, { "weight": 10, "sprite": 9 } ],
+            "rotates": false
+          }
+        ]
+      }
+    ]
+  }
+]
