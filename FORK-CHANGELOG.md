@@ -28,6 +28,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   built-in effects, so the lit Flamero-Mado never actually set things on fire. Now it does, and the shock lance stuns.
 
 ### Backrooms
+- [BE] **Tally tokens are the Backrooms' money:** brass tokens, five to a bottle of almond water. Every Exchange
+  stall, the diner, the Breakroom and the Level 2 crews deal in them and keep a stack to pay you with; Breakroom jobs
+  and standing rewards pay in tokens instead of almond water, and loose tokens replace cash cards in Level 1 loot.
 - [BE] **Light tools against the dark things:** a **work lamp** (a battery floodlight to set down, far brighter than a
   flashlight), a **lightstick bundle** (five glowsticks taped together: about ten minutes of very bright light) and a
   **UV torch** whose violet beam [C++] doubles the burn on a Smiler (wielded, switched on, within 10 squares and in

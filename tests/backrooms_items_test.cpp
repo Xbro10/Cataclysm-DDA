@@ -18,7 +18,9 @@
 #include "cata_catch.h"
 #include "damage.h"
 #include "enums.h"
+#include "faction.h"
 #include "flag.h"
+#include "game.h"
 #include "item.h"
 #include "item_factory.h"
 #include "item_group.h"
@@ -460,4 +462,37 @@ TEST_CASE( "uv_torch_doubles_the_burn_on_a_smiler", "[.][backrooms_items]" )
         smiler.process_turn();
         CHECK( full - smiler.get_hp() >= full * 40 / 100 );
     }
+}
+
+TEST_CASE( "backrooms_traders_deal_in_tally_tokens", "[.][backrooms_items]" )
+{
+    const itype_id token( "br_tally_token" );
+    if( !token.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    for( const char *fac : {
+             "br1_exchange", "br1_exchange_supplies", "br1_exchange_gear", "br1_exchange_curios",
+             "br1_diner", "br_breakroom", "br_tunnel_workers"
+         } ) {
+        CAPTURE( fac );
+        const faction *f = g->faction_manager_ptr->get( faction_id( fac ) );
+        REQUIRE( f != nullptr );
+        CHECK( f->currency == token );
+    }
+    // Every stall stocks tokens to pay with.
+    for( const char *stock : {
+             "br1_exchange_supplies", "br1_exchange_gear", "br1_exchange_curios", "br1_diner_stock"
+         } ) {
+        CAPTURE( stock );
+        int tokens = 0;
+        for( const item &it : item_group::items_from( item_group_id( stock ), calendar::turn ) ) {
+            if( it.typeId() == token ) {
+                tokens++;
+            }
+        }
+        CHECK( tokens >= 20 );
+    }
+    // Five tokens buy a bottle of almond water.
+    CHECK( item( token ).price( true ) * 5 == 2500 );
 }
