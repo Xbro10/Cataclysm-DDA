@@ -162,6 +162,17 @@ bool safe_for_daily_life( const npc &guy );
 void track_fight_items( npc &guy );
 /** Safe, in the 30 minutes after a fight, and something of theirs lying nearby. */
 bool wants_to_recover_items( const npc &guy );
+/**
+ * Every turn (user request 2026-11-18): their own weapon (tagged as wielded at the fight's
+ * start) lying on their tile or next to them, and no weapon in hand: grab it back now, mid-fight
+ * too, rather than after the fight. Further off, autonomy_recover_items fetches it afterwards.
+ */
+void grab_dropped_weapon( npc &guy );
+/**
+ * Every turn: NPC var autonomy_debug_drop_weapon (set by EOC_AUTONOMY_DEBUG_DROP_WEAPON[_FAR])
+ * makes them drop their weapon 1 (or 3) tiles off, tagged as theirs, to test picking it up.
+ */
+void debug_drop_weapon( npc &guy );
 /** Calm, awake, away from their spot and able to get there. */
 bool wants_return_home( const npc &guy );
 

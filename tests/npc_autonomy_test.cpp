@@ -72,6 +72,8 @@ static const effect_on_condition_id effect_on_condition_EOC_AUTONOMY_DEBUG_LONEL
 static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY( "EOC_AUTONOMY_DEBUG_NOT_LONELY" );
 static const effect_on_condition_id
+effect_on_condition_EOC_AUTONOMY_DEBUG_CAMPFIRE( "EOC_AUTONOMY_DEBUG_CAMPFIRE" );
+static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_OWNED_AREA( "EOC_AUTONOMY_DEBUG_OWNED_AREA" );
 
 static const string_id<behavior::node_t> behavior_node_t_npc_priorities( "npc_priorities" );
@@ -1694,4 +1696,69 @@ TEST_CASE( "npc_autonomy_arm_up_never_swaps_a_drawn_weapon", "[npc][autonomy]" )
         turns( 9 );
         CHECK( guy.get_wielded_item() );
     }
+}
+
+// User request 2026-11-18: an NPC whose weapon ends up right next to them grabs it straight
+// back, mid-fight too; further off they fetch it once the fight is over.
+TEST_CASE( "npc_autonomy_grabs_a_dropped_weapon_straight_back", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    npc &guy = spawn_follower( get_avatar().pos_bub().xy() + point( 4, 0 ) );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_fac( faction_no_faction );
+    item knife( itype_knife_combat );
+    guy.wield( knife );
+    // A fight is on: a zombie three tiles off.
+    spawn_test_monster( "mon_zombie", guy.pos_bub() + point( 0, 3 ) );
+    here.build_map_cache( 0 );
+    const auto weapon_on_ground = [&here, &guy]( int dist ) {
+        for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), dist ) ) {
+            for( const item &it : here.i_at( p ) ) {
+                if( it.typeId() == itype_knife_combat ) {
+                    return rl_dist( p, guy.pos_bub() );
+                }
+            }
+        }
+        return -1;
+    };
+
+    SECTION( "dropped beside them: back in hand on the same turn, mid-fight" ) {
+        guy.set_value( "autonomy_debug_drop_weapon", 1.0 );
+        npc_autonomy::on_npc_turn( guy );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_knife_combat );
+        CHECK( weapon_on_ground( 2 ) == -1 );
+    }
+    SECTION( "dropped 3 tiles off: left there while the fight is on" ) {
+        guy.set_value( "autonomy_debug_drop_weapon", 3.0 );
+        npc_autonomy::on_npc_turn( guy );
+        CHECK_FALSE( guy.get_wielded_item() );
+        CHECK( weapon_on_ground( 3 ) == 3 );
+        CHECK_FALSE( npc_autonomy::wants_to_recover_items( guy ) );
+    }
+    SECTION( "someone else's knife beside them isn't theirs" ) {
+        item other( itype_knife_combat );
+        guy.remove_weapon();
+        here.add_item_or_charges( guy.pos_bub() + tripoint( 1, 0, 0 ), other );
+        npc_autonomy::grab_dropped_weapon( guy );
+        CHECK_FALSE( guy.get_wielded_item() );
+    }
+}
+
+TEST_CASE( "npc_autonomy_debug_campfire", "[npc][autonomy]" )
+{
+    clear_map();
+    clear_avatar();
+    map &here = get_map();
+    avatar &you = get_avatar();
+    dialogue d( get_talker_for( you ), nullptr );
+    effect_on_condition_EOC_AUTONOMY_DEBUG_CAMPFIRE->activate( d );
+    const tripoint_bub_ms fire = you.pos_bub() + tripoint( 6, 0, 0 );
+    CHECK( here.get_field( fire, field_fd_fire ) != nullptr );
+    CHECK_FALSE( here.i_at( fire ).empty() );
 }
