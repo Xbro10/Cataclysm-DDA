@@ -3,10 +3,12 @@ param([string]$Out, [string]$Preview)
 # 0 Flamero-Mado spear, unlit (br_flamero_mado_off)
 # 1 Flamero-Mado spear, lit   (br_flamero_mado_on)
 # 2 Flamero-Mado schematic    (br_flamero_schematic)
+# 3, 4, 5 the lit spear's other animation frames (1, 3, 4, 5 loop; the tileset marks it "animated")
 # The spear lies corner to corner, butt top-right, blade pointing down-left. Its shape lives in spear_shape.ps1.
 Add-Type -AssemblyName System.Drawing
 $T = 32; $TW = 32; $TH = 32
-$Count = 3
+$Count = 6
+$Scratch = $Count
 # One extra tile on the right is scratch space for the schematic's silhouette; it is cropped off before saving.
 $bmp = New-Object System.Drawing.Bitmap (($Count + 1) * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 . "$PSScriptRoot\sprite_common.ps1"
@@ -20,18 +22,24 @@ DrawSpear 0 $ground $false
 OutlineT 0 $INK
 Shadow 0 15 30 9
 
-# ---- 1: lit: ribbons of flame curl out of the collar jets, wrap the blade's base and rise.
-DrawSpear 1 $ground $true
-OutlineT 1 $INK
-Ribbon 1 @(@(12, 18), @(9, 17), @(7, 15), @(7, 12), @(9, 10), @(10, 8)) 2.5 $false
-Ribbon 1 @(@(15, 20), @(18, 21), @(20, 19), @(21, 16), @(20, 13), @(21, 11)) 2.4 $false
-Ribbon 1 @(@(14, 17), @(15, 14), @(14, 11), @(15, 9)) 1.7 $false
-Ribbon 1 @(@(10, 21), @(7, 21), @(5, 19), @(5, 16)) 1.6 $false
-Ribbon 1 @(@(14, 22), @(16, 24), @(18, 24), @(19, 22)) 1.3 $false
-# One thin strand wraps in front of the collar.
-Ribbon 1 @(@(11, 21), @(13, 19), @(15, 17), @(16, 16)) 1.0 $true
-Embers 1 @(@(11, 6), @(6, 9), @(22, 9), @(17, 7), @(3, 14), @(23, 14))
-Shadow 1 15 30 9
+# ---- 1 (and 3, 4, 5): lit: ribbons of flame curl out of the collar jets, wrap the blade's base and rise.
+# Four frames of the same flames, swaying (see FlameFrame in spear_shape.ps1).
+function DrawLit($tile, $frame) {
+  $script:FlameFrame = $frame; FlameFrameStart
+  DrawSpear $tile $ground $true
+  OutlineT $tile $INK
+  Ribbon $tile @(@(12, 18), @(9, 17), @(7, 15), @(7, 12), @(9, 10), @(10, 8)) 2.5 $false
+  Ribbon $tile @(@(15, 20), @(18, 21), @(20, 19), @(21, 16), @(20, 13), @(21, 11)) 2.4 $false
+  Ribbon $tile @(@(14, 17), @(15, 14), @(14, 11), @(15, 9)) 1.7 $false
+  Ribbon $tile @(@(10, 21), @(7, 21), @(5, 19), @(5, 16)) 1.6 $false
+  Ribbon $tile @(@(14, 22), @(16, 24), @(18, 24), @(19, 22)) 1.3 $false
+  # One thin strand wraps in front of the collar.
+  Ribbon $tile @(@(11, 21), @(13, 19), @(15, 17), @(16, 16)) 1.0 $true
+  Embers $tile @(@(11, 6), @(6, 9), @(22, 9), @(17, 7), @(3, 14), @(23, 14))
+  Shadow $tile 15 30 9
+}
+DrawLit 1 0; DrawLit 3 1; DrawLit 4 2; DrawLit 5 3
+$script:FlameFrame = 0
 
 # ---- 2: schematic: blueprint in a plastic sleeve, the spear drawn as a pale technical outline, red notes.
 $bp = Hex '#2e5a9a'; $bpD = Hex '#21447a'; $bpL = Hex '#4a78b8'; $line = Hex '#e8f0fa'; $fill = Hex '#7fa6d8'; $red = Hex '#d23a2a'; $sleeve = Hex '#c8dae8'
@@ -40,11 +48,11 @@ Grain 2 5 7 23 17 $bpD $bpL 18 $rng
 for ($x = 7; $x -lt 28; $x += 4) { Fill 2 $x 7 1 17 $bpL }
 for ($y = 9; $y -lt 24; $y += 4) { Fill 2 5 $y 23 1 $bpL }
 # Draw the spear small on the scratch tile, then copy it over as an outline drawing.
-DrawSpear 3 (Layout 7.5 21.5 1 -0.62 22) $false
+DrawSpear $Scratch (Layout 7.5 21.5 1 -0.62 22) $false
 for ($y = 0; $y -lt $T; $y++) { for ($x = 0; $x -lt $T; $x++) {
-  if ((SGet 3 $x $y).A -eq 0) { continue }
+  if ((SGet $Scratch $x $y).A -eq 0) { continue }
   $edge = $false
-  foreach ($d in @(@(1, 0), @(-1, 0), @(0, 1), @(0, -1))) { $nx = $x + $d[0]; $ny = $y + $d[1]; if ($nx -lt 0 -or $ny -lt 0 -or $nx -ge $T -or $ny -ge $T -or (SGet 3 $nx $ny).A -eq 0) { $edge = $true } }
+  foreach ($d in @(@(1, 0), @(-1, 0), @(0, 1), @(0, -1))) { $nx = $x + $d[0]; $ny = $y + $d[1]; if ($nx -lt 0 -or $ny -lt 0 -or $nx -ge $T -or $ny -ge $T -or (SGet $Scratch $nx $ny).A -eq 0) { $edge = $true } }
   SPix 2 $x $y ($(if ($edge) { $line } else { $fill }))
 } }
 # Dimension line under it, a callout to the collar, and the red margin note.
