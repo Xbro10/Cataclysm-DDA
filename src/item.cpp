@@ -424,7 +424,17 @@ item &item::convert( const itype_id &new_type, Character *carrier )
 {
     // Carry over relative rot similar to crafting
     const double rel_rot = get_relative_rot();
+    // Xbro10 fork: an item's relic data (passive effects such as an on-hit spell) is copied from its type
+    // only when the item is created, so switching a weapon on (Additions' lit Flamero-Mado, the shock lance)
+    // kept the "off" type's effects. Take the new type's, unless this item has its own relic data (an
+    // artifact rolled or set at runtime differs from its type's and is kept).
+    const itype *old_type = type;
+    const bool relic_from_type = !relic_data ||
+                                 ( old_type->relic_data && *relic_data == *old_type->relic_data );
     type = find_type( new_type );
+    if( relic_from_type ) {
+        relic_data = type->relic_data;
+    }
     set_relative_rot( rel_rot );
     requires_tags_processing = true; // new type may have "active" flags
     item temp( *this );

@@ -32,6 +32,8 @@
 #include "mtype.h"
 #include "npc.h"
 #include "player_helpers.h"
+#include "pocket_type.h"
+#include "ret_val.h"
 #include "point.h"
 #include "string_formatter.h"
 #include "type_id.h"
@@ -96,6 +98,8 @@ TEST_CASE( "flamero_mado_spear_lights_burns_and_goes_out", "[.][backrooms_items]
         CHECK( lit->damage_melee( damage_heat ) > 0 );
         CHECK( lit->damage_melee( damage_stab ) == spear.damage_melee( damage_stab ) );
         CHECK( lit->has_flag( flag_FLAMING ) );
+        // Lit by the player, it carries its on-hit fire spell (relic data follows the item's new type).
+        CHECK( lit->is_relic() );
 
         // Burn it out: one charge every 3 turns (lighting it is free).
         int turns = 0;
@@ -352,4 +356,61 @@ TEST_CASE( "backrooms_entities_butcher_and_drop_properly", "[.][backrooms_items]
     }
     CHECK( teeth > 30 );
     CHECK( balloon );
+}
+
+TEST_CASE( "shock_lance_switches_on_shocks_and_drains_its_battery", "[.][backrooms_items]" )
+{
+    const itype_id lance_off( "xa_shock_lance_off" );
+    const itype_id lance_on( "xa_shock_lance_on" );
+    if( !lance_off.is_valid() ) {
+        WARN( "Needs --mods=xbro_additions" );
+        return;
+    }
+    clear_avatar();
+    clear_map_without_vision();
+    avatar &you = get_avatar();
+    map &here = get_map();
+    const damage_type_id damage_electric( "electric" );
+
+    SECTION( "with no battery it won't switch on" ) {
+        item off( lance_off );
+        REQUIRE( you.wield( off ) );
+        you.invoke_item( &*you.get_wielded_item() );
+        CHECK( you.get_wielded_item()->typeId() == lance_off );
+    }
+
+    SECTION( "with a charged battery: on, shocking, stunning on some hits, and drawing power" ) {
+        item lance( lance_off );
+        item battery( itype_id( "medium_battery_cell" ) );
+        battery.ammo_set( battery.ammo_default(), battery.ammo_capacity( battery.ammo_default()->ammo->type ) );
+        REQUIRE( lance.put_in( battery, pocket_type::MAGAZINE_WELL ).success() );
+        REQUIRE( you.wield( lance ) );
+        CHECK( you.get_wielded_item()->damage_melee( damage_electric ) == 0 );
+        you.invoke_item( &*you.get_wielded_item() );
+        item_location on = you.get_wielded_item();
+        REQUIRE( on->typeId() == lance_on );
+        CHECK( on->damage_melee( damage_electric ) > 0 );
+        CHECK( on->is_relic() );
+        CHECK( spell_id( "xa_shock_lance_stun" ).is_valid() );
+        const units::energy before = on->energy_remaining( &you );
+        for( int i = 0; i < 600; i++ ) {
+            calendar::turn += 1_turns;
+            you.process_items( &here );
+        }
+        CHECK( you.get_wielded_item()->energy_remaining( &you ) < before );
+        // Switch it off again.
+        you.invoke_item( &*you.get_wielded_item() );
+        CHECK( you.get_wielded_item()->typeId() == lance_off );
+    }
+
+    SECTION( "a found lance comes with a battery in it" ) {
+        bool found = false;
+        for( const item &it : item_group::items_from( item_group_id( "xa_shock_lance_cache" ), calendar::turn_zero ) ) {
+            if( it.typeId() == lance_off ) {
+                found = true;
+                CHECK( it.magazine_current() != nullptr );
+            }
+        }
+        CHECK( found );
+    }
 }

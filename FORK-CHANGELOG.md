@@ -19,6 +19,14 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ## November 19, 2026
 
+### Additions
+- [AD] **Shock lance:** the Flamero-Mado's sibling, a rare end-game spear that runs on a medium battery. Switched on,
+  every hit adds electric damage, about one hit in three stuns, and blue arcs crackle over its head (animated, both
+  tilesets, on the ground and in your hands). Labs, military gear and prison armouries; crafted from its schematic.
+  [BE] With the Backrooms too: Level 1 gun safes and the Exchange's rare find.
+- [C++] **Switched-on weapons keep their special effects:** turning a weapon on never gave it the "on" form's
+  built-in effects, so the lit Flamero-Mado never actually set things on fire. Now it does, and the shock lance stuns.
+
 ### Backrooms
 - [BE] **Weaknesses that work in play:** [C++] Skin-stealers and Hounds back off from a flashlight, lamp or fire
   (`FEARS_LIGHT`; the game's bright-light fear only counted near-daylight). Deathmoths really burn in fire (powdery
