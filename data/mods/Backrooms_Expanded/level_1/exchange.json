@@ -193,7 +193,9 @@
         { "class": "BR1_trader_supplies", "x": 5, "y": 3 },
         { "class": "BR1_trader_gear", "x": 9, "y": 3 },
         { "class": "BR1_trader_curios", "x": 15, "y": 3 },
-        { "class": "BR1_exchange_guard", "x": 11, "y": 9 }
+        { "class": "BR1_exchange_guard", "x": 11, "y": 9 },
+        { "class": "BR1_exchange_guard", "x": 4, "y": 9 },
+        { "class": "BR1_exchange_guard", "x": 18, "y": 9 }
       ],
       "place_zones": [
         { "type": "LOOT_UNSORTED", "faction": "br1_exchange_supplies", "x": [ 3, 6 ], "y": 2 },
@@ -424,10 +426,58 @@
     "faction": "br1_exchange_curios"
   },
   {
+    "type": "npc_class",
+    "id": "NC_BR1_EXCHANGE_GUARD",
+    "name": { "str": "Exchange Guard" },
+    "job_description": "I keep the peace inside the wire.  The traders pay well for it, and I earn it.",
+    "common": false,
+    "//": "The Exchange pays for real protection: body armour, a helmet, a melee weapon in hand and a loaded Glock as a sidearm, and the skills to use them. +3 Strength; nothing they carry needs more than the base roll.",
+    "worn_override": "NC_BR1_EXCHANGE_GUARD_worn",
+    "weapon_override": "NC_BR1_EXCHANGE_GUARD_weapon",
+    "carry_override": "NC_BR1_EXCHANGE_GUARD_carry",
+    "traits": [ { "group": "Appearance_demographics" } ],
+    "bonus_str": { "constant": 3 },
+    "bonus_dex": { "rng": [ 1, 2 ] },
+    "bonus_per": { "rng": [ 0, 2 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "melee", "bonus": { "rng": [ 4, 5 ] } },
+      { "skill": "cutting", "bonus": { "rng": [ 4, 5 ] } },
+      { "skill": "stabbing", "bonus": { "rng": [ 4, 5 ] } },
+      { "skill": "bashing", "bonus": { "rng": [ 3, 4 ] } },
+      { "skill": "dodge", "bonus": { "rng": [ 3, 4 ] } },
+      { "skill": "gun", "bonus": { "rng": [ 2, 3 ] } },
+      { "skill": "pistol", "bonus": { "rng": [ 3, 4 ] } }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_EXCHANGE_GUARD_worn",
+    "subtype": "collection",
+    "items": [ "pants_army", "tshirt", "jacket_army", "kevlar", "socks", "boots_combat", "gloves_tactical", "helmet_army", "holster" ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_EXCHANGE_GUARD_weapon",
+    "subtype": "distribution",
+    "items": [ [ "machete", 40 ], [ "spear_steel", 35 ], [ "bat_metal", 25 ] ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_EXCHANGE_GUARD_carry",
+    "subtype": "collection",
+    "entries": [
+      { "item": "glock_19", "contents-group": "br1_runner_glockmag" },
+      { "group": "br1_runner_glockmag" },
+      { "item": "bandages", "count": 3 },
+      { "item": "flashlight", "charges": [ 50, 100 ] }
+    ]
+  },
+  {
     "type": "npc",
     "id": "BR1_exchange_guard",
-    "//": "Exchange guard by the gate. Reuses the Breakroom door guard's class.",
-    "class": "NC_BR1_GATE_GUARD",
+    "//": "Exchange guards: one by the gate, two in the back corners of the aisle (NC_BR1_EXCHANGE_GUARD).",
+    "class": "NC_BR1_EXCHANGE_GUARD",
     "attitude": 0,
     "mission": "GUARD",
     "chat": "TALK_BR1_EXCHANGE_GUARD",
