@@ -5,7 +5,7 @@ on by default in new worlds on Xbro10's fork (you can turn it off in the world's
 
 ## What's in it
 
-Items: 4 (Flamero-Mado spear, shock lance, and a schematic for each). Recipes: 2.
+Items: 4 (Flamero-Mado spear, Specter shock lance, and a schematic for each). Recipes: 2.
 
 ### The Flamero-Mado spear
 
@@ -34,7 +34,7 @@ It ships with Xbro10's fork builds. For another build, copy the `Xbro_Additions`
 Made by Xbro10. Art is original to this mod (CC-BY-SA 3.0), drawn by the scripts in `tools/backrooms_expanded/`
 (`draw_br_weapons.ps1`, `draw_br_held.ps1`, `draw_br_held_udp.ps1`, `spear_shape.ps1`).
 
-### The shock lance
+### The Specter (shock lance)
 
 The Flamero-Mado's sibling: a rare end-game spear that runs on a medium battery instead of fuel.
 

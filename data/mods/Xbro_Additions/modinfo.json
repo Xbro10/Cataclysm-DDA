@@ -6,7 +6,7 @@
     "authors": [ "Xbro10" ],
     "maintainers": [ "Xbro10" ],
     "//": "Keep the counts in the description current: one line per kind of thing the mod adds (Items, Recipes, Structures, Monsters...).",
-    "description": "Additions to the regular world, no Backrooms needed.  On by default in new worlds.\nItems: 4 (Flamero-Mado spear, shock lance, and a schematic for each)\nRecipes: 2",
+    "description": "Additions to the regular world, no Backrooms needed.  On by default in new worlds.\nItems: 4 (Flamero-Mado spear, Specter shock lance, and a schematic for each)\nRecipes: 2",
     "category": "items",
     "dependencies": [ "dda" ],
     "version": "0.1.0"

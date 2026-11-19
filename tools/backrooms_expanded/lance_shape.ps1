@@ -84,29 +84,56 @@ function Arc($tile, $x0, $y0, $x1, $y1, $rng, $jit = 1.6, $front = $false, $glow
 }
 # A pixel point on the lance, from its axis position.
 function LancePt($S, $u, $v) { $xy = AxisXY $S $u $v; return @([Math]::Round($xy[0]), [Math]::Round($xy[1])) }
-# The switched-on lance's arcs for one animation frame: the prong tips arc to each other and to the point, a short
-# arc crawls over the insulators, and a few sparks fly. $seed picks the frame's bolts.
+# A faint blue haze around the live head, only on empty pixels, strongest near the point: the lance seems to hum.
+function LanceHalo($tile, $S, $scale = 1.0, $strength = 1.0) {
+  $R = 2.5 * $scale
+  $axis = New-Object System.Collections.Generic.List[object]
+  for ($u = 58; $u -le 100; $u += 2) { $axis.Add((AxisXY $S $u 0)) }
+  for ($y = 0; $y -lt $TH; $y++) {
+    for ($x = 0; $x -lt $TW; $x++) {
+      if ((SGet $tile $x $y).A -ne 0) { continue }
+      $best = 99.0
+      foreach ($p in $axis) { $d = [Math]::Sqrt(($x - $p[0]) * ($x - $p[0]) + ($y - $p[1]) * ($y - $p[1])); if ($d -lt $best) { $best = $d } }
+      if ($best -lt $R + 2) {
+        $a = [int](70 * $strength * [Math]::Pow([Math]::Max(0, 1 - ($best - 1) / ($R + 1)), 1.5))
+        if ($a -gt 10) { SPix $tile $x $y ([System.Drawing.Color]::FromArgb($a, $L.arcGlow.R, $L.arcGlow.G, $L.arcGlow.B)) }
+      }
+    }
+  }
+}
+# The switched-on lance's arcs for one animation frame: both prong tips always arc to the point, often across the
+# blade to each other, forked bolts lash out to the sides, current crawls over the insulators and down the shaft,
+# sparks fly, and a blue haze hangs round the head. $seed picks the frame's bolts.
 function LanceArcs($tile, $S, $seed, $scale = 1.0) {
   $rng = New-Object System.Random $seed
   $pa = LancePt $S 74.5 (-3.3); $pb = LancePt $S 74.5 3.3; $tipP = LancePt $S 99 0
-  # Each prong arcs forward to the point, outside the blade; one side or both, a new bolt every frame.
-  $both = $rng.Next(3) -ne 0
-  $first = $rng.Next(2)
-  foreach ($k in 0, 1) {
-    if (-not $both -and $k -ne $first) { continue }
-    $p = if ($k -eq 0) { $pa } else { $pb }
-    Arc $tile $p[0] $p[1] $tipP[0] $tipP[1] $rng (1.6 * $scale) $true
+  # Both prongs arc forward to the point, wilder than before.
+  foreach ($p in @($pa, $pb)) { Arc $tile $p[0] $p[1] $tipP[0] $tipP[1] $rng (2.2 * $scale) $true }
+  # Across the blade, prong to prong, two frames in three.
+  if ($rng.Next(3) -ne 0) { Arc $tile $pa[0] $pa[1] $pb[0] $pb[1] $rng (1.4 * $scale) $true }
+  # Two forked bolts lashing out sideways from the prongs or the point.
+  for ($k = 0; $k -lt 2; $k++) {
+    $side = $(if ($rng.Next(2) -eq 0) { -1 } else { 1 })
+    $from = $(if ($rng.Next(3) -eq 0) { $tipP } elseif ($side -lt 0) { $pa } else { $pb })
+    $end = LancePt $S (68 + $rng.Next(26)) ($side * (8 + $rng.Next(5)))
+    Arc $tile $from[0] $from[1] $end[0] $end[1] $rng (1.6 * $scale) $false
+    # A fork off the bolt's middle.
+    $mx = ($from[0] + $end[0]) / 2.0; $my = ($from[1] + $end[1]) / 2.0
+    $fork = LancePt $S (72 + $rng.Next(24)) ($side * (6 + $rng.Next(6)))
+    Arc $tile $mx $my $fork[0] $fork[1] $rng (1.0 * $scale) $false $false
   }
-  # A short spark jumping off a prong, away from the lance.
-  $p = if ($rng.Next(2) -eq 0) { $pa } else { $pb }
-  $away = LancePt $S (70 + $rng.Next(12)) ((($(if ($p -eq $pa) { -1 } else { 1 }))) * (6 + $rng.Next(3)))
-  Arc $tile $p[0] $p[1] $away[0] $away[1] $rng (1.0 * $scale) $false
+  # Current crawls over the insulators, and now and then runs back down the shaft to the copper coils.
   $ia = LancePt $S 49 ((-2.6) * ($(if ($rng.Next(2) -eq 0) { 1 } else { -1 }))); $ib = LancePt $S 56.5 ((2.6) * ($(if ($rng.Next(2) -eq 0) { 1 } else { -1 })))
-  if ($rng.Next(2) -eq 0) { Arc $tile $ia[0] $ia[1] $ib[0] $ib[1] $rng (1.0 * $scale) $false $false }
-  # Sparks: single bright pixels near the head.
-  for ($k = 0; $k -lt 4; $k++) {
-    $u = 70 + $rng.Next(32); $v = ($rng.NextDouble() * 2 - 1) * 6
+  Arc $tile $ia[0] $ia[1] $ib[0] $ib[1] $rng (1.2 * $scale) $false $false
+  if ($rng.Next(2) -eq 0) {
+    $c = LancePt $S (36 + $rng.Next(8)) ((-2.2) * ($(if ($rng.Next(2) -eq 0) { 1 } else { -1 })))
+    Arc $tile $ia[0] $ia[1] $c[0] $c[1] $rng (1.2 * $scale) $false $false
+  }
+  # Sparks: bright pixels flung around the head.
+  for ($k = 0; $k -lt 9; $k++) {
+    $u = 64 + $rng.Next(40); $v = ($rng.NextDouble() * 2 - 1) * 10
     $p = LancePt $S $u $v
     if ($p[0] -ge 0 -and $p[0] -lt $TW -and $p[1] -ge 0 -and $p[1] -lt $TH -and (SGet $tile $p[0] $p[1]).A -eq 0) { SPix $tile $p[0] $p[1] ($(if ($k % 2) { $L.arcCore } else { $L.arcGlow })) }
   }
+  LanceHalo $tile $S $scale (0.8 + 0.4 * $rng.NextDouble())
 }

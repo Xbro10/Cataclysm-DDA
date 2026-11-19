@@ -1,7 +1,7 @@
 [
   {
     "type": "mod_tileset",
-    "//": "The shock lance on the ground (off, on, and its schematic), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_xa_lance.ps1 in UndeadPeople style. One mod_tileset per file.",
+    "//": "The Specter (shock lance) on the ground (off, on, and its schematic), original art for this mod (CC-BY-SA 3.0) drawn by tools/backrooms_expanded/draw_xa_lance.ps1 in UndeadPeople style. One mod_tileset per file.",
     "compatibility": [ "UltimateCataclysm", "UNDEAD_PEOPLE_BASE" ],
     "tiles-new": [
       {
