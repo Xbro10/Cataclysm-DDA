@@ -1,0 +1,168 @@
+[
+  {
+    "type": "MONSTER",
+    "id": "mon_br_den_hound",
+    "copy-from": "mon_br_hound",
+    "looks_like": "mon_br_hound",
+    "//": "A Hound of the pack Dot's 'Hound den' job puts in the den. The same animal as mon_br_hound; a separate id only so the job counts this pack's kills (EOC_BR1_JOB_KILLS)."
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_JOB_KILLS",
+    "//": "Counts the kills Dot's hunting jobs need, from the moment you accept them: any Hound for 'Thin the Hounds' (u_br1_pest_kills), the den's own pack for 'The Hound den' (u_br1_den_kills). The jobs finish when you report to Dot (TALK_BR1_HANDIN_DOT).",
+    "eoc_type": "EVENT",
+    "required_event": "character_kills_monster",
+    "condition": "u_is_avatar",
+    "effect": [
+      {
+        "if": {
+          "and": [
+            { "u_has_mission": "MISSION_BR1_PEST_CONTROL" },
+            {
+              "or": [
+                { "compare_string": [ "mon_br_hound", { "context_val": "victim_type" } ] },
+                { "compare_string": [ "mon_br_den_hound", { "context_val": "victim_type" } ] }
+              ]
+            }
+          ]
+        },
+        "then": [
+          { "math": [ "u_br1_pest_kills += 1" ] },
+          {
+            "if": { "math": [ "u_br1_pest_kills == 3" ] },
+            "then": [ { "u_message": "That's three Hounds.  Dot will want to hear about it.", "type": "good" } ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "and": [
+            { "u_has_mission": "MISSION_BR1_HOUND_DEN" },
+            { "compare_string": [ "mon_br_den_hound", { "context_val": "victim_type" } ] }
+          ]
+        },
+        "then": [
+          { "math": [ "u_br1_den_kills += 1" ] },
+          {
+            "if": { "math": [ "u_br1_den_kills == 3" ] },
+            "then": [ { "u_message": "That's the den's pack done.  Go and tell Dot.", "type": "good" } ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_DOT",
+    "//": "Reporting back to Dot ('About that job…'). Each line shows while you have that job and have done it; it takes what the job asked for and finishes the job here (its end effects give the reward and count toward your standing).",
+    "dynamic_line": "Well?  Tell me.",
+    "responses": [
+      {
+        "text": "Here's your five litres of gas.",
+        "condition": { "and": [ { "u_has_mission": "MISSION_BR1_FUEL_RUN" }, { "u_has_items": { "item": "gasoline", "charges": 5000 } } ] },
+        "effect": [
+          { "u_consume_item": "gasoline", "count": 5000 },
+          { "math": [ "u_br1_handed_fuel = 1" ] },
+          { "finish_mission": "MISSION_BR1_FUEL_RUN", "success": true }
+        ],
+        "topic": "TALK_BR1_HANDIN_FUEL"
+      },
+      {
+        "text": "Three Hounds down.",
+        "condition": { "and": [ { "u_has_mission": "MISSION_BR1_PEST_CONTROL" }, { "math": [ "u_br1_pest_kills >= 3" ] } ] },
+        "effect": [ { "math": [ "u_br1_handed_pest = 1" ] }, { "finish_mission": "MISSION_BR1_PEST_CONTROL", "success": true } ],
+        "topic": "TALK_BR1_HANDIN_PEST"
+      },
+      {
+        "text": "The den's clear.  Every one of them.",
+        "condition": { "and": [ { "u_has_mission": "MISSION_BR1_HOUND_DEN" }, { "math": [ "u_br1_den_kills >= 3" ] } ] },
+        "effect": [ { "math": [ "u_br1_handed_den = 1" ] }, { "finish_mission": "MISSION_BR1_HOUND_DEN", "success": true } ],
+        "topic": "TALK_BR1_HANDIN_DEN"
+      },
+      {
+        "text": "I found their roster.",
+        "condition": { "and": [ { "u_has_mission": "MISSION_BR1_OVERRUN_ROSTER" }, { "u_has_items": { "item": "br1_camp_roster", "count": 1 } } ] },
+        "effect": [
+          { "u_consume_item": "br1_camp_roster", "count": 1 },
+          { "math": [ "u_br1_handed_roster = 1" ] },
+          { "finish_mission": "MISSION_BR1_OVERRUN_ROSTER", "success": true }
+        ],
+        "topic": "TALK_BR1_HANDIN_ROSTER"
+      },
+      {
+        "text": "I found your runner.  They're on their way home.",
+        "condition": { "and": [ { "u_has_mission": "MISSION_BR1_FIND_RUNNER" }, { "math": [ "br1_runner_missing == 0" ] } ] },
+        "effect": [ { "math": [ "u_br1_handed_runner = 1" ] }, { "finish_mission": "MISSION_BR1_FIND_RUNNER", "success": true } ],
+        "topic": "TALK_BR1_HANDIN_RUNNER"
+      },
+      { "text": "Not yet.  I'm still on it.", "topic": "TALK_BR1_FOREMAN" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_MARCUS",
+    "//": "Reporting back to Marcus ('About that job…'), as TALK_BR1_HANDIN_DOT.",
+    "dynamic_line": "Go on.  What have you got?",
+    "responses": [
+      {
+        "text": "Here's your crate.  Still sealed.",
+        "condition": { "and": [ { "u_has_mission": "MISSION_BR1_SUPPLY_DROP" }, { "u_has_items": { "item": "br1_supply_crate", "count": 1 } } ] },
+        "effect": [
+          { "u_consume_item": "br1_supply_crate", "count": 1 },
+          { "math": [ "u_br1_handed_supply = 1" ] },
+          { "finish_mission": "MISSION_BR1_SUPPLY_DROP", "success": true }
+        ],
+        "topic": "TALK_BR1_HANDIN_SUPPLY"
+      },
+      {
+        "text": "I rode the lifts.  Three lobbies.",
+        "condition": { "and": [ { "u_has_mission": "MISSION_BR1_RIDE_LIFTS" }, { "math": [ "u_br1_lobby_arrivals >= u_br1_lifts_mark + 3" ] } ] },
+        "effect": [ { "math": [ "u_br1_handed_lifts = 1" ] }, { "finish_mission": "MISSION_BR1_RIDE_LIFTS", "success": true } ],
+        "topic": "TALK_BR1_HANDIN_LIFTS"
+      },
+      { "text": "Not yet.  I'm still on it.", "topic": "TALK_BR1_CARTOGRAPHER" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_FUEL",
+    "dynamic_line": "That'll keep the lights on.  Here, you earned this.",
+    "responses": [ { "text": "Glad to help.", "topic": "TALK_BR1_FOREMAN" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_PEST",
+    "dynamic_line": "Quieter out there already.  Take these.",
+    "responses": [ { "text": "Glad to help.", "topic": "TALK_BR1_FOREMAN" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_DEN",
+    "dynamic_line": "Every one of them?  Good.  Better than good.  Here.  And people will hear about this.",
+    "responses": [ { "text": "Glad to help.", "topic": "TALK_BR1_FOREMAN" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_ROSTER",
+    "dynamic_line": "Five names.  I'll write them on the wall with the others.  Thank you.  Here, take these.",
+    "responses": [ { "text": "Glad to help.", "topic": "TALK_BR1_FOREMAN" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_RUNNER",
+    "dynamic_line": "You found them.  Thank you.  Here, this is from all of us.",
+    "responses": [ { "text": "Glad to help.", "topic": "TALK_BR1_FOREMAN" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_SUPPLY",
+    "dynamic_line": "Still sealed.  Good.  Batteries, tins.  Here's your share.",
+    "responses": [ { "text": "Glad to help.", "topic": "TALK_BR1_CARTOGRAPHER" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_HANDIN_LIFTS",
+    "dynamic_line": "That one, and that one, and there.  Good.  Here's water, and here's two more lobbies I've had word of.",
+    "responses": [ { "text": "Glad to help.", "topic": "TALK_BR1_CARTOGRAPHER" } ]
+  }
+]

@@ -271,13 +271,14 @@
     "id": "MISSION_BR1_FUEL_RUN",
     "name": { "str": "Fuel run" },
     "description": "Bring Dot five litres of gasoline for the Breakroom's generator.  Some parked cars still have a little in the tank.",
-    "goal": "MGOAL_FIND_ITEM",
+    "goal": "MGOAL_CONDITION",
+    "//goal": "Handed in at the Breakroom (camps_handins.json), not completed out in the lanes.",
+    "goal_condition": { "math": [ "u_br1_handed_fuel == 1" ] },
     "difficulty": 1,
     "value": 0,
-    "item": "gasoline",
-    "count": 5000,
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
+    "start": { "effect": [ { "math": [ "u_br1_handed_fuel = 0" ] } ] },
     "end": {
       "effect": [
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
@@ -304,13 +305,14 @@
     "id": "MISSION_BR1_PEST_CONTROL",
     "name": { "str": "Thin the Hounds" },
     "description": "Kill three Hounds anywhere on Level 1, then report back to Dot.",
-    "goal": "MGOAL_KILL_MONSTER_TYPE",
-    "monster_type": "mon_br_hound",
-    "monster_kill_goal": 3,
+    "goal": "MGOAL_CONDITION",
+    "//goal": "Handed in at the Breakroom (camps_handins.json), not completed out in the lanes.",
+    "goal_condition": { "math": [ "u_br1_handed_pest == 1" ] },
     "difficulty": 2,
     "value": 0,
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
+    "start": { "effect": [ { "math": [ "u_br1_handed_pest = 0" ] }, { "math": [ "u_br1_pest_kills = 0" ] } ] },
     "end": {
       "effect": [
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 2 },
@@ -338,12 +340,15 @@
     "id": "MISSION_BR1_HOUND_DEN",
     "name": { "str": "The Hound den" },
     "description": "A Hound pack has denned up nearby.  Dot marked it on your map.  Kill every Hound in the den.",
-    "goal": "MGOAL_KILL_MONSTERS",
+    "goal": "MGOAL_CONDITION",
+    "//goal": "Handed in at the Breakroom (camps_handins.json), not completed out in the lanes.",
+    "goal_condition": { "math": [ "u_br1_handed_den == 1" ] },
     "difficulty": 4,
     "value": 0,
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
     "start": {
+      "effect": [ { "math": [ "u_br1_handed_den = 0" ] }, { "math": [ "u_br1_den_kills = 0" ] } ],
       "assign_mission_target": {
         "om_terrain": "br1_hound_den",
         "om_terrain_replace": "br1_garage",
@@ -357,9 +362,9 @@
       },
       "update_mapgen": {
         "place_monster": [
-          { "monster": "mon_br_hound", "x": 9, "y": 10, "target": true },
-          { "monster": "mon_br_hound", "x": 13, "y": 10, "target": true },
-          { "monster": "mon_br_hound", "x": 12, "y": 13, "target": true }
+          { "monster": "mon_br_den_hound", "x": 9, "y": 10 },
+          { "monster": "mon_br_den_hound", "x": 13, "y": 10 },
+          { "monster": "mon_br_den_hound", "x": 12, "y": 13 }
         ]
       }
     },
@@ -391,14 +396,15 @@
     "id": "MISSION_BR1_OVERRUN_ROSTER",
     "name": { "str": "Who they were" },
     "description": "Find the overrun camp Dot marked on your map and bring back their roster, so somebody remembers their names.",
-    "goal": "MGOAL_FIND_ITEM",
-    "item": "br1_camp_roster",
-    "count": 1,
+    "goal": "MGOAL_CONDITION",
+    "//goal": "Handed in at the Breakroom (camps_handins.json), not completed out in the lanes.",
+    "goal_condition": { "math": [ "u_br1_handed_roster == 1" ] },
     "difficulty": 2,
     "value": 0,
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
     "start": {
+      "effect": [ { "math": [ "u_br1_handed_roster = 0" ] } ],
       "assign_mission_target": {
         "om_terrain": "br1_overrun_camp",
         "om_terrain_replace": "br1_garage",
@@ -438,14 +444,15 @@
     "id": "MISSION_BR1_SUPPLY_DROP",
     "name": { "str": "Supply drop" },
     "description": "Marcus heard of a padlocked storage cage with a sealed Breakroom crate inside.  He marked it on your map.  Bring the crate back unopened.",
-    "goal": "MGOAL_FIND_ITEM",
-    "item": "br1_supply_crate",
-    "count": 1,
+    "goal": "MGOAL_CONDITION",
+    "//goal": "Handed in at the Breakroom (camps_handins.json), not completed out in the lanes.",
+    "goal_condition": { "math": [ "u_br1_handed_supply == 1" ] },
     "difficulty": 3,
     "value": 0,
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
     "start": {
+      "effect": [ { "math": [ "u_br1_handed_supply = 0" ] } ],
       "assign_mission_target": {
         "om_terrain": "br1_supply_cage",
         "om_terrain_replace": "br1_garage",
@@ -486,12 +493,13 @@
     "name": { "str": "Ride the lifts" },
     "description": "Ride the lobby elevators three times, arriving in a lobby each time, then tell Marcus what you saw.",
     "goal": "MGOAL_CONDITION",
-    "goal_condition": { "math": [ "u_br1_lobby_arrivals >= u_br1_lifts_mark + 3" ] },
+    "//goal": "Handed in at the Breakroom (camps_handins.json), not completed out in the lanes.",
+    "goal_condition": { "math": [ "u_br1_handed_lifts == 1" ] },
     "difficulty": 2,
     "value": 0,
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
-    "start": { "effect": [ { "math": [ "u_br1_lifts_mark = u_br1_lobby_arrivals" ] } ] },
+    "start": { "effect": [ { "math": [ "u_br1_handed_lifts = 0" ] }, { "math": [ "u_br1_lifts_mark = u_br1_lobby_arrivals" ] } ] },
     "end": {
       "effect": [
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
