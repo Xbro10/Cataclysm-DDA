@@ -129,7 +129,13 @@
     "object": {
       "predecessor_mapgen": "br2_tunnels",
       "faction_owner": [ { "id": "br_tunnel_workers", "x": [ 0, 10 ], "y": [ 0, 10 ] } ],
-      "place_nested": [ { "chunks": [ "br2_workers_core" ], "x": 0, "y": 0 } ]
+      "place_nested": [
+        { "chunks": [ "br2_workers_core" ], "x": 0, "y": 0 },
+        { "//": "Survivor Minds hooks: CAMP and WATER (pointing at the drip pool) in the corridor outside each doorway.", "chunks": [ "br_sm_mark_camp" ], "x": 12, "y": 6 },
+        { "chunks": [ "br_sm_mark_water_w" ], "x": 12, "y": 4 },
+        { "chunks": [ "br_sm_mark_camp" ], "x": 4, "y": 12 },
+        { "chunks": [ "br_sm_mark_water_n" ], "x": 6, "y": 12 }
+      ]
     }
   },
   {

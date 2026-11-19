@@ -1,0 +1,52 @@
+[
+  {
+    "type": "item_group",
+    "id": "br1_overrun_body",
+    "subtype": "collection",
+    "//": "What the dead survivor at an overrun camp still has on them. With Survivor Minds on, mod_interactions/survivor_minds adds their journal.",
+    "entries": [ { "group": "br1_camp_lockers", "prob": 70 } ]
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_camp",
+    "//": "Hooks for Survivor Minds' chalk marks. Weight 0: the id exists so the maps can name it, but it never places anything. With Survivor Minds on, mod_interactions/survivor_minds/marks.json adds a chunk with the same id that draws the mark. No dependency on that mod either way.",
+    "weight": 0,
+    "object": { "mapgensize": [ 1, 1 ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_danger",
+    "weight": 0,
+    "object": { "mapgensize": [ 1, 1 ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_looted",
+    "weight": 0,
+    "object": { "mapgensize": [ 1, 1 ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_water_n",
+    "weight": 0,
+    "object": { "mapgensize": [ 1, 1 ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_water_e",
+    "weight": 0,
+    "object": { "mapgensize": [ 1, 1 ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_water_s",
+    "weight": 0,
+    "object": { "mapgensize": [ 1, 1 ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_water_w",
+    "weight": 0,
+    "object": { "mapgensize": [ 1, 1 ] }
+  }
+]

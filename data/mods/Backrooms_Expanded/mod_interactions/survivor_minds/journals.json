@@ -1,0 +1,58 @@
+[
+  {
+    "type": "item_group",
+    "id": "br1_overrun_body",
+    "copy-from": "br1_overrun_body",
+    "subtype": "collection",
+    "//": "Loaded only with Survivor Minds: the dead survivor at an overrun camp (level_1/structures_story.json) also carries their journal, with its last entries already written.",
+    "extend": { "entries": [ { "group": "br_sm_overrun_journals", "prob": 100 } ] }
+  },
+  {
+    "type": "item_group",
+    "id": "br_sm_overrun_journals",
+    "subtype": "distribution",
+    "//": "One of these journals. Survivor Minds' journal item (sm_journal) reads the item variables sm_journal_owner and sm_journal_text, the same ones its NPCs fill in each morning, so a pre-written one reads like any other found journal. Mention only what an overrun squatter camp holds: sandbags, a brazier, the drip pool, wretches, the dark.",
+    "items": [
+      {
+        "item": "sm_journal",
+        "prob": 25,
+        "variables": [
+          {
+            "sm_journal_owner": "Marisol",
+            "sm_journal_text": "Day 31: Slept well.  Ate enough.  Water's fine.  The drip pool fills a pot by morning if nobody knocks it.\nDay 32: Kept waking up.  Ate enough.  Water's fine.  Heard muttering out past the pillars.  Bay numbers, over and over.\nDay 33: Barely slept.  Running low on food.  Water's fine.  Ruth says it's just someone lost.  She wants to bring them in.\nDay 34: Barely slept.  Hungry.  Thirsty.  Ruth went out to look and didn't come back.  The muttering is closer.\nDay 35: It's at the sandbags.  It has Ruth's coat on.  If anyone finds this, don't answer when it calls you by"
+          }
+        ]
+      },
+      {
+        "item": "sm_journal",
+        "prob": 25,
+        "variables": [
+          {
+            "sm_journal_owner": "Theo",
+            "sm_journal_text": "Day 18: Slept well.  Belly's full.  Plenty to drink.  Good day.  Found a vending machine nobody had cracked yet.\nDay 19: Slept badly.  Ate enough.  Water's fine.  The light over the next bay went out.  Nobody went near it.\nDay 20: Slept badly.  Ate enough.  Water's fine.  Two more lights out.  The dark is coming down the row toward us.\nDay 21: Barely slept.  Rationing what I drink.  Only the brazier left.  Something moves out there whenever the fire gets low.\nDay 22: Out of fuel.  Writing by the last of it.  Going to stay very still and"
+          }
+        ]
+      },
+      {
+        "item": "sm_journal",
+        "prob": 25,
+        "variables": [
+          {
+            "sm_journal_owner": "Ines",
+            "sm_journal_text": "Day 47: Couldn't get comfortable.  Food's fine for now.  Water's fine.  Dee went out on a supply run.  Back by tomorrow, she said.\nDay 48: Kept waking up.  Food's fine for now.  Water's fine.  No Dee.\nDay 49: Barely slept.  Hungry.  Water's fine.  Still no Dee.  Doubled the watch.\n(Day 50: the page is blank.)\nDay 51: Dee came back in the night.  It isn't Dee.  We held the sandbags until morning.\nDay 52: Three of us left.  Bleeding won't stop.  The stores are open if you need them.  Take what's left.  Bury"
+          }
+        ]
+      },
+      {
+        "item": "sm_journal",
+        "prob": 25,
+        "variables": [
+          {
+            "sm_journal_owner": "Walt",
+            "sm_journal_text": "Day 63: Slept like the dead.  Bad choice of words.  Belly's full.  Water's fine.  Two months in this garage.  Thought we had it figured out.\nDay 64: Slept well.  Ate enough.  Water's fine.  New guy wandered in.  Thin as a rail, eyes gone yellow.  Gave him a bedroll.\nDay 65: Kept waking up.  Ate enough.  Water's fine.  New guy won't eat.  Just stands at the edge of the light, counting bays.\nDay 66: Barely slept.  He scratched Paulo in the night.  Says he doesn't remember.  His skin is coming off in sheets.\nDay 67: Should have left him in the dark.  Should have"
+          }
+        ]
+      }
+    ]
+  }
+]

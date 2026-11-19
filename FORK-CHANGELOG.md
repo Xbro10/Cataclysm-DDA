@@ -20,6 +20,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 18, 2026
 
 ### Backrooms
+- [BE] [SM] **Survivor Minds traces in the Backrooms:** with both mods on, an overrun camp's dead survivor carries
+  their journal (four stories of a camp's last days), CAMP and WATER marks lead to squatter and tunnel crew camps,
+  DANGER marks edge the dead zones, and LOOTED marks sit in picked-over places (about 1 in 5 Level 1 maintenance
+  rooms, booths and security offices come emptied). Either mod still works alone.
 - [BE] **Backrooms entities have weaknesses:** [C++] Smilers burn in bright light (switch on a flashlight mid-fight
   and one dies in a few turns; Level 0's ceiling lights are too dim). Hounds break when you stand your ground,
   Deathmoths fly into fires and burn, Wretches take double damage from burning weapons, Skin-stealers back off from light.
@@ -100,6 +104,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   after you had killed what scared them. Now it lasts as long as that run (unless they already feared you).
 
 ### For developers
+- [BE] **Optional hooks for another mod:** `survivor_minds_hooks.json` defines empty nested chunks (`br_sm_mark_*`, weight 0, so
+  they exist but never place anything) and the item group `br1_overrun_body`; `mod_interactions/survivor_minds/` gives
+  them content when Survivor Minds is loaded, plus weighted picked-over copies of three Level 1 rooms. Hidden test
+  `[backrooms_sm]` (`--mods=backrooms,backrooms_expanded,survivor_minds`).
 - [C++] **`--check-mods` handles mod_interactions like a real world:** it loaded every file in a mod's folder,
   interaction folders included, so a mod with an interaction folder for another mod failed the check without it.
 - [C++] **Test runs no longer fail after a data file changes:** the first run of the test program after any JSON

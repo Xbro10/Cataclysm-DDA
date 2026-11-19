@@ -1,0 +1,38 @@
+[
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_camp",
+    "//": "Loaded only with Survivor Minds: fills Backrooms Expanded's empty mark hooks (survivor_minds_hooks.json, weight 0) with Survivor Minds' own chalk-mark furniture. Placed at camps, dead zones and picked-over rooms.",
+    "object": { "mapgensize": [ 1, 1 ], "place_furniture": [ { "furn": "f_sm_mark_camp", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_danger",
+    "object": { "mapgensize": [ 1, 1 ], "place_furniture": [ { "furn": "f_sm_mark_danger", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_looted",
+    "object": { "mapgensize": [ 1, 1 ], "place_furniture": [ { "furn": "f_sm_mark_looted", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_water_n",
+    "object": { "mapgensize": [ 1, 1 ], "place_furniture": [ { "furn": "f_sm_mark_water_n", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_water_e",
+    "object": { "mapgensize": [ 1, 1 ], "place_furniture": [ { "furn": "f_sm_mark_water_e", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_water_s",
+    "object": { "mapgensize": [ 1, 1 ], "place_furniture": [ { "furn": "f_sm_mark_water_s", "x": 0, "y": 0 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br_sm_mark_water_w",
+    "object": { "mapgensize": [ 1, 1 ], "place_furniture": [ { "furn": "f_sm_mark_water_w", "x": 0, "y": 0 } ] }
+  }
+]
