@@ -12,3 +12,5 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
   well as pierces, about one hit in three sets the target on fire, and a full tank burns about 25 minutes. Found in
   museum displays and mansion weapon collections; crafted only from its schematic. Sprites for UltiCa and
   UndeadPeople, on the ground and in your hands.
+- The lit Flamero-Mado spear's flames are animated: they sway and flicker and embers rise, on the ground and in your
+  hands, in UltiCa and UndeadPeople (4 frames looping about every 0.4 s).

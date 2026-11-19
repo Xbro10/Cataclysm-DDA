@@ -127,7 +127,28 @@ $F = @{ rim = (Hex '#8c1e10'); red = (Hex '#e0482a'); orange = (Hex '#ff9a32'); 
 $FlameNormal = @(@(1.0, $F.rim), @(0.72, $F.red), @(0.48, $F.orange), @(0.24, $F.yellow))
 $FlameBright = @(@(1.0, $F.red), @(0.8, $F.orange), @(0.56, $F.yellow), @(0.28, $F.white))
 $script:flameLayers = $FlameNormal
+# Animation: set $script:FlameFrame (0-3) before drawing a frame, and call FlameFrameStart at the start of each
+# tile so every ribbon gets its own phase. Ribbons then sway sideways (more toward the tip), lift a pixel on
+# alternate frames and pulse a little in size; embers drift upward. Frame 0 with no sway is the still picture.
+$script:FlameFrame = 0
+$script:ribbonNo = 0
+function FlameFrameStart { $script:ribbonNo = 0 }
+function SwayPath($path) {
+  $f = $script:FlameFrame; $k = $script:ribbonNo
+  if ($f -eq 0) { return $path }
+  $n = $path.Count; $out = New-Object System.Collections.Generic.List[object]
+  for ($j = 0; $j -lt $n; $j++) {
+    $t = if ($n -gt 1) { $j / ($n - 1) } else { 0 }
+    $dx = [Math]::Round(1.4 * $t * [Math]::Sin($f * [Math]::PI / 2 + $k * 1.7))
+    $dy = - [Math]::Round(1.2 * $t * (($f + $k) % 2))
+    $out.Add(@(($path[$j][0] + $dx), ($path[$j][1] + $dy)))
+  }
+  return $out
+}
 function Ribbon($tile, $path, $r0, $front) {
+  $path = SwayPath $path
+  $r0 = $r0 * (1.0 + 0.12 * [Math]::Sin($script:FlameFrame * [Math]::PI / 2 + $script:ribbonNo * 2.3))
+  $script:ribbonNo++
   $layers = $script:flameLayers
   foreach ($layer in $layers) {
     $scale = $layer[0]; $col = $layer[1]
@@ -153,4 +174,13 @@ function Ribbon($tile, $path, $r0, $front) {
 }
 $script:flamePx = @{}
 # Embers: single bright pixels drifting off the flames.
-function Embers($tile, $pts) { foreach ($p in $pts) { if ((SGet $tile $p[0] $p[1]).A -eq 0) { SPix $tile $p[0] $p[1] $F.orange } } }
+function Embers($tile, $pts) {
+  $i = 0
+  foreach ($p in $pts) {
+    # Each frame an ember rises 2 pixels and drifts sideways; after 4 frames it is back where it started.
+    $x = $p[0] + [int][Math]::Round([Math]::Sin($script:FlameFrame + $i)); $y = $p[1] - 2 * $script:FlameFrame
+    $i++
+    if ($x -lt 0 -or $x -ge $TW -or $y -lt 0 -or $y -ge $TH) { continue }
+    if ((SGet $tile $x $y).A -eq 0) { SPix $tile $x $y ($(if (($script:FlameFrame + $i) % 3 -eq 0) { $F.yellow } else { $F.orange })) }
+  }
+}
