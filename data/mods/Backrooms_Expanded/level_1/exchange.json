@@ -255,9 +255,13 @@
       { "item": "crowbar", "prob": 60 },
       { "item": "wrench", "prob": 50 },
       { "item": "br_firesalt", "charges": 50, "count": [ 2, 4 ] },
-      { "item": "br_lightstick_bundle", "count": [ 2, 3 ] },
-      { "item": "br_work_lamp", "prob": 60 },
-      { "item": "br_uv_torch", "prob": 40 }
+      {
+        "distribution": [
+          { "item": "br_lightstick_bundle", "count": [ 2, 3 ], "prob": 50 },
+          { "item": "br_work_lamp", "prob": 30 },
+          { "item": "br_uv_torch", "prob": 20 }
+        ]
+      }
     ]
   },
   {
@@ -291,7 +295,7 @@
     "id": "br1_buys_supplies",
     "//": "What the supplies trader buys: food, drink, medicine, and the cans and bottles they come in.",
     "message": "<npcname> only deals in food, water and medicine.",
-    "entries": [ { "category": "food" }, { "category": "drugs" }, { "category": "container" }, { "item": "pur_tablets" } ]
+    "entries": [ { "item": "br_tally_token" }, { "category": "food" }, { "category": "drugs" }, { "category": "container" }, { "item": "pur_tablets" } ]
   },
   {
     "type": "shopkeeper_whitelist",
@@ -299,6 +303,7 @@
     "//": "What the gear trader buys: tools, parts, lights, batteries and car bits, plus almond water.",
     "message": "<npcname> only deals in tools, lights and batteries.",
     "entries": [
+      { "item": "br_tally_token" },
       { "category": "tools" },
       { "category": "spare_parts" },
       { "category": "tool_magazine" },
@@ -322,6 +327,7 @@
     "//": "What the oddities trader buys: books, maps, notes and odd finds, plus almond water.",
     "message": "<npcname> only buys maps, books, notes and oddities.",
     "entries": [
+      { "item": "br_tally_token" },
       { "category": "books" },
       { "category": "maps" },
       { "group": "br1_exchange_curios" },
