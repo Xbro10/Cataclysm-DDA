@@ -5,7 +5,7 @@ on by default in new worlds on Xbro10's fork (you can turn it off in the world's
 
 ## What's in it
 
-Items: 2 (Flamero-Mado spear, Flamero-Mado schematic). Recipes: 1.
+Items: 4 (Flamero-Mado spear, shock lance, and a schematic for each). Recipes: 2.
 
 ### The Flamero-Mado spear
 
@@ -33,3 +33,17 @@ It ships with Xbro10's fork builds. For another build, copy the `Xbro_Additions`
 
 Made by Xbro10. Art is original to this mod (CC-BY-SA 3.0), drawn by the scripts in `tools/backrooms_expanded/`
 (`draw_br_weapons.ps1`, `draw_br_held.ps1`, `draw_br_held_udp.ps1`, `spear_shape.ps1`).
+
+### The shock lance
+
+The Flamero-Mado's sibling: a rare end-game spear that runs on a medium battery instead of fuel.
+
+- Switch it on: every hit adds electric damage, about one hit in three stuns the target for a turn or two, and it
+  gives off a faint blue light. It draws 25 W, so a full battery lasts a good while, and it switches itself off when
+  the battery runs flat. Things immune to electricity (the Redeemer, robots) shrug it off.
+- Switched off, it's a fine spear.
+- **Where to find it:** lab science stores, military gear and prison armouries, very rarely.
+- **Crafting:** Electronics 7, Fabrication 6 and soldering, and only after reading its schematic.
+- Sprites for UltiCa and UndeadPeople, on the ground and in your hands, with animated arcs when it's on.
+
+With **Backrooms Expanded** it also turns up in Level 1 security office gun safes and as the Exchange's rare find.

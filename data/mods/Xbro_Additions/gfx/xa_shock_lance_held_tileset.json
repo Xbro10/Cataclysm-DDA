@@ -1,0 +1,26 @@
+[
+  {
+    "type": "mod_tileset",
+    "//": "The shock lance in your hands, UltiCa: upright and slim, 32x64 like UltiCa's own pikes (tools/backrooms_expanded/draw_xa_lance_held.ps1).",
+    "compatibility": [ "UltimateCataclysm" ],
+    "tiles-new": [
+      {
+        "file": "gfx/xa_shock_lance_held.png",
+        "sprite_width": 32,
+        "sprite_height": 64,
+        "sprite_offset_x": 0,
+        "sprite_offset_y": -32,
+        "tiles": [
+          { "id": "overlay_wielded_xa_shock_lance_off", "fg": 0, "rotates": false },
+          {
+            "id": "overlay_wielded_xa_shock_lance_on",
+            "//": "Animated: eight frames of crackling arcs, 4/60 s each (tiles 1-8 of the sheet).",
+            "fg": [ { "weight": 4, "sprite": 1 }, { "weight": 4, "sprite": 2 }, { "weight": 4, "sprite": 3 }, { "weight": 4, "sprite": 4 }, { "weight": 4, "sprite": 5 }, { "weight": 4, "sprite": 6 }, { "weight": 4, "sprite": 7 }, { "weight": 4, "sprite": 8 } ],
+            "animated": true,
+            "rotates": false
+          }
+        ]
+      }
+    ]
+  }
+]
