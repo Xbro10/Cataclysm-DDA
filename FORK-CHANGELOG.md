@@ -87,8 +87,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   after you had killed what scared them. Now it lasts as long as that run (unless they already feared you).
 
 ### For developers
-- [C++] **`--check-mods` checks each mod with exactly its own dependencies:** the throwaway world it uses got the
-  default mods, so a mod_interactions folder for a default mod loaded while that mod wasn't, and reported unknown items.
+- [C++] **`--check-mods` handles mod_interactions like a real world:** it loaded every file in a mod's folder,
+  interaction folders included, so a mod with an interaction folder for another mod failed the check without it.
 - [C++] **Test runs no longer fail after a data file changes:** the first run of the test program after any JSON
   edit logged "Stale game data detected" as an error per changed file, so it ended with "Treating result as failure
   due to error logged during initialization" even when every test passed. The test program now turns that check off
