@@ -1,7 +1,7 @@
 [
   {
     "type": "mod_tileset",
-    "//": "The shock lance in your hands, UndeadPeople: held steeply across the body, 64x80 like UndeadPeople's own spears (tools/backrooms_expanded/draw_xa_lance_held_udp.ps1).",
+    "//": "The Specter (shock lance) in your hands, UndeadPeople: held steeply across the body, 64x80 like UndeadPeople's own spears (tools/backrooms_expanded/draw_xa_lance_held_udp.ps1).",
     "compatibility": [ "UNDEAD_PEOPLE_BASE" ],
     "tiles-new": [
       {

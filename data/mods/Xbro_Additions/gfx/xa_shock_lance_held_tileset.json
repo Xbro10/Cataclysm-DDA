@@ -1,7 +1,7 @@
 [
   {
     "type": "mod_tileset",
-    "//": "The shock lance in your hands, UltiCa: upright and slim, 32x64 like UltiCa's own pikes (tools/backrooms_expanded/draw_xa_lance_held.ps1).",
+    "//": "The Specter (shock lance) in your hands, UltiCa: upright and slim, 32x64 like UltiCa's own pikes (tools/backrooms_expanded/draw_xa_lance_held.ps1).",
     "compatibility": [ "UltimateCataclysm" ],
     "tiles-new": [
       {
