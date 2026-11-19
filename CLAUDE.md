@@ -18,7 +18,9 @@ As of 2026-11-18. Update this each time a prompt is finished.
   finished 2026-11-18, tested in game with its follow-ups (Safety sizes threats up against the NPC's own strength,
   gunners stand and shoot, shopkeepers return to their spot, NPCs pick up what they dropped in a fight). 5.3 (chats keep to
   follow and guard rules) built 2026-11-18, waiting for the in-game test; then 5.3 is finished. User decision
-  (2026-11-18): strangers only chat with their own friends, never come over to chat with the player or followers. Next: 5.4.
+  (2026-11-18): strangers only chat with their own friends, never come over to chat with the player or followers.
+  5.4 (journals mention loneliness and fear) built 2026-11-18 (morning values only, user choice), waiting for the
+  in-game test; test `[survivor_minds]` with `--mods=survivor_minds`. Next: 5.5.
 - Order: the rest of Phase 5 in order, then Phase 6 (6.0 first), then 3.6, then Phase 9, then Phase 7, then Phase 8
   (it takes over the shelter half of 7.7; 8.6, Backrooms homes, goes on `dev`), then Phase 10 (last).
   Skip 3.5 and 4.1 (covered by 5.6), 4.5 (5.8 step B), 3.7 and 4.7 (Phase 7). 6.6 starts 4.6 (scouts).

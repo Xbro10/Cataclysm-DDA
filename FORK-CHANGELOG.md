@@ -53,6 +53,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   kit; a badly hurt runner heads home early.
 
 ### NPCs
+- [SM] **Journals mention loneliness and fear (step 5.4):** with NPC autonomy on, a follower's morning journal entry
+  adds a line when they've been alone a long time ("Haven't talked to anyone in days.") or are scared as they write
+  ("Couldn't settle.  Kept watching the dark."), four wordings each. Official builds never show it.
 - [C++] **Shopkeepers go back to their booth:** with NPC autonomy on, a shopkeeper (like the Exchange traders) or a
   sheltering stranger scared off their spot looks for safety only within 6 tiles of it, and walks back once calm,
   as guards return to their post. They remember the spot where they first stood calm, so a trader already standing
