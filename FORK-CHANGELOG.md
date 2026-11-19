@@ -20,6 +20,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 18, 2026
 
 ### Backrooms
+- [BE] **The Exchange has three guards:** one at the gate and two in the back corners, in body armour and army
+  helmets, with a machete, steel spear or metal bat and a loaded Glock, strong and skilled enough to use them.
 - [BE] [SM] **Survivor Minds traces in the Backrooms:** with both mods on, an overrun camp's dead survivor carries
   their journal (four stories of a camp's last days), CAMP and WATER marks lead to squatter and tunnel crew camps,
   DANGER marks edge the dead zones, and LOOTED marks sit in picked-over places (about 1 in 5 Level 1 maintenance
