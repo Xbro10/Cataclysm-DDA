@@ -215,7 +215,7 @@
     "id": "br1_buys_cook",
     "//": "The cook only buys what goes on the grill or in the fridge.",
     "message": "<npcname> only buys food for the kitchen.",
-    "entries": [ { "category": "food" }, { "category": "container" } ]
+    "entries": [ { "item": "br_tally_token" }, { "category": "food" }, { "category": "container" } ]
   },
   {
     "type": "npc_class",
