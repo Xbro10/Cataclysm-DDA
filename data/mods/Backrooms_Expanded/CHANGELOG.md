@@ -20,6 +20,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Changed
 
+- Fewer brown rats on Level 1: they were the most common spawn, in packs of up to five, and slowed the level down. Now a smaller share, in packs of one to three (one or two in dead zones).
 - Breakroom runners are the camp's best fighters: high melee, cutting, dodge and pistol skills, a machete in a scabbard, a loaded Glock 19 with spare magazines, a leather jacket, a first aid kit, bandages and painkillers. A runner badly hurt on a run (torso or head under half, or in a lot of pain) cuts it short and heads home; otherwise a run lasts until 1-2 days after leaving. Runners check how hurt they are every 10 minutes (it was every 30), so they turn back soon after a bad fight. The diner server and the Exchange traders keep the runners' old everyday clothes.
 - The All-Nite serves chili and soup in a bowl and coffee in a styrofoam cup. Chili used to spawn as a loose puddle (it has no container of its own), soup came in a can and coffee in a plastic bottle.
 - The pistol in a security office's gun safe has its part-loaded magazine in the gun, instead of the gun and magazine lying side by side.
@@ -29,6 +30,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Fixed
 
+- Deathmoths really burn in fire now: they're flying insects without the insect fire fear, and their powdery wings are flammable (a ground fire barely hurts most flying monsters).
+- Skin-stealers (and Hounds) back off when a flashlight, lamp or fire lights them up (needs the Xbro10 fork build). The game's own bright-light fear only counted near-daylight, so a flashlight in a dark room never scared them.
 - Dot's "Hound den" job no longer fails with "Unable to find and assign mission target".
 - "Who they were": the overrun camp it marks always has its body with the roster (it used to be able to turn a square you had already seen into the camp, which left the roster on bare floor).
 - The 3-job and 6-job rewards (the stores key, Marcus's map) wait until you talk to Dot ("You wanted to see me?") instead of popping up out in the lanes when a job finishes there.

@@ -21,7 +21,7 @@
     "//": "Dead zones: where the lights are all out, the things that like the dark gather. Still no grabs; entity packs stay at 3 at most.",
     "monsters": [
       { "monster": "mon_br_smiler", "weight": 30 },
-      { "monster": "mon_sewer_rat", "weight": 30, "pack_size": [ 2, 4 ] },
+      { "monster": "mon_sewer_rat", "weight": 15, "pack_size": [ 1, 2 ] },
       { "monster": "mon_br_hound", "weight": 15, "pack_size": [ 2, 3 ] },
       { "group": "GROUP_ZOMBIE", "weight": 15 },
       { "monster": "mon_br_wretch", "weight": 10, "starts": "30 days" }
