@@ -190,19 +190,25 @@ bool game::check_mod_data( const std::vector<mod_id> &opts )
             // Load any dependencies and de-duplicate them
             std::vector<mod_id> dep_vector = tree.get_dependencies_of_X_as_strings( mod.ident );
             std::set<mod_id> dep_set( dep_vector.begin(), dep_vector.end() );
-            // Xbro10 fork: the throwaway world was made with the default mods, and a mod's
-            // mod_interactions folders load when their mod is in the world's list. So a folder for a
-            // default mod (Backrooms Expanded's for xbro_armory) loaded although that mod wasn't, and
-            // reported its items as unknown. List exactly the mods being checked.
+            // Xbro10 fork: load the mods the way a real world does (game::load_packs): each mod's own
+            // files, then its mod_interactions folders, which load only for mods in the world's list.
+            // Upstream loaded every file in the mod folder, mod_interactions included, so a mod with an
+            // interaction folder for another mod (Backrooms Expanded's for xbro_additions) failed the
+            // check with that mod's items "unknown". The list is exactly the mods being checked (the
+            // throwaway world was made with the default mods).
             std::vector<mod_id> &active_order = world_generator->active_world->active_mod_order;
             active_order = dep_vector;
             active_order.push_back( mod.ident );
             for( const auto &dep : dep_set ) {
-                load_data_from_dir( dep->path, dep->ident.str() );
+                load_mod_data_from_dir( dep->path, dep->ident.str() );
             }
 
             // Load mod itself
-            load_data_from_dir( mod.path, mod.ident.str() );
+            load_mod_data_from_dir( mod.path, mod.ident.str() );
+            for( const auto &dep : dep_set ) {
+                load_mod_interaction_data_from_dir( dep->path / "mod_interactions", dep->ident.str() );
+            }
+            load_mod_interaction_data_from_dir( mod.path / "mod_interactions", mod.ident.str() );
             DynamicDataLoader::get_instance().finalize_loaded_data();
         } catch( const std::exception &err ) {
             std::cerr << "Error loading data: " << err.what() << std::endl;

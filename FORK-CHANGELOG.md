@@ -8,7 +8,7 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 |---|---|
 | **[BE]** | Backrooms Expanded mod: levels, places, monsters, items, jobs |
 | **[SM]** | Survivor Minds mod: NPC journals, wall marks, routines, gossip |
-| **[AR]** | Xbro10's Armory mod: weapons for the regular world, no Backrooms needed (on by default) |
+| **[AD]** | Additions mod: things added to the regular world, no Backrooms needed (on by default) |
 | **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
 | **[Launcher]** | The launcher in `tools/launcher/` |
 
@@ -20,11 +20,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 18, 2026
 
 ### Backrooms
-- [AR] **Xbro10's Armory, a new mod on by default:** weapons for the regular world, no Backrooms needed. First in it is the
+- [AD] **Additions, a new mod on by default:** additions to the regular world, no Backrooms needed. First in it is the
   **Flamero-Mado spear**, a rare end-game spear you fill with kerosene or gasoline and light; lit, it burns as well as
   pierces and about one hit in three sets the target on fire. Found in museums and mansion collections; crafted only
   from its schematic. Sprites for UltiCa and UndeadPeople. [BE] With both mods on, it also turns up in Level 2 crew
-  stores, at the Exchange and on the Redeemer; Backrooms Expanded works with or without the Armory.
+  stores, at the Exchange and on the Redeemer; Backrooms Expanded works with or without Additions.
 - [BE] **Entity loot and proper butchery:** butchering a Hound, Deathmoth or the Redeemer gave human flesh (the game's
   default); now they give mutant meat, fat, bone and hide. Hounds drop fangs, Smilers sometimes their teeth, Facelings
   their clothes and pocket things, Skin-stealers the skin they wore, Partygoers a red balloon and party hat, the
