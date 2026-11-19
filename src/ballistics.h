@@ -41,6 +41,11 @@ projectile_attack_aim projectile_attack_roll( const dispersion_sources &dispersi
  *  dispersion.
  *  Returns the rolled dispersion of the shot and the actually hit point.
  */
+// Xbro10 fork: true on chain-link, bars, arrow slits and other terrain you can see, breathe and reach through
+// (TRANSPARENT, PERMEABLE and THIN_OBSTACLE) with no furniture or vehicle in the way. Arrows, bolts and thrown things fly
+// through it like bullets already do, and NPCs count a shot through it as clear.
+bool projectile_passes_mesh( const map &here, const tripoint_bub_ms &p );
+
 void projectile_attack( dealt_projectile_attack &attack, const projectile &proj_arg,
                         const tripoint_bub_ms &source, const tripoint_bub_ms &target_arg,
                         const dispersion_sources &dispersion, Creature *origin = nullptr, const vehicle *in_veh = nullptr,

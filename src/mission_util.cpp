@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -221,6 +222,30 @@ static std::optional<tripoint_abs_omt> find_or_create_om_terrain(
 
                 // We found a match, so set this position (which was our replacement terrain)
                 // to our desired mission terrain.
+                if( !target_pos.is_invalid() ) {
+                    overmap_buffer.ter_set( target_pos, oter_id( params.overmap_terrain.evaluate( d ) ) );
+                }
+            }
+        }
+
+        // Xbro10 fork: "cant_see" asks for a place whose map isn't made yet, so its layout (and anything placed with
+        // it) is generated on arrival. On a revealed map nothing is unseen and the mission failed ("Unable to find and
+        // assign mission target", then "Mapgen update function called with invalid tripoint"). Fall back to a place
+        // that is seen but not generated yet: the terrain itself, else the replacement terrain turned into it.
+        if( target_pos.is_invalid() && params.cant_see && params.create_if_necessary && !params.must_see ) {
+            omt_find_params seen_params = find_params;
+            seen_params.cant_see = false;
+            const auto random_ungenerated = [&]( const std::string & type ) {
+                seen_params.types.front().first = type;
+                std::vector<tripoint_abs_omt> spots = overmap_buffer.find_all( origin_pos, seen_params );
+                spots.erase( std::remove_if( spots.begin(), spots.end(), []( const tripoint_abs_omt & p ) {
+                    return overmap_buffer.is_omt_generated( p );
+                } ), spots.end() );
+                return random_entry( spots, tripoint_abs_omt::invalid );
+            };
+            target_pos = random_ungenerated( params.overmap_terrain.evaluate( d ) );
+            if( target_pos.is_invalid() && params.replaceable_overmap_terrain ) {
+                target_pos = random_ungenerated( ( *params.replaceable_overmap_terrain ).evaluate( d ) );
                 if( !target_pos.is_invalid() ) {
                     overmap_buffer.ter_set( target_pos, oter_id( params.overmap_terrain.evaluate( d ) ) );
                 }
