@@ -86,6 +86,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **Ambient volume changes apply in game:** lowering Ambient sound volume or Sound effect volume and leaving
   Options fades the playing ambient loops (rain, wind, night) so they come back at the new volume; before, they kept
   the old volume until a restart.
+- [C++] **No scenario pop-up in plain worlds:** the "Last Character" template from a Backrooms world no longer
+  pops up "Tried to use non-existent scenario" when you start a world without the Backrooms; it just uses the default
+  scenario.
 - [C++] **A stranger who ran from monsters no longer flees from you for a day:** running from zombies switched them
   to the game's "fleeing" attitude, which also meant fleeing the player for 24 hours, so they kept running from you
   after you had killed what scared them. Now it lasts as long as that run (unless they already feared you).

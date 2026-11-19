@@ -1658,8 +1658,15 @@ void avatar::load( const JsonObject &data )
     } else {
         const scenario *generic_scenario = scenario::generic();
 
-        debugmsg( "Tried to use non-existent scenario '%s'. Setting to generic '%s'.",
-                  scen_ident.c_str(), generic_scenario->ident().c_str() );
+        // Xbro10 fork: a template made in a world with a mod's scenario (say a Backrooms start) is
+        // offered in every world; without that mod, fall back quietly. Saves still report it.
+        if( loading_template ) {
+            DebugLog( D_INFO, D_GAME ) << "Template scenario '" << scen_ident << "' isn't loaded; using '"
+                                       << generic_scenario->ident().str() << "'.";
+        } else {
+            debugmsg( "Tried to use non-existent scenario '%s'. Setting to generic '%s'.",
+                      scen_ident.c_str(), generic_scenario->ident().c_str() );
+        }
         set_scenario( generic_scenario );
     }
 

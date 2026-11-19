@@ -106,6 +106,9 @@ class avatar : public Character
             tripoint_abs_ms bbox_max;
         };
         zone_sort_viewport_t zone_sort_viewport; // NOLINT(cata-serialize)
+        // Xbro10 fork: true while load_template() reads a character template, so a scenario from a mod
+        // this world doesn't have falls back to the generic one quietly instead of with a debug pop-up.
+        bool loading_template = false; // NOLINT(cata-serialize)
 
         void store( JsonOut &json ) const;
         void load( const JsonObject &data );
