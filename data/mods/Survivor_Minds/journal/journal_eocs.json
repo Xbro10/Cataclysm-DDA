@@ -80,8 +80,19 @@
           "else": { "set_string_var": "<sm_j_mood_bad>", "target_var": { "u_val": "sm_p_mood" }, "parse_tags": true }
         }
       },
+      { "set_string_var": "", "target_var": { "u_val": "sm_p_needs" } },
       {
-        "set_string_var": "<u_val:sm_gap>Day <u_val:sm_today>: <u_val:sm_p_sleep> <u_val:sm_p_food> <u_val:sm_p_water> <u_val:sm_p_mood>",
+        "//": "Prompt 5.4: with the fork's NPC autonomy option, a lonely NPC (Social 60+) says so. On an official build the variable doesn't exist and counts as 0: no line.",
+        "if": { "and": [ { "math": [ "has_var(u_autonomy_need_social)" ] }, { "math": [ "u_autonomy_need_social >= 60" ] } ] },
+        "then": { "set_string_var": " <sm_j_lonely>", "target_var": { "u_val": "sm_p_needs" }, "parse_tags": true }
+      },
+      {
+        "//": "Prompt 5.4: and a scared one (Safety 50+, read as the entry is written).",
+        "if": { "and": [ { "math": [ "has_var(u_autonomy_need_safety)" ] }, { "math": [ "u_autonomy_need_safety >= 50" ] } ] },
+        "then": { "set_string_var": "<u_val:sm_p_needs> <sm_j_scared>", "target_var": { "u_val": "sm_p_needs" }, "parse_tags": true }
+      },
+      {
+        "set_string_var": "<u_val:sm_gap>Day <u_val:sm_today>: <u_val:sm_p_sleep> <u_val:sm_p_food> <u_val:sm_p_water> <u_val:sm_p_mood><u_val:sm_p_needs>",
         "target_var": { "u_val": "sm_entry" },
         "parse_tags": true
       },
