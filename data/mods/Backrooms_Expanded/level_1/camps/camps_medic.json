@@ -1,0 +1,239 @@
+[
+  {
+    "type": "npc",
+    "id": "BR1_medic",
+    "//": "The Breakroom's medic (both layouts: the infirmary in the Checkpoint, by the bunks in the Bunker). Treats the Breakroom's own people for free every 10 minutes (EOC_BR1_MEDIC_TICK) and you for tally tokens; her own people come first. Stays put (GUARD).",
+    "name_unique": "Ruth Abara",
+    "gender": "female",
+    "name_suffix": "the Medic",
+    "class": "NC_BR1_MEDIC",
+    "attitude": 0,
+    "mission": "GUARD",
+    "chat": "TALK_BR1_MEDIC",
+    "faction": "br_breakroom"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_BR1_MEDIC",
+    "name": { "str": "Medic" },
+    "job_description": "I keep the Breakroom's people alive.  You too, if you can pay.",
+    "common": false,
+    "worn_override": "NC_BR1_MEDIC_worn",
+    "carry_override": "NC_BR1_MEDIC_carry",
+    "traits": [ { "group": "Appearance_demographics" }, { "trait": "RETURN_TO_START_POS" }, { "trait": "BR1_BREAKROOM_MEMBER" } ],
+    "bonus_per": { "rng": [ 1, 3 ] },
+    "bonus_int": { "rng": [ 2, 4 ] },
+    "skills": [
+      { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
+      { "skill": "firstaid", "bonus": { "rng": [ 6, 8 ] } },
+      { "skill": "chemistry", "bonus": { "rng": [ 1, 3 ] } }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_MEDIC_worn",
+    "subtype": "collection",
+    "items": [ "tshirt", "pants_cargo", "coat_lab", "socks", "sneakers", "gloves_medical" ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_BR1_MEDIC_carry",
+    "subtype": "collection",
+    "entries": [
+      { "item": "bandages", "count": [ 4, 8 ] },
+      { "item": "disinfectant", "charges": [ 3, 6 ] },
+      { "item": "medical_tape", "count": [ 1, 2 ] }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_MEDIC_TICK",
+    "//": "Every 10 minutes on Level 1, the medic does her round (EOC_BR1_MEDIC_ROUND, run as her). 'local' only reaches NPCs loaded near you, so nothing happens while you're far from the Breakroom (as with the runners, nothing off-screen moves). br1_player_at lets the round only report treatments you could see.",
+    "recurrence": [ "10 minutes", "10 minutes" ],
+    "condition": { "current_dimension": "backrooms_level_1" },
+    "effect": [
+      { "u_location_variable": { "global_val": "br1_player_at" } },
+      { "u_run_npc_eocs": [ "EOC_BR1_MEDIC_ROUND" ], "unique_ids": [ "BR1_medic" ], "local": true }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_MEDIC_ROUND",
+    "//": "Run as the medic. Treats every hurt Breakroom member (BR1_BREAKROOM_MEMBER) within 30 squares of her (EOC_BR1_MEDIC_TREAT). br1_medic_busy is 1 while one of them is still badly hurt afterwards: then she only stops your bleeding and won't do a full treatment for you yet.",
+    "effect": [
+      { "math": [ "br1_medic_busy = 0" ] },
+      { "u_run_npc_eocs": [ "EOC_BR1_MEDIC_TREAT" ], "local": true, "npc_range": 30 }
+    ]
+  },
+  {
+    "type": "activity_type",
+    "id": "ACT_BR1_TREATMENT",
+    "//": "You lying still while the medic works on you (the patch-up and full treatment pass this much time).",
+    "activity_level": "NO_EXERCISE",
+    "verb": "being treated",
+    "rooted": true,
+    "based_on": "time"
+  },
+  {
+    "type": "mutation",
+    "id": "BR1_BREAKROOM_MEMBER",
+    "name": { "str": "Breakroom member" },
+    "description": "One of the Breakroom's own people: its medic treats them for free.",
+    "points": 0,
+    "player_display": false,
+    "purifiable": false,
+    "valid": false
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_MEDIC_TREAT",
+    "//": "Run as an NPC near the medic. Only the Breakroom's own people (trait BR1_BREAKROOM_MEMBER, given by their classes), and only if hurt: stop bleeding, clean bites and infection, and heal 10 on every body part (about a third of a person's hit points, so a bad wound takes an hour or so of rounds).",
+    "condition": {
+      "and": [
+        { "u_has_trait": "BR1_BREAKROOM_MEMBER" },
+        {
+          "math": [
+            "u_hp('torso') + u_hp('head') + u_hp('arm_l') + u_hp('arm_r') + u_hp('leg_l') + u_hp('leg_r') < u_hp_max('torso') + u_hp_max('head') + u_hp_max('arm_l') + u_hp_max('arm_r') + u_hp_max('leg_l') + u_hp_max('leg_r')"
+          ]
+        }
+      ]
+    },
+    "effect": [
+      { "u_lose_effect": [ "bleed", "bite", "infected" ], "target_part": "ALL" },
+      { "u_heal_all": 10 },
+      {
+        "if": {
+          "math": [
+            "( u_hp('torso') < u_hp_max('torso') * 0.75 ) + ( u_hp('head') < u_hp_max('head') * 0.75 ) + ( u_hp('leg_l') < u_hp_max('leg_l') * 0.5 ) + ( u_hp('leg_r') < u_hp_max('leg_r') * 0.5 ) > 0"
+          ]
+        },
+        "then": [ { "math": [ "br1_medic_busy = 1" ] } ]
+      },
+      {
+        "if": { "math": [ "distance('u', br1_player_at) <= 12" ] },
+        "then": [ { "message": "Ruth patches up <u_name>.", "type": "neutral" } ]
+      }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_MEDIC",
+    "//": "Prices in tally tokens, cheaper once you've done 3 jobs for the Breakroom (u_br1_standing): 5 or 3 to patch up, 20 or 10 for a full treatment. The conditions and payments work the price out themselves; u_br1_medic_patch / _full, set on the way in, are only for the response text.",
+    "speaker_effect": {
+      "effect": [
+        { "math": [ "u_br1_medic_patch = 5 - 2 * ( u_br1_standing >= 3 )" ] },
+        { "math": [ "u_br1_medic_full = 20 - 10 * ( u_br1_standing >= 3 )" ] }
+      ]
+    },
+    "dynamic_line": {
+      "math": [
+        "u_hp('torso') + u_hp('head') + u_hp('arm_l') + u_hp('arm_r') + u_hp('leg_l') + u_hp('leg_r') < u_hp_max('torso') + u_hp_max('head') + u_hp_max('arm_l') + u_hp_max('arm_r') + u_hp_max('leg_l') + u_hp_max('leg_r')"
+      ],
+      "yes": "Sit.  Let me look at you.  Hm.  I can fix that, but medicine isn't free down here.",
+      "no": "You're walking and you're not bleeding.  Good.  Keep it that way."
+    },
+    "responses": [
+      {
+        "text": "Stop the bleeding and clean me up.  [<u_val:br1_medic_patch> tally tokens]",
+        "condition": {
+          "and": [
+            {
+              "math": [
+                "u_hp('torso') + u_hp('head') + u_hp('arm_l') + u_hp('arm_r') + u_hp('leg_l') + u_hp('leg_r') < u_hp_max('torso') + u_hp_max('head') + u_hp_max('arm_l') + u_hp_max('arm_r') + u_hp_max('leg_l') + u_hp_max('leg_r')"
+              ]
+            },
+            { "u_has_items": { "item": "br_tally_token", "count": { "math": [ "5 - 2 * ( u_br1_standing >= 3 )" ] } } }
+          ]
+        },
+        "effect": [
+          { "u_consume_item": "br_tally_token", "count": { "math": [ "5 - 2 * ( u_br1_standing >= 3 )" ] } },
+          { "u_lose_effect": [ "bleed", "bite", "infected" ], "target_part": "ALL" },
+          { "u_heal_all": 5 },
+          { "u_assign_activity": "ACT_BR1_TREATMENT", "duration": "15 minutes" }
+        ],
+        "topic": "TALK_BR1_MEDIC_PATCHED"
+      },
+      {
+        "text": "Fix me up properly.  [<u_val:br1_medic_full> tally tokens]",
+        "condition": {
+          "and": [
+            { "math": [ "br1_medic_busy == 0" ] },
+            {
+              "math": [
+                "u_hp('torso') + u_hp('head') + u_hp('arm_l') + u_hp('arm_r') + u_hp('leg_l') + u_hp('leg_r') < u_hp_max('torso') + u_hp_max('head') + u_hp_max('arm_l') + u_hp_max('arm_r') + u_hp_max('leg_l') + u_hp_max('leg_r')"
+              ]
+            },
+            { "u_has_items": { "item": "br_tally_token", "count": { "math": [ "20 - 10 * ( u_br1_standing >= 3 )" ] } } }
+          ]
+        },
+        "effect": [
+          { "u_consume_item": "br_tally_token", "count": { "math": [ "20 - 10 * ( u_br1_standing >= 3 )" ] } },
+          { "u_lose_effect": [ "bleed", "bite", "infected" ], "target_part": "ALL" },
+          { "u_heal_all": 500 },
+          { "u_assign_activity": "ACT_BR1_TREATMENT", "duration": "2 hours" }
+        ],
+        "topic": "TALK_BR1_MEDIC_FIXED"
+      },
+      {
+        "text": "Fix me up properly.",
+        "condition": {
+          "and": [
+            { "math": [ "br1_medic_busy == 1" ] },
+            {
+              "math": [
+                "u_hp('torso') + u_hp('head') + u_hp('arm_l') + u_hp('arm_r') + u_hp('leg_l') + u_hp('leg_r') < u_hp_max('torso') + u_hp_max('head') + u_hp_max('arm_l') + u_hp_max('arm_r') + u_hp_max('leg_l') + u_hp_max('leg_r')"
+              ]
+            }
+          ]
+        },
+        "topic": "TALK_BR1_MEDIC_BUSY"
+      },
+      {
+        "text": "I can't pay.",
+        "condition": {
+          "and": [
+            {
+              "math": [
+                "u_hp('torso') + u_hp('head') + u_hp('arm_l') + u_hp('arm_r') + u_hp('leg_l') + u_hp('leg_r') < u_hp_max('torso') + u_hp_max('head') + u_hp_max('arm_l') + u_hp_max('arm_r') + u_hp_max('leg_l') + u_hp_max('leg_r')"
+              ]
+            },
+            { "not": { "u_has_items": { "item": "br_tally_token", "count": { "math": [ "5 - 2 * ( u_br1_standing >= 3 )" ] } } } }
+          ]
+        },
+        "topic": "TALK_BR1_MEDIC_NO_TOKENS"
+      },
+      { "text": "Who are you?", "topic": "TALK_BR1_MEDIC_ABOUT" },
+      { "text": "Bye.", "topic": "TALK_DONE" }
+    ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_MEDIC_PATCHED",
+    "dynamic_line": "There.  Bleeding's stopped and it's clean.  It'll still hurt.  Come back if you want it done properly.",
+    "responses": [ { "text": "Thanks.", "topic": "TALK_BR1_MEDIC" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_MEDIC_FIXED",
+    "dynamic_line": "Stitched, cleaned, set.  You lay on that cot two hours; don't argue.  Now go and don't make me do it again.",
+    "responses": [ { "text": "Thanks, Ruth.", "topic": "TALK_BR1_MEDIC" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_MEDIC_BUSY",
+    "dynamic_line": "Not now.  One of ours is in a bad way and they come first.  I can stop your bleeding, that's all.  Come back in a bit.",
+    "responses": [ { "text": "All right.", "topic": "TALK_BR1_MEDIC" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_MEDIC_NO_TOKENS",
+    "dynamic_line": "Then you can't pay.  Bandages don't come from nowhere.  Do a job for Dot, earn some tokens, come back.",
+    "responses": [ { "text": "Fine.", "topic": "TALK_BR1_MEDIC" } ]
+  },
+  {
+    "type": "talk_topic",
+    "id": "TALK_BR1_MEDIC_ABOUT",
+    "dynamic_line": "Ruth.  I was a nurse, up there, before.  Now I'm the reason the runners come back in one piece.  Breakroom people I treat for nothing; that's the deal we made.  Everyone else pays, and waits their turn.  Work for Dot a while and I'll do it cheaper.",
+    "responses": [ { "text": "Good to know.", "topic": "TALK_BR1_MEDIC" } ]
+  }
+]

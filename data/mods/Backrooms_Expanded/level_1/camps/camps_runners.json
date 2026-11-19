@@ -49,7 +49,7 @@
     "worn_override": "NC_BR1_RUNNER_worn",
     "weapon_override": "NC_BR1_RUNNER_weapon",
     "carry_override": "NC_BR1_RUNNER_carry",
-    "traits": [ { "group": "Appearance_demographics" } ],
+    "traits": [ { "group": "Appearance_demographics" }, { "trait": "BR1_BREAKROOM_MEMBER" } ],
     "bonus_str": { "constant": 2 },
     "bonus_dex": { "rng": [ 2, 3 ] },
     "bonus_per": { "rng": [ 0, 2 ] },
