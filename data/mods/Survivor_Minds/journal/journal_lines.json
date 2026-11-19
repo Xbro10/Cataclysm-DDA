@@ -10,5 +10,27 @@
   { "type": "snippet", "category": "<sm_j_water_bad>", "text": [ "Parched.", "Mouth like sandpaper.", "If I don't find water today, that's it." ] },
   { "type": "snippet", "category": "<sm_j_mood_good>", "text": [ "Feeling good about things.", "Good day ahead, I think.", "Almost hopeful." ] },
   { "type": "snippet", "category": "<sm_j_mood_ok>", "text": [ "Holding together.", "Getting by.", "Another day.  Fine." ] },
-  { "type": "snippet", "category": "<sm_j_mood_bad>", "text": [ "Can't keep going like this.", "Everything's falling apart.", "Don't know why I bother writing this." ] }
+  { "type": "snippet", "category": "<sm_j_mood_bad>", "text": [ "Can't keep going like this.", "Everything's falling apart.", "Don't know why I bother writing this." ] },
+  {
+    "type": "snippet",
+    "//": "Prompt 5.4: added to the morning entry when the fork's NPC autonomy option keeps Social at 60 or more (NPC var autonomy_need_social). Never on an official build.",
+    "category": "<sm_j_lonely>",
+    "text": [
+      "Haven't talked to anyone in days.",
+      "Caught myself talking to the walls.",
+      "Would give a lot for a real conversation.",
+      "Nobody to tell any of this to."
+    ]
+  },
+  {
+    "type": "snippet",
+    "//": "Prompt 5.4: added to the morning entry when the fork's NPC autonomy option has Safety at 50 or more (NPC var autonomy_need_safety). Never on an official build.",
+    "category": "<sm_j_scared>",
+    "text": [
+      "Couldn't settle.  Kept watching the dark.",
+      "Every sound had me reaching for something.",
+      "Didn't feel safe for a second.",
+      "Something's out there.  I can feel it."
+    ]
+  }
 ]

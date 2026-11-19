@@ -6,6 +6,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ## Unreleased
 
 ### Added
+- Morning journal entries mention loneliness and fear: with the NPC autonomy option of Xbro10's fork, an NPC who has been alone a long time (Social 60+) adds a line like "Haven't talked to anyone in days.", and a scared one (Safety 50+) a line like "Couldn't settle.  Kept watching the dark.", four wordings each. On an official build those values don't exist and no such line appears.
 - Journal lines about Backrooms finds (with Backrooms Expanded): an NPC who eats moth jelly, a royal ration, or drinks cloudy water (liquid pain) writes about it, at most once a day each. Without Backrooms Expanded they simply never come up.
 
 ## v0.1.0 - 2026-11-17
