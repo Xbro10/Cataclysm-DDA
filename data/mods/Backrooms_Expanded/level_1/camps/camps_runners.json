@@ -49,7 +49,7 @@
     "worn_override": "NC_BR1_RUNNER_worn",
     "weapon_override": "NC_BR1_RUNNER_weapon",
     "carry_override": "NC_BR1_RUNNER_carry",
-    "traits": [ { "group": "Appearance_demographics" } ],
+    "traits": [ { "group": "Appearance_demographics" }, { "trait": "BR1_BREAKROOM_MEMBER" } ],
     "bonus_str": { "constant": 2 },
     "bonus_dex": { "rng": [ 2, 3 ] },
     "bonus_per": { "rng": [ 0, 2 ] },
@@ -266,7 +266,6 @@
                 "if": { "math": [ "distance('u', u_br1_home) > 24" ] },
                 "then": [ { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } } ],
                 "else": [
-                  { "//": "Home: keep the runner posted at its spot inside (see the arrival step above).", "u_set_guard_pos": { "u_val": "br1_home" } },
                   {
                     "if": {
                       "and": [
@@ -277,6 +276,11 @@
                       ]
                     },
                     "then": [ { "run_eocs": "EOC_BR1_RUNNER_SEND" } ]
+                  },
+                  {
+                    "//": "Still home (not just sent out): keep the runner posted at its spot inside (see the arrival step above). After the departure check, so it never touches a runner setting off.",
+                    "if": { "math": [ "u_br1_run_state == 0" ] },
+                    "then": [ { "u_set_guard_pos": { "u_val": "br1_home" } } ]
                   }
                 ]
               }

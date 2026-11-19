@@ -129,7 +129,8 @@
         { "class": "BR1_runner_rosa", "x": 9, "y": 5, "unique_id": "BR1_runner_rosa" },
         { "class": "BR1_gate_guard", "x": 4, "y": 14 },
         { "class": "BR1_breakroom_archer", "x": 4, "y": 17 },
-        { "class": "BR1_breakroom_archer", "x": 19, "y": 17 }
+        { "class": "BR1_breakroom_archer", "x": 19, "y": 17 },
+        { "class": "BR1_medic", "x": 16, "y": 14, "unique_id": "BR1_medic" }
       ],
       "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 16, "y": 10 }, { "furn": "f_br1_runner_board", "x": 4, "y": 12 } ],
       "place_signs": [ { "x": 16, "y": 20, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
@@ -187,7 +188,8 @@
         { "class": "BR1_runner_rosa", "x": 9, "y": 5, "unique_id": "BR1_runner_rosa" },
         { "class": "BR1_gate_guard", "x": 10, "y": 16 },
         { "class": "BR1_breakroom_archer", "x": 3, "y": 18 },
-        { "class": "BR1_breakroom_archer", "x": 13, "y": 18 }
+        { "class": "BR1_breakroom_archer", "x": 13, "y": 18 },
+        { "class": "BR1_medic", "x": 16, "y": 14, "unique_id": "BR1_medic" }
       ],
       "place_furniture": [ { "furn": "f_br1_supply_locker", "x": 16, "y": 10 }, { "furn": "f_br1_runner_board", "x": 6, "y": 16 } ],
       "place_signs": [ { "x": 9, "y": 21, "signage": "BREAKROOM.  NO WEAPONS DRAWN INSIDE.  TAKE A NUMBER." } ],
