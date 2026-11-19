@@ -3,11 +3,11 @@ param([string]$Out, [string]$Preview)
 # 0 Flamero-Mado spear, unlit (br_flamero_mado_off)
 # 1 Flamero-Mado spear, lit   (br_flamero_mado_on)
 # 2 Flamero-Mado schematic    (br_flamero_schematic)
-# 3, 4, 5 the lit spear's other animation frames (1, 3, 4, 5 loop; the tileset marks it "animated")
+# 3-9 the lit spear's other animation frames (1, 3, 4 ... 9 loop; the tileset marks it "animated")
 # The spear lies corner to corner, butt top-right, blade pointing down-left. Its shape lives in spear_shape.ps1.
 Add-Type -AssemblyName System.Drawing
 $T = 32; $TW = 32; $TH = 32
-$Count = 6
+$Count = 10
 $Scratch = $Count
 # One extra tile on the right is scratch space for the schematic's silhouette; it is cropped off before saving.
 $bmp = New-Object System.Drawing.Bitmap (($Count + 1) * $T), $T, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
@@ -22,8 +22,8 @@ DrawSpear 0 $ground $false
 OutlineT 0 $INK
 Shadow 0 15 30 9
 
-# ---- 1 (and 3, 4, 5): lit: ribbons of flame curl out of the collar jets, wrap the blade's base and rise.
-# Four frames of the same flames, swaying (see FlameFrame in spear_shape.ps1).
+# ---- 1 (and 3-9): lit: ribbons of flame curl out of the collar jets, wrap the blade's base and rise.
+# Eight frames of the same flames, swaying (see FlameFrame in spear_shape.ps1).
 function DrawLit($tile, $frame) {
   $script:FlameFrame = $frame; FlameFrameStart
   DrawSpear $tile $ground $true
@@ -38,7 +38,7 @@ function DrawLit($tile, $frame) {
   Embers $tile @(@(11, 6), @(6, 9), @(22, 9), @(17, 7), @(3, 14), @(23, 14))
   Shadow $tile 15 30 9
 }
-DrawLit 1 0; DrawLit 3 1; DrawLit 4 2; DrawLit 5 3
+DrawLit 1 0; foreach ($fr in 1..7) { DrawLit (2 + $fr) $fr }
 $script:FlameFrame = 0
 
 # ---- 2: schematic: blueprint in a plastic sleeve, the spear drawn as a pale technical outline, red notes.
