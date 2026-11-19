@@ -14,8 +14,8 @@
           { "id": "overlay_wielded_br_flamero_mado_off", "fg": 0, "rotates": false },
           {
             "id": "overlay_wielded_br_flamero_mado_on",
-            "//": "Animated: four frames of swaying flame, 6/60 s each (tiles 1-4 of the sheet).",
-            "fg": [ { "weight": 6, "sprite": 1 }, { "weight": 6, "sprite": 2 }, { "weight": 6, "sprite": 3 }, { "weight": 6, "sprite": 4 } ],
+            "//": "Animated: eight frames of swaying flame, 4/60 s each, about half a second a loop (tiles 1-8 of the sheet).",
+            "fg": [ { "weight": 4, "sprite": 1 }, { "weight": 4, "sprite": 2 }, { "weight": 4, "sprite": 3 }, { "weight": 4, "sprite": 4 }, { "weight": 4, "sprite": 5 }, { "weight": 4, "sprite": 6 }, { "weight": 4, "sprite": 7 }, { "weight": 4, "sprite": 8 } ],
             "animated": true,
             "rotates": false
           }

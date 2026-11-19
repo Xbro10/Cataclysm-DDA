@@ -1,12 +1,12 @@
 param([string]$Out, [string]$Preview)
 # Draws the UndeadPeople held-weapon overlays, 64x80 tiles like UndeadPeople's own wielded spears
 # (sprite_offset -16, -48: the character's 32x32 tile is x 16-47, y 48-79 of each tile).
-# 0 overlay_wielded_br_flamero_mado_off   1-4 overlay_wielded_br_flamero_mado_on (four animation frames)
+# 0 overlay_wielded_br_flamero_mado_off   1-8 overlay_wielded_br_flamero_mado_on (eight animation frames)
 # UndeadPeople holds a spear steeply across the body: butt below the hand, head up past the shoulder, with a
 # short gap where the hand covers the shaft. The spear's shape lives in spear_shape.ps1.
 Add-Type -AssemblyName System.Drawing
 $T = 32; $TW = 64; $TH = 80
-$Count = 5
+$Count = 9
 $bmp = New-Object System.Drawing.Bitmap ($Count * $TW), $TH, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 . "$PSScriptRoot\sprite_common.ps1"
 . "$PSScriptRoot\spear_shape.ps1"
@@ -23,7 +23,7 @@ DrawSpear 0 $held $false 4.0
 HandGap 0
 OutlineT 0 $INK
 
-# Lit, four animation frames on tiles 1-4 (see FlameFrame in spear_shape.ps1).
+# Lit, eight animation frames on tiles 1-8 (see FlameFrame in spear_shape.ps1).
 # Flames: big, bright tongues curl out of the collar (about x 33, y 46) on both sides and climb the blade, with
 # a white-hot core; the held sprite is small on screen, so they need to be bolder than on the ground sprite.
 $script:flameLayers = $FlameBright
@@ -43,7 +43,7 @@ function DrawLit($tile, $frame) {
   Ribbon $tile @(@(35, 47), @(34, 44), @(36, 41)) 0.9 $true
   Embers $tile @(@(24, 33), @(43, 30), @(29, 25), @(38, 22), @(23, 40), @(45, 38), @(32, 21), @(26, 28), @(44, 25))
 }
-foreach ($fr in 0..3) { DrawLit (1 + $fr) $fr }
+foreach ($fr in 0..7) { DrawLit (1 + $fr) $fr }
 $script:FlameFrame = 0
 
 # Save, plus a 6x preview with a gap between tiles and the character's tile marked.
