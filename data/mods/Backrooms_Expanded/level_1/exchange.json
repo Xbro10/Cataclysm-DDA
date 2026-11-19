@@ -248,7 +248,10 @@
       { "item": "screwdriver" },
       { "item": "crowbar", "prob": 60 },
       { "item": "wrench", "prob": 50 },
-      { "item": "br_firesalt", "charges": 50, "count": [ 2, 4 ] }
+      { "item": "br_firesalt", "charges": 50, "count": [ 2, 4 ] },
+      { "item": "br_lightstick_bundle", "count": [ 2, 3 ] },
+      { "item": "br_work_lamp", "prob": 60 },
+      { "item": "br_uv_torch", "prob": 40 }
     ]
   },
   {
@@ -299,6 +302,9 @@
       { "group": "br_cat_car" },
       { "item": "rope_30" },
       { "item": "br_firesalt" },
+      { "item": "br_lightstick_bundle" },
+      { "item": "br_work_lamp" },
+      { "item": "br_uv_torch" },
       { "item": "bottle_almond_water" },
       { "item": "almond_water" }
     ]
