@@ -10,6 +10,7 @@
     "power": 15,
     "fac_food_supply": [ [ 0, { "calories": 57600, "vitamins": {  } } ] ],
     "wealth": 3000,
+    "currency": "br_tally_token",
     "price_rules": [
       { "item": "almond_water", "price": 2500 },
       { "item": "bottle_almond_water", "price": 50 },
@@ -62,6 +63,7 @@
     "power": 5,
     "fac_food_supply": [ [ 0, { "calories": 19200, "vitamins": {  } } ] ],
     "wealth": 3000,
+    "currency": "br_tally_token",
     "price_rules": [ { "item": "almond_water", "price": 2500 }, { "item": "bottle_almond_water", "price": 50 } ],
     "relations": {
       "br1_exchange": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
@@ -85,6 +87,7 @@
     "power": 5,
     "fac_food_supply": [ [ 0, { "calories": 19200, "vitamins": {  } } ] ],
     "wealth": 3000,
+    "currency": "br_tally_token",
     "price_rules": [ { "item": "almond_water", "price": 2500 }, { "item": "bottle_almond_water", "price": 50 } ],
     "relations": {
       "br1_exchange": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
@@ -108,6 +111,7 @@
     "power": 5,
     "fac_food_supply": [ [ 0, { "calories": 19200, "vitamins": {  } } ] ],
     "wealth": 3000,
+    "currency": "br_tally_token",
     "price_rules": [ { "item": "almond_water", "price": 2500 }, { "item": "bottle_almond_water", "price": 50 } ],
     "relations": {
       "br1_exchange": { "kill on sight": false, "watch your back": true, "share my stuff": true, "guard your stuff": true, "lets you in": true, "defends your space": true, "knows your voice": true },
@@ -220,6 +224,7 @@
     "subtype": "collection",
     "//": "Stock of the supplies trader: a few kinds of food, water and medicine in deep piles. Restocks every 3 days.",
     "entries": [
+      { "item": "br_tally_token", "count": [ 30, 50 ] },
       { "group": "almond_water_sealed", "count": [ 6, 10 ] },
       { "item": "can_beans", "count": [ 4, 8 ] },
       { "item": "granola", "count": [ 4, 8 ] },
@@ -238,6 +243,7 @@
     "subtype": "collection",
     "//": "Stock of the gear trader: batteries and lights above all, then tape, rope and a few real tools.",
     "entries": [
+      { "item": "br_tally_token", "count": [ 30, 50 ] },
       { "item": "light_battery_cell", "charges": 16, "count": [ 6, 10 ] },
       { "item": "flashlight", "charges": 16, "count": [ 2, 4 ] },
       { "item": "glowstick", "charges": 1400, "count": [ 3, 6 ] },
@@ -260,6 +266,7 @@
     "subtype": "collection",
     "//": "Stock of the oddities trader: maps, guides and notes, plus one rare find that changes with each restock.",
     "entries": [
+      { "item": "br_tally_token", "count": [ 20, 40 ] },
       { "item": "survivormap", "count": [ 2, 3 ] },
       { "item": "roadmap", "count": [ 1, 2 ] },
       { "item": "br1_note_generator", "count": [ 1, 2 ] },
@@ -524,7 +531,7 @@
   {
     "type": "talk_topic",
     "id": "TALK_BR1_EXCHANGE_ABOUT",
-    "dynamic_line": "The Exchange.  People fall in here with their pockets full and no idea what anything's worth.  We fix that.  You bring what you found, we give you what you need, and nobody gets stabbed over a can of beans.  Almond water's the closest thing to money down here: it never goes off, and everyone needs it.",
+    "dynamic_line": "The Exchange.  People fall in here with their pockets full and no idea what anything's worth.  We fix that.  You bring what you found, we give you what you need, and nobody gets stabbed over a can of beans.  We pay in tallies: brass tokens, punched right here, and every stall and crew down here takes them.  Five buy a bottle of almond water.  We'll still take the water itself, mind: it never goes off, and everyone needs it.",
     "responses": [ { "text": "Got it.", "topic": "TALK_BR1_TRADER" } ]
   },
   {

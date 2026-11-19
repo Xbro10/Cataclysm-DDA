@@ -1,0 +1,26 @@
+[
+  {
+    "type": "ITEM",
+    "subtypes": [ "GENERIC" ],
+    "category": "currency",
+    "id": "br_tally_token",
+    "//": "The Backrooms' money: the currency of the Exchange, its stalls, the diner, the Breakroom and the Level 2 tunnel crews (faction \"currency\"), so their traders value it at full price and pay with it. Jobs and Breakroom standing pay in it. One token is worth a fifth of a bottle of almond water.",
+    "name": { "str": "tally token" },
+    "description": "A brass washer stamped with five tally marks and a crooked letter E, punched out at the Exchange's counting table.  Nobody down here trusts paper.  Every stall on Level 1 and every tunnel crew on Level 2 takes them; five buy a bottle of almond water.",
+    "weight": "4 g",
+    "volume": "1 ml",
+    "price": "1 cent",
+    "price_postapoc": "5 USD",
+    "material": [ "brass" ],
+    "symbol": "$",
+    "color": "yellow",
+    "looks_like": "RobofacCoin"
+  },
+  {
+    "type": "item_group",
+    "id": "br_tally_pouch",
+    "subtype": "collection",
+    "//": "A few loose tally tokens, as a survivor or worker carries them.",
+    "entries": [ { "item": "br_tally_token", "count": [ 2, 8 ] } ]
+  }
+]

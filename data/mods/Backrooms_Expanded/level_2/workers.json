@@ -11,6 +11,7 @@
     "power": 15,
     "fac_food_supply": [ [ 0, { "calories": 57600, "vitamins": {  } } ] ],
     "wealth": 600,
+    "currency": "br_tally_token",
     "relations": {
       "br_tunnel_workers": {
         "kill on sight": false,
@@ -84,6 +85,7 @@
     "subtype": "collection",
     "entries": [
       { "item": "br_firesalt", "charges": [ 20, 50 ] },
+      { "group": "br_tally_pouch" },
       { "group": "br_cat_tools", "prob": 30 },
       { "group": "br_cat_hardware", "prob": 40 }
     ]
