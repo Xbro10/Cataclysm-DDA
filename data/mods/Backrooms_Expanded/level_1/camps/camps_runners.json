@@ -171,6 +171,11 @@
     "//": "Run as a runner. u_br1_run_state: 0 home, 1 out on a run, 2 heading home, 3 missing (waiting to be found). A run lasts until 1-2 days after leaving (u_br1_run_turn; the runner waits at the destination till then), or ends early when the runner is badly hurt; it doesn't depend on how full their pack is. Off-screen, an NPC that reaches its goal soon picks a random new one, so every tick re-aims a runner who has strayed more than a square from where it should be. Only one runner is out at a time (global br1_runner_out). Blocks run in the order 3, 2, 1, 0 so one tick never does two steps.",
     "effect": [
       {
+        "//": "On a run and more than a square from home: remember it (the board then says 'back for a rest' if they come home before the run ends, rather than right after they set off).",
+        "if": { "and": [ { "math": [ "u_br1_run_state == 1" ] }, { "math": [ "distance('u', u_br1_home) > 24" ] } ] },
+        "then": [ { "math": [ "u_br1_was_away = 1" ] } ]
+      },
+      {
         "if": { "math": [ "u_br1_run_state == 3" ] },
         "then": [
           {
@@ -281,13 +286,15 @@
           { "math": [ "br1_rs_1 = u_br1_run_state" ] },
           { "math": [ "br1_rn_1 = u_br1_run_next" ] },
           { "math": [ "br1_ld_1 = u_br1_left_day" ] },
-          { "math": [ "br1_rd_1 = u_br1_run_dest" ] }
+          { "math": [ "br1_rd_1 = u_br1_run_dest" ] },
+          { "math": [ "br1_ah_1 = ( u_br1_was_away == 1 ) * ( distance('u', u_br1_home) <= 24 )" ] }
         ],
         "else": [
           { "math": [ "br1_rs_2 = u_br1_run_state" ] },
           { "math": [ "br1_rn_2 = u_br1_run_next" ] },
           { "math": [ "br1_ld_2 = u_br1_left_day" ] },
-          { "math": [ "br1_rd_2 = u_br1_run_dest" ] }
+          { "math": [ "br1_rd_2 = u_br1_run_dest" ] },
+          { "math": [ "br1_ah_2 = ( u_br1_was_away == 1 ) * ( distance('u', u_br1_home) <= 24 )" ] }
         ]
       }
     ]
@@ -324,6 +331,7 @@
         ]
       },
       { "math": [ "u_br1_left_day = br1_sched_day" ] },
+      { "math": [ "u_br1_was_away = 0" ] },
       {
         "if": { "math": [ "distance('u', u_br1_dest) < 48" ] },
         "then": [ { "math": [ "u_br1_run_dest = 0" ] } ],
@@ -526,7 +534,8 @@
     },
     "end": {
       "effect": [
-        { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "count": 2 },
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
         { "u_spawn_item": "br_cat_medical", "use_item_group": true, "count": 2 },
         { "math": [ "faction_like('br_breakroom') += 8" ] },
         { "run_eocs": "EOC_BR1_STANDING_UP" }
@@ -566,6 +575,7 @@
       { "math": [ "br1_bl_next = br1_rn_1" ] },
       { "math": [ "br1_bl_left = br1_ld_1" ] },
       { "math": [ "br1_bl_dest = br1_rd_1" ] },
+      { "math": [ "br1_bl_home = br1_ah_1" ] },
       { "math": [ "br1_bl_depart = br1_depart_1" ] },
       { "math": [ "br1_bl_h = br1_depart_1_h" ] },
       {
@@ -585,6 +595,7 @@
       { "math": [ "br1_bl_next = br1_rn_2" ] },
       { "math": [ "br1_bl_left = br1_ld_2" ] },
       { "math": [ "br1_bl_dest = br1_rd_2" ] },
+      { "math": [ "br1_bl_home = br1_ah_2" ] },
       { "math": [ "br1_bl_depart = br1_depart_2" ] },
       { "math": [ "br1_bl_h = br1_depart_2_h" ] },
       {
@@ -731,6 +742,17 @@
                 ]
               }
             ]
+          }
+        ]
+      },
+      {
+        "//": "Back at the Breakroom partway through a run (came home to sleep or rest): say so instead of OUT. br1_bl_home comes from the 10-minute tick (br1_ah_N).",
+        "if": { "and": [ { "math": [ "br1_bl_dead != 1" ] }, { "math": [ "br1_bl_state == 1" ] }, { "math": [ "br1_bl_home == 1" ] } ] },
+        "then": [
+          {
+            "set_string_var": "<global_val:br1_bl_name>: back for a rest.  Heading out again after.",
+            "target_var": { "global_val": "br1_bl_line" },
+            "parse_tags": true
           }
         ]
       }

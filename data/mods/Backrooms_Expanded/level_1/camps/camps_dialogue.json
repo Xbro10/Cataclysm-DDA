@@ -8,6 +8,13 @@
       "no": "Another one.  Sit down before you fall down.  I'm Dot.  People here call me the Foreman, because somebody has to be.  Ask what you want to ask; everybody has the same questions."
     },
     "responses": [
+      {
+        "text": "You wanted to see me?",
+        "//": "Only when a standing reward (3 or 6 jobs) is waiting: EOC_BR1_STANDING_UP marks it due, Dot hands it over here.",
+        "condition": { "or": [ { "math": [ "u_br1_key_due == 1" ] }, { "math": [ "u_br1_map_due == 1" ] } ] },
+        "effect": { "run_eocs": "EOC_BR1_STANDING_REWARDS" },
+        "topic": "TALK_BR1_FOREMAN"
+      },
       { "text": "Where am I?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_WHERE" },
       { "text": "How do I get back?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_BACK" },
       { "text": "What's dangerous down here?", "effect": { "math": [ "u_br1_met_foreman = 1" ] }, "topic": "TALK_BR1_FOREMAN_DANGER" },

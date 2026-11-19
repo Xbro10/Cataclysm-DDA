@@ -119,7 +119,7 @@
     "//": "One week's draw from the Breakroom supply locker.",
     "subtype": "collection",
     "entries": [
-      { "item": "almond_water", "container-item": "bottle_almond_water", "count": 2 },
+      { "group": "almond_water_sealed", "count": 2 },
       { "group": "br1_camp_food", "count": [ 3, 4 ] },
       { "group": "br_cat_medical", "count": [ 1, 2 ] },
       { "group": "br_cat_power", "count": 1, "prob": 50 },
@@ -134,16 +134,26 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR1_STANDING_UP",
-    "//": "Run at the end of every Breakroom job. Counts finished jobs (u_br1_standing) and hands out the milestone rewards at 3 and 6.",
+    "//": "Run at the end of every Breakroom job. Counts finished jobs (u_br1_standing) and marks the milestone rewards at 3 and 6 as due (u_br1_key_due, u_br1_map_due). Some jobs finish out in the lanes (Thin the Hounds ends on the third kill), so the rewards wait until you talk to Dot: 'You wanted to see me?' (EOC_BR1_STANDING_REWARDS).",
     "effect": [
       { "math": [ "u_br1_standing += 1" ] },
       {
         "if": { "math": [ "u_br1_standing >= 3" ] },
         "then": [ { "u_add_morale": "morale_br1_regular", "bonus": 5, "max_bonus": 10, "duration": "6 h", "decay_start": "3 h" } ]
       },
+      { "if": { "math": [ "u_br1_standing == 3" ] }, "then": [ { "math": [ "u_br1_key_due = 1" ] } ] },
+      { "if": { "math": [ "u_br1_standing == 6" ] }, "then": [ { "math": [ "u_br1_map_due = 1" ] } ] }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR1_STANDING_REWARDS",
+    "//": "Dot hands over any milestone reward that is due, when you talk to her (TALK_BR1_FOREMAN, 'You wanted to see me?').",
+    "effect": [
       {
-        "if": { "math": [ "u_br1_standing == 3" ] },
+        "if": { "math": [ "u_br1_key_due == 1" ] },
         "then": [
+          { "math": [ "u_br1_key_due = 0" ] },
           { "u_spawn_item": "br1_breakroom_key" },
           {
             "message": "Breakroom regular.\n\nDot presses a small brass key into your hand.  \"Stores locker.  One draw a week, same as the rest of us.  You've earned it.\"  Somebody has written your name on the roster by the kettle.",
@@ -153,10 +163,13 @@
         ]
       },
       {
-        "if": { "math": [ "u_br1_standing == 6" ] },
+        "if": { "math": [ "u_br1_map_due == 1" ] },
         "then": [
+          { "math": [ "u_br1_map_due = 0" ] },
           { "u_spawn_item": "br1_marcus_map" },
-          { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "count": 3 },
+          { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+          { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+          { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
           { "math": [ "faction_trust('br_breakroom') += 20" ] },
           {
             "message": "One of us.\n\nMarcus hands you a folded square of graph paper as thick as a book.  \"Copy of the big map.  Don't lose it.  Don't show it to the sandbag lot.\"  Dot gives you three bottles from her own ration tin and won't hear a word about it.",
