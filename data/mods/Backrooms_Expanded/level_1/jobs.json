@@ -35,27 +35,179 @@
   {
     "type": "overmap_terrain",
     "id": "br1_hound_den",
-    "//": "Never placed by overmap generation: Dot's 'Hound den' job turns an unseen garage square into one.",
-    "name": "parking deck",
-    "sym": ".",
+    "//": "A Hound den on Level 1: 2-4 per map (br1_hound_den special), in one of four layouts. Dot's 'Hound den' job sends you to one you haven't seen and puts a pack in it.",
+    "name": "hound den",
+    "sym": "%",
     "looks_like": "s_garage",
-    "color": "dark_gray",
+    "color": "brown",
     "see_cost": "full_high",
     "flags": [ "NO_ROTATE" ]
   },
   {
+    "type": "overmap_special",
+    "id": "br1_hound_den",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_hound_den" } ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 2, 4 ],
+    "flags": [ "BACKROOMS_L1", "EXTRADIMENSIONAL" ]
+  },
+  {
     "type": "mapgen",
     "om_terrain": "br1_hound_den",
+    "weight": 40,
+    "//": "Den: a pack's sleeping place, two or three of them at home.",
     "object": {
       "predecessor_mapgen": "br1_garage",
       "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ],
-      "place_nested": [ { "chunks": [ "br1_hound_den_core" ], "x": 6, "y": 6 } ]
+      "place_nested": [ { "chunks": [ "br1_hound_den_core" ], "x": 6, "y": 6 } ],
+      "place_monster": [ { "monster": "mon_br_hound", "x": [ 8, 15 ], "y": [ 8, 15 ], "repeat": [ 2, 3 ] } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_hound_den",
+    "weight": 20,
+    "//": "Abandoned den: the pack moved on. Old bedding, dry bones, now and then a fang left behind.",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ],
+      "place_nested": [ { "chunks": [ "br1_hound_den_old" ], "x": 6, "y": 6 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_hound_den",
+    "weight": 25,
+    "//": "Last stand: a survivor cornered by the pack. Their body and gear, spent shells, a blood trail, and two Hounds still nosing around.",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ],
+      "place_nested": [ { "chunks": [ "br1_hound_den_last_stand" ], "x": 6, "y": 6 } ],
+      "place_monster": [ { "monster": "mon_br_hound", "x": [ 8, 15 ], "y": [ 8, 15 ], "repeat": 2 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_hound_den",
+    "weight": 15,
+    "//": "Feeding ground: where a big pack brings what it kills. Bone heaps, a half-eaten body, three or four Hounds, and a pile of shed fangs.",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ],
+      "place_nested": [ { "chunks": [ "br1_hound_den_feeding" ], "x": 6, "y": 6 } ],
+      "place_monster": [ { "monster": "mon_br_hound", "x": [ 7, 16 ], "y": [ 7, 16 ], "repeat": [ 3, 4 ] } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_hound_den_old",
+    "//": "The den after the pack left: the same shape, bedding flattened and cold, bones picked dry, old dark stains.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "            ",
+        "  X..X..X   ",
+        " X.o.....o. ",
+        " .b..b..%.X ",
+        " ....o..b.. ",
+        " X..b.....X ",
+        " .o....b..o ",
+        " ..b.....%. ",
+        " X..o.b..X  ",
+        "  ..X..X.   ",
+        "            ",
+        "            "
+      ],
+      "terrain": { ".": "t_thconc_floor", "X": "t_thconc_floor", "o": "t_thconc_floor", "%": "t_thconc_floor", "b": "t_thconc_floor" },
+      "furniture": { "X": "f_wreckage", "b": "f_straw_bed" },
+      "fields": { "%": { "field": "fd_blood", "intensity": 1, "age": 500 } },
+      "items": { "o": { "item": "br1_den_scraps", "chance": 70, "repeat": [ 1, 2 ] } },
+      "place_item": [ { "item": "br_hound_fang", "x": [ 3, 8 ], "y": [ 3, 8 ], "chance": 40 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_hound_den_last_stand",
+    "//": "A survivor backed into a corner of the den: their body by the wreck they hid behind, spent 9mm shells where they shot, a blood trail out through the bedding. Their gear and journal (Survivor Minds) are on the body (br1_overrun_body).",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "            ",
+        "  X..X..X   ",
+        " XC%.....o. ",
+        " .%%.b..%.X ",
+        " .s%.o..b.. ",
+        " X.s%%....X ",
+        " .o..%.b..o ",
+        " ..b..%%.%. ",
+        " X..o.b.%X  ",
+        "  ..X..X%   ",
+        "            ",
+        "            "
+      ],
+      "terrain": {
+        ".": "t_thconc_floor",
+        "X": "t_thconc_floor",
+        "o": "t_thconc_floor",
+        "%": "t_thconc_floor",
+        "b": "t_thconc_floor",
+        "C": "t_thconc_floor",
+        "s": "t_thconc_floor"
+      },
+      "furniture": { "X": "f_wreckage", "b": "f_straw_bed" },
+      "fields": { "%": { "field": "fd_blood", "intensity": 2, "age": 20 } },
+      "items": {
+        "o": { "item": "br1_den_scraps", "chance": 80 },
+        "C": [ { "item": "corpse_bloody", "chance": 100 }, { "item": "br1_overrun_body", "chance": 100 } ]
+      },
+      "place_item": [
+        { "item": "9mm_casing", "x": 2, "y": 4, "chance": 100, "repeat": [ 2, 4 ] },
+        { "item": "9mm_casing", "x": 3, "y": 5, "chance": 100, "repeat": [ 1, 3 ] }
+      ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_hound_den_feeding",
+    "//": "Where a big pack eats: heaps of bones, a half-eaten body in the middle, fresh blood everywhere, and the fangs they shed.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        " X..o..o..X ",
+        " .%%..%..o. ",
+        " o.%.o%%.%. ",
+        " ..%%.b.%.o ",
+        " o.%.C%%..% ",
+        " .%.%%.%%.. ",
+        " b..%.%.o.% ",
+        " .o.%%..%.. ",
+        " X..o.b..oX ",
+        "  ..X..X.   ",
+        "            ",
+        "            "
+      ],
+      "terrain": { ".": "t_thconc_floor", "X": "t_thconc_floor", "o": "t_thconc_floor", "%": "t_thconc_floor", "b": "t_thconc_floor", "C": "t_thconc_floor" },
+      "furniture": { "X": "f_wreckage", "b": "f_straw_bed" },
+      "fields": { "%": { "field": "fd_blood", "intensity": 3, "age": 5 } },
+      "items": {
+        "o": [ { "item": "br1_den_scraps", "chance": 100, "repeat": [ 1, 3 ] } ],
+        "C": { "item": "corpse_bloody", "chance": 100 }
+      },
+      "place_item": [
+        { "item": "bone_human", "x": [ 2, 9 ], "y": [ 2, 8 ], "chance": 80, "repeat": [ 2, 4 ] },
+        { "item": "br_hound_fang", "x": [ 2, 9 ], "y": [ 2, 8 ], "chance": 70, "repeat": [ 1, 3 ] }
+      ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
     "type": "mapgen",
     "nested_mapgen_id": "br1_hound_den_core",
-    "//": "Where a Hound pack sleeps: dragged-in junk, flattened bedding, bones and old blood. The pack itself is placed by the job (MISSION_BR1_HOUND_DEN).",
+    "//": "Where a Hound pack sleeps: dragged-in junk, flattened bedding, bones and old blood. Its Hounds come from the den's mapgen, and the 'Hound den' job (MISSION_BR1_HOUND_DEN) adds a pack.",
     "object": {
       "mapgensize": [ 12, 12 ],
       "rows": [
@@ -196,8 +348,9 @@
         "om_terrain": "br1_hound_den",
         "om_terrain_replace": "br1_garage",
         "random": true,
-        "search_range": 15,
+        "search_range": 30,
         "min_distance": 4,
+        "//": "cant_see: a den (or a garage square to become one) you haven't seen, so its layout is generated when you arrive. A seen garage square turned into a den would keep its old look.",
         "cant_see": true,
         "reveal_radius": 1,
         "z": 0
@@ -206,8 +359,7 @@
         "place_monster": [
           { "monster": "mon_br_hound", "x": 9, "y": 10, "target": true },
           { "monster": "mon_br_hound", "x": 13, "y": 10, "target": true },
-          { "monster": "mon_br_hound", "x": 10, "y": 13, "target": true },
-          { "monster": "mon_br_hound", "x": 14, "y": 13, "target": true }
+          { "monster": "mon_br_hound", "x": 12, "y": 13, "target": true }
         ]
       }
     },
@@ -224,10 +376,10 @@
     },
     "dialogue": {
       "describe": "There's a den.  Somebody has to deal with it.",
-      "offer": "One of the packs has gone to ground close by.  Bedding, bones, the lot.  Four of them, maybe more.  As long as that den's there, nobody walks that way.  I'll mark it for you.  Go in with light and go in ready.",
+      "offer": "One of the packs has gone to ground close by.  Bedding, bones, the lot.  Three of them at least, maybe more.  As long as that den's there, nobody walks that way.  I'll mark it for you.  Go in with light and go in ready.",
       "accepted": "Don't go in alone if you can help it.",
       "rejected": "Can't blame you.  It's a bad job.",
-      "advice": "Four of them in a den won't scatter like a lone pack.  Fight from a corner or a doorway so they come at you one or two at a time.",
+      "advice": "A pack in its den won't scatter like a lone pack.  Fight from a corner or a doorway so they come at you one or two at a time.",
       "inquire": "The den?",
       "success": "Every one of them?  Good.  Better than good.  Here.  And people will hear about this.",
       "success_lie": "There's still howling from that way.  Try again.",
@@ -252,6 +404,8 @@
         "om_terrain_replace": "br1_garage",
         "random": true,
         "search_range": 30,
+        "//": "cant_see: a camp (or a garage square to become one) you haven't seen, so the camp, its body and the roster on the body are generated when you arrive. A seen garage square turned into a camp kept its old look, so the roster lay on bare floor with no body.",
+        "cant_see": true,
         "reveal_radius": 1,
         "z": 0
       },
@@ -259,7 +413,8 @@
     },
     "end": {
       "effect": [
-        { "u_spawn_item": "almond_water", "container": "bottle_almond_water", "count": 2 },
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
+        { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
         { "math": [ "faction_trust('br_breakroom') += 10" ] },
         { "u_spawn_item": "br_cat_medical", "use_item_group": true, "count": 3 },
         { "math": [ "u_br1_roster_done = 1" ] },

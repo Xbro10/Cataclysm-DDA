@@ -7,7 +7,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Added
 
-- The Exchange has **three guards** now: one by the gate and two in the back corners. Each wears body armour and an army helmet, fights with a machete, steel spear or metal bat, and carries a loaded Glock, with the strength and skill to use them.
+- **Hound dens** are a Level 1 place now (2 to 4 per map, "hound den" on the map once seen), in four layouts: a den with two or three Hounds at home, an abandoned den with dry bones and maybe a fang, a survivor's last stand (their body and gear, spent shells, two Hounds still around) and a feeding ground (bone heaps, a half-eaten body, a big pack and shed fangs). Dot's "Hound den" job sends you to one you haven't seen within 30 squares and adds a pack of three.
+- The Exchange has **three guards** now: one by the gate and two in the back corners. Each wears body armour and an army helmet, fights with a steel spear (it reaches over the fence) or a machete, and carries a loaded Glock, with the strength and skill to use them.
 - **Survivor Minds traces** (with Survivor Minds on too; Backrooms Expanded still works without it): the dead survivor at an overrun camp carries their **journal**, one of four, with the last days before the camp fell (read it like any found journal). Survivor Minds' chalk marks appear on their own: **CAMP** and **WATER** arrows outside squatter camps and Level 2 tunnel crew camps, **DANGER** where a dead zone meets the lit garage, and **LOOTED** by an overrun camp's picked-over crates. About 1 in 5 maintenance rooms, attendant booths and security offices on Level 1 has been picked over: emptied, with a LOOTED mark at the door.
 - Backrooms entities have weaknesses. **Smilers burn in bright light:** switch on a flashlight, or catch one by a lamp or fire, and it sizzles and loses about a quarter of its health every turn, dying in a few turns (Level 0's ceiling lights are too dim; needs the Xbro10 fork build). **Hounds** have low morale: stand your ground and hurt them, kill one, or bring light or fire, and the pack breaks. **Deathmoths** are not scared of fire, so they fly into flares and fires, and burning weapons do triple damage to their wings. **Wretches** are dry husks: burning weapons do double damage. **Skin-stealers** back off from bright light.
 - The **Flamero-Mado spear** in the Backrooms: with Additions on too (the spear's own mod, on by default in new worlds), it turns up in Level 2 crew stores, as the Exchange oddities trader's rare find, and in the Redeemer's remains. Backrooms Expanded works with or without it.
@@ -28,6 +29,12 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Fixed
 
+- Dot's "Hound den" job no longer fails with "Unable to find and assign mission target".
+- "Who they were": the overrun camp it marks always has its body with the roster (it used to be able to turn a square you had already seen into the camp, which left the roster on bare floor).
+- The 3-job and 6-job rewards (the stores key, Marcus's map) wait until you talk to Dot ("You wanted to see me?") instead of popping up out in the lanes when a job finishes there.
+- Breakroom door guards carry a steel spear (Exchange guards usually do too): it reaches over the chain-link fence, so they now fight zombies at the fence instead of ignoring them.
+- The runner board says "back for a rest" when a runner on a run has come home to sleep, instead of still saying OUT.
+- No more "cannot contain it" error when a reward or the weekly ration gives two or three almond waters: each comes in its own bottle.
 - Butchering Backrooms entities no longer gives human flesh. Hounds give stringy mutant meat, fat, bone, sinew and a hide; Deathmoths a little mutant meat; the Redeemer a great deal of it. Only Wretches and Facelings, which were or look like people, still butcher as people.
 - Breakroom runners really leave now. They looked for a squatter camp, lobby or generator room only 12 squares away, and those are rare, so most days they found nothing and the board said "Done for today". They now look 30 squares out, and if there is still nothing they go scavenging in the lanes ("OUT, scavenging the lanes").
 - Breakroom Bunker: the two archers now stand in half-sandbag nests either side of the airlock instead of in the open at the ends of the sandbag wall.

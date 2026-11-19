@@ -121,6 +121,7 @@
       { "skill": "ALL", "level": { "sum": [ { "dice": [ 3, 2 ] }, { "constant": -2 } ] } },
       { "skill": "melee", "bonus": { "rng": [ 2, 4 ] } },
       { "skill": "bashing", "bonus": { "rng": [ 2, 4 ] } },
+      { "skill": "stabbing", "bonus": { "rng": [ 2, 4 ] } },
       { "skill": "dodge", "bonus": { "rng": [ 1, 2 ] } }
     ]
   },
@@ -134,7 +135,8 @@
     "type": "item_group",
     "id": "NC_BR1_GATE_GUARD_weapon",
     "subtype": "distribution",
-    "items": [ [ "pipe", 50 ], [ "crowbar", 30 ], [ "hammer_sledge", 20 ] ]
+    "//": "A steel spear: it reaches two tiles and stabs through chain-link, so a guard behind the fence can hit a zombie on the other side.",
+    "items": [ [ "spear_steel", 100 ] ]
   },
   {
     "type": "talk_topic",
