@@ -1,9 +1,11 @@
-# Xbro10's Armory
+# Additions
 
-New weapons for Cataclysm: Dark Days Ahead, for the regular world. It doesn't need the Backrooms mods, and it is
+Additions to Cataclysm: Dark Days Ahead for the regular world. It doesn't need the Backrooms mods, and it is
 on by default in new worlds on Xbro10's fork (you can turn it off in the world's mod list).
 
 ## What's in it
+
+Items: 2 (Flamero-Mado spear, Flamero-Mado schematic). Recipes: 1.
 
 ### The Flamero-Mado spear
 
@@ -24,8 +26,8 @@ and the Redeemer's remains; and Backrooms firesalt fuels it.
 
 ## Install
 
-It ships with Xbro10's fork builds. For another build, copy the `Xbro_Armory` folder into the game's `data/mods`
-(or your user `mods` folder) and tick **Xbro10's Armory** in the world's mod list.
+It ships with Xbro10's fork builds. For another build, copy the `Xbro_Additions` folder into the game's `data/mods`
+(or your user `mods` folder) and tick **Additions** in the world's mod list.
 
 ## Credits
 
