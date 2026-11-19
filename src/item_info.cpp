@@ -3629,11 +3629,14 @@ void item::melee_combat_info( std::vector<iteminfo> &info, const iteminfo_query 
 {
     const std::string space = "  ";
 
-    std::map<damage_type_id, int> dmg_types;
+    // Xbro10 fork: kept in damage type order (bash, cut, pierce...). A std::map keyed by
+    // damage_type_id sorted by the order ids were first created, which changes with link
+    // order, so the same weapon could list "Pierce" before "Bash" (iteminfo_test failed).
+    std::vector<std::pair<damage_type_id, int>> dmg_types;
     for( const damage_type &dt : damage_type::get_all() ) {
         int val = damage_melee( dt.id );
         if( val ) {
-            dmg_types.emplace( dt.id, val );
+            dmg_types.emplace_back( dt.id, val );
         }
     }
 

@@ -59,6 +59,15 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   ("First day", "Survived 12 days"), and with followers Discord shows your party, you plus them ("3 of 3").
   Detailed still adds sleeping or driving.
 
+### Bug fixes
+- [C++] **A weapon's melee damage always lists Bash, Cut, Pierce in order:** the order depended on how the game
+  was built, so the same spear could show "Pierce" before "Bash".
+
+### For developers
+- [C++] **Synced with upstream CDDA** (66 commits: partial dodge and limb shielding, wound and quest fixes, cash
+  cards retired, `map.cpp` and `npctalk.cpp` split into more files). No conflicts. Upstream's use actions now take
+  an `item_location`, so the NPC hearth-lighting code and the Backrooms item tests were updated to match.
+
 ## November 18, 2026
 
 ### Backrooms
