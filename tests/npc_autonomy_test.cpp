@@ -72,8 +72,6 @@ static const effect_on_condition_id effect_on_condition_EOC_AUTONOMY_DEBUG_LONEL
 static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_NOT_LONELY( "EOC_AUTONOMY_DEBUG_NOT_LONELY" );
 static const effect_on_condition_id
-effect_on_condition_EOC_AUTONOMY_DEBUG_CAMPFIRE( "EOC_AUTONOMY_DEBUG_CAMPFIRE" );
-static const effect_on_condition_id
 effect_on_condition_EOC_AUTONOMY_DEBUG_OWNED_AREA( "EOC_AUTONOMY_DEBUG_OWNED_AREA" );
 
 static const string_id<behavior::node_t> behavior_node_t_npc_priorities( "npc_priorities" );
@@ -1727,15 +1725,21 @@ TEST_CASE( "npc_autonomy_grabs_a_dropped_weapon_straight_back", "[npc][autonomy]
         return -1;
     };
 
+    // The fight tags what they carry, then the knife lands this far off.
+    npc_autonomy::track_fight_items( guy );
+    const auto drop_at = [&here, &guy]( int dist ) {
+        here.add_item_or_charges( guy.pos_bub() + tripoint( -dist, 0, 0 ), guy.remove_weapon() );
+    };
+
     SECTION( "dropped beside them: back in hand on the same turn, mid-fight" ) {
-        guy.set_value( "autonomy_debug_drop_weapon", 1.0 );
+        drop_at( 1 );
         npc_autonomy::on_npc_turn( guy );
         REQUIRE( guy.get_wielded_item() );
         CHECK( guy.get_wielded_item()->typeId() == itype_knife_combat );
         CHECK( weapon_on_ground( 2 ) == -1 );
     }
     SECTION( "dropped 3 tiles off: left there while the fight is on" ) {
-        guy.set_value( "autonomy_debug_drop_weapon", 3.0 );
+        drop_at( 3 );
         npc_autonomy::on_npc_turn( guy );
         CHECK_FALSE( guy.get_wielded_item() );
         CHECK( weapon_on_ground( 3 ) == 3 );
@@ -1748,17 +1752,4 @@ TEST_CASE( "npc_autonomy_grabs_a_dropped_weapon_straight_back", "[npc][autonomy]
         npc_autonomy::grab_dropped_weapon( guy );
         CHECK_FALSE( guy.get_wielded_item() );
     }
-}
-
-TEST_CASE( "npc_autonomy_debug_campfire", "[npc][autonomy]" )
-{
-    clear_map();
-    clear_avatar();
-    map &here = get_map();
-    avatar &you = get_avatar();
-    dialogue d( get_talker_for( you ), nullptr );
-    effect_on_condition_EOC_AUTONOMY_DEBUG_CAMPFIRE->activate( d );
-    const tripoint_bub_ms fire = you.pos_bub() + tripoint( 6, 0, 0 );
-    CHECK( here.get_field( fire, field_fd_fire ) != nullptr );
-    CHECK_FALSE( here.i_at( fire ).empty() );
 }

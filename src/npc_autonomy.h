@@ -168,11 +168,6 @@ bool wants_to_recover_items( const npc &guy );
  * too, rather than after the fight. Further off, autonomy_recover_items fetches it afterwards.
  */
 void grab_dropped_weapon( npc &guy );
-/**
- * Every turn: NPC var autonomy_debug_drop_weapon (set by EOC_AUTONOMY_DEBUG_DROP_WEAPON[_FAR])
- * makes them drop their weapon 1 (or 3) tiles off, tagged as theirs, to test picking it up.
- */
-void debug_drop_weapon( npc &guy );
 /** Calm, awake, away from their spot and able to get there. */
 bool wants_return_home( const npc &guy );
 

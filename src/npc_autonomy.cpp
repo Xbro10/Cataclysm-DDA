@@ -400,7 +400,6 @@ void on_npc_turn( npc &guy )
     // Also with the option just turned off: nothing else would give them their weapon back.
     set_down_wood_after_trip( guy );
     remember_home_spot( guy );
-    debug_drop_weapon( guy );
     track_fight_items( guy );
     // Their own weapon at their feet first, then something else from the pack.
     grab_dropped_weapon( guy );
@@ -1695,9 +1694,6 @@ std::string recover_plan_text( const npc &guy )
     return _( "Plan: pick their things back up" );
 }
 
-// NPC var, set by EOC_AUTONOMY_DEBUG_DROP_WEAPON: drop the weapon on the next turn.
-constexpr const char *var_debug_drop_weapon = "autonomy_debug_drop_weapon";
-
 } // namespace
 
 void grab_dropped_weapon( npc &guy )
@@ -1740,40 +1736,6 @@ void grab_dropped_weapon( npc &guy )
             }
             return;
         }
-    }
-}
-
-void debug_drop_weapon( npc &guy )
-{
-    // 1: beside them (grabbed straight back); 3: three tiles off (fetched after the fight).
-    const int distance = static_cast<int>( get_num( guy, var_debug_drop_weapon, 0.0 ) );
-    if( distance <= 0 ) {
-        return;
-    }
-    guy.remove_value( var_debug_drop_weapon );
-    if( !guy.get_wielded_item() ) {
-        return;
-    }
-    map &here = get_map();
-    // Tag what they carry as a fight would, so they know the weapon is theirs.
-    guy.set_value( var_in_fight, 1.0 );
-    const std::string key = carrier_key( guy );
-    item_location weapon = guy.get_wielded_item();
-    weapon->set_var( ivar_carried_by, key );
-    weapon->set_var( ivar_was_wielded, 1.0 );
-    // A free tile that far from them, else their own.
-    tripoint_bub_ms where = guy.pos_bub();
-    for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), distance ) ) {
-        if( rl_dist( p, guy.pos_bub() ) == distance && here.passable( p ) &&
-            get_creature_tracker().creature_at( p ) == nullptr && guy.sees( here, p ) ) {
-            where = p;
-            break;
-        }
-    }
-    const std::string name = weapon->tname();
-    here.add_item_or_charges( where, guy.remove_weapon() );
-    if( player_sees( guy ) ) {
-        add_msg( m_info, _( "NPC autonomy debug: %1$s drops their %2$s." ), guy.get_name(), name );
     }
 }
 

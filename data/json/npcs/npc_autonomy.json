@@ -121,64 +121,6 @@
   },
   {
     "type": "effect_on_condition",
-    "id": "EOC_AUTONOMY_DEBUG_SCARED_STRANGER",
-    "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): a stranger with no gear 3-4 tiles from you and two zombies 9-12 tiles away, to watch seeking safety (step 5.2). By day or with no light around they back away from the zombies, towards you; at night with a light in sight (EOC_AUTONOMY_DEBUG_CAMPFIRE first) they back into the light.",
-    "effect": [
-      { "u_spawn_npc": "NC_NONE", "real_count": 1, "min_radius": 3, "max_radius": 4 },
-      { "u_spawn_monster": "mon_zombie", "real_count": 2, "min_radius": 9, "max_radius": 12 },
-      {
-        "u_message": "NPC autonomy debug: a stranger with no gear and two zombies.  Look at the stranger (x): Safety should be 50+ and the plan line \"Plan: stay safe (…)\"; they back away from the zombies, or into the light at night."
-      }
-    ]
-  },
-  {
-    "type": "ter_furn_transform",
-    "id": "autonomy_debug_firebreak",
-    "//": "Xbro10 fork, NPC autonomy debug: flammable ground (grass, wooden floor) around the debug campfire becomes dirt, so the fire can't spread.",
-    "terrain": [ { "result": "t_dirt", "valid_flags": [ "FLAMMABLE", "FLAMMABLE_ASH", "FLAMMABLE_HARD" ] } ]
-  },
-  {
-    "type": "effect_on_condition",
-    "id": "EOC_AUTONOMY_DEBUG_CAMPFIRE",
-    "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): a fire on a pile of planks 6 tiles east of you, on dirt so it can't spread, burning for a while. At night it's a patch of light in the dark, to test seeking safety with EOC_AUTONOMY_DEBUG_SCARED_STRANGER. Also handy for the warmth tests.",
-    "effect": [
-      { "u_location_variable": { "context_val": "loc" }, "x_adjust": 6 },
-      { "u_transform_radius": 1, "ter_furn_transform": "autonomy_debug_firebreak", "target_var": { "context_val": "loc" } },
-      { "map_spawn_item": "2x4", "count": 6, "loc": { "context_val": "loc" } },
-      { "u_set_field": "fd_fire", "radius": 0, "intensity": 2, "target_var": { "context_val": "loc" } },
-      { "u_message": "NPC autonomy debug: a fire 6 tiles east of you, on six planks." }
-    ]
-  },
-  {
-    "type": "effect_on_condition",
-    "id": "EOC_AUTONOMY_DEBUG_DROP_WEAPON",
-    "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): every NPC within 6 tiles drops their weapon on the tile beside them on their next turn. They should grab it straight back (\"grabs their weapon back\").",
-    "effect": [
-      { "u_run_npc_eocs": [ "EOC_AUTONOMY_DEBUG_DROP_WEAPON_NEAR_ONE" ], "local": true, "npc_range": 6 },
-      { "u_message": "NPC autonomy debug: NPCs within 6 tiles drop their weapon beside them on their next turn." }
-    ]
-  },
-  {
-    "type": "effect_on_condition",
-    "id": "EOC_AUTONOMY_DEBUG_DROP_WEAPON_NEAR_ONE",
-    "effect": [ { "math": [ "u_autonomy_debug_drop_weapon = 1" ] } ]
-  },
-  {
-    "type": "effect_on_condition",
-    "id": "EOC_AUTONOMY_DEBUG_DROP_WEAPON_FAR",
-    "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): every NPC within 6 tiles drops their weapon 3 tiles away on their next turn. Too far to grab mid-fight: once nothing hostile is around they walk over and pick it up (\"picks their things back up\").",
-    "effect": [
-      { "u_run_npc_eocs": [ "EOC_AUTONOMY_DEBUG_DROP_WEAPON_FAR_ONE" ], "local": true, "npc_range": 6 },
-      { "u_message": "NPC autonomy debug: NPCs within 6 tiles drop their weapon 3 tiles away on their next turn." }
-    ]
-  },
-  {
-    "type": "effect_on_condition",
-    "id": "EOC_AUTONOMY_DEBUG_DROP_WEAPON_FAR_ONE",
-    "effect": [ { "math": [ "u_autonomy_debug_drop_weapon = 3" ] } ]
-  },
-  {
-    "type": "effect_on_condition",
     "id": "EOC_AUTONOMY_DEBUG_OWNED_AREA",
     "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): every item lying in your current map square (24x24 tiles) now belongs to the Free Merchants, to check that NPCs leave owned food, water and firewood alone. Picking those items up yourself counts as stealing. Items lying there later aren't affected.",
     "effect": [

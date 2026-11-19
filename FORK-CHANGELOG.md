@@ -93,10 +93,6 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   edit logged "Stale game data detected" as an error per changed file, so it ended with "Treating result as failure
   due to error logged during initialization" even when every test passed. The test program now turns that check off
   (`--option WARN_ON_MODIFIED:true` turns it back on), as this build's own config already does.
-- [C++] **Debug shortcuts for NPC autonomy tests** (Debug > Game > Activate EOC): `EOC_AUTONOMY_DEBUG_SCARED_STRANGER` (a
-  stranger with no gear and two zombies), `EOC_AUTONOMY_DEBUG_CAMPFIRE` (a fire on planks 6 tiles east, on dirt so it
-  can't spread), `EOC_AUTONOMY_DEBUG_DROP_WEAPON` and `..._FAR` (NPCs within 6 tiles drop their weapon beside them, or
-  3 tiles off).
 - [C++] **NPC autonomy checks are 15-25 times cheaper:** the Safety check looked for hostiles twice per call and
   checked line of sight to every creature in view, friends included, several times per NPC turn. It now scans once,
   only checks sight to hostiles, and rates the NPC's weapon only when a hostile is in view (`[npc_perf]`: Safety
