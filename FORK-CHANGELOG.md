@@ -20,6 +20,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ## November 19, 2026
 
 ### Backrooms
+- [BE] **Weaknesses that work in play:** [C++] Skin-stealers and Hounds back off from a flashlight, lamp or fire
+  (`FEARS_LIGHT`; the game's bright-light fear only counted near-daylight). Deathmoths really burn in fire (powdery
+  wings, and no insect fire fear; a ground fire barely hurt flyers). Fewer brown rats on Level 1, which slowed it
+  down. [AD] The Flamero-Mado spear no longer sets things alight after you put it out.
 - [BE] **Hound dens and Breakroom job fixes:** Hound dens are a Level 1 place with four layouts (den, abandoned, a
   survivor's last stand, feeding ground); the den job no longer errors, "Who they were" always has its body, the
   3- and 6-job rewards wait for Dot, door guards spear zombies over the fence, the board shows a runner resting at

@@ -3029,12 +3029,30 @@ static void burn_in_light( monster &mon, map &here )
     add_msg_if_player_sees( mon, m_good, _( "The %s sizzles and smokes in the light!" ), mon.name() );
 }
 
+// Xbro10 fork: FEARS_LIGHT (Backrooms Expanded's Skin-stealer and Hounds). The game's BRIGHT_LIGHT fear
+// only counts light near daylight, so a flashlight in a dark room never scared anything. At the same
+// level as BURNS_IN_LIGHT (50: a flashlight, lamp or fire) its nerve breaks and it backs off while lit.
+static const mon_flag_str_id mon_flag_FEARS_LIGHT( "FEARS_LIGHT" );
+
+static void fear_light( monster &mon, map &here )
+{
+    if( !mon_flag_FEARS_LIGHT.is_valid() || !mon.has_flag( mon_flag_FEARS_LIGHT.id() ) ||
+        mon.is_dead() ) {
+        return;
+    }
+    if( here.ambient_light_at( mon.pos_bub( here ) ) < burning_light_level ) {
+        return;
+    }
+    mon.morale = std::min( mon.morale, -10 );
+}
+
 void monster::process_turn()
 {
     blocks_left = type->block.count;
 
     map &here = get_map();
     burn_in_light( *this, here );
+    fear_light( *this, here );
     if( !is_hallucination() ) {
         for( const std::pair<const emit_id, time_duration> &e : type->emit_fields ) {
             if( !calendar::once_every( e.second ) ) {
