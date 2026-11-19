@@ -1,6 +1,7 @@
 #include "wound.h"
 
 #include <algorithm>
+#include <limits>
 #include <map>
 #include <memory>
 #include <set>
@@ -618,6 +619,16 @@ wound_update_ret wound::update_wound( const Character *who, const time_duration 
 
     healing_progress += time * get_wound_healing_modifier( who );
 
+    // Some saves have uninitialized healing_progress, so it can be all sorts of bananas values
+    // < 0 won't ever heal, and anything that doesn't fit in time_duration (int) causes UB when
+    // doing the conversion
+    // Feel free to remove after 0.K
+    if( healing_progress < 0 ||
+        healing_progress >= static_cast<float>( std::numeric_limits<int>::max() ) ) {
+        debugmsg( "Wound '%s' has invalid healing progress?", type->id.str() );
+        return wound_update_ret::REMOVE;
+    }
+
     const time_duration heal_progress = time_duration::from_seconds( healing_progress );
 
     if( wound_progress_timer && wound_progress_timer->second <= heal_progress ) {
@@ -641,9 +652,9 @@ float wound::get_wound_healing_modifier( const Character *who ) const
     float mod = 1.f;
 
     // -200 health is 0.5x to healing, +200 is 1.5x
-    mod = mod + ( who->get_lifestyle() / 400.f );
+    mod = mod + std::clamp( who->get_lifestyle() / 400.f, -0.5f, 0.5f );
 
     mod = who->enchantment_cache->modify_value( enchant_vals::mod::REGEN_WOUND, mod );
 
-    return mod;
+    return std::max( 0.0f, mod );
 }
