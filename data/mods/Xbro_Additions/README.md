@@ -42,7 +42,7 @@ The Flamero-Mado's sibling: a rare end-game spear that runs on a medium battery 
   gives off a faint blue light. It draws 25 W, so a full battery lasts a good while, and it switches itself off when
   the battery runs flat. Things immune to electricity (the Redeemer, robots) shrug it off.
 - Switched off, it's a fine spear.
-- **Where to find it:** lab science stores, military gear and prison armouries, very rarely.
+- **Where to find it:** lab science stores, military gear, and police and prison armouries, very rarely.
 - **Crafting:** Electronics 7, Fabrication 6 and soldering, and only after reading its schematic.
 - Sprites for UltiCa and UndeadPeople, on the ground and in your hands, with animated arcs when it's on.
 

@@ -150,5 +150,12 @@
     "copy-from": "prison_weapons",
     "//": "Additions: a crowd-control prototype in a prison armoury, about 1 roll in 200.",
     "extend": { "items": [ { "group": "xa_shock_lance_cache", "prob": 1 } ] }
+  },
+  {
+    "type": "item_group",
+    "id": "cop_armory",
+    "copy-from": "cop_armory",
+    "//": "Additions: a crowd-control prototype in a police armoury (police stations, police roadblocks, lab security), about 1 roll in 160.",
+    "extend": { "items": [ { "group": "xa_shock_lance_cache", "prob": 2 } ] }
   }
 ]
