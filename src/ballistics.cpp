@@ -239,12 +239,20 @@ projectile_attack_aim projectile_attack_roll( const dispersion_sources &dispersi
 // Xbro10 fork: see ballistics.h.
 bool projectile_passes_mesh( const map &here, const tripoint_bub_ms &p )
 {
-    if( here.has_furn( p ) || here.veh_at( p ) ) {
+    if( here.veh_at( p ) ) {
         return false;
     }
     const ter_t &ter = here.ter( p ).obj();
-    return ter.has_flag( ter_furn_flag::TFLAG_TRANSPARENT ) && ter.has_flag( ter_furn_flag::TFLAG_PERMEABLE ) &&
-           ter.has_flag( ter_furn_flag::TFLAG_THIN_OBSTACLE );
+    const bool mesh = ter.has_flag( ter_furn_flag::TFLAG_TRANSPARENT ) &&
+                      ter.has_flag( ter_furn_flag::TFLAG_PERMEABLE ) &&
+                      ter.has_flag( ter_furn_flag::TFLAG_THIN_OBSTACLE );
+    if( !here.has_furn( p ) ) {
+        return mesh;
+    }
+    // low cover you shoot over (a half sandbag wall): see-through, short and climbable, on open ground or mesh
+    const furn_t &furn = here.furn( p ).obj();
+    return furn.has_flag( ter_furn_flag::TFLAG_TRANSPARENT ) && furn.has_flag( ter_furn_flag::TFLAG_SHORT ) &&
+           furn.has_flag( ter_furn_flag::TFLAG_MOUNTABLE ) && ( ter.movecost > 0 || mesh );
 }
 
 void projectile_attack( dealt_projectile_attack &attack, const projectile &proj_arg,

@@ -91,6 +91,12 @@ TEST_CASE( "projectiles_through_obstacles", "[projectile]" )
     // Xbro10 fork: a slow projectile (an arrow) also flies through chain-link (projectile_passes_mesh)...
     CHECK( projectile_end_point( range, gun, 10, 3 ) == range[2] );
 
+    // ...and over low cover like a half sandbag wall...
+    here.ter_set( range[1], ter_id( "t_dirt" ) );
+    here.furn_set( range[1], furn_id( "f_sandbag_half" ) );
+    CHECK( projectile_end_point( range, gun, 10, 3 ) == range[2] );
+    here.furn_set( range[1], furn_id( "f_null" ) );
+
     // ...but not through a solid obstacle
     here.ter_set( range[1], ter_id( "t_wall" ) );
     CHECK( projectile_end_point( range, gun, 10, 3 ) == range[0] );

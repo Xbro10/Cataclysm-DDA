@@ -389,3 +389,39 @@ TEST_CASE( "NPC_shoots_through_chain_link", "[npc_attack]" )
     CHECK( fires_within_ten_turns() );
     CHECK( main_npc.pos_bub() == main_npc_start_tripoint );
 }
+
+// Reported 2026-11-19: a Breakroom archer in a sandbag nest never shot a zombie on the far side of a
+// half sandbag wall and the yard's chain-link. Low cover you can shoot over doesn't block the shot.
+TEST_CASE( "NPC_shoots_over_sandbags_and_through_chain_link", "[npc_attack]" )
+{
+    map &here = get_map();
+    get_player_character().setpos( here, main_npc_start_tripoint );
+    clear_map_and_put_player_underground();
+    clear_vehicles();
+    scoped_weather_override sunny_weather( weather_sunny );
+    npc &main_npc = npc_attack_setup::respawn_main_npc();
+    main_npc.set_fac( faction_your_followers );
+    main_npc.set_str_base( 14 );
+    main_npc.reset_stats();
+    main_npc.rules.set_flag( ally_rule::use_guns );
+    main_npc.rules.clear_flag( ally_rule::use_silent );
+    arm_shooter( main_npc, itype_id( "compbow" ) );
+    monster *zombie = npc_attack_setup::spawn_zombie_at_range( 4 );
+    REQUIRE( zombie );
+    zombie->set_hp( 100000 );
+    here.furn_set( main_npc_start_tripoint + tripoint( 1, 0, 0 ), furn_id( "f_sandbag_half" ) );
+    here.ter_set( main_npc_start_tripoint + tripoint( 3, 0, 0 ), ter_id( "t_chainfence" ) );
+
+    main_npc.evaluate_best_attack( zombie );
+    npc_attack_gun *gun = dynamic_cast<npc_attack_gun *>( main_npc.get_current_attack().get() );
+    REQUIRE( gun );
+    const int loaded = main_npc.get_wielded_item()->ammo_remaining();
+    bool fired = false;
+    for( int turn = 0; turn < 10 && !fired; turn++ ) {
+        main_npc.set_moves( 100 );
+        gun->use( main_npc, zombie->pos_bub() );
+        fired = main_npc.get_wielded_item()->ammo_remaining() < loaded;
+    }
+    CHECK( fired );
+    CHECK( main_npc.pos_bub() == main_npc_start_tripoint );
+}

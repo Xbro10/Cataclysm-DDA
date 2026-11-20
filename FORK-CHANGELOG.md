@@ -75,7 +75,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   (and won't start one) with something hostile close by, and a hostile right beside them counts even in the dark.
 - [BE] **Moth jelly is fresh:** [C++] a Deathmoth's jelly is as fresh as the kill (the game aged every death drop
   from the first day, so weeks in it dropped rotten). **The royal ration** no longer freezes the debug spawn menu (it
-  listed two vitamins the game no longer has, and each one popped an error every redraw).
+  listed two vitamins the game no longer has, and each one popped an error every redraw). Level 1's attendant
+  booth no longer causes a mapgen error when it lands on a puddle.
+- [C++] **Archers shoot over sandbags:** arrows, bolts and thrown things fly over low cover you can see over and climb
+  (a half sandbag wall), as bullets already did, and NPCs count the shot as clear. The Breakroom archers in their
+  sandbag nests now shoot through the yard's chain-link instead of standing there.
 - [C++] **A weapon's melee damage always lists Bash, Cut, Pierce in order:** the order depended on how the game
   was built, so the same spear could show "Pierce" before "Bash".
 
