@@ -483,6 +483,32 @@ TEST_CASE( "level0_generates_cleanly", "[.][backrooms_runner]" )
     CHECK( errors.empty() );
 }
 
+// Level 1 garage squares (puddles, junk, the booth and the other rooms mixed in) generate without
+// mapgen errors. Reported 2026-11-19: the booth was set over a puddle's murky water.
+TEST_CASE( "level1_garage_generates_cleanly", "[.][backrooms_runner]" )
+{
+    const oter_str_id garage( "br1_garage" );
+    if( !garage.is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    clear_map_without_vision();
+    clear_avatar();
+    const tripoint_abs_omt pos( 50, 50, 0 );
+    std::string errors;
+    for( int i = 0; i < 400; ++i ) {
+        overmap_buffer.ter_set( pos, garage.id() );
+        MAPBUFFER.clear_outside_reality_bubble();
+        errors += capture_debugmsg_during( [&pos]() {
+            smallmap tm;
+            tm.generate( pos, calendar::turn, false, true );
+            tm.delete_unmerged_submaps();
+        } );
+    }
+    INFO( errors.substr( 0, 1500 ) );
+    CHECK( errors.empty() );
+}
+
 // Level 1's Exchange builds with three traders and a guard, a locked storeroom, and traders who stock up.
 TEST_CASE( "exchange_market_generates", "[.][backrooms_runner]" )
 {
