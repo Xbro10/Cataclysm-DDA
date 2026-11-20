@@ -42,7 +42,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Dot's "Hound den" job no longer fails with "Unable to find and assign mission target".
 - Moth jelly from a Deathmoth is fresh, however long after the cataclysm you kill it (flag `FRESH_DROP`; needs the Xbro10 fork build, elsewhere it drops aged as before).
 - The royal ration no longer freezes the debug spawn menu: it listed vitamins A and B, which the game no longer has.
-- Level 1's attendant booth no longer causes a mapgen error when it lands on a puddle ("setting terrain ... when item water_murky existed").
+- Level 1 garage maps no longer pop up mapgen errors ("setting terrain ... when item water_murky existed", or rope_6 and the like): the attendant booth and the small features (puddles, pipe leaks, junk, working lights, vending machines) clear what is under them.
 - The Breakroom archers shoot over their sandbag nests and through the yard's chain-link (needs the Xbro10 fork build).
 - "Who they were": the overrun camp it marks always has its body with the roster (it used to be able to turn a square you had already seen into the camp, which left the roster on bare floor).
 - The 3-job and 6-job rewards (the stores key, Marcus's map) wait until you talk to Dot ("You wanted to see me?") instead of popping up out in the lanes when a job finishes there.
