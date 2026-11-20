@@ -71,6 +71,7 @@ user folder's `mods/`), then enable **Survivor Minds** when creating a world.
 Run these with Debug → Game → Activate EOC:
 
 - `EOC_SM_DEBUG_ROUTINE`: followers say a routine line and check their food now.
+- `EOC_SM_DEBUG_JOURNAL_NOW`: followers, guards and camp workers write a journal entry now.
 - `EOC_SM_DEBUG_MARK_LOOTED`: followers try to mark LOOTED now.
 - `EOC_SM_DEBUG_DANGER`: each follower's danger numbers; clears past warnings.
 - `EOC_SM_DEBUG_GOSSIP_RESET`: resets the daily gossip tip.
