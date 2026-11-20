@@ -27,6 +27,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **NPCs pick up the arrows they shot:** a shot arrow or bolt (or something thrown) lands as a new item, so it
   never counted as theirs and was only picked up by chance. Now it does, they look up to 20 tiles away (was 10), and a
   follower may walk up to 15 tiles from you to get their things (their follow distance is only a few tiles).
+- [C++] **NPCs remember places (step 5.6, part A):** with NPC autonomy on, each NPC remembers up to 30 places: water
+  they drank from (a sink, cooler or pool, not a bottle they found), spots they sheltered at when scared, and where
+  they got badly hurt. A thirsty NPC with no water in sight walks back to water they remember ("Name heads for water
+  they remember."), within their follow or guard limits, and forgets it if it's gone. Memories fade (danger after 3
+  days, water after a month) and the least important go first when full; they save with the NPC, and older saves
+  start with nothing remembered. The look-around panel shows "Remembers 7 places".
 
 ### Bug fixes
 - [C++] **No more error for a job with nowhere to go:** a stranger's ordinary job aimed at a house can't be done inside

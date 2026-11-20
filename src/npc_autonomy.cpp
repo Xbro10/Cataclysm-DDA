@@ -39,6 +39,7 @@
 #include "gun_mode.h"
 #include "npc.h"
 #include "npc_arbitration.h"
+#include "npc_memory.h"
 #include "npc_trip.h"
 #include "options.h"
 #include "pocket_type.h"
@@ -415,6 +416,10 @@ void on_npc_turn( npc &guy )
         elapsed = 1_minutes;
     }
     update_needs( guy, elapsed );
+    // Step 5.6: scared (Safety 50+) and badly hurt here: a place to stay away from.
+    if( safety_need( guy ) >= 0.5f && guy.hp_percentage() < 50 ) {
+        npc_memory::remember( guy, npc_memory::place_kind::danger, guy.pos_abs() );
+    }
     drop_stale_plans( guy );
     dress_for_the_cold( guy );
 }
@@ -433,11 +438,18 @@ void dress_for_the_cold( npc &guy )
 std::string needs_text( const npc &guy )
 {
     const needs_t needs = current_needs( guy );
-    return string_format( "%s %s  %s  %s  %s  %s  %s", _( "Needs:" ),
-                          needs.eats ? need_part( _( "Food" ), needs.food ) : untracked_part( _( "Food" ) ),
-                          needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
-                          need_part( _( "Sleep" ), needs.sleep ), need_part( _( "Warmth" ), needs.warmth ),
-                          need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ) );
+    std::string text = string_format( "%s %s  %s  %s  %s  %s  %s", _( "Needs:" ),
+                                      needs.eats ? need_part( _( "Food" ), needs.food ) : untracked_part( _( "Food" ) ),
+                                      needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
+                                      need_part( _( "Sleep" ), needs.sleep ), need_part( _( "Warmth" ), needs.warmth ),
+                                      need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ) );
+    // Step 5.6: place memory.
+    const int places = npc_memory::count( guy );
+    if( places > 0 ) {
+        text += "  " + string_format( n_gettext( "Remembers %d place", "Remembers %d places", places ),
+                                      places );
+    }
+    return text;
 }
 
 std::string plan_line( const npc &guy )
@@ -744,6 +756,57 @@ npc::need_result run_planner( npc &guy, const trip_kind &kind )
            guy.execute_eat_food();
 }
 
+// Step 5.6: how far a thirsty NPC with no follow or post limits walks to water they remember.
+constexpr int remembered_water_range = 60;
+// NPC var: the remembered water they last said they were heading for.
+constexpr const char *var_water_memory_said = "autonomy_water_memory_said";
+
+// Step 5.6: the nearest water they remember, if it's in the loaded map on their level and they
+// may go there (inside their follow or post reach; anyone else within 60 tiles).
+std::optional<tripoint_bub_ms> remembered_water( const npc &guy )
+{
+    const std::optional<tripoint_abs_ms> spot = npc_memory::nearest( guy,
+            npc_memory::place_kind::water );
+    const map &here = get_map();
+    if( !spot || spot->z() != guy.posz() || !here.inbounds( *spot ) ) {
+        return std::nullopt;
+    }
+    if( const std::optional<npc_reach> reach = guy.obligation_reach() ) {
+        if( !reach->contains( *spot ) ) {
+            return std::nullopt;
+        }
+    } else if( rl_dist( guy.pos_abs(), *spot ) > remembered_water_range ) {
+        return std::nullopt;
+    }
+    return here.get_bub( *spot );
+}
+
+// Step 5.6: nothing to drink in reach, so head for water they remember. Once there (within 2
+// tiles) and still nothing, or if they can't get there, it's forgotten.
+goal_result walk_to_remembered_water( npc &guy )
+{
+    const std::optional<tripoint_bub_ms> spot = remembered_water( guy );
+    if( !spot ) {
+        return goal_result::none;
+    }
+    map &here = get_map();
+    if( rl_dist( guy.pos_bub(), *spot ) <= 2 ||
+        !guy.move_to_and_verify( npc_trip_spec::within_range( *spot, 1, true ) ) ) {
+        npc_memory::forget( guy, npc_memory::place_kind::water, here.get_abs( *spot ) );
+        guy.remove_value( var_water_memory_said );
+        return goal_result::none;
+    }
+    const std::string key = target_key( here.get_abs( *spot ) );
+    const diag_value *said = guy.maybe_get_value( var_water_memory_said );
+    if( said == nullptr || !said->is_str() || said->str() != key ) {
+        guy.set_value( var_water_memory_said, key );
+        if( player_sees( guy ) ) {
+            add_msg( m_neutral, _( "%s heads for water they remember." ), guy.get_name() );
+        }
+    }
+    return goal_result::acted;
+}
+
 // Drives the game's own planner for this need (pick a target, walk, eat or drink there,
 // cross off targets that fail) and adds what it lacks: saying where they're off to,
 // giving up after a few failed targets, and for water, refilling a bottle.
@@ -754,6 +817,8 @@ goal_result fetch( npc &guy, const trip_kind &kind )
     }
     // Only a target that turned out unreachable counts toward giving up, not "found nothing".
     const bool had_target = guy.plan_for( kind.need ).active();
+    const std::optional<tripoint_abs_ms> target_before = had_target ?
+            std::optional<tripoint_abs_ms>( guy.plan_for( kind.need ).target ) : std::nullopt;
     const npc::need_result result = run_planner( guy, kind );
     const npc::need_plan &plan = guy.plan_for( kind.need );
 
@@ -778,6 +843,16 @@ goal_result fetch( npc &guy, const trip_kind &kind )
             }
             // Last step for water: top up a bottle for later, at clean water only.
             const itype_id liquid = adjacent_water( guy );
+            // Step 5.6: remember a water source that stays put (a sink, a cooler, a pool), not a
+            // bottle they found lying about.
+            if( target_before ) {
+                const map &here = get_map();
+                const bool lasting = !liquid.is_null() || ( here.inbounds( *target_before ) &&
+                                     here.has_furn( here.get_bub( *target_before ) ) );
+                if( lasting ) {
+                    npc_memory::remember( guy, npc_memory::place_kind::water, *target_before );
+                }
+            }
             if( liquid.is_valid() && !liquid.is_null() && liquid->comestible &&
                 liquid->comestible->parasites == 0 && liquid->comestible->contamination.empty() &&
                 refill_bottle( guy, liquid ) && player_sees( guy ) ) {
@@ -791,6 +866,9 @@ goal_result fetch( npc &guy, const trip_kind &kind )
             guy.plan_for( kind.need ).clear();
             if( had_target ) {
                 count_failed_target( guy, kind );
+            } else if( kind.need == npc::need_goal_id::drink_water ) {
+                // Step 5.6: nothing in reach; water they remember.
+                return walk_to_remembered_water( guy );
             }
             return goal_result::none;
         case npc::need_result::holding:
@@ -800,6 +878,10 @@ goal_result fetch( npc &guy, const trip_kind &kind )
             guy.mod_moves( -guy.get_speed() );
             return goal_result::acted;
         case npc::need_result::idle:
+            if( kind.need == npc::need_goal_id::drink_water && !guy.plan_for( kind.need ).active() ) {
+                // Step 5.6: nothing in reach; water they remember.
+                return walk_to_remembered_water( guy );
+            }
             break;
     }
     return goal_result::none;
@@ -807,11 +889,16 @@ goal_result fetch( npc &guy, const trip_kind &kind )
 
 // Need at 50+, safe, awake, allowed by the follower rules, not given up, the game agrees
 // it's worth it, and something in the pack or in reach.
+bool may_make_trip( const npc &guy, const trip_kind &kind, const int need )
+{
+    return enabled() && guy.needs_food() && !guy.in_sleep_state() && is_safe( guy ) &&
+           need >= need_to_act && looks_after_self( guy ) && !gave_up( guy, kind ) &&
+           guy.intake_useful( kind.need );
+}
+
 bool wants_trip( const npc &guy, const trip_kind &kind, const int need )
 {
-    if( !enabled() || !guy.needs_food() || guy.in_sleep_state() || !is_safe( guy ) ||
-        need < need_to_act || !looks_after_self( guy ) || gave_up( guy, kind ) ||
-        !guy.intake_useful( kind.need ) ) {
+    if( !may_make_trip( guy, kind, need ) ) {
         return false;
     }
     if( carries_for( guy, kind.need ) ) {
@@ -1476,7 +1563,8 @@ goal_result seek_safety( npc &guy )
         guy.set_value( var_safe_spot, key );
     }
     if( *spot == guy.pos_abs() ) {
-        // Hold here, eyes open, until calmer.
+        // Hold here, eyes open, until calmer. Step 5.6: a place to come back to.
+        npc_memory::remember( guy, npc_memory::place_kind::safe, *spot );
         guy.mod_moves( -guy.get_speed() );
         return goal_result::acted;
     }
@@ -2076,7 +2164,12 @@ bool wants_warmth( const npc &guy )
 
 bool wants_water( const npc &guy )
 {
-    return wants_trip( guy, water_trip, enabled() ? water_need( guy ) : 0 );
+    const int need = enabled() ? water_need( guy ) : 0;
+    if( wants_trip( guy, water_trip, need ) ) {
+        return true;
+    }
+    // Step 5.6: nothing in reach, but they remember water.
+    return may_make_trip( guy, water_trip, need ) && remembered_water( guy ).has_value();
 }
 
 bool wants_food( const npc &guy )
