@@ -1,0 +1,18 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_JOURNAL_NOW",
+    "//": "Developer shortcut: Debug menu > Activate EOC. Every follower, guard and camp worker in the loaded area writes a journal entry right now, ignoring the clock and the once-a-day limit (a second entry for today is fine for testing). Use it to test the lonely and scared lines without waiting for morning. Remove before release.",
+    "effect": [
+      { "u_run_npc_eocs": [ "EOC_SM_DEBUG_JOURNAL_NOW_FOLLOWER" ], "local": true },
+      { "u_message": "Survivor Minds debug: followers wrote a journal entry.  Read it with \"Got a minute?\" > \"Can I read your journal?\"" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_JOURNAL_NOW_FOLLOWER",
+    "//": "u_friend: followers, guards and camp workers alike.",
+    "condition": "u_friend",
+    "effect": [ { "run_eocs": "EOC_SM_JOURNAL_WRITE_ENTRY" } ]
+  }
+]
