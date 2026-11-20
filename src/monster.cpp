@@ -162,6 +162,7 @@ static const flag_id json_flag_CANNOT_MOVE( "CANNOT_MOVE" );
 static const flag_id json_flag_CANNOT_TAKE_DAMAGE( "CANNOT_TAKE_DAMAGE" );
 static const flag_id json_flag_DISABLE_FLIGHT( "DISABLE_FLIGHT" );
 static const flag_id json_flag_FILTHY( "FILTHY" );
+static const flag_id json_flag_FRESH_DROP( "FRESH_DROP" );
 static const flag_id json_flag_GRAB( "GRAB" );
 static const flag_id json_flag_GRAB_FILTER( "GRAB_FILTER" );
 
@@ -3546,7 +3547,15 @@ void monster::drop_items_on_death( map *here, item *corpse ) const
                                   spawn_flags::use_spawn_rate );
 
     for( item &e : new_items ) {
-        e.randomize_rot();
+        // Xbro10 fork: a FRESH_DROP item (a mod flag, checked only if defined) comes from the body
+        // itself, so it is as fresh as the kill, not aged since the cataclysm began.
+        if( json_flag_FRESH_DROP.is_valid() && e.has_flag( json_flag_FRESH_DROP ) ) {
+            e.set_birthday( calendar::turn );
+            e.set_rot( 0_turns );
+            e.set_last_temp_check( calendar::turn );
+        } else {
+            e.randomize_rot();
+        }
         e.preserve_location( pos_abs() );
     }
 

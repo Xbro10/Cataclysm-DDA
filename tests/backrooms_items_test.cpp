@@ -276,6 +276,52 @@ TEST_CASE( "backrooms_wiki_finds_work", "[.][backrooms_items]" )
     }
 }
 
+// A deathmoth killed a month in leaves fresh jelly (FRESH_DROP), not jelly aged since the cataclysm.
+TEST_CASE( "moth_jelly_is_as_fresh_as_the_kill", "[.][backrooms_items]" )
+{
+    if( !backrooms_items_loaded() ) {
+        return;
+    }
+    clear_map_without_vision();
+    map &here = get_map();
+    const time_point old_turn = calendar::turn;
+    calendar::turn = calendar::start_of_cataclysm + 30_days;
+    const tripoint_bub_ms spot( 30, 30, 0 );
+    monster moth( mtype_id( "mon_br_deathmoth" ) );
+    moth.spawn( spot );
+    const itype_id moth_jelly( "br_moth_jelly" );
+    int found = 0;
+    for( int i = 0; i < 40 && found == 0; i++ ) {
+        moth.drop_items_on_death( &here, nullptr );
+        for( const item &it : here.i_at( spot ) ) {
+            if( it.typeId() == moth_jelly ) {
+                found++;
+                CHECK_FALSE( it.rotten() );
+                CHECK( it.get_rot() == 0_turns );
+            }
+        }
+    }
+    CHECK( found > 0 );
+    here.i_clear( spot );
+    calendar::turn = old_turn;
+}
+
+// Every Backrooms food shows its item info (the debug spawn menu and the inventory both build it).
+TEST_CASE( "backrooms_foods_show_their_info", "[.][backrooms_items]" )
+{
+    if( !backrooms_items_loaded() ) {
+        return;
+    }
+    for( const char *id : { "br_royal_ration", "br_moth_jelly", "br_liquid_pain" } ) {
+        CAPTURE( id );
+        item food( itype_id( id ), calendar::turn );
+        std::vector<iteminfo> info;
+        food.info( true, info );
+        CHECK_FALSE( info.empty() );
+        CHECK_FALSE( food.tname().empty() );
+    }
+}
+
 TEST_CASE( "npcs_never_drink_cloudy_water_on_their_own", "[.][backrooms_items]" )
 {
     if( !backrooms_items_loaded() ) {

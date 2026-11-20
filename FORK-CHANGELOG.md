@@ -70,6 +70,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **Synced with upstream CDDA** (66 commits: partial dodge and limb shielding, wound and quest fixes, cash
   cards retired, `map.cpp` and `npctalk.cpp` split into more files). No conflicts. Upstream's use actions now take
   an `item_location`, so the NPC hearth-lighting code and the Backrooms item tests were updated to match.
+- [BE] **Moth jelly is fresh:** [C++] a Deathmoth's jelly is as fresh as the kill (the game aged every death drop
+  from the first day, so weeks in it dropped rotten). **The royal ration** no longer freezes the debug spawn menu (it
+  listed two vitamins the game no longer has, and each one popped an error every redraw).
 
 ## November 18, 2026
 
