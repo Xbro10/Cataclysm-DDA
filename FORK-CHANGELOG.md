@@ -22,7 +22,7 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ### Additions
 - [AD] **Specter (shock lance):** the Flamero-Mado's sibling, a rare end-game spear that runs on a medium battery. Switched on,
   every hit adds electric damage, about one hit in three stuns, and forked blue arcs crackle and lash out from its head (animated, both
-  tilesets, on the ground and in your hands). Labs, military gear and prison armouries; crafted from its schematic.
+  tilesets, on the ground and in your hands). Labs, military gear, and police and prison armouries; crafted from its schematic.
   [BE] With the Backrooms too: Level 1 gun safes and the Exchange's rare find.
 - [C++] **Switched-on weapons keep their special effects:** turning a weapon on never gave it the "on" form's
   built-in effects, so the lit Flamero-Mado never actually set things on fire. Now it does, and the Specter stuns.
