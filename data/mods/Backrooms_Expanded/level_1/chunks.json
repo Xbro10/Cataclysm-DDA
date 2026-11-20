@@ -8,7 +8,7 @@
       "rotation": [ 0, 3 ],
       "rows": [ "      ", " ~~   ", " ~~~~ ", "  ~~~ ", "   ~  ", "      " ],
       "palettes": [ "br1_garage_palette" ],
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
@@ -19,7 +19,7 @@
       "rotation": [ 0, 3 ],
       "rows": [ "  ~   ", " ~~~  ", "  ~~  ", "    ~ ", "   ~~~", "    ~ " ],
       "palettes": [ "br1_garage_palette" ],
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
@@ -32,7 +32,7 @@
       "rows": [ "      ", " #### ", " ~w ~ ", "  ~~  ", "      ", "      " ],
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "w": "t_br1_drip_pool" },
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
@@ -43,7 +43,7 @@
       "rotation": [ 0, 3 ],
       "rows": [ "      ", " XX   ", " X*X  ", "  X   ", "      ", "      " ],
       "palettes": [ "br1_garage_palette" ],
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
@@ -54,7 +54,7 @@
       "rotation": [ 0, 3 ],
       "rows": [ "      ", "  r   ", "  *   ", "  r   ", "      ", "      " ],
       "palettes": [ "br1_garage_palette" ],
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
@@ -66,7 +66,7 @@
       "rows": [ "      ", "      ", "  !!  ", "  !!  ", "      ", "      " ],
       "palettes": [ "br1_garage_palette" ],
       "place_monster": [ { "monster": "mon_br_deathmoth", "x": [ 1, 4 ], "y": [ 1, 4 ], "chance": 15, "pack_size": [ 1, 2 ] } ],
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
@@ -84,7 +84,7 @@
         "v": { "item": "br_cat_snacks", "chance": 100, "repeat": [ 3, 6 ] },
         "u": [ { "item": "default_vending_machine", "chance": 100 }, { "item": "almond_water_sealed", "chance": 10 } ]
       },
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
@@ -99,7 +99,7 @@
       "terrain": { "u": "t_thconc_floor" },
       "furniture": { "u": "f_vending_c" },
       "items": { "u": [ { "item": "default_vending_machine", "chance": 100 }, { "item": "almond_water_sealed", "chance": 10 } ] },
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
