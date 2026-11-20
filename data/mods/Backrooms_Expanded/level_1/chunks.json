@@ -134,7 +134,7 @@
       "rows": [ "        ", " ###### ", " #cc..# ", " #.b..# ", " #.!..D ", " ###### ", "        ", "        " ],
       "palettes": [ "br1_garage_palette" ],
       "place_items": [ { "item": "br1_booth_loot", "x": [ 2, 3 ], "y": 2, "chance": 60 } ],
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
