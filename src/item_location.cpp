@@ -1176,6 +1176,18 @@ void item_location::deserialize( const JsonObject &obj )
                     break;
                 }
             }
+            // Xbro10 fork (seen 2026-11-20): identical items in a pocket merge into one stack when
+            // a save loads, so a location on the stack that merged away has no uid left to find
+            // (arrows an NPC picked back up went into the quiver as a stack of their own). As for
+            // a map tile's runs (retrieve_rle_copy), fall back to its place in the pocket.
+            // A stack that merged into the one before it is past the end now: the last one.
+            if( !found && idx > -1 && !parent_contents.empty() ) {
+                auto iter = parent_contents.begin();
+                std::advance( iter, std::min( idx, static_cast<int>( parent_contents.size() ) - 1 ) );
+                found = *iter;
+                DebugLog( D_INFO, D_GAME ) << "item_location UID " << uid <<
+                                           " not in its container after loading; using index " << idx;
+            }
             if( !found ) {
                 debugmsg( "item_location UID not found in container contents" );
                 ptr = std::make_shared<impl::nowhere>();

@@ -61,6 +61,8 @@ bool has_company( const npc &guy );
 std::string needs_text( const npc &guy );
 /** The panel's second line: "Plan: ..." while on a trip, or why a cold NPC can't warm up; "" otherwise. */
 std::string plan_line( const npc &guy );
+/** The panel's last line: "Remembers N places" (step 5.6); "" when they remember none. */
+std::string memory_text( const npc &guy );
 
 // ---- Daily life (step 3.3): behavior-tree goals "autonomy_meal", "autonomy_socialize" ----
 

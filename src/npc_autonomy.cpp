@@ -438,18 +438,22 @@ void dress_for_the_cold( npc &guy )
 std::string needs_text( const npc &guy )
 {
     const needs_t needs = current_needs( guy );
-    std::string text = string_format( "%s %s  %s  %s  %s  %s  %s", _( "Needs:" ),
-                                      needs.eats ? need_part( _( "Food" ), needs.food ) : untracked_part( _( "Food" ) ),
-                                      needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
-                                      need_part( _( "Sleep" ), needs.sleep ), need_part( _( "Warmth" ), needs.warmth ),
-                                      need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ) );
-    // Step 5.6: place memory.
+    return string_format( "%s %s  %s  %s  %s  %s  %s", _( "Needs:" ),
+                          needs.eats ? need_part( _( "Food" ), needs.food ) : untracked_part( _( "Food" ) ),
+                          needs.eats ? need_part( _( "Water" ), needs.water ) : untracked_part( _( "Water" ) ),
+                          need_part( _( "Sleep" ), needs.sleep ), need_part( _( "Warmth" ), needs.warmth ),
+                          need_part( _( "Safety" ), needs.safety ), need_part( _( "Social" ), needs.social ) );
+}
+
+std::string memory_text( const npc &guy )
+{
+    // Step 5.6. On its own line after the plan (2026-11-20): added to the needs line it made that
+    // wrap, and the look-around panel had no room left for the plan.
     const int places = npc_memory::count( guy );
-    if( places > 0 ) {
-        text += "  " + string_format( n_gettext( "Remembers %d place", "Remembers %d places", places ),
-                                      places );
+    if( places <= 0 ) {
+        return std::string();
     }
-    return text;
+    return string_format( n_gettext( "Remembers %d place", "Remembers %d places", places ), places );
 }
 
 std::string plan_line( const npc &guy )
