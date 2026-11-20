@@ -12,10 +12,28 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 | **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
 | **[Launcher]** | The launcher in `tools/launcher/` |
 
-**Jump to:** [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
+**Jump to:** [Nov 20](#november-20-2026) · [Nov 19](#november-19-2026) · [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
 [Nov 12–14, the first version](#november-1214-2026-the-first-version) · [How to add an entry](#how-to-add-an-entry)
 
 ---
+
+## November 20, 2026
+
+### NPCs
+- [C++] **Archers and gunners keep their distance:** with NPC autonomy on, an NPC with a bow or gun they may fire and
+  something slower right beside them steps to a free tile further from everything hostile, then shoots again, instead
+  of clubbing it with the bow. They stay within their follow distance or near their post; against something as fast
+  as them, or with nowhere to go, they fight as before.
+- [C++] **NPCs pick up the arrows they shot:** a shot arrow or bolt (or something thrown) lands as a new item, so it
+  never counted as theirs and was only picked up by chance. Now it does, they look up to 20 tiles away (was 10), and a
+  follower may walk up to 15 tiles from you to get their things (their follow distance is only a few tiles).
+
+### Bug fixes
+- [C++] **No more error for a job with nowhere to go:** a stranger's ordinary job aimed at a house can't be done inside
+  a Backrooms level; it no longer logs "Unable to find and assign mission target" or "Mapgen update function called
+  with invalid tripoint".
+- [C++] **Mod sprites for the other tileset aren't errors:** each of our mods has one sprite file for UltiCa and one for
+  UndeadPeople, and the game logged an error for whichever didn't match your tileset. Now it's a plain log line.
 
 ## November 19, 2026
 

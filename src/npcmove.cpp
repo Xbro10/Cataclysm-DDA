@@ -1812,6 +1812,13 @@ void npc::move()
             return;
         }
     }
+    // Xbro10 fork (reported 2026-11-20): with NPC autonomy on, a ready gunner with something
+    // slower right beside them steps away from it (within their follow or post reach) and
+    // shoots again, instead of clubbing it with the gun or bow.
+    if( !in_vehicle && ai_cache.dangerous_explosives.empty() && !has_flag( json_flag_CANNOT_MOVE ) &&
+        npc_autonomy::kite_step( *this ) ) {
+        return;
+    }
 
     // TODO: Place player-aiding actions here, with a weight
 

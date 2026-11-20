@@ -64,6 +64,7 @@
 #include "monster.h"
 #include "mtype.h"
 #include "npc.h"
+#include "npc_autonomy.h"
 #include "options.h"
 #include "output.h"
 #include "panels.h"
@@ -1621,6 +1622,8 @@ dealt_projectile_attack Character::throw_item( const tripoint_bub_ms &target, co
     // Copy the item, we may alter it before throwing
     item thrown = to_throw;
     thrown.set_var( "last_act_by_char_id", getID().get_value() );
+    // Xbro10 fork: an NPC (autonomy on) picks it back up after the fight.
+    npc_autonomy::tag_shot_ammo( *this, thrown );
 
     const int move_cost = throw_cost( *this, to_throw );
     mod_moves( -move_cost );
@@ -2438,6 +2441,9 @@ static projectile make_gun_projectile( const item &gun, Character &guy )
             item drop( gun.ammo_current(), calendar::turn, 1 );
             drop.active = fx.count( ammo_effect_ACT_ON_RANGED_HIT );
             drop.set_favorite( gun.get_contents().first_ammo().is_favorite );
+            // Xbro10 fork: the landed arrow or bolt is a new item; an NPC (autonomy on) tags
+            // it as theirs so they pick it back up after the fight.
+            npc_autonomy::tag_shot_ammo( guy, drop );
             proj.set_drop( drop );
         }
 

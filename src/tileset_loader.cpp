@@ -421,8 +421,10 @@ atlas_upload_interrupt tileset_cache::loader::load( const std::string &tileset_i
         json_path = mts.get_full_path();
 
         if( !mts.is_compatible( tileset_id ) ) {
-            dbg( D_ERROR ) << "Mod tileset in \"" << json_path << "\" is not compatible with \""
-                           << tileset_id << "\".";
+            // Xbro10 fork: a mod's sprites for another tileset are skipped on purpose (our mods
+            // ship one file for UltiCa and one for UndeadPeople), so it's not an error.
+            dbg( D_INFO ) << "Mod tileset in \"" << json_path << "\" is not compatible with \""
+                          << tileset_id << "\"; skipped.";
             continue;
         }
         dbg( D_INFO ) << "Attempting to Load JSON file " << json_path;

@@ -13,6 +13,7 @@
 #include "type_id.h"
 
 class Character;
+class item;
 class npc;
 
 namespace npc_autonomy
@@ -203,6 +204,19 @@ enum class gunner_stance {
     step_back
 };
 gunner_stance gunner_stance_for( npc &guy );
+/**
+ * Every turn (reported 2026-11-20): a ready gunner with something slower right beside them
+ * steps to a free tile further from every hostile they see (inside their follow or post reach),
+ * then shoots again. The game only stepped back when a crowd outnumbered them, and its retreat
+ * swings at anything adjacent first, so an archer beside one zombie clubbed it with the bow.
+ * True when they stepped.
+ */
+bool kite_step( npc &guy );
+/**
+ * A recovered arrow, bolt or thrown thing (reported 2026-11-20): the game makes a new item where
+ * a shot lands, so it lost the "theirs" tag from the fight. Tags it with the shooter, an NPC.
+ */
+void tag_shot_ammo( const Character &shooter, item &drop );
 /**
  * For the look-around panel: why a cold NPC (Warmth 50+) can't warm up, e.g. "Cold: no room
  * to carry the firewood"; "" when they aren't cold or have a way.

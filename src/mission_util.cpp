@@ -266,6 +266,13 @@ static std::optional<tripoint_abs_omt> find_or_create_om_terrain(
     // If we got here and this is still invalid, it means that we couldn't find it nor create it
     // on any overmap (new or existing) within the allowed search range.
     if( target_pos.is_invalid() ) {
+        // Xbro10 fork (seen 2026-11-19): in another dimension (a Backrooms level) a vanilla job's
+        // target ("house") can't exist; that's expected, so it's a log line, not an error.
+        if( g->get_dimension_prefix() != dimension_id( "default" ) ) {
+            DebugLog( D_INFO, D_GAME ) << "No mission target " << params.overmap_terrain.evaluate( d )
+                                       << " in this dimension.";
+            return std::nullopt;
+        }
         debugmsg( "Unable to find and assign mission target %s within %d tiles.",
                   params.overmap_terrain.evaluate( d ), find_params.search_range );
         return std::nullopt;
@@ -493,6 +500,12 @@ bool mission_util::set_update_mapgen( const JsonObject &jo,
     } else {
         auto mission_func = [update_map = std::move( update_map )]( mission * miss ) {
             tripoint_abs_omt update_pos3 = miss->get_target();
+            // Xbro10 fork (seen 2026-11-19): a job whose target couldn't be found (a vanilla
+            // "house" job offered inside a Backrooms level) has none; changing the map there
+            // only logged "Mapgen update function called with invalid tripoint".
+            if( update_pos3.is_invalid() ) {
+                return;
+            }
             update_map( update_pos3, miss );
         };
         funcs.emplace_back( std::move( mission_func ) );

@@ -1568,7 +1568,11 @@ constexpr const char *ivar_was_wielded = "autonomy_was_wielded";
 constexpr const char *var_in_fight = "autonomy_in_fight";
 // NPC var: they look for their things until this turn.
 constexpr const char *var_recover_until = "autonomy_recover_until";
-constexpr int recover_radius = 10;
+// 20 tiles (2026-11-20, was 10): arrows and bolts land well past what they were shot at.
+constexpr int recover_radius = 20;
+// A follower may walk this far from the player for their own things (their follow distance
+// is only 2-6 tiles); if the player walks off, the item drops out of reach and they follow.
+constexpr int recover_follower_reach = 15;
 constexpr time_duration recover_for = 30_minutes;
 
 std::string carrier_key( const npc &guy )
@@ -1619,7 +1623,14 @@ std::optional<tripoint_bub_ms> nearest_lost_item( const npc &guy )
                 break;
             }
         }
-        if( found && safe_spot_in_reach( guy, here.get_abs( p ) ) && guy.sees( here, p ) ) {
+        if( !found ) {
+            continue;
+        }
+        const tripoint_abs_ms where = here.get_abs( p );
+        const bool in_reach = guy.is_walking_with() ?
+                              rl_dist( get_player_character().pos_abs(), where ) <= recover_follower_reach :
+                              safe_spot_in_reach( guy, where );
+        if( in_reach && guy.sees( here, p ) ) {
             return p;
         }
     }
@@ -1898,6 +1909,74 @@ gunner_stance gunner_stance_for( npc &guy )
         close = true;
     }
     return close ? gunner_stance::step_back : gunner_stance::hold;
+}
+
+bool kite_step( npc &guy )
+{
+    if( !enabled() || guy.in_sleep_state() || !ready_gunner( guy ) ) {
+        return false;
+    }
+    std::vector<tripoint_bub_ms> foes;
+    bool beside = false;
+    for( const Creature *critter : guy.get_visible_creatures( watch_hostile_range ) ) {
+        if( guy.attitude_to( *critter ) != Creature::Attitude::HOSTILE ) {
+            continue;
+        }
+        if( rl_dist( guy.pos_bub(), critter->pos_bub() ) <= 1 ) {
+            if( critter->get_speed() >= guy.get_speed() ) {
+                // Can't get away from it: fight as the game would.
+                return false;
+            }
+            beside = true;
+        }
+        foes.push_back( critter->pos_bub() );
+    }
+    if( !beside ) {
+        return false;
+    }
+    const auto nearest_foe = [&foes]( const tripoint_bub_ms & p ) {
+        int best = std::numeric_limits<int>::max();
+        int total = 0;
+        for( const tripoint_bub_ms &foe : foes ) {
+            const int dist = rl_dist( p, foe );
+            best = std::min( best, dist );
+            total += dist;
+        }
+        return std::make_pair( best, total );
+    };
+    map &here = get_map();
+    const std::optional<npc_reach> reach = guy.obligation_reach();
+    const std::pair<int, int> now = nearest_foe( guy.pos_bub() );
+    std::optional<tripoint_bub_ms> best_tile;
+    std::pair<int, int> best = now;
+    for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), 1 ) ) {
+        if( p == guy.pos_bub() || !guy.can_move_to( p, true ) || avoids_trap( guy, p ) ||
+            ( reach && !reach->contains( here.get_abs( p ) ) ) ) {
+            continue;
+        }
+        // Only a tile further from the nearest of them, then from all of them together.
+        const std::pair<int, int> there = nearest_foe( p );
+        if( there.first > best.first || ( there.first == best.first && best_tile &&
+                                          there.second > best.second ) ) {
+            best = there;
+            best_tile = p;
+        }
+    }
+    if( !best_tile || best.first <= now.first ) {
+        return false;
+    }
+    guy.move_to( *best_tile, true );
+    return true;
+}
+
+void tag_shot_ammo( const Character &shooter, item &drop )
+{
+    const npc *guy = dynamic_cast<const npc *>( &shooter );
+    // Only in a fight: not something an NPC tosses to the player.
+    if( guy == nullptr || !enabled() || drop.is_null() || get_num( *guy, var_in_fight, 0.0 ) <= 0.0 ) {
+        return;
+    }
+    drop.set_var( ivar_carried_by, carrier_key( *guy ) );
 }
 
 bool stands_with_player( const npc &guy )
