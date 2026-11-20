@@ -102,3 +102,52 @@ TEST_CASE( "survivor_minds_journal_mentions_loneliness_and_fear", "[.][survivor_
         CHECK( mentions_any( entry, scared_lines ) );
     }
 }
+
+static const effect_on_condition_id
+effect_on_condition_EOC_SM_JOURNAL_MORNING( "EOC_SM_JOURNAL_MORNING" );
+static const effect_on_condition_id
+effect_on_condition_EOC_SM_DEBUG_JOURNAL_NOW_FOLLOWER( "EOC_SM_DEBUG_JOURNAL_NOW_FOLLOWER" );
+
+static const faction_id faction_your_followers( "your_followers" );
+
+// Reported 2026-11-19: a guard left far away all morning never wrote that day's entry (only
+// 6-10 AM counted, and NPCs outside the loaded area don't run). Now they write it as soon as
+// they're loaded again that day.
+TEST_CASE( "survivor_minds_journal_written_later_the_same_day", "[.][survivor_minds]" )
+{
+    clear_map();
+    clear_avatar();
+    npc &guy = spawn_npc( get_avatar().pos_bub().xy() + point( 3, 0 ), "test_talker" );
+    guy.remove_value( "sm_journal_day" );
+    const auto due = [&guy]( const time_duration &time_of_day ) {
+        set_time( calendar::turn_zero + 2_days + time_of_day );
+        const_dialogue d( get_const_talker_for( guy ), nullptr );
+        return effect_on_condition_EOC_SM_JOURNAL_MORNING->test_condition( d );
+    };
+    CHECK_FALSE( due( 5_hours ) );
+    CHECK( due( 7_hours ) );
+    CHECK( due( 15_hours ) );
+    // Written today: not again.
+    dialogue write( get_talker_for( guy ), nullptr );
+    effect_on_condition_EOC_SM_JOURNAL_WRITE_ENTRY->activate( write );
+    CHECK_FALSE( due( 15_hours ) );
+}
+
+TEST_CASE( "survivor_minds_debug_journal_now_includes_guards", "[.][survivor_minds]" )
+{
+    clear_map();
+    clear_avatar();
+    set_time( calendar::turn_zero + 15_hours );
+    npc &guy = spawn_npc( get_avatar().pos_bub().xy() + point( 3, 0 ), "test_talker" );
+    guy.set_fac( faction_your_followers );
+    guy.set_attitude( NPCATT_NULL );
+    guy.set_mission( NPC_MISSION_GUARD_ALLY );
+    REQUIRE( guy.is_player_ally() );
+    REQUIRE_FALSE( guy.is_following() );
+    guy.remove_value( "sm_journal_text" );
+    dialogue d( get_talker_for( guy ), nullptr );
+    effect_on_condition_EOC_SM_DEBUG_JOURNAL_NOW_FOLLOWER->activate( d );
+    const diag_value *text = guy.maybe_get_value( "sm_journal_text" );
+    REQUIRE( text != nullptr );
+    CHECK( text->str().find( "Day " ) != std::string::npos );
+}
