@@ -91,7 +91,7 @@
     "calories": 1800,
     "quench": -2,
     "fun": 8,
-    "vitamins": [ [ "vitA", 50 ], [ "vitC", 50 ], [ "calcium", 50 ], [ "iron", 50 ], [ "vitB", 50 ] ]
+    "vitamins": [ [ "vitC", 50 ], [ "calcium", 50 ], [ "iron", 50 ] ]
   },
   {
     "type": "ITEM",
