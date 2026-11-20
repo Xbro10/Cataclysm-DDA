@@ -27,6 +27,17 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **NPCs pick up the arrows they shot:** a shot arrow or bolt (or something thrown) lands as a new item, so it
   never counted as theirs and was only picked up by chance. Now it does, they look up to 20 tiles away (was 10), and a
   follower may walk up to 15 tiles from you to get their things (their follow distance is only a few tiles).
+- [C++] **Archer followers really work now (fixed again):** played out in a test, an archer follower with default
+  rules never shot their bow and clubbed zombies with it. Four causes, all fixed:
+  - **Bows count as quiet:** "use silent weapons only" (on by default) now allows bows and crossbows; a short bow's
+    twang counted as loud, so followers weren't allowed to shoot it at all.
+  - **They loose sooner:** with NPC autonomy on, an NPC stops aiming once something could reach them within about two
+    turns (they aimed while a zombie walked up, waiting for a "sure" shot at 3 tiles).
+  - **They nock the next arrow:** with an empty bow or gun, enemies in view and none beside them, they reload at once
+    (the game rated walking up and clubbing above reloading).
+  - **Kiting:** something slower right beside them, they step away and shoot again; the game's own step back (which
+    made them flee a zombie two tiles off instead of shooting) is off for them. A follower may back off up to 10
+    tiles from you to do it, and walk up to 15 tiles from you to pick their arrows up without turning back.
 - [C++] **NPCs remember places (step 5.6, part A):** with NPC autonomy on, each NPC remembers up to 30 places: water
   they drank from (a sink, cooler or pool, not a bottle they found), spots they sheltered at when scared, and where
   they got badly hurt. A thirsty NPC with no water in sight walks back to water they remember ("Name heads for water

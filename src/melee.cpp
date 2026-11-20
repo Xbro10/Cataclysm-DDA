@@ -2733,7 +2733,9 @@ double Character::evaluate_weapon_internal( const item &maybe_weapon, bool can_u
     // Needed because evaluation includes electricity via linked cables.
     const map &here = get_map();
 
-    bool allowed = can_use_gun && maybe_weapon.is_gun() && ( !use_silent || maybe_weapon.is_silent() );
+    // Xbro10 fork: bows and crossbows count as quiet for the "silent weapons only" rule.
+    bool allowed = can_use_gun && maybe_weapon.is_gun() && ( !use_silent ||
+                   quiet_enough_for_follower_rules( maybe_weapon ) );
     // According to unmodified evaluation score, NPCs almost always prioritize wielding guns if they have one.
     // This is relatively reasonable, as players can issue commands to NPCs when we do not want them to use ranged weapons.
     // Conversely, we cannot directly issue commands when we want NPCs to prioritize ranged weapons.

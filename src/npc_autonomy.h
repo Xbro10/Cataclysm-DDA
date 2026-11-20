@@ -213,6 +213,26 @@ gunner_stance gunner_stance_for( npc &guy );
  */
 bool kite_step( npc &guy );
 /**
+ * Fire control (reported 2026-11-20, playbook Phase 9 item 1 in a simple form): the game aims
+ * until the target is inside the shooter's sure range, often 3 tiles with a bow, so an archer
+ * aimed while a zombie walked up and never loosed. True when something hostile they see could
+ * reach them within about two turns: shoot now, don't keep aiming.
+ */
+bool fire_now( const npc &shooter );
+/**
+ * Every turn after kite_step (reported 2026-11-20): a ready gunner whose gun or bow is empty, with
+ * hostiles in view but none beside them, reloads (nocks an arrow) now. Empty, the game rated
+ * clubbing with the bow above reloading, so an archer walked up to a zombie after one shot.
+ * True when they reloaded.
+ */
+bool ready_the_shot( npc &guy );
+/**
+ * A follower picking their own things back up (arrows, a dropped weapon) within 15 tiles of the
+ * player: the game's pull to follow waits meanwhile (it grew past the pickup's weight 11 tiles
+ * out and turned them back). Once the player walks off, the things are out of reach and they follow.
+ */
+bool fetches_own_things( const npc &guy );
+/**
  * A recovered arrow, bolt or thrown thing (reported 2026-11-20): the game makes a new item where
  * a shot lands, so it lost the "theirs" tag from the fight. Tags it with the shooter, an NPC.
  */

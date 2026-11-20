@@ -346,6 +346,14 @@ enum class ally_rule : int {
 };
 // NOLINTEND(optin.core.EnumCastOutOfRange)
 
+/**
+ * Xbro10 fork (reported 2026-11-20): may a follower with the "use silent weapons only" rule fire
+ * this? Silent weapons, and bows and crossbows (anything firing arrows or bolts): a twang, not a
+ * gunshot. The game's cutoff is noise under 5 and a short bow is 6, so with the default rules an
+ * archer follower never shot their bow and clubbed zombies with it.
+ */
+bool quiet_enough_for_follower_rules( const item &weapon );
+
 struct ally_rule_data {
     ally_rule rule;
     std::string rule_true_text;

@@ -1365,8 +1365,10 @@ void npc::act_on_danger_assessment()
     // Xbro10 fork: with NPC autonomy on, a ready gunner that outguns what it sees stands and
     // shoots instead of backing away (it never fired while kiting a walking zombie), and only
     // takes the short step back from something slower within 2 tiles, never the long retreat.
+    // Since 2026-11-20 that step is npc_autonomy::kite_step (only from something right beside
+    // them); the game's own step back made an archer flee a zombie 2 tiles off instead of shooting.
     const npc_autonomy::gunner_stance gunner = npc_autonomy::gunner_stance_for( *this );
-    if( gunner == npc_autonomy::gunner_stance::hold && has_effect( effect_npc_run_away ) &&
+    if( gunner != npc_autonomy::gunner_stance::none && has_effect( effect_npc_run_away ) &&
         !has_effect( effect_npc_fire_bad ) ) {
         remove_effect( effect_npc_run_away );
         mem_combat.repositioning = false;
@@ -1458,7 +1460,7 @@ void npc::act_on_danger_assessment()
                     }
                 }
             }
-        } else if( gunner != npc_autonomy::gunner_stance::hold && // Xbro10 fork: gunner rules
+        } else if( gunner == npc_autonomy::gunner_stance::none && // Xbro10 fork: gunner rules
                    may_step_back && // Xbro10 fork: stand with the player
                    ( failed_reposition ||
                      ( mem_combat.assess_ally / 3.0f + mem_combat.my_defence_assess < mem_combat.assess_enemy *
@@ -1817,6 +1819,11 @@ void npc::move()
     // shoots again, instead of clubbing it with the gun or bow.
     if( !in_vehicle && ai_cache.dangerous_explosives.empty() && !has_flag( json_flag_CANNOT_MOVE ) &&
         npc_autonomy::kite_step( *this ) ) {
+        return;
+    }
+    // ...and with the gun or bow empty and nothing beside them, reloads before the game's attack
+    // choice rates walking up and clubbing it higher.
+    if( ai_cache.dangerous_explosives.empty() && npc_autonomy::ready_the_shot( *this ) ) {
         return;
     }
 
@@ -2756,7 +2763,7 @@ void npc::evaluate_best_attack( const Creature *target )
                     if( !( mode.second.melee() || mode.second.flags.count( "NPC_AVOID" ) ||
                            !can_use( *mode.second.target ) ||
                            ( rules.has_flag( ally_rule::use_silent ) && is_player_ally() &&
-                             !mode.second->is_silent() ) ) ) {
+                             !quiet_enough_for_follower_rules( *mode.second.target ) ) ) ) { // Xbro10 fork: bows count as quiet
                         if( it->shots_remaining( here, this ) > 0 || can_reload_current() ) {
                             compare( std::make_shared<npc_attack_gun>( *it, mode.second ), "(as FIRED) ", it.get_item() );
                         } else {

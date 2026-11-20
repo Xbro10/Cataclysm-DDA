@@ -465,6 +465,10 @@ float character_oracle_t::npc_following_urgency( std::string_view ) const
     if( n->posz() != player.posz() ) {
         return 0.6f;
     }
+    // Xbro10 fork: picking up their own arrows or weapon within 15 tiles of the player first.
+    if( npc_autonomy::fetches_own_things( *n ) ) {
+        return 0.0f;
+    }
     const int dist = rl_dist( n->pos_abs(), player.pos_abs() );
     const int radius = n->desired_follow_radius();
     if( dist <= radius ) {

@@ -1891,6 +1891,13 @@ bool wants_to_recover_items( const npc &guy )
     } );
 }
 
+bool fetches_own_things( const npc &guy )
+{
+    return enabled() && guy.is_walking_with() &&
+           rl_dist( get_player_character().pos_abs(), guy.pos_abs() ) <= recover_follower_reach &&
+           wants_to_recover_items( guy );
+}
+
 bool is_goal( const std::string &goal )
 {
     return goal == goal_meal || goal == goal_socialize || goal == goal_get_water ||
@@ -1966,7 +1973,7 @@ bool ready_gunner( npc &guy )
         if( !( mode.second.melee() || mode.second.flags.count( "NPC_AVOID" ) ||
                !guy.can_use( *mode.second.target ) ||
                ( guy.rules.has_flag( ally_rule::use_silent ) && guy.is_player_ally() &&
-                 !mode.second->is_silent() ) ) ) {
+                 !quiet_enough_for_follower_rules( *mode.second.target ) ) ) ) {
             may_fire = true;
             break;
         }
@@ -1999,6 +2006,24 @@ gunner_stance gunner_stance_for( npc &guy )
     return close ? gunner_stance::step_back : gunner_stance::hold;
 }
 
+// A gunner backs off from something slower this close (see kite_step). With fire_now() they loose
+// from 2-3 tiles without a long aim, so stepping out of reach is enough.
+constexpr int kite_gap = 1;
+// A follower backing off to shoot may go this far from the player (their follow distance is only
+// 2-6 tiles, gone in a few steps); guards keep to their post. A first piece of Phase 9 item 6.
+constexpr int kite_follower_reach = 10;
+
+// A follower may back off to within kite_follower_reach of the player; anyone else with a reach
+// (a guard) keeps to it.
+static bool may_kite_to( const npc &guy, const std::optional<npc_reach> &reach,
+                         const tripoint_abs_ms &p )
+{
+    if( guy.is_walking_with() ) {
+        return rl_dist( get_player_character().pos_abs(), p ) <= kite_follower_reach;
+    }
+    return !reach || reach->contains( p );
+}
+
 bool kite_step( npc &guy )
 {
     if( !enabled() || guy.in_sleep_state() || !ready_gunner( guy ) ) {
@@ -2010,7 +2035,7 @@ bool kite_step( npc &guy )
         if( guy.attitude_to( *critter ) != Creature::Attitude::HOSTILE ) {
             continue;
         }
-        if( rl_dist( guy.pos_bub(), critter->pos_bub() ) <= 1 ) {
+        if( rl_dist( guy.pos_bub(), critter->pos_bub() ) <= kite_gap ) {
             if( critter->get_speed() >= guy.get_speed() ) {
                 // Can't get away from it: fight as the game would.
                 return false;
@@ -2039,7 +2064,7 @@ bool kite_step( npc &guy )
     std::pair<int, int> best = now;
     for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), 1 ) ) {
         if( p == guy.pos_bub() || !guy.can_move_to( p, true ) || avoids_trap( guy, p ) ||
-            ( reach && !reach->contains( here.get_abs( p ) ) ) ) {
+            !may_kite_to( guy, reach, here.get_abs( p ) ) ) {
             continue;
         }
         // Only a tile further from the nearest of them, then from all of them together.
@@ -2055,6 +2080,51 @@ bool kite_step( npc &guy )
     }
     guy.move_to( *best_tile, true );
     return true;
+}
+
+bool ready_the_shot( npc &guy )
+{
+    if( !enabled() || guy.in_sleep_state() || !ready_gunner( guy ) ) {
+        return false;
+    }
+    item_location weapon = guy.get_wielded_item();
+    if( weapon->ammo_remaining() > 0 || !guy.can_reload_current() ) {
+        return false;
+    }
+    bool in_view = false;
+    for( const Creature *critter : guy.get_visible_creatures( watch_hostile_range ) ) {
+        if( guy.attitude_to( *critter ) != Creature::Attitude::HOSTILE ) {
+            continue;
+        }
+        if( rl_dist( guy.pos_bub(), critter->pos_bub() ) <= kite_gap ) {
+            // Right beside them: stepping away (kite_step) or fighting comes first.
+            return false;
+        }
+        in_view = true;
+    }
+    if( !in_view ) {
+        return false;
+    }
+    guy.do_reload( weapon );
+    return true;
+}
+
+bool fire_now( const npc &shooter )
+{
+    if( !enabled() ) {
+        return false;
+    }
+    for( const Creature *critter : shooter.get_visible_creatures( watch_hostile_range ) ) {
+        if( shooter.attitude_to( *critter ) != Creature::Attitude::HOSTILE ) {
+            continue;
+        }
+        // Tiles it covers in two turns (a zombie, speed 70: about 1.4), plus the tile beside them.
+        const int reach = 1 + ( 2 * std::max( critter->get_speed(), 0 ) + 99 ) / 100;
+        if( rl_dist( shooter.pos_bub(), critter->pos_bub() ) <= reach ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void tag_shot_ammo( const Character &shooter, item &drop )

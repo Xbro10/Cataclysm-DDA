@@ -26,6 +26,7 @@
 #include "mapdata.h"
 #include "messages.h"
 #include "npc.h"
+#include "npc_autonomy.h"
 #include "pimpl.h"
 #include "point.h"
 #include "projectile.h"
@@ -487,8 +488,11 @@ void npc_attack_gun::use( npc &source, const tripoint_bub_ms &location ) const
 
     // Only aim if we aren't in risk of being hit
     // TODO: Get distance to closest enemy
+    // Xbro10 fork: with NPC autonomy on, no more aiming once something could reach them within
+    // about two turns (npc_autonomy::fire_now): an archer aimed while a zombie walked up.
     if( target.range > 1 && source.aim_per_move( gun, source.recoil, target, aim_cache ) > 0 &&
-        source.confident_gun_mode_range( gunmode, source.recoil ) < target.range ) {
+        source.confident_gun_mode_range( gunmode, source.recoil ) < target.range &&
+        !npc_autonomy::fire_now( source ) ) {
         add_msg_debug( debugmode::debug_filter::DF_NPC, "%s is aiming", source.disp_name() );
         source.aim( Target_attributes( source.pos_bub(), location ) );
     } else {

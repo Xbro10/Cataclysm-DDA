@@ -2859,6 +2859,21 @@ bool npc::is_following() const
     return attitude == NPCATT_FOLLOW || attitude == NPCATT_WAIT;
 }
 
+// Xbro10 fork: see npc.h.
+bool quiet_enough_for_follower_rules( const item &weapon )
+{
+    if( weapon.is_silent() ) {
+        return true;
+    }
+    if( !weapon.is_gun() ) {
+        return false;
+    }
+    static const ammotype ammo_arrow( "arrow" );
+    static const ammotype ammo_bolt( "bolt" );
+    const std::set<ammotype> ammo = weapon.ammo_types();
+    return ammo.count( ammo_arrow ) > 0 || ammo.count( ammo_bolt ) > 0;
+}
+
 bool npc::is_leader() const
 {
     return attitude == NPCATT_LEAD;
