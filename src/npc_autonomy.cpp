@@ -1900,9 +1900,26 @@ gunner_stance gunner_stance_for( npc &guy )
     return close ? gunner_stance::step_back : gunner_stance::hold;
 }
 
+bool stands_with_player( const npc &guy )
+{
+    return enabled() && guy.is_player_ally() && !guy.rules.has_flag( ally_rule::allow_fall_back );
+}
+
+bool falls_back_to_player( const npc &guy )
+{
+    return enabled() && guy.is_player_ally() && guy.rules.has_flag( ally_rule::allow_fall_back );
+}
+
+bool may_step_back( const npc &guy )
+{
+    const std::optional<npc_reach> reach = guy.obligation_reach();
+    return !reach || reach->contains( guy.pos_abs() );
+}
+
 bool wants_safety( const npc &guy )
 {
-    if( !enabled() || guy.in_sleep_state() ) {
+    // A follower or guard only goes looking for a safe spot once the player allows it.
+    if( !enabled() || guy.in_sleep_state() || stands_with_player( guy ) ) {
         return false;
     }
     const float safety = safety_need( guy );

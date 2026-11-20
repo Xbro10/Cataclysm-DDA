@@ -101,6 +101,17 @@
     "text": "<mypronoun> will fetch water and keep mealtimes unprompted (NPC autonomy)."
   },
   {
+    "type": "snippet",
+    "category": "<ally_rule_allow_fall_back_true_text>",
+    "//": "Xbro10 fork, follower rule allow_fall_back (NPC autonomy option). Unset is the default.",
+    "text": "<mypronoun> will fall back toward you when a fight goes badly (NPC autonomy)."
+  },
+  {
+    "type": "snippet",
+    "category": "<ally_rule_allow_fall_back_false_text>",
+    "text": "<mypronoun> will stand with you and not run unless you allow it (NPC autonomy)."
+  },
+  {
     "type": "effect_on_condition",
     "id": "EOC_AUTONOMY_DEBUG_LONELY",
     "//": "Xbro10 fork, NPC autonomy debug (Debug > Game > Activate EOC): every NPC within 30 tiles gets Social 100 and may chat right away.",

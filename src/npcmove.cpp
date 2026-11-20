@@ -148,6 +148,7 @@ static const activity_id ACT_MULTIPLE_FISH( "ACT_MULTIPLE_FISH" );
 static const activity_id ACT_MULTIPLE_READ( "ACT_MULTIPLE_READ" );
 static const activity_id ACT_MULTIPLE_STUDY( "ACT_MULTIPLE_STUDY" );
 static const activity_id ACT_OPERATION( "ACT_OPERATION" );
+static const activity_id ACT_PULP( "ACT_PULP" );
 static const activity_id ACT_SPELLCASTING( "ACT_SPELLCASTING" );
 static const activity_id ACT_START_FIRE( "ACT_START_FIRE" );
 static const activity_id ACT_VEHICLE_DECONSTRUCTION( "ACT_VEHICLE_DECONSTRUCTION" );
@@ -476,6 +477,13 @@ tripoint_bub_ms npc::good_escape_direction( bool include_pos )
     if( !run_to_friend ) {
         run_to_friend = mem_combat.panic < 10 + personality.bravery + op_of_u.trust;
     }
+    // Xbro10 fork (user request 2026-11-19): a follower allowed to fall back always regroups on
+    // the player once beyond their follow distance, however panicked, and also when they first
+    // looked for a retreat zone and found none (upstream skipped the player then).
+    const bool regroup_on_player = npc_autonomy::falls_back_to_player( *this );
+    if( regroup_on_player ) {
+        run_to_friend = true;
+    }
     if( path.empty() && careful_retreat ) {
         add_msg_debug( debugmode::DF_NPC_MOVEAI,
                        "%s doesn't already have an escape path.  Checking for retreat zone.", name );
@@ -500,7 +508,9 @@ tripoint_bub_ms npc::good_escape_direction( bool include_pos )
                            "<color_light_gray>%s did not detect a zone to reposition to, or is too panicked.  Checking to see if there's an ally.</color>",
                            name );
         }
-    } else if( path.empty() && run_to_friend && is_player_ally() ) {
+    }
+    if( path.empty() && run_to_friend && is_player_ally() &&
+        ( !careful_retreat || regroup_on_player ) ) {
         Character &player_character = get_player_character();
         int dist = rl_dist( pos_bub(), player_character.pos_bub() );
         int def_radius = desired_follow_radius();
@@ -1039,7 +1049,11 @@ void npc::assess_danger()
             ai_cache.neutral_guys.emplace_back( g->shared_from( critter ) );
             continue;
         }
-        if( !sees( here, critter ) ) {
+        // Xbro10 fork (reported 2026-11-19): something hostile right beside them counts even
+        // unseen (in the dark): it's biting them. Upstream skipped it, so the NPC went on with
+        // what it was doing (smashing a corpse) while a zombie chewed on it.
+        if( !sees( here, critter ) &&
+            !( rl_dist( pos_bub(), critter.pos_bub() ) <= 1 && critter.posz() == posz() ) ) {
             continue;
         }
 
@@ -1358,6 +1372,16 @@ void npc::act_on_danger_assessment()
         mem_combat.repositioning = false;
         path.clear();
     }
+    // Xbro10 fork (user request 2026-11-19): with the player, the player decides. A follower or
+    // guard without the "fall back" rule never starts the long retreat, and steps back from a
+    // crowd only while inside their follow distance or near their post.
+    const bool stands_with_player = npc_autonomy::stands_with_player( *this );
+    const bool may_step_back = !stands_with_player || npc_autonomy::may_step_back( *this );
+    if( !may_step_back && has_effect( effect_npc_run_away ) && !has_effect( effect_npc_fire_bad ) ) {
+        remove_effect( effect_npc_run_away );
+        mem_combat.repositioning = false;
+        path.clear();
+    }
     if( has_effect( effect_npc_run_away ) ) {
         // this check runs each turn that the NPC is repositioning and assesses if the situation is getting any better.
         // The longer they try to move without improving, the more likely they become to stop and stand their ground.
@@ -1382,7 +1406,8 @@ void npc::act_on_danger_assessment()
     if( !has_effect( effect_npc_run_away ) && !has_effect( effect_npc_fire_bad ) ) {
         mem_combat.assessment_before_repos = std::round( mem_combat.assess_enemy );
         if( mem_combat.assess_ally < mem_combat.assess_enemy &&
-            gunner == npc_autonomy::gunner_stance::none ) { // Xbro10 fork: gunner rules
+            gunner == npc_autonomy::gunner_stance::none && // Xbro10 fork: gunner rules
+            !stands_with_player ) { // Xbro10 fork: only with the player's leave
             // Each time NPC decides to run away, their panic increases, which increases likelihood
             // and duration of running away.
             // if they run to a more advantageous position, they'll reassess and rally.
@@ -1434,6 +1459,7 @@ void npc::act_on_danger_assessment()
                 }
             }
         } else if( gunner != npc_autonomy::gunner_stance::hold && // Xbro10 fork: gunner rules
+                   may_step_back && // Xbro10 fork: stand with the player
                    ( failed_reposition ||
                      ( mem_combat.assess_ally / 3.0f + mem_combat.my_defence_assess < mem_combat.assess_enemy *
                        mem_combat.swarm_count ) ) ) {
@@ -1698,6 +1724,13 @@ void npc::move()
         }
         abandon_activity();
         clear_committed_goal();
+    }
+    // Xbro10 fork (reported 2026-11-19): a follower kept smashing a corpse while a zombie chewed
+    // on her. The game kept the pulp job through a fight and went back to it whenever the fight
+    // logic didn't act that turn. With something hostile close by, drop it; the fight comes first.
+    if( activity.id() == ACT_PULP && in_harms_way() ) {
+        abandon_activity();
+        pulp_location.reset();
     }
     // Xbro10 fork: with NPC autonomy on, an overloaded NPC puts down junk it picked up itself.
     if( !has_activity() && ai_cache.danger <= 0.0f && !in_harms_way() &&
@@ -3375,12 +3408,14 @@ npc_action npc::address_needs( float danger )
         return npc_noop;
     }
 
-    if( can_do_pulp() ) {
+    // Xbro10 fork (reported 2026-11-19): no smashing corpses with something hostile close by.
+    const bool pulp_is_safe = !in_harms_way();
+    if( pulp_is_safe && can_do_pulp() ) {
         if( !activity ) {
             assign_activity( pulp_activity_actor( *pulp_location ) );
         }
         return self_activity();
-    } else if( find_corpse_to_pulp() ) {
+    } else if( pulp_is_safe && find_corpse_to_pulp() ) {
         move_to_next();
         return npc_noop;
     }

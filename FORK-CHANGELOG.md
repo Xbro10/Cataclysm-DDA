@@ -57,12 +57,25 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   Breakroom's own people for free; you pay in tally tokens (5 to patch up, 20 for a full treatment with 2 hours on her
   cot; 3 and 10 after 3 jobs), and while one of hers is badly hurt she only patches you up.
 
+### NPCs
+- [C++] **Followers stand with you:** with NPC autonomy on, followers and your guards no longer run off on their own
+  when a fight goes badly (no "is panicking!" retreat, no walking off to a safe spot). They fight or hold beside you,
+  stepping back a tile or two from a crowd only while still within their follow distance or near their post. A new
+  follower rule, "fall back when a fight goes badly", lets them retreat again, and then they regroup on you instead
+  of running anywhere. Strangers still run as before.
+
 ### Launcher
 - [C++] **Discord card: days survived and followers:** every card now says how long you've survived
   ("First day", "Survived 12 days") and, with followers, how many ("Survived 2 days · 1 follower"). Detailed still
   adds sleeping or driving.
 
 ### Bug fixes
+- [C++] **NPCs stop smashing corpses to fight:** a follower could keep pulping a dead zombie while a live one chewed on
+  her; the corpse job stayed through the fight and came back whenever the fight logic paused. Now an NPC drops it
+  (and won't start one) with something hostile close by, and a hostile right beside them counts even in the dark.
+- [BE] **Moth jelly is fresh:** [C++] a Deathmoth's jelly is as fresh as the kill (the game aged every death drop
+  from the first day, so weeks in it dropped rotten). **The royal ration** no longer freezes the debug spawn menu (it
+  listed two vitamins the game no longer has, and each one popped an error every redraw).
 - [C++] **A weapon's melee damage always lists Bash, Cut, Pierce in order:** the order depended on how the game
   was built, so the same spear could show "Pierce" before "Bash".
 
@@ -70,9 +83,6 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **Synced with upstream CDDA** (66 commits: partial dodge and limb shielding, wound and quest fixes, cash
   cards retired, `map.cpp` and `npctalk.cpp` split into more files). No conflicts. Upstream's use actions now take
   an `item_location`, so the NPC hearth-lighting code and the Backrooms item tests were updated to match.
-- [BE] **Moth jelly is fresh:** [C++] a Deathmoth's jelly is as fresh as the kill (the game aged every death drop
-  from the first day, so weeks in it dropped rotten). **The royal ration** no longer freezes the debug spawn menu (it
-  listed two vitamins the game no longer has, and each one popped an error every redraw).
 
 ## November 18, 2026
 

@@ -338,7 +338,11 @@ enum class ally_rule : int {
     // Xbro10 fork: NPC autonomy. Set = the follower leaves food and water to the player (no
     // trips or mealtimes of their own). Stored this way round so old saves, which lack it, keep
     // the default (looking after themselves).
-    no_self_care = 262144
+    no_self_care = 262144,
+    // Xbro10 fork: NPC autonomy (user request 2026-11-19). Set = the follower may fall back
+    // when a fight goes badly (5.2's "stay safe" and the game's retreat, regrouping on the
+    // player). Unset, the default and what old saves load as, they stand with the player.
+    allow_fall_back = 524288
 };
 // NOLINTEND(optin.core.EnumCastOutOfRange)
 
@@ -452,6 +456,13 @@ const std::unordered_map<std::string, ally_rule_data> ally_rule_strs = { {
                 ally_rule::no_self_care,
                 "<ally_rule_no_self_care_true_text>",
                 "<ally_rule_no_self_care_false_text>"
+            }
+        },
+        {
+            "allow_fall_back", {
+                ally_rule::allow_fall_back,
+                "<ally_rule_allow_fall_back_true_text>",
+                "<ally_rule_allow_fall_back_false_text>"
             }
         },
         {

@@ -131,6 +131,19 @@ bool wants_warmth( const npc &guy );
 /** Scared and a spot to go to or hold, or seeking safety and not yet calm. */
 bool wants_safety( const npc &guy );
 
+// ---- Followers stand with the player (user request 2026-11-19) ----
+// With the player, the player decides: a follower or guard doesn't seek safety or start the
+// game's long retreat on their own, only once the follower rule allow_fall_back is set. They
+// may still step back a tile or two from a crowd (and gunners take their short step back),
+// but only while inside their reach (follow distance, or near their post).
+
+/** Autonomy on, a player ally, and the rule allow_fall_back not set. */
+bool stands_with_player( const npc &guy );
+/** Inside their reach (follow distance or post), so a short step back is fine. */
+bool may_step_back( const npc &guy );
+/** Autonomy on, a player ally, and allow_fall_back set: a retreat regroups on the player. */
+bool falls_back_to_player( const npc &guy );
+
 // ---- Back to their spot (reported 2026-11-18) ----
 // The game keeps shopkeepers (and sheltering strangers) standing still but never remembers
 // where, so a trader scared off their booth stayed in the aisle. With NPC autonomy on, they
