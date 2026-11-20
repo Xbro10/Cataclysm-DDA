@@ -3,9 +3,14 @@
 This is Xbro10's fork of Cataclysm: Dark Days Ahead (CDDA). The project plan is the
 playbook PDF at
 `C:\Users\xande\Documents\CDDA documents for modding\CDDA Backrooms + Autonomous NPCs — Claude Code Playbook.pdf`
-(Phases 0–10 plus testing/publishing prompts and a "Parked ideas" list; the 2026-11-18 version, which adds Phase 9
-"Fighting smart" and Phase 10 "Life off-screen"; older ones are kept beside it as "(old, 2026-11-12)", "(old, 2026-11-16)"
-and "(old, 2026-11-17)"). Map every request to a playbook prompt.
+(Phases 0–10 plus testing/publishing prompts and a "Parked ideas" list; the 2026-11-20 version; older ones are kept
+beside it as "(old, 2026-11-12)", "(old, 2026-11-16)", "(old, 2026-11-17)" and "(old, 2026-11-18)", and "MOST UP TO
+DATE.pdf" is a copy of the current one). The PDF is an export of the Claude doc "CDDA Backrooms + Autonomous NPCs —
+Claude Code Playbook" (https://claude.ai/artifact/G7ZKKDAthN3upUXGrznUQX): to update the playbook, edit that doc
+with the Claude Docs tools, export it as a PDF and save it here the same way. The roadmap page "Backrooms Fork Roadmap"
+(https://claude.ai/artifact/Eszyf1oUojRwdUxuXozHrg) is published from `D:\dev\Important Files\fork-roadmap.html`:
+read the live page first (other sessions publish to it too), edit the file, publish to that URL. Map every request to
+a playbook prompt.
 
 ## Playbook progress
 
