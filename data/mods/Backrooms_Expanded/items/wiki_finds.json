@@ -5,6 +5,11 @@
     "//": "Xbro10 fork: NPCs never pick this to eat or drink on their own (src/npcmove.cpp rate_food). Official builds load the flag and ignore it. No \"info\": it would give the trap away in the description."
   },
   {
+    "type": "json_flag",
+    "id": "FRESH_DROP",
+    "//": "Xbro10 fork: a monster's death drop with this flag is as fresh as the kill, not aged since the cataclysm began (src/monster.cpp drop_items_on_death). Official builds load the flag and ignore it."
+  },
+  {
     "type": "ITEM",
     "id": "br_moth_jelly",
     "//": "From the Backrooms Wiki. Deathmoths leave it behind (br_deathmoth_drops). A sweet food that mends a few hit points.",
@@ -27,6 +32,7 @@
     "healthy": 1,
     "spoils_in": "5 days",
     "vitamins": [ [ "vitC", 5 ] ],
+    "flags": [ "FRESH_DROP" ],
     "consumption_effect_on_conditions": [ "EOC_BR_MOTH_JELLY_MEND" ]
   },
   {
