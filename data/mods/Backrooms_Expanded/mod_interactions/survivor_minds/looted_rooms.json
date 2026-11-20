@@ -26,7 +26,7 @@
       "palettes": [ "br1_garage_palette" ],
       "terrain": { "x": "t_thconc_floor" },
       "furniture": { "x": "f_sm_mark_looted" },
-      "flags": [ "ERASE_FURNITURE_BEFORE_PLACING_TERRAIN" ]
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {

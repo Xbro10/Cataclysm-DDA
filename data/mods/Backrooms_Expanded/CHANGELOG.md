@@ -40,6 +40,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 - Deathmoths really burn in fire now: they're flying insects without the insect fire fear, and their powdery wings are flammable (a ground fire barely hurts most flying monsters).
 - Skin-stealers (and Hounds) back off when a flashlight, lamp or fire lights them up (needs the Xbro10 fork build). The game's own bright-light fear only counted near-daylight, so a flashlight in a dark room never scared them.
 - Dot's "Hound den" job no longer fails with "Unable to find and assign mission target".
+- Moth jelly from a Deathmoth is fresh, however long after the cataclysm you kill it (flag `FRESH_DROP`; needs the Xbro10 fork build, elsewhere it drops aged as before).
+- The royal ration no longer freezes the debug spawn menu: it listed vitamins A and B, which the game no longer has.
 - "Who they were": the overrun camp it marks always has its body with the roster (it used to be able to turn a square you had already seen into the camp, which left the roster on bare floor).
 - The 3-job and 6-job rewards (the stores key, Marcus's map) wait until you talk to Dot ("You wanted to see me?") instead of popping up out in the lanes when a job finishes there.
 - Breakroom door guards carry a steel spear (Exchange guards usually do too): it reaches over the chain-link fence, so they now fight zombies at the fence instead of ignoring them.
