@@ -63,6 +63,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   stepping back a tile or two from a crowd only while still within their follow distance or near their post. A new
   follower rule, "fall back when a fight goes badly", lets them retreat again, and then they regroup on you instead
   of running anywhere. Strangers still run as before.
+- [SM] **Guards far away still keep their journal:** a guard you left at a distant post all morning wrote nothing that
+  day (entries only counted from 6 to 10 AM, and NPCs out of range don't write). Now they write it as soon as you're
+  back near them. New debug shortcut `EOC_SM_DEBUG_JOURNAL_NOW` makes followers, guards and camp workers write an
+  entry right away, to test the lonely and scared lines.
 
 ### Launcher
 - [C++] **Discord card: days survived and followers:** every card now says how long you've survived

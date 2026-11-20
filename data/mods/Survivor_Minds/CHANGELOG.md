@@ -8,6 +8,10 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ### Added
 - Morning journal entries mention loneliness and fear: with the NPC autonomy option of Xbro10's fork, an NPC who has been alone a long time (Social 60+) adds a line like "Haven't talked to anyone in days.", and a scared one (Safety 50+) a line like "Couldn't settle.  Kept watching the dark.", four wordings each. On an official build those values don't exist and no such line appears.
 - Journal lines about Backrooms finds (with Backrooms Expanded): an NPC who eats moth jelly, a royal ration, or drinks cloudy water (liquid pain) writes about it, at most once a day each. Without Backrooms Expanded they simply never come up.
+- Debug shortcut `EOC_SM_DEBUG_JOURNAL_NOW`: every follower, guard and camp worker nearby writes a journal entry right away, to test the entry lines without waiting for morning.
+
+### Changed
+- An NPC away from you all morning (a guard left at a far-off post) now writes that day's entry as soon as you're back near them, any time after 6 AM. Before, only 6-10 AM counted, so the day stayed blank. Days spent wholly away are still blank pages.
 
 ## v0.1.0 - 2026-11-17
 

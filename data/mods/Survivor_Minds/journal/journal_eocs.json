@@ -5,8 +5,8 @@
     "//": [
       "How the timer works: this is ONE global recurring EOC. The game wakes it every in-game hour ('recurrence').",
       "Because global + run_for_npcs are true, each wake-up runs it once for the avatar and once for every NPC in the loaded area (u = that character).",
-      "The condition skips the avatar, skips hours outside 6 AM-10 AM, and skips anyone whose u_sm_journal_day is already today, so each NPC writes exactly once per morning even across save/load or missed hours.",
-      "NPCs outside the loaded area are not run; the next entry they write notes the missing days."
+      "The condition skips the avatar, skips hours before 6 AM, and skips anyone whose u_sm_journal_day is already today, so each NPC writes exactly once a day even across save/load or missed hours.",
+      "NPCs outside the loaded area are not run. Until 2026-11-19 entries were only written up to 10 AM, so a guard left far away all morning skipped the day; now they write it as soon as they're loaded again that day (any time after 6 AM). Days spent wholly away still show as blank pages."
     ],
     "global": true,
     "run_for_npcs": true,
@@ -15,7 +15,6 @@
       "and": [
         "u_is_npc",
         { "math": [ "time_since('midnight', 'unit':'hours') >= 6" ] },
-        { "math": [ "time_since('midnight', 'unit':'hours') < 10" ] },
         { "math": [ "u_sm_journal_day != floor(time_since('cataclysm', 'unit':'days')) + 1" ] }
       ]
     },
