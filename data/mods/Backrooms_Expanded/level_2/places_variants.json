@@ -102,7 +102,8 @@
         { "furn": "f_br2_steam_vent", "x": 4, "y": 13 },
         { "furn": "f_br2_steam_vent", "x": 19, "y": 11 }
       ],
-      "place_terrain": [ { "ter": "t_br2_light", "x": 12, "y": 12 } ]
+      "place_terrain": [ { "ter": "t_br2_light", "x": 12, "y": 12 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {
@@ -121,7 +122,8 @@
         { "furn": "f_br2_steam_vent", "x": 21, "y": 11 }
       ],
       "place_terrain": [ { "ter": "t_br2_light", "x": 12, "y": 11 }, { "ter": "t_br2_light", "x": 12, "y": 13 } ],
-      "place_item": [ { "item": "corpse_bloody", "x": 9, "y": 12, "chance": 100 }, { "item": "br1_note_lost", "x": 9, "y": 12, "chance": 50 } ]
+      "place_item": [ { "item": "corpse_bloody", "x": 9, "y": 12, "chance": 100 }, { "item": "br1_note_lost", "x": 9, "y": 12, "chance": 50 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
   },
   {

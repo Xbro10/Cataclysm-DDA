@@ -41,6 +41,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Fixed
 
+- Level 2 valve junctions no longer log a mapgen error ("setting terrain to t_br2_light ... when item br_lightstick_bundle existed") when a dripping pool's lightstick landed where the junction puts its ceiling light.
 - Deathmoths really burn in fire now: they're flying insects without the insect fire fear, and their powdery wings are flammable (a ground fire barely hurts most flying monsters).
 - Skin-stealers (and Hounds) back off when a flashlight, lamp or fire lights them up (needs the Xbro10 fork build). The game's own bright-light fear only counted near-daylight, so a flashlight in a dark room never scared them.
 - Dot's "Hound den" job no longer fails with "Unable to find and assign mission target".
