@@ -1,0 +1,9 @@
+[
+  {
+    "type": "item_group",
+    "id": "NC_SM_GABRIEL_SPEAR_weapon",
+    "subtype": "collection",
+    "//": "Loaded only when Additions is on too: Gabriel the Spearman carries the Flamero-Mado spear (unlit; NPCs don't use an item's light action) instead of a steel spear.  No copy-from, so this replaces gabriel/gabriel_npc.json's group.",
+    "items": [ { "item": "br_flamero_mado_off" } ]
+  }
+]

@@ -2,18 +2,49 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_SM_DEBUG_SPAWN_GABRIEL",
-    "//": "Developer shortcut (Debug menu > Activate EOC).  Spawns Gabriel next to you.  Doesn't check for an existing Gabriel; his real spawn point comes later.",
+    "//": "Developer shortcut (Debug menu > Activate EOC).  Spawns Gabriel next to you as the Brawler or the Spearman, 50/50.  Doesn't check for an existing Gabriel; his real spawn point comes later.",
+    "effect": [
+      {
+        "if": { "math": [ "rand(1) == 0" ] },
+        "then": [
+          { "u_spawn_npc": "sm_gabriel", "real_count": 1, "min_radius": 1, "max_radius": 2 },
+          { "u_message": "Survivor Minds debug: Gabriel (Brawler) spawned nearby.", "type": "info" }
+        ],
+        "else": [
+          { "u_spawn_npc": "sm_gabriel_spear", "real_count": 1, "min_radius": 1, "max_radius": 2 },
+          { "u_message": "Survivor Minds debug: Gabriel (Spearman) spawned nearby.", "type": "info" }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_SPAWN_GABRIEL_BRAWLER",
+    "//": "Developer shortcut: always the Brawler loadout (morningstar, chainmail).",
     "effect": [
       { "u_spawn_npc": "sm_gabriel", "real_count": 1, "min_radius": 1, "max_radius": 2 },
-      { "u_message": "Survivor Minds debug: Gabriel spawned nearby.", "type": "info" }
+      { "u_message": "Survivor Minds debug: Gabriel (Brawler) spawned nearby.", "type": "info" }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_SM_DEBUG_SPAWN_GABRIEL_SPEAR",
+    "//": "Developer shortcut: always the Spearman loadout (Flamero-Mado spear with Additions on, else a steel spear; leather armour).",
+    "effect": [
+      { "u_spawn_npc": "sm_gabriel_spear", "real_count": 1, "min_radius": 1, "max_radius": 2 },
+      { "u_message": "Survivor Minds debug: Gabriel (Spearman) spawned nearby.", "type": "info" }
     ]
   },
   {
     "type": "effect_on_condition",
     "id": "EOC_SM_DEBUG_WATCH_GABRIEL",
-    "//": "Developer shortcut: watch mode.  Spawns a new, unrecruited Gabriel a short way off and makes you unseen, unheard, unscented and unhurtable, with sight through walls, so he acts as if you weren't there.  A follower would just follow you, so don't recruit this one.  EOC_SM_DEBUG_WATCH_STOP ends it.",
+    "//": "Developer shortcut: watch mode.  Spawns a new, unrecruited Gabriel (either loadout, 50/50) a short way off and makes you unseen, unheard, unscented and unhurtable, with sight through walls, so he acts as if you weren't there.  A follower would just follow you, so don't recruit this one.  EOC_SM_DEBUG_WATCH_STOP ends it.",
     "effect": [
-      { "u_spawn_npc": "sm_gabriel", "real_count": 1, "min_radius": 6, "max_radius": 10 },
+      {
+        "if": { "math": [ "rand(1) == 0" ] },
+        "then": [ { "u_spawn_npc": "sm_gabriel", "real_count": 1, "min_radius": 6, "max_radius": 10 } ],
+        "else": [ { "u_spawn_npc": "sm_gabriel_spear", "real_count": 1, "min_radius": 6, "max_radius": 10 } ]
+      },
       { "u_add_trait": "DEBUG_CLOAK" },
       { "u_add_trait": "DEBUG_SILENT" },
       { "u_add_trait": "DEBUG_NOSCENT" },

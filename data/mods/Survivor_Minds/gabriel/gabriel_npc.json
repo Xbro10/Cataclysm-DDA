@@ -12,7 +12,7 @@
   {
     "type": "npc",
     "id": "sm_gabriel",
-    "//": "Survivor Minds' unique NPC.  A veteran brawler with a morningstar and a code: hates teamers, never snitches, short on words.  Recruitable.",
+    "//": "Survivor Minds' unique NPC, Brawler loadout (sm_gabriel_spear is the Spearman).  A veteran brawler with a morningstar and a code: hates teamers, never snitches, short on words.  Recruitable.",
     "name_unique": "Gabriel",
     "class": "NC_SM_GABRIEL",
     "gender": "male",
@@ -22,6 +22,52 @@
     "//2": "Fixed personality instead of rolled, so he's never Timid.  Shows as Freedom fighter, Brave and Hero: picks fights with bullies, doesn't run, looks out for people.",
     "personality": { "aggression": 5, "bravery": 6, "collector": 0, "altruism": 3 },
     "faction": "no_faction"
+  },
+  {
+    "type": "npc",
+    "id": "sm_gabriel_spear",
+    "//": "Gabriel's other loadout: the same man (look, talk, personality), geared as a spearman in leather armour.  The spawn EOCs pick this or sm_gabriel at random.",
+    "name_unique": "Gabriel",
+    "class": "NC_SM_GABRIEL_SPEAR",
+    "gender": "male",
+    "attitude": 0,
+    "mission": "NULL",
+    "chat": "TALK_SM_GABRIEL_MEET",
+    "personality": { "aggression": 5, "bravery": 6, "collector": 0, "altruism": 3 },
+    "faction": "no_faction"
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_SM_GABRIEL_SPEAR",
+    "name": { "str": "Spearman" },
+    "job_description": "I keep things at spear's length.  Then I don't.",
+    "common": false,
+    "//2": "Same look and traits as the Brawler (NC_SM_GABRIEL); keep the two lists in step.",
+    "traits": [
+      { "trait": "SKIN_LIGHT" },
+      { "trait": "hair_long", "variant": "blond" },
+      { "trait": "eye_color", "variant": "green" },
+      { "trait": "SM_GABRIEL" },
+      { "trait": "TOUGH" },
+      { "trait": "FASTLEARNER" }
+    ],
+    "bonus_str": { "constant": 1 },
+    "bonus_dex": { "constant": 2 },
+    "bonus_per": { "constant": 1 },
+    "skills": [
+      { "skill": "melee", "bonus": { "rng": [ 6, 7 ] } },
+      { "skill": "stabbing", "bonus": { "rng": [ 7, 8 ] } },
+      { "skill": "cutting", "bonus": { "rng": [ 4, 5 ] } },
+      { "skill": "bashing", "bonus": { "rng": [ 3, 4 ] } },
+      { "skill": "dodge", "bonus": { "rng": [ 5, 6 ] } },
+      { "skill": "survival", "bonus": { "rng": [ 2, 3 ] } },
+      { "skill": "firstaid", "bonus": { "rng": [ 1, 2 ] } },
+      { "skill": "speech", "bonus": { "rng": [ 1, 2 ] } }
+    ],
+    "proficiencies": [ "prof_spears_familiar", "prof_spears_pro", "prof_hand_axes_familiar", "prof_hand_axes_pro" ],
+    "weapon_override": "NC_SM_GABRIEL_SPEAR_weapon",
+    "worn_override": "NC_SM_GABRIEL_SPEAR_worn",
+    "carry_override": "NC_SM_GABRIEL_carry"
   },
   {
     "type": "npc_class",
@@ -84,16 +130,43 @@
     "type": "item_group",
     "id": "NC_SM_GABRIEL_worn",
     "subtype": "collection",
-    "//": "Dressed for the cold.  He likes winter.",
+    "//": "Brawler: chainmail under his cyan hoodie (same layer, worn first, so the hoodie and blue scarf stay on top of the sprite), leather-armour gauntlets and boots, a nasal helmet.",
     "items": [
       { "item": "boxer_briefs" },
       { "item": "socks" },
       { "item": "tshirt" },
-      { "item": "hoodie", "variant": "hoodie_cyan" },
       { "item": "jeans" },
-      { "item": "boots_combat" },
+      { "item": "lc_chainmail_hauberk" },
+      { "item": "hoodie", "variant": "hoodie_cyan" },
+      { "item": "boots_larmor" },
+      { "item": "gauntlets_larmor" },
+      { "item": "helmet_nasal" },
+      { "item": "sm_scarf_blue" },
+      { "item": "backpack" }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_SM_GABRIEL_SPEAR_weapon",
+    "subtype": "collection",
+    "//": "A steel spear without Additions; mod_interactions/xbro_additions/gabriel_flamero.json swaps in the Flamero-Mado spear when Additions is on.",
+    "items": [ { "item": "spear_steel" } ]
+  },
+  {
+    "type": "item_group",
+    "id": "NC_SM_GABRIEL_SPEAR_worn",
+    "subtype": "collection",
+    "//": "Spearman: lighter.  A leather armour suit under his cyan hoodie (worn first, so the hoodie and scarf show), leather arm guards and boots, no helmet.  No cloak: its hood covered his hair and hoodie on the sprite.",
+    "items": [
+      { "item": "boxer_briefs" },
+      { "item": "socks" },
+      { "item": "tshirt" },
+      { "item": "jeans" },
+      { "item": "armor_larmor" },
+      { "item": "hoodie", "variant": "hoodie_cyan" },
+      { "item": "armguard_larmor" },
+      { "item": "boots_larmor" },
       { "item": "gloves_leather" },
-      { "item": "hat_knit" },
       { "item": "sm_scarf_blue" },
       { "item": "backpack" }
     ]

@@ -24,6 +24,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   Hounds that defend their den (bolder, and a flashlight doesn't drive them off). Moth jelly also cleans dirty cuts and
   scratches, as saline does. A runner getting tired on a run heads home to sleep instead of lying down out in the lanes.
 
+### NPCs
+- [SM] **Gabriel's two loadouts:** he now spawns as either the Brawler (morningstar, chainmail under his cyan hoodie,
+  nasal helmet) or the Spearman (the Additions mod's Flamero-Mado spear, or a steel spear without it, and leather
+  armour), picked at random. Same look, talk and personality either way.
+
 ### Launcher
 - **"Already up to date" pops up:** installing a sound pack you already have says so in a pop-up, not only in the
   status line at the bottom.
@@ -37,6 +42,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   about 4 minutes) generates each of the mod's 22 overmap terrains 40 to 200 times and fails on any mapgen error,
   naming the place. It replaces the separate Level 0, garage and tunnel tests; the Level 0 one had been skipping itself
   (it looked up `backfloorchamber`, but the rotatable terrain's id is `backfloorchamber_north`). Add new places to its list.
+- [SM] **Gabriel's loadouts:** templates `sm_gabriel` (class `NC_SM_GABRIEL`, Brawler) and `sm_gabriel_spear`
+  (`NC_SM_GABRIEL_SPEAR`, Spearman). Survivor Minds' first `mod_interactions/xbro_additions/` file replaces the
+  Spearman's weapon group with the Flamero-Mado. Debug `EOC_SM_DEBUG_SPAWN_GABRIEL_BRAWLER` / `_SPEAR`.
 
 ## November 20, 2026
 
