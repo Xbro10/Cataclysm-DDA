@@ -156,7 +156,7 @@
     "type": "item_group",
     "id": "NC_SM_GABRIEL_SPEAR_worn",
     "subtype": "collection",
-    "//": "Spearman: lighter.  A leather armour suit under his cyan hoodie (worn first, so the hoodie and scarf show), leather arm guards and boots, no helmet.  No cloak: its hood covered his hair and hoodie on the sprite.",
+    "//": "Spearman: lighter.  A leather armour suit under his cyan hoodie (worn first, so the hoodie and scarf show), leather arm guards and boots, no helmet, and a wool cloak (its hood is drawn up over his hair; the user chose it in its original colour).",
     "items": [
       { "item": "boxer_briefs" },
       { "item": "socks" },
@@ -168,6 +168,7 @@
       { "item": "boots_larmor" },
       { "item": "gloves_leather" },
       { "item": "sm_scarf_blue" },
+      { "item": "cloak_wool" },
       { "item": "backpack" }
     ]
   },

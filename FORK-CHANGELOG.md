@@ -26,8 +26,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ### NPCs
 - [SM] **Gabriel's two loadouts:** he now spawns as either the Brawler (morningstar, chainmail under his cyan hoodie,
-  nasal helmet) or the Spearman (the Additions mod's Flamero-Mado spear, or a steel spear without it, and leather
-  armour), picked at random. Same look, talk and personality either way.
+  nasal helmet) or the Spearman (the Additions mod's Flamero-Mado spear, or a steel spear without it, leather
+  armour and a wool cloak), picked at random. Same look, talk and personality either way.
 
 ### Launcher
 - **"Already up to date" pops up:** installing a sound pack you already have says so in a pop-up, not only in the
