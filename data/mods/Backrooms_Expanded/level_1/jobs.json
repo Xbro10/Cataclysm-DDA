@@ -281,6 +281,7 @@
     "start": { "effect": [ { "math": [ "u_br1_handed_fuel = 0" ] } ] },
     "end": {
       "effect": [
+        { "u_message": "Dot pays you: 5 tally tokens and 2 cans of food.  The Breakroom likes you a little more.", "type": "good" },
         { "u_spawn_item": "br_tally_token", "count": 5 },
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 2 },
         { "math": [ "faction_like('br_breakroom') += 5" ] },
@@ -315,6 +316,7 @@
     "start": { "effect": [ { "math": [ "u_br1_handed_pest = 0" ] }, { "math": [ "u_br1_pest_kills = 0" ] } ] },
     "end": {
       "effect": [
+        { "u_message": "Dot pays you: 2 cans of food, 2 batteries or cells and 3 medical supplies.  The Breakroom likes you a little more.", "type": "good" },
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 2 },
         { "u_spawn_item": "br_cat_power", "use_item_group": true, "count": 2 },
         { "math": [ "faction_like('br_breakroom') += 5" ] },
@@ -364,12 +366,14 @@
         "place_monster": [
           { "monster": "mon_br_den_hound", "x": 9, "y": 10 },
           { "monster": "mon_br_den_hound", "x": 13, "y": 10 },
-          { "monster": "mon_br_den_hound", "x": 12, "y": 13 }
+          { "monster": "mon_br_den_hound", "x": 12, "y": 13 },
+          { "monster": "mon_br_den_hound", "x": 10, "y": 14, "chance": 50 }
         ]
       }
     },
     "end": {
       "effect": [
+        { "u_message": "Dot pays you: a light, 4 batteries or cells and 5 tally tokens.  The Breakroom likes and trusts you more.", "type": "good" },
         { "u_spawn_item": "tools_lighting", "use_item_group": true },
         { "u_spawn_item": "br_cat_power", "use_item_group": true, "count": 4 },
         { "u_spawn_item": "br_tally_token", "count": 5 },
@@ -419,6 +423,7 @@
     },
     "end": {
       "effect": [
+        { "u_message": "Dot pays you: 10 tally tokens and 3 medical supplies.  The Breakroom trusts you more.", "type": "good" },
         { "u_spawn_item": "br_tally_token", "count": 10 },
         { "math": [ "faction_trust('br_breakroom') += 10" ] },
         { "u_spawn_item": "br_cat_medical", "use_item_group": true, "count": 3 },
@@ -465,6 +470,7 @@
     },
     "end": {
       "effect": [
+        { "u_message": "Marcus pays you: 5 tally tokens, 4 batteries or cells, 3 cans of food and 2 tools.  The Breakroom likes you a little more.", "type": "good" },
         { "u_spawn_item": "br_cat_power", "use_item_group": true, "count": 4 },
         { "u_spawn_item": "cannedfood", "use_item_group": true, "count": 3 },
         { "u_spawn_item": "br_tally_token", "count": 5 },
@@ -501,6 +507,7 @@
     "start": { "effect": [ { "math": [ "u_br1_handed_lifts = 0" ] }, { "math": [ "u_br1_lifts_mark = u_br1_lobby_arrivals" ] } ] },
     "end": {
       "effect": [
+        { "u_message": "Marcus pays you: 5 tally tokens, and marks two more lift lobbies on your map.  The Breakroom likes you a little more.", "type": "good" },
         { "u_spawn_item": "br_tally_token", "count": 5 },
         {
           "u_location_variable": { "context_val": "br1_lobby_hint" },

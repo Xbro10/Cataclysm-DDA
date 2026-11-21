@@ -201,6 +201,11 @@
         "then": [ { "math": [ "u_br1_run_state = 2" ] }, { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } } ]
       },
       {
+        "//": "Getting tired on a run: head home to sleep in the Breakroom instead of lying down out in the lanes. Sleepiness 130 is a few hours before an NPC beds down (191, 'Tired'), enough to walk home.",
+        "if": { "and": [ { "math": [ "u_br1_run_state == 1" ] }, { "math": [ "u_val('sleepiness') >= 130" ] } ] },
+        "then": [ { "math": [ "u_br1_run_state = 2" ] }, { "u_set_goal": { "om_terrain": "br1_garage", "var": { "u_val": "br1_home" } } } ]
+      },
+      {
         "if": { "math": [ "u_br1_run_state == 2" ] },
         "then": [
           {
@@ -545,6 +550,7 @@
     },
     "end": {
       "effect": [
+        { "u_message": "Dot pays you: 2 bottles of almond water and 2 medical supplies.  The Breakroom likes you more.", "type": "good" },
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
         { "u_spawn_item": "almond_water", "container": "bottle_almond_water" },
         { "u_spawn_item": "br_cat_medical", "use_item_group": true, "count": 2 },

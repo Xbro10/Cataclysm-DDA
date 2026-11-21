@@ -38,10 +38,11 @@
   {
     "type": "effect_on_condition",
     "id": "EOC_BR_MOTH_JELLY_MEND",
-    "//": "u ate moth jelly: a few hit points back on every body part.",
+    "//": "u ate moth jelly: a few hit points back on every body part, and every dirty cut and scratch is cleaned as saline would (the game's own EOC_INVOKE_CLEANING_WOUNDS, which regeneration mutations use).",
     "effect": [
       { "math": [ "u_hp('ALL')", "+=", "4" ] },
-      { "u_message": "Sweet and warm.  The ache in your bruises eases a little.", "type": "good" }
+      { "run_eocs": "EOC_INVOKE_CLEANING_WOUNDS" },
+      { "u_message": "Sweet and warm.  The ache in your bruises eases a little, and your cuts stop stinging.", "type": "good" }
     ]
   },
   {

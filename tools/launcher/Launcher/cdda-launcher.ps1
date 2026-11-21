@@ -50,7 +50,7 @@ $script:UserSoundDir = Join-Path $UserDir 'sound'
 $script:DownloadDir = Join-Path $Root 'Downloads'
 $script:BackupDir   = Join-Path $Root 'Backups'
 $script:SettingsFile = if ($RootOverride) { Join-Path $Root 'settings.json' } else { Join-Path $LauncherDir 'settings.json' }
-$script:LauncherVersion = '2026-11-17'
+$script:LauncherVersion = '2026-11-21'
 # Where a newer launcher is published (the testing branch is what testers get).
 $script:LauncherUpdateUrl = 'https://raw.githubusercontent.com/Xbro10/Cataclysm-DDA/testing/tools/launcher/Launcher/cdda-launcher.ps1'
 $script:LauncherExeName = 'CDDA Fork Launcher.exe'
@@ -1694,7 +1694,11 @@ function Install-SoundPack {
         if ($err) { return }
         $pk = $script:SoundPacks[$script:SoundJobKey]
         Update-SoundList
-        if ($res.Same) { $lblStatus.Text = "$($pk.Label) is already up to date ($($res.Version))."; return }
+        if ($res.Same) {
+            $lblStatus.Text = "$($pk.Label) is already up to date ($($res.Version))."
+            Show-Info "$($pk.Label) is already up to date ($($res.Version)). Nothing to download."
+            return
+        }
         $lblStatus.Text = "Installed $($pk.Label) ($($res.Version))."
         if ((Get-GameSoundpack) -ne $pk.Name -and (Confirm-Action "$($pk.Label) is installed. Use it in the game now?")) { Use-SoundPack $script:SoundJobKey }
     }

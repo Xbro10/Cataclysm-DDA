@@ -4,7 +4,10 @@
     "id": "mon_br_den_hound",
     "copy-from": "mon_br_hound",
     "looks_like": "mon_br_hound",
-    "//": "A Hound of the pack Dot's 'Hound den' job puts in the den. The same animal as mon_br_hound; a separate id only so the job counts this pack's kills (EOC_BR1_JOB_KILLS)."
+    "//": "A Hound of the pack Dot's 'Hound den' job puts in the den. Defends its den: more aggressive and braver than a wandering Hound, and a flashlight does not drive it off (fire and losses still do). A separate id also lets the job count this pack's kills (EOC_BR1_JOB_KILLS).",
+    "aggression": 80,
+    "morale": 50,
+    "delete": { "flags": [ "FEARS_LIGHT" ], "fear_triggers": [ "BRIGHT_LIGHT" ] }
   },
   {
     "type": "effect_on_condition",
