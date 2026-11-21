@@ -245,15 +245,18 @@ TEST_CASE( "breakroom_runner_goes_far_or_scavenges", "[.][backrooms_runner]" )
     }
 }
 
-// A runner badly hurt on a run cuts it short and heads home at once; an unhurt one keeps going.
+// A runner badly hurt on a run, or getting tired (reported 2026-11-21: they slept out in the lanes), cuts it
+// short and heads home at once; a fresh, unhurt one keeps going.
 TEST_CASE( "breakroom_runner_comes_home_when_hurt", "[.][backrooms_runner]" )
 {
     if( !effect_on_condition_EOC_BR1_RUNNER_TICK.is_valid() ) {
         WARN( "Needs --mods=backrooms,backrooms_expanded" );
         return;
     }
-    const bool hurt = GENERATE( true, false );
-    CAPTURE( hurt );
+    const int why = GENERATE( 0, 1, 2 );
+    CAPTURE( why );
+    const bool hurt = why == 1;
+    const bool tired = why == 2;
     clear_map_without_vision();
     clear_avatar();
     set_time( calendar::turn_zero + 12_hours );
@@ -270,7 +273,8 @@ TEST_CASE( "breakroom_runner_comes_home_when_hurt", "[.][backrooms_runner]" )
         guy.set_part_hp_cur( bodypart_id( "torso" ), guy.get_part_hp_max( bodypart_id( "torso" ) ) / 3 );
     }
     run_eoc( guy, effect_on_condition_EOC_BR1_RUNNER_TICK );
-    CHECK( runner_var( guy, "br1_run_state" ) == ( hurt ? 2 : 1 ) );
+    CHECK( runner_var( guy, "br1_run_state" ) == ( hurt || tired ? 2 : 1 ) );
+    guy.set_sleepiness( tired ? 150 : 0 );
 }
 
 // Both Breakroom layouts build, with the runner board, supply locker and front defences in place.

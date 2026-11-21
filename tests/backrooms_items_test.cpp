@@ -257,6 +257,17 @@ TEST_CASE( "backrooms_wiki_finds_work", "[.][backrooms_items]" )
         CHECK( you.get_part_hp_cur( torso ) > 20 );
     }
 
+    SECTION( "moth jelly cleans dirty cuts and scratches, as saline does" ) {
+        const wound_type_id scratch( "scratch_small" );
+        const wound_type_id clean_scratch( "clean_scratch_small" );
+        you.get_part( bodypart_id( "arm_l" ) )->add_wound( scratch, you, 1 );
+        REQUIRE( you.has_wound( scratch ) );
+        item jelly( moth_jelly );
+        you.consume( jelly, /*force=*/true );
+        CHECK_FALSE( you.has_wound( scratch ) );
+        CHECK( you.has_wound( clean_scratch ) );
+    }
+
     SECTION( "cloudy water is liquid pain" ) {
         REQUIRE( you.get_pain() == 0 );
         item drink( liquid_pain );

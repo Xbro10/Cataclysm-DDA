@@ -12,10 +12,21 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 | **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
 | **[Launcher]** | The launcher in `tools/launcher/` |
 
-**Jump to:** [Nov 20](#november-20-2026) · [Nov 19](#november-19-2026) · [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
+**Jump to:** [Nov 21](#november-21-2026) · [Nov 20](#november-20-2026) · [Nov 19](#november-19-2026) · [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
 [Nov 12–14, the first version](#november-1214-2026-the-first-version) · [How to add an entry](#how-to-add-an-entry)
 
 ---
+
+## November 21, 2026
+
+### Backrooms
+- [BE] **Breakroom jobs, runners and finds:** handing in a job now says what you earned. The Hound den's pack is 3 or 4
+  Hounds that defend their den (bolder, and a flashlight doesn't drive them off). Moth jelly also cleans dirty cuts and
+  scratches, as saline does. A runner getting tired on a run heads home to sleep instead of lying down out in the lanes.
+
+### Launcher
+- **"Already up to date" pops up:** installing a sound pack you already have says so in a pop-up, not only in the
+  status line at the bottom.
 
 ## November 20, 2026
 
