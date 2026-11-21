@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "calendar.h"
 #include "cata_catch.h"
 #include "character.h"
 #include "coordinates.h"
@@ -35,6 +36,7 @@
 #include "type_id.h"
 #include "visitable.h"
 
+static const itype_id itype_arrow_wood( "arrow_wood" );
 static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_jeans( "jeans" );
 static const itype_id itype_rock( "rock" );
@@ -341,6 +343,57 @@ TEST_CASE( "item_location_in_container_uid_miss_becomes_nowhere",
     } );
     CHECK_FALSE( loaded );
     CHECK_FALSE( dmsg.empty() );
+}
+
+// Xbro10 fork (N28, seen 2026-11-20): "item_location UID not found in container contents" on
+// loading. Two stacks of arrows in a pack that didn't stack when saved (one was tagged) merge
+// into one when the save loads; a location on the stack that merged away (an NPC nocking an
+// arrow from it) finds the merged arrows, not an error.
+TEST_CASE( "item_location_on_a_stack_that_merged_on_load", "[item][item_location][item_uid]" )
+{
+    clear_map_without_vision();
+    map &m = get_map();
+    tripoint_bub_ms pos( 60, 60, 0 );
+    m.i_clear( pos );
+
+    item backpack_item( itype_backpack );
+    item kept( itype_arrow_wood, calendar::turn, 5 );
+    item tagged( itype_arrow_wood, calendar::turn, 3 );
+    tagged.set_var( "autonomy_carried_by", "1" );
+    backpack_item.put_in( kept, pocket_type::CONTAINER );
+    backpack_item.put_in( tagged, pocket_type::CONTAINER );
+    m.add_item( pos, backpack_item );
+    item &placed_backpack = m.i_at( pos ).only_item();
+    REQUIRE( placed_backpack.all_items_container_top().size() == 2 );
+
+    item *tagged_ptr = nullptr;
+    item *kept_ptr = nullptr;
+    for( item *it : placed_backpack.all_items_container_top() ) {
+        if( it->has_var( "autonomy_carried_by" ) ) {
+            tagged_ptr = it;
+        } else {
+            kept_ptr = it;
+        }
+    }
+    REQUIRE( tagged_ptr != nullptr );
+    REQUIRE( kept_ptr != nullptr );
+    item_location backpack_loc( map_cursor( pos ), &placed_backpack );
+    item_location arrows_loc( backpack_loc, tagged_ptr );
+    const std::string json_str = serialize_item_location( arrows_loc );
+
+    // What a load leaves: the tagged stack merged into the other one, and its uid is gone.
+    kept_ptr->charges += tagged_ptr->charges;
+    backpack_loc.remove_item( *tagged_ptr );
+    REQUIRE( placed_backpack.all_items_container_top().size() == 1 );
+
+    item_location loaded;
+    const std::string dmsg = capture_debugmsg_during( [&]() {
+        loaded = deserialize_item_location( json_str );
+    } );
+    CHECK( dmsg.empty() );
+    REQUIRE( loaded );
+    CHECK( loaded->typeId() == itype_arrow_wood );
+    CHECK( loaded->charges == 8 );
 }
 
 TEST_CASE( "item_location_on_map_survives_removal", "[item][item_location][item_uid]" )

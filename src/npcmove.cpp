@@ -942,9 +942,13 @@ void npc::assess_danger()
     const bool self_defense_only = rules.engagement == combat_engagement::NO_MOVE ||
                                    rules.engagement == combat_engagement::NONE;
     const bool no_fighting = rules.has_flag( ally_rule::forbid_engage );
+    // Xbro10 fork (N18, 2026-11-20): with NPC autonomy on, a gunner who stepped back to shoot
+    // (up to 10 tiles from the player) still fights. Past the follow distance "follow close"
+    // made every monster no target, so an archer two steps back walked to the player, past the
+    // zombie, and back into its reach.
     const bool must_retreat = rules.has_flag( ally_rule::follow_close ) &&
                               !too_close( pos_bub(), player_character.pos_bub(), follow_distance() ) &&
-                              !is_guarding();
+                              !is_guarding() && !npc_autonomy::shoots_from_kite_range( *this );
 
     if( is_player_ally() ) {
         if( rules.engagement == combat_engagement::FREE_FIRE ) {
@@ -2712,8 +2716,12 @@ void npc::evaluate_best_attack( const Creature *target )
 
     std::shared_ptr<npc_attack> best_attack;
     npc_attack_rating best_evaluated_attack;
+    // Xbro10 fork: the best shot too, in case a ready gunner should shoot rather than close in.
+    std::shared_ptr<npc_attack> best_shot;
+    npc_attack_rating best_shot_rating;
     // item's name is only built when the debug message is logged
-    const auto compare = [&best_attack, &best_evaluated_attack, this, &target]
+    const auto compare = [&best_attack, &best_evaluated_attack, &best_shot, &best_shot_rating, this,
+                          &target]
     ( const std::shared_ptr<npc_attack> &potential_attack, const char *kind, const item * it ) {
         const npc_attack_rating evaluated = potential_attack->evaluate( *this, target );
         if( evaluated.value() ) {
@@ -2723,6 +2731,11 @@ void npc::evaluate_best_attack( const Creature *target )
             if( evaluated > best_evaluated_attack ) {
                 best_attack = potential_attack;
                 best_evaluated_attack = evaluated;
+            }
+            if( evaluated > best_shot_rating &&
+                dynamic_cast<const npc_attack_gun *>( potential_attack.get() ) != nullptr ) {
+                best_shot = potential_attack;
+                best_shot_rating = evaluated;
             }
         }
     };
@@ -2782,6 +2795,19 @@ void npc::evaluate_best_attack( const Creature *target )
     }
     for( const spell_id &sp : magic->spells() ) {
         compare( std::make_shared<npc_attack_spell>( sp ), sp.c_str(), nullptr );
+    }
+
+    // Xbro10 fork (N18, reported 2026-11-20): close up, a shot is rated x0.85 and the bow they
+    // already hold costs a time penalty, so swinging the bow at something 2 tiles off rated higher
+    // and an archer who had just stepped away (npc_autonomy::kite_step) walked straight back up to
+    // it. With NPC autonomy on, a ready gunner shoots instead of walking up to melee
+    // (npc_autonomy::shoots_from_here). Beside it too: npc_autonomy::kite_step steps away first
+    // when it can, so this is when there's no room (10 tiles from the player, a wall behind).
+    if( best_shot && best_attack != best_shot && best_shot_rating > 0 &&
+        dynamic_cast<const npc_attack_melee *>( best_attack.get() ) != nullptr &&
+        npc_autonomy::shoots_from_here( *this ) ) {
+        best_attack = best_shot;
+        best_evaluated_attack = best_shot_rating;
     }
 
     ai_cache.current_attack = best_attack;
@@ -4119,7 +4145,15 @@ void npc::avoid_friendly_fire()
                ( rl_dist( r, tar ) - rl_dist( r, center ) );
     } );
 
+    // Xbro10 fork (N18, 2026-11-20): with NPC autonomy on, a ready gunner doesn't side-step up
+    // to something close: the closest tile to the target sorts first, so with the player near
+    // the line of fire an archer who'd just stepped away walked back beside the zombie.
+    const bool keep_distance = npc_autonomy::shoots_from_here( *this );
+    const int now_dist = rl_dist( pos_bub(), tar );
     for( const tripoint_bub_ms &pt : candidates ) {
+        if( keep_distance && rl_dist( pt, tar ) < now_dist && rl_dist( pt, tar ) <= 2 ) {
+            continue;
+        }
         if( can_move_to( pt ) ) {
             move_to( pt );
             return;

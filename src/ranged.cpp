@@ -2443,7 +2443,7 @@ static projectile make_gun_projectile( const item &gun, Character &guy )
             drop.set_favorite( gun.get_contents().first_ammo().is_favorite );
             // Xbro10 fork: the landed arrow or bolt is a new item; an NPC (autonomy on) tags
             // it as theirs so they pick it back up after the fight.
-            npc_autonomy::tag_shot_ammo( guy, drop );
+            npc_autonomy::tag_shot_ammo( guy, drop, true );
             proj.set_drop( drop );
         }
 

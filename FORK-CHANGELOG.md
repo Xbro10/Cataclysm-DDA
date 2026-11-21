@@ -38,6 +38,17 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   - **Kiting:** something slower right beside them, they step away and shoot again; the game's own step back (which
     made them flee a zombie two tiles off instead of shooting) is off for them. A follower may back off up to 10
     tiles from you to do it, and walk up to 15 tiles from you to pick their arrows up without turning back.
+- [C++] **Archers no longer walk back up to the zombie (N18):** after stepping away they shoot from there. Four causes:
+  past their follow distance the "follow close" rule made the game ignore the zombie and walk them back to you, past
+  it; at two tiles the game rated swinging the bow above a shot; its "don't hit a friend" side-step picked the tile
+  nearest the zombie; and a bow counted for almost nothing in their own strength, so one zombie made them "outgunned"
+  and every gunner rule switched off. When there's nowhere left to step (10 tiles from you, a wall behind), they shoot
+  point-blank instead of clubbing.
+- [C++] **Every arrow picked back up (N26):** arrows that stuck in a zombie end up in its corpse, and they take them
+  out of it now. One arrow they can't reach no longer makes them stop looking for the rest, they also go for arrows
+  that flew on into the dark, and a shot at something further off than they watch still counts as theirs.
+- [C++] **Plan line for meals and chats (N27):** the look-around panel says "Plan: have a meal" or "Plan: have a
+  chat" too. Chores (camp work, smashing corpses) already show after "Follower;" on the line above.
 - [C++] **NPCs remember places (step 5.6, part A):** with NPC autonomy on, each NPC remembers up to 30 places: water
   they drank from (a sink, cooler or pool, not a bottle they found), spots they sheltered at when scared, and where
   they got badly hurt. A thirsty NPC with no water in sight walks back to water they remember ("Name heads for water
@@ -46,11 +57,20 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   start with nothing remembered. The look-around panel shows "Remembers 7 places".
 
 ### Bug fixes
+- [C++] **No "item_location UID not found" on loading (N28):** two stacks of the same thing in a bag can merge into one
+  when a save loads, and an activity on the stack that merged away (an NPC nocking an arrow) lost its item with that
+  error. Saves now note what the item was, and loading falls back to that kind of item in the same place (never a
+  different item, as the first try at this fix could). Saves made before this still show the error once.
 - [C++] **No more error for a job with nowhere to go:** a stranger's ordinary job aimed at a house can't be done inside
   a Backrooms level; it no longer logs "Unable to find and assign mission target" or "Mapgen update function called
   with invalid tripoint".
 - [C++] **Mod sprites for the other tileset aren't errors:** each of our mods has one sprite file for UltiCa and one for
   UndeadPeople, and the game logged an error for whichever didn't match your tileset. Now it's a plain log line.
+
+### For developers
+- [C++] The hidden test `Character_attacking_a_zombie` (`[.melee]`) no longer crashes: its unarmed case read the
+  wielded item without checking there was one (an upstream test bug, on master too). It runs now and misses two of
+  its expected hit chances by a little (48% for 50-70%, 74.6% for 75-85%): upstream's numbers drifted; left as is.
 
 ## November 19, 2026
 

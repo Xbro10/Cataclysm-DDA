@@ -222,6 +222,19 @@ bool kite_step( npc &guy );
  */
 bool fire_now( const npc &shooter );
 /**
+ * The attack choice (N18, reported 2026-11-20): a ready gunner shoots at something 2+ tiles off
+ * rather than walking up to club it, unless something within 2 tiles is as fast as them. The
+ * game rated a swing of the bow above a close shot, so an archer stepped away (kite_step) and
+ * walked straight back.
+ */
+bool shoots_from_here( npc &guy );
+/**
+ * N18: a following gunner who stands and shoots (gunner_stance_for isn't none) up to 10 tiles
+ * from the player fights from there. Past their follow distance (2-6 tiles, gone after a step or
+ * two away from a zombie) the game had them follow the player instead, back past the zombie.
+ */
+bool shoots_from_kite_range( npc &guy );
+/**
  * Every turn after kite_step (reported 2026-11-20): a ready gunner whose gun or bow is empty, with
  * hostiles in view but none beside them, reloads (nocks an arrow) now. Empty, the game rated
  * clubbing with the bow above reloading, so an archer walked up to a zombie after one shot.
@@ -237,8 +250,10 @@ bool fetches_own_things( const npc &guy );
 /**
  * A recovered arrow, bolt or thrown thing (reported 2026-11-20): the game makes a new item where
  * a shot lands, so it lost the "theirs" tag from the fight. Tags it with the shooter, an NPC.
+ * A throw only in a fight; a shot (fired) always, and it counts as one (N26: a shot at something
+ * further off than they watch wasn't tagged).
  */
-void tag_shot_ammo( const Character &shooter, item &drop );
+void tag_shot_ammo( Character &shooter, item &drop, bool fired = false );
 /**
  * For the look-around panel: why a cold NPC (Warmth 50+) can't warm up, e.g. "Cold: no room
  * to carry the firewood"; "" when they aren't cold or have a way.

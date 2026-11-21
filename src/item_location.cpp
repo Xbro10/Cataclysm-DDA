@@ -824,6 +824,8 @@ class item_location::impl::item_in_container : public item_location::impl
             js.member( "parent", container );
             if( target()->uid().is_valid() ) {
                 js.member( "uid", target()->uid().get_value() );
+                // Xbro10 fork (N28): what it was, for when its stack merges away on load.
+                js.member( "item_type", target()->typeId() );
             }
             js.end_object();
         }
@@ -1176,17 +1178,25 @@ void item_location::deserialize( const JsonObject &obj )
                     break;
                 }
             }
-            // Xbro10 fork (seen 2026-11-20): identical items in a pocket merge into one stack when
-            // a save loads, so a location on the stack that merged away has no uid left to find
-            // (arrows an NPC picked back up went into the quiver as a stack of their own). As for
-            // a map tile's runs (retrieve_rle_copy), fall back to its place in the pocket.
-            // A stack that merged into the one before it is past the end now: the last one.
-            if( !found && idx > -1 && !parent_contents.empty() ) {
-                auto iter = parent_contents.begin();
-                std::advance( iter, std::min( idx, static_cast<int>( parent_contents.size() ) - 1 ) );
-                found = *iter;
-                DebugLog( D_INFO, D_GAME ) << "item_location UID " << uid <<
-                                           " not in its container after loading; using index " << idx;
+            // Xbro10 fork (N28, seen 2026-11-20): identical items in a pocket can merge into one
+            // stack when a save loads, so a location on the stack that merged away has no uid left
+            // to find (arrows an NPC picked back up went into the quiver as a stack of their own).
+            // Fall back to an item of the same type in that pocket, the one at its old place
+            // first. Never another kind of item: saves from before "item_type" keep the error.
+            itype_id item_type;
+            if( !found && obj.read( "item_type", item_type ) && !item_type.is_null() ) {
+                int i = 0;
+                for( item *it : parent_contents ) {
+                    if( it->typeId() == item_type && ( !found || i == idx ) ) {
+                        found = it;
+                    }
+                    ++i;
+                }
+                if( found ) {
+                    DebugLog( D_INFO, D_GAME ) << "item_location UID " << uid <<
+                                               " not in its container after loading; using a " << item_type.str() <<
+                                               " in the same place";
+                }
             }
             if( !found ) {
                 debugmsg( "item_location UID not found in container contents" );

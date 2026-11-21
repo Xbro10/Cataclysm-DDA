@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <functional>
 #include <limits>
 #include <map>
@@ -315,6 +316,19 @@ static bool sees_hostile_within( const npc &guy, const int radius )
 // adds about 10, or nearly 30 with good skills (a zombie brute is 27, a hulk 173). The game
 // rates a loaded gun on a much bigger scale (a rifle about 680), so a gun counts a tenth:
 // a rifle then beats zombies and brutes, but not a hulk.
+// A shot's damage: the round or arrow in it, else the one they'd load.
+static float shot_damage( const item &gun )
+{
+    float damage = gun.gun_damage().total_damage();
+    if( gun.ammo_data() == nullptr ) {
+        const itype_id ammo = gun.ammo_default();
+        if( !ammo.is_null() && ammo->ammo ) {
+            damage += ammo->ammo->damage.total_damage();
+        }
+    }
+    return damage;
+}
+
 static float own_strength( const npc &guy )
 {
     const float health = std::clamp( guy.hp_percentage() / 100.0f, 0.0f, 1.0f );
@@ -324,6 +338,13 @@ static float own_strength( const npc &guy )
     float attack = weapon ? static_cast<float>( guy.evaluate_weapon( *weapon ) ) : 0.0f;
     if( weapon && weapon->is_gun() ) {
         attack /= 10.0f;
+        // N18 (2026-11-20): the game rates a one-shot weapon by the one shot in it, so a short
+        // bow was about 0.7 (0.07 here) and a skilled archer counted as weaker than one zombie:
+        // every gunner rule was off. A gun or bow they can fire counts at least half a shot's damage.
+        if( weapon->shots_remaining( get_map(), &guy ) > 0 ||
+            !guy.find_ammo( *weapon, false, -1 ).empty() ) {
+            attack = std::max( attack, shot_damage( *weapon ) / 2.0f );
+        }
     }
     return defence + attack * health;
 }
@@ -1666,6 +1687,8 @@ constexpr int recover_radius = 20;
 // is only 2-6 tiles); if the player walks off, the item drops out of reach and they follow.
 constexpr int recover_follower_reach = 15;
 constexpr time_duration recover_for = 30_minutes;
+// NPC var: "place:misses" for the spot they couldn't walk to last.
+constexpr const char *var_recover_failed = "autonomy_recover_failed";
 
 std::string carrier_key( const npc &guy )
 {
@@ -1700,29 +1723,57 @@ bool is_mine_to_recover( const npc &guy, const item &it )
     return it.get_var( ivar_carried_by ) == carrier_key( guy );
 }
 
-// The nearest tagged item of theirs lying where they may go and can see.
+// Their things on this tile: lying loose, or in a corpse (N26, 2026-11-20: an arrow that sticks
+// in a monster is in its inventory, and in its corpse once it dies).
+bool has_lost_item_at( const npc &guy, map &here, const tripoint_bub_ms &p )
+{
+    for( const item &it : here.i_at( p ) ) {
+        if( is_mine_to_recover( guy, it ) ) {
+            return true;
+        }
+        if( it.is_corpse() ) {
+            for( const item *inside : it.all_items_top( pocket_type::CONTAINER ) ) {
+                if( is_mine_to_recover( guy, *inside ) ) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+std::vector<item_location> lost_items_at( const npc &guy, const tripoint_bub_ms &p )
+{
+    std::vector<item_location> found;
+    for( item &it : get_map().i_at( p ) ) {
+        item_location loc( map_cursor( p ), &it );
+        if( is_mine_to_recover( guy, it ) ) {
+            found.push_back( loc );
+        } else if( it.is_corpse() ) {
+            for( item *inside : it.all_items_top( pocket_type::CONTAINER ) ) {
+                if( is_mine_to_recover( guy, *inside ) ) {
+                    found.emplace_back( loc, inside );
+                }
+            }
+        }
+    }
+    return found;
+}
+
+// The nearest tagged item of theirs lying where they may go. Not only tiles they can see
+// (N26: an arrow that flew on into the dark was left); they know where they shot.
 std::optional<tripoint_bub_ms> nearest_lost_item( const npc &guy )
 {
     map &here = get_map();
     for( const tripoint_bub_ms &p : closest_points_first( guy.pos_bub(), recover_radius ) ) {
-        if( !here.inbounds( p ) || !here.has_items( p ) ) {
-            continue;
-        }
-        bool found = false;
-        for( const item &it : here.i_at( p ) ) {
-            if( is_mine_to_recover( guy, it ) ) {
-                found = true;
-                break;
-            }
-        }
-        if( !found ) {
+        if( !here.inbounds( p ) || !here.has_items( p ) || !has_lost_item_at( guy, here, p ) ) {
             continue;
         }
         const tripoint_abs_ms where = here.get_abs( p );
         const bool in_reach = guy.is_walking_with() ?
                               rl_dist( get_player_character().pos_abs(), where ) <= recover_follower_reach :
                               safe_spot_in_reach( guy, where );
-        if( in_reach && guy.sees( here, p ) ) {
+        if( in_reach ) {
             return p;
         }
     }
@@ -1733,18 +1784,22 @@ std::optional<tripoint_bub_ms> nearest_lost_item( const npc &guy )
 // or won't fit and their hands are free. Untags what they take.
 bool take_lost_items( npc &guy, const tripoint_bub_ms &p )
 {
-    map &here = get_map();
     bool took = false;
     bool stuck = false;
-    for( item &it : here.i_at( p ) ) {
-        if( !is_mine_to_recover( guy, it ) ) {
-            continue;
-        }
-        item_location loc( map_cursor( p ), &it );
+    for( item_location &loc : lost_items_at( guy, p ) ) {
+        const item &it = *loc;
         const bool was_weapon = it.get_var( ivar_was_wielded, 0.0 ) > 0.0;
         item copy = it;
         copy.erase_var( ivar_carried_by );
         copy.erase_var( ivar_was_wielded );
+        // N26 (2026-11-20): out of arrows in a fight, an NPC may take the quiver off to hold it
+        // (the game rated it above the empty bow); then nothing fits and they stopped looking.
+        const item_location held = guy.get_wielded_item();
+        if( held && !guy.can_stash( copy ) && held->is_armor() && !held->is_gun() &&
+            held->can_contain( copy ).success() && guy.can_wear( *held ).success() ) {
+            item to_wear = guy.remove_weapon();
+            guy.wear_item( to_wear, false );
+        }
         if( was_weapon && !guy.get_wielded_item() && guy.can_wield( copy ).success() ) {
             guy.wield( copy );
         } else if( guy.can_stash( copy ) ) {
@@ -1783,10 +1838,26 @@ goal_result recover_items( npc &guy )
     if( square_dist( guy.pos_bub(), *spot ) <= 1 ) {
         return take_lost_items( guy, *spot ) ? goal_result::acted : goal_result::none;
     }
+    const std::string key = target_key( get_map().get_abs( *spot ) );
     if( guy.move_to_and_verify( npc_trip_spec::within_range( *spot, 1, true ) ) ) {
+        guy.remove_value( var_recover_failed );
         return goal_result::acted;
     }
-    guy.remove_value( var_recover_until );
+    // A walk can fail for a moment (the way changed): only the third miss in a row counts.
+    const std::string failed = guy.get_value( var_recover_failed ).to_string();
+    const int misses = failed.rfind( key + ":", 0 ) == 0 ?
+                       std::atoi( failed.c_str() + key.size() + 1 ) + 1 : 1;
+    if( misses < 3 ) {
+        guy.set_value( var_recover_failed, key + ":" + std::to_string( misses ) );
+        return goal_result::none;
+    }
+    guy.remove_value( var_recover_failed );
+    // Can't get there: give up on what lies there, not on the rest (N26: one arrow over a
+    // fence made them stop looking for all of them).
+    for( item_location &loc : lost_items_at( guy, *spot ) ) {
+        loc->erase_var( ivar_carried_by );
+        loc->erase_var( ivar_was_wielded );
+    }
     return goal_result::none;
 }
 
@@ -2131,12 +2202,44 @@ bool fire_now( const npc &shooter )
     return false;
 }
 
-void tag_shot_ammo( const Character &shooter, item &drop )
+bool shoots_from_here( npc &guy )
 {
-    const npc *guy = dynamic_cast<const npc *>( &shooter );
-    // Only in a fight: not something an NPC tosses to the player.
-    if( guy == nullptr || !enabled() || drop.is_null() || get_num( *guy, var_in_fight, 0.0 ) <= 0.0 ) {
+    if( !enabled() || !ready_gunner( guy ) ) {
+        return false;
+    }
+    // Outgunned or not: walking up to club something with a bow is never better. Only
+    // something close and as fast as them (no getting away from it) is fought as the game would.
+    for( const Creature *critter : guy.get_visible_creatures( 2 ) ) {
+        if( guy.attitude_to( *critter ) == Creature::Attitude::HOSTILE &&
+            critter->get_speed() >= guy.get_speed() ) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool shoots_from_kite_range( npc &guy )
+{
+    return enabled() && guy.is_walking_with() &&
+           rl_dist( get_player_character().pos_abs(), guy.pos_abs() ) <= kite_follower_reach &&
+           gunner_stance_for( guy ) != gunner_stance::none;
+}
+
+void tag_shot_ammo( Character &shooter, item &drop, const bool fired )
+{
+    npc *guy = dynamic_cast<npc *>( &shooter );
+    if( guy == nullptr || !enabled() || drop.is_null() ) {
         return;
+    }
+    const bool in_fight = get_num( *guy, var_in_fight, 0.0 ) > 0.0;
+    // A throw only in a fight: not something an NPC tosses to the player.
+    if( !fired && !in_fight ) {
+        return;
+    }
+    if( !in_fight ) {
+        // N26: a shot at something they don't count as a fight yet (further off than they
+        // watch). The fight's end starts the time to look for it.
+        guy->set_value( var_in_fight, 1.0 );
     }
     drop.set_var( ivar_carried_by, carrier_key( *guy ) );
 }
@@ -2385,7 +2488,17 @@ std::string plan_text( const npc &guy )
         return home;
     }
     const std::string recover = recover_plan_text( guy );
-    return recover.empty() ? warm_plan_text( guy ) : recover;
+    if( !recover.empty() ) {
+        return recover;
+    }
+    // N27 (2026-11-20): mealtimes and chats had no plan line.
+    if( guy.get_committed_goal() == goal_meal ) {
+        return _( "Plan: have a meal" );
+    }
+    if( guy.get_committed_goal() == goal_socialize ) {
+        return _( "Plan: have a chat" );
+    }
+    return warm_plan_text( guy );
 }
 
 bool wants_meal( const npc &guy )
