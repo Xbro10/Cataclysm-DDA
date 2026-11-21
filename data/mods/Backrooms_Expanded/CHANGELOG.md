@@ -23,6 +23,10 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Changed
 
+- Breakroom job hand-ins say what you earned ("Dot pays you: 5 tally tokens and 2 cans of food...").
+- The Hound den's pack defends its den: 3 or 4 Hounds, more aggressive and braver than wandering ones, and a flashlight doesn't drive them off (fire and losses still do).
+- Moth jelly also cleans dirty cuts and scratches, as saline does.
+- A runner getting tired on a run heads home to sleep in the Breakroom instead of lying down out in the lanes.
 - Breakroom and Exchange guards (the door guard, the archers and the Exchange guards) go back to their own post after a fight, a meal or a scare, instead of staying wherever they ended up (new guards only: those already in a world keep their old post).
 - A runner back from a run goes back inside to its own spot, where it rests and heals, instead of standing in the yard (often badly hurt).
 - **Tally tokens are the Backrooms' money.** Brass tokens stamped with tally marks (each with a sprite), worth a fifth of a bottle of almond water: every Exchange stall, the diner, the Breakroom and the Level 2 tunnel crews deal in them, keep a stack to pay you with, and value them at full price. Breakroom jobs and standing rewards pay in tokens instead of almond water (5 per bottle they used to give). Level 1 elevator lobbies and useful rooms hold a few loose tokens where they had cash cards. Every stall takes tokens as payment, whatever else it buys. The gear stall stocks one kind of light tool per restock (lightstick bundles, a work lamp or a UV torch). Almond water is still a good trade, and the newcomer's gift and runners' hauls are unchanged.
