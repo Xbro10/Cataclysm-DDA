@@ -71,6 +71,14 @@ As of 2026-11-18. Update this each time a prompt is finished.
   and how well it does (food and water kept, injuries, kills, things built). It extends the long tests already
   planned (7.9 a month alone, 9.10 arena fights, 10.7 long absence) into a direct autonomy-vs-upstream comparison;
   build it from those tests' setups and report both NPCs side by side.
+- Cata++ (user idea, 2026-11-20, on the to-do list, not scheduled): add Noctifer's Cataclysm++ mod
+  (github.com/Noctifer-de-Mortem/nocts_cata_mod, folder `nocts_cata_mod_DDA`, mod id `Cata++`, Unlicense, so it can be
+  shipped) as an optional mod, not on by default. Plan agreed in outline: import a pinned commit on `dev` with credits
+  and a list of our edits; `--check-mods Cata++`, then with Backrooms, Backrooms Expanded, Survivor Minds and Additions;
+  then a Backrooms Expanded `mod_interactions/Cata++/` folder, because Cata++ adds its monsters and items to vanilla
+  groups (`GROUP_ZOMBIE`, canned food, clothing, lighting) that Backrooms loot and spawns use, and its buildings and
+  start scenarios don't exist in a Backrooms world (the Backrooms mod replaces the default dimension). It has UltiCa
+  sprites, none for UndeadPeople. Ask the user before downloading it.
 - The playbook's `CHANGELOG-fork.md` is this repo's `FORK-CHANGELOG.md`.
 - Phase 6 rule: stance, anchor, leash, wants and trips are saved NPC variables, not new enum entries.
   The follower rule `ally_rule::no_self_care` (added 2026-11-15) predates this rule.
