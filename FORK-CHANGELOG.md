@@ -28,6 +28,16 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - **"Already up to date" pops up:** installing a sound pack you already have says so in a pop-up, not only in the
   status line at the bottom.
 
+### Bug fixes
+- [BE] **Level 2 valve junctions** no longer log a mapgen error when a dripping pool's lightstick lay where the
+  junction puts its ceiling light.
+
+### For developers
+- [C++] **One test for every Backrooms Expanded place:** `backrooms_places_generate_cleanly` (`[backrooms_runner]`,
+  about 4 minutes) generates each of the mod's 22 overmap terrains 40 to 200 times and fails on any mapgen error,
+  naming the place. It replaces the separate Level 0, garage and tunnel tests; the Level 0 one had been skipping itself
+  (it looked up `backfloorchamber`, but the rotatable terrain's id is `backfloorchamber_north`). Add new places to its list.
+
 ## November 20, 2026
 
 ### NPCs

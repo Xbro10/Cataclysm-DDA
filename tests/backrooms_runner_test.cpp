@@ -272,9 +272,9 @@ TEST_CASE( "breakroom_runner_comes_home_when_hurt", "[.][backrooms_runner]" )
     if( hurt ) {
         guy.set_part_hp_cur( bodypart_id( "torso" ), guy.get_part_hp_max( bodypart_id( "torso" ) ) / 3 );
     }
+    guy.set_sleepiness( tired ? 150 : 0 );
     run_eoc( guy, effect_on_condition_EOC_BR1_RUNNER_TICK );
     CHECK( runner_var( guy, "br1_run_state" ) == ( hurt || tired ? 2 : 1 ) );
-    guy.set_sleepiness( tired ? 150 : 0 );
 }
 
 // Both Breakroom layouts build, with the runner board, supply locker and front defences in place.
@@ -436,81 +436,72 @@ TEST_CASE( "manila_room_has_food_and_water", "[.][backrooms_runner]" )
     }
 }
 
-// Level 2 tunnels generate without mapgen errors (a light used to land on a junk pile's items).
-// Any debug message fails the test.
-TEST_CASE( "level2_tunnels_generate_cleanly", "[.][backrooms_runner]" )
+// Every Backrooms Expanded place generates without mapgen errors: each is generated many times so
+// its random chunks, variants and loot all get mixed in. Any debug message fails, naming the place.
+// Nested chunks that set terrain over items or furniture an earlier chunk left need a clearing flag
+// (ERASE_ALL_BEFORE_PLACING_TERRAIN): reported 2026-11-19, the garage booth set over a puddle's water.
+// Add every new overmap terrain here.
+TEST_CASE( "backrooms_places_generate_cleanly", "[.][backrooms_runner]" )
 {
-    const oter_str_id tunnels( "br2_tunnels" );
-    if( !tunnels.is_valid() ) {
+    if( !oter_str_id( "br1_garage" ).is_valid() ) {
         WARN( "Needs --mods=backrooms,backrooms_expanded" );
         return;
     }
-    clear_map_without_vision();
-    clear_avatar();
-    const tripoint_abs_omt pos( 50, 50, 0 );
-    std::string errors;
-    for( int i = 0; i < 400; ++i ) {
-        overmap_buffer.ter_set( pos, tunnels.id() );
-        MAPBUFFER.clear_outside_reality_bubble();
-        errors += capture_debugmsg_during( [&pos]() {
-            smallmap tm;
-            tm.generate( pos, calendar::turn, false, true );
-            tm.delete_unmerged_submaps();
-        } );
+    struct place {
+        const char *id;
+        int times;
+    };
+    // About 0.1 s per generation, so the whole test takes about 4 minutes. The fillers and the lobby
+    // (many variants) get the most runs; places with NPCs the fewest, since each run leaves its NPCs
+    // in the overmap.
+    const place places[] = {
+        // Level 0: the upstream filler (rotatable, so its id ends in _north) with the Manila Room,
+        // archway rooms and blackout zones mixed in
+        { "backfloorchamber_north", 200 },
+        { "br0_thin_room", 100 },
+        // Level 1
+        { "br1_garage", 200 },
+        { "br1_arrival", 100 },
+        { "br1_generator_site", 100 },
+        { "br1_hound_den", 100 },
+        { "br1_supply_cage", 100 },
+        { "br1_elevator_lobby", 200 },
+        { "br1_elevator_lobby_dead", 100 },
+        { "br1_sealed_store", 100 },
+        { "br1_dead_zone", 100 },
+        { "br1_overrun_camp", 100 },
+        { "br1_breakroom", 40 },
+        { "br1_squatter_camp", 40 },
+        { "br1_diner", 40 },
+        { "br1_exchange", 40 },
+        // Level 2
+        { "br2_tunnels", 200 },
+        { "br2_boiler_room", 100 },
+        { "br2_valve_junction", 100 },
+        { "br2_flooded", 100 },
+        { "br2_service_ladder", 100 },
+        { "br2_workers_camp", 40 },
+    };
+    for( const place &p : places ) {
+        const oter_str_id ter( p.id );
+        CAPTURE( p.id );
+        REQUIRE( ter.is_valid() );
+        clear_map_without_vision();
+        clear_avatar();
+        const tripoint_abs_omt pos( 50, 50, 0 );
+        std::string errors;
+        for( int i = 0; i < p.times && errors.empty(); ++i ) {
+            overmap_buffer.ter_set( pos, ter.id() );
+            MAPBUFFER.clear_outside_reality_bubble();
+            errors += capture_debugmsg_during( [&pos]() {
+                smallmap tm;
+                tm.generate( pos, calendar::turn, false, true );
+                tm.delete_unmerged_submaps();
+            } );
+        }
+        INFO( errors.substr( 0, 1500 ) );
+        CHECK( errors.empty() );
     }
-    CHECK( errors.empty() );
-}
-
-// Level 0 squares (with the Manila Room, archway rooms, blackout zones and pillar halls mixed in)
-// generate without mapgen errors. Any debug message fails the test.
-TEST_CASE( "level0_generates_cleanly", "[.][backrooms_runner]" )
-{
-    const oter_str_id lobby( "backfloorchamber" );
-    const ter_str_id deep( "t_br0_carpet_deep" );
-    if( !lobby.is_valid() || !deep.is_valid() ) {
-        WARN( "Needs --mods=backrooms,backrooms_expanded" );
-        return;
-    }
-    clear_map_without_vision();
-    clear_avatar();
-    const tripoint_abs_omt pos( 50, 50, 0 );
-    std::string errors;
-    for( int i = 0; i < 400; ++i ) {
-        overmap_buffer.ter_set( pos, lobby.id() );
-        MAPBUFFER.clear_outside_reality_bubble();
-        errors += capture_debugmsg_during( [&pos]() {
-            smallmap tm;
-            tm.generate( pos, calendar::turn, false, true );
-            tm.delete_unmerged_submaps();
-        } );
-    }
-    CHECK( errors.empty() );
-}
-
-// Level 1 garage squares (puddles, junk, the booth and the other rooms mixed in) generate without
-// mapgen errors. Reported 2026-11-19: the booth was set over a puddle's murky water.
-TEST_CASE( "level1_garage_generates_cleanly", "[.][backrooms_runner]" )
-{
-    const oter_str_id garage( "br1_garage" );
-    if( !garage.is_valid() ) {
-        WARN( "Needs --mods=backrooms,backrooms_expanded" );
-        return;
-    }
-    clear_map_without_vision();
-    clear_avatar();
-    const tripoint_abs_omt pos( 50, 50, 0 );
-    std::string errors;
-    for( int i = 0; i < 400; ++i ) {
-        overmap_buffer.ter_set( pos, garage.id() );
-        MAPBUFFER.clear_outside_reality_bubble();
-        errors += capture_debugmsg_during( [&pos]() {
-            smallmap tm;
-            tm.generate( pos, calendar::turn, false, true );
-            tm.delete_unmerged_submaps();
-        } );
-    }
-    INFO( errors.substr( 0, 1500 ) );
-    CHECK( errors.empty() );
 }
 
 // Level 1's Exchange builds with three traders and a guard, a locked storeroom, and traders who stock up.
