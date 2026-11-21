@@ -2740,9 +2740,15 @@ double Character::evaluate_weapon_internal( const item &maybe_weapon, bool can_u
     // This is relatively reasonable, as players can issue commands to NPCs when we do not want them to use ranged weapons.
     // Conversely, we cannot directly issue commands when we want NPCs to prioritize ranged weapons.
     // Note that the scoring method here is different from the 'weapon_value' used elsewhere.
-    double val_gun = allowed ? gun_value( maybe_weapon,
-                                          std::max( maybe_weapon.shots_remaining( here, this ), pretend_ammo )
-                                        ) : 0;
+    int shots = std::max( maybe_weapon.shots_remaining( here, this ), pretend_ammo );
+    // Xbro10 fork (2026-11-21): a draw bow (RELOAD_AND_SHOOT) holds no arrow until it's fired, so
+    // it always rated as a club, and an NPC refused a bow for scissors. Count the arrows they carry.
+    if( allowed && shots <= 0 && maybe_weapon.has_flag( flag_RELOAD_AND_SHOOT ) ) {
+        for( const item_location &ammo : find_ammo( maybe_weapon, false, -1 ) ) {
+            shots += ammo->count();
+        }
+    }
+    double val_gun = allowed ? gun_value( maybe_weapon, shots ) : 0;
     add_msg_debug( debugmode::DF_NPC_ITEMAI,
                    "Weapon %s for %s valued at <color_light_cyan>%1.2f as a ranged weapon to wield</color>.",
                    maybe_weapon.type->get_id().str(), disp_name(), val_gun );

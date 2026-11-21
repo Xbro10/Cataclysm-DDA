@@ -28,6 +28,13 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [SM] **Gabriel's two loadouts:** he now spawns as either the Brawler (morningstar, chainmail under his cyan hoodie,
   nasal helmet) or the Spearman (the Additions mod's Flamero-Mado spear, or a steel spear without it, leather
   armour and a wool cloak), picked at random. Same look, talk and personality either way.
+- [C++] **NPCs value bows properly:** NPCs took a pair of scissors over a compound bow and refused a bow they were asked
+  to use. The game rated a draw bow by its sights, and bows have none, so every shot counted as a pure gamble; and a
+  bow holds no arrow until it's fired, so it was rated as a club. Now it's rated by the aim the archer really gets
+  (aiming by eye improves with archery skill, as when they shoot) and the arrows they carry. An archer with a quiver
+  rates a compound bow above a katana, a recurve or longbow above a combat knife, a short bow about level with one.
+  With no arrows it's still a club. Greatbows still need the strength to draw them. All NPCs, not only with NPC
+  autonomy on.
 
 ### Launcher
 - **"Already up to date" pops up:** installing a sound pack you already have says so in a pop-up, not only in the

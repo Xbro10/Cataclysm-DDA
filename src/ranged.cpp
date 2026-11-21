@@ -2758,7 +2758,10 @@ double Character::gun_value( const item &weap, int ammo ) const
     if( tmp.is_magazine() || tmp.magazine_current() || tmp.magazine_default() ) {
         tmp.ammo_set( ammo_type );
     }
-    int total_dispersion = get_weapon_dispersion( tmp ).max() + tmp.sight_dispersion( *this ).second;
+    // Xbro10 fork (2026-11-21): the best aim the shooter can really get, as firing uses
+    // (sights or point shooting). Sights alone rated a bow, which has none, as a pure gamble
+    // (3000+ dispersion), so NPCs took scissors over a compound bow.
+    int total_dispersion = get_weapon_dispersion( tmp ).max() + most_accurate_aiming_method_limit( tmp );
 
     if( def_ammo_i != nullptr && def_ammo_i->ammo ) {
         const islot_ammo &def_ammo = *def_ammo_i->ammo;

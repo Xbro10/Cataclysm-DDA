@@ -364,3 +364,31 @@ TEST_CASE( "a_follower_fetches_arrows_from_a_corpse_and_past_one_out_of_reach", 
     CHECK_FALSE( still_tagged );
 }
 
+
+// Reported 2026-11-21: NPCs took a pair of scissors over a compound bow and refused a bow they
+// were asked to use. A draw bow has no sights (rated a pure gamble) and holds no arrow until it's
+// fired (rated a club); now it's rated by the aim they really get and the arrows they carry.
+TEST_CASE( "an_archer_rates_a_bow_above_scissors", "[npc][ranged]" )
+{
+    clear_map();
+    npc &guy = spawn_npc( { 50, 50 }, "test_talker" );
+    clear_character( guy );
+    guy.mod_str_bonus( 4 );
+    guy.set_skill_level( skill_archery, 4 );
+    item quiver( itype_quiver_large );
+    quiver.put_in( item( itype_arrow_wood, calendar::turn, 20 ), pocket_type::CONTAINER );
+    guy.wear_item( quiver, false );
+    const item scissors( itype_id( "scissors" ) );
+    const item knife( itype_id( "knife_combat" ) );
+    const item compbow( itype_id( "compbow" ) );
+    const item shortbow( itype_shortbow );
+    CAPTURE( guy.evaluate_weapon( scissors ), guy.evaluate_weapon( knife ),
+             guy.evaluate_weapon( shortbow ), guy.evaluate_weapon( compbow ) );
+    CHECK( guy.evaluate_weapon( shortbow ) > guy.evaluate_weapon( scissors ) );
+    CHECK( guy.evaluate_weapon( compbow ) > guy.evaluate_weapon( knife ) );
+
+    SECTION( "no arrows: a bow is only a club" ) {
+        guy.clear_worn();
+        CHECK( guy.evaluate_weapon( compbow ) < guy.evaluate_weapon( knife ) );
+    }
+}
