@@ -1,5 +1,19 @@
 [
   {
+    "type": "overmap_terrain",
+    "id": "backfloorchamber",
+    "copy-from": "backfloorchamber",
+    "//": "Half the upstream spawn chance (40%), user request 2026-11-23: Level 0 is meant to feel barren, and something round every corner left no room to breathe with so few supplies. Population per square stays 2-15.",
+    "spawns": { "group": "GROUP_BACKROOMS", "population": [ 2, 15 ], "chance": 20 }
+  },
+  {
+    "type": "overmap_terrain",
+    "id": [ "backroom_stairs_bottom", "backroom_stairs_top" ],
+    "copy-from": "backroom_stairs_bottom",
+    "//": "As backfloorchamber: half the upstream spawn chance.",
+    "spawns": { "group": "GROUP_BACKROOMS", "population": [ 2, 15 ], "chance": 20 }
+  },
+  {
     "type": "monstergroup",
     "id": "GROUP_BACKROOMS",
     "//": "Adds to the upstream Level 0 group (data/mods/Backrooms/monstergroups.json; without \"override\" these entries are appended). Level 0 is Class 1: the Backrooms' own entities are about 1 spawn in 70, against roughly 1000 weight of zombies and animals. Nothing here grabs or mimics; Wretches only after day 30.",

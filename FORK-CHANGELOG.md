@@ -19,10 +19,19 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ## November 23, 2026
 
+### Backrooms
+- [BE] **Level 0 is quieter:** a Level 0 chamber now has monsters half as often (a 20% chance per map square instead of
+  upstream's 40%). Squares you've already explored keep what they had.
+
 ### Bug fixes
 - [C++] **No crash drawing a bow or gun:** pressing fire with empty hands and picking a bow in a quiver (or a gun in a
   holster, or one on a shoulder strap) from "Draw what?" crashed the game. The menu's choices pointed at a list that
   was already gone (an upstream bug).
+
+### Mods
+- **No Wounds** (new, optional, off by default; `data/mods/No_Wounds/`): hits no longer give body parts wounds
+  (scratches, cuts, lacerations, bruises), the limb wounds upstream added from experimental 2026-10-25. Damage and
+  bleeding work as before. It sets the game's `WOUND_CHANCE` option to 0.
 
 ## November 21, 2026
 
