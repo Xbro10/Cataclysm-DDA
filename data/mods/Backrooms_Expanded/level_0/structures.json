@@ -1,0 +1,672 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br0_stairs_nowhere",
+    "copy-from": "t_carpet_backrooms",
+    "name": "stairs to nowhere",
+    "description": "A short flight of office stairs with a handrail, climbing straight up into the ceiling tiles and stopping there.  The top step is pressed flat against the ceiling.  There was never anywhere for them to go.",
+    "symbol": "<",
+    "color": "white",
+    "looks_like": "t_stairs_up",
+    "move_cost": 4
+  },
+  {
+    "type": "terrain",
+    "id": "t_br0_overgrown_carpet",
+    "copy-from": "t_carpet_backrooms",
+    "name": "overgrown carpet",
+    "description": "Carpet grown over with thick, springy moss and pale grass.  Nothing down here could feed it: no sun, no soil, just the hum of the lights.",
+    "color": "green",
+    "looks_like": "t_moss"
+  },
+  {
+    "type": "item_group",
+    "id": "br0_janitor_shelf",
+    "subtype": "distribution",
+    "//": "Janitor's closet shelves: cleaning supplies, now and then tape or a flashlight.",
+    "entries": [
+      { "item": "bleach", "prob": 20 },
+      { "item": "detergent", "prob": 20 },
+      { "item": "soap", "prob": 20 },
+      { "item": "sponge", "prob": 15 },
+      { "item": "duct_tape", "prob": 10 },
+      { "item": "flashlight", "prob": 5 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br0_janitor_locker",
+    "subtype": "distribution",
+    "entries": [ { "item": "jumpsuit", "prob": 50 }, { "item": "bandana", "prob": 30 }, { "item": "bucket", "prob": 20 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br0_party_table",
+    "subtype": "distribution",
+    "//": "Birthday party tables. The cake is fresh. Nobody knows why.",
+    "entries": [
+      { "item": "cake2", "prob": 25 },
+      { "item": "cake3", "prob": 10 },
+      { "item": "plastic_plate", "prob": 25 },
+      { "item": "plastic_fork", "prob": 20 },
+      { "item": "napkin", "prob": 20 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br0_waiting_magazines",
+    "subtype": "distribution",
+    "entries": [ { "item": "mag_glam", "prob": 40 }, { "item": "mag_tv", "prob": 40 }, { "item": "paper", "prob": 20 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br0_burned_debris",
+    "subtype": "distribution",
+    "entries": [ { "item": "ash", "prob": 40 }, { "item": "charcoal", "prob": 20 }, { "item": "scrap", "prob": 20 }, { "item": "plastic_chunk", "prob": 20 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br0_wet_papers",
+    "subtype": "distribution",
+    "entries": [ { "item": "paper", "prob": 50 }, { "item": "pen", "prob": 25 }, { "item": "stapler", "prob": 10 }, { "item": "e_scrap", "prob": 15 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br0_living_drawer",
+    "subtype": "distribution",
+    "entries": [ { "item": "family_photo", "prob": 40 }, { "item": "candle", "prob": 30 }, { "item": "phonebook", "prob": 30 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br0_tipped_debris",
+    "subtype": "distribution",
+    "entries": [ { "item": "paper", "prob": 40 }, { "item": "pen", "prob": 20 }, { "item": "splinter", "prob": 20 }, { "item": "glass_shard", "prob": 20 } ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_cubicle_farm",
+    "name": "cubicle farm",
+    "sym": "C",
+    "color": "yellow",
+    "looks_like": "office_cubical",
+    "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BACKROOMS", "population": [ 2, 15 ], "chance": 20 },
+    "extras": "backrooms",
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_waiting_room",
+    "copy-from": "br0_cubicle_farm",
+    "name": "waiting room",
+    "sym": "W"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_janitor_closet",
+    "copy-from": "br0_cubicle_farm",
+    "name": "janitor's closet",
+    "sym": "j",
+    "color": "light_blue"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_collapsed_office",
+    "copy-from": "br0_cubicle_farm",
+    "name": "collapsed office",
+    "sym": "x",
+    "color": "light_gray",
+    "looks_like": "abandonedwarehouse"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_burned_breakroom",
+    "copy-from": "br0_cubicle_farm",
+    "name": "burned break room",
+    "sym": "b",
+    "color": "red",
+    "looks_like": "abandonedwarehouse"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_flooded_conference",
+    "copy-from": "br0_cubicle_farm",
+    "name": "flooded conference room",
+    "sym": "~",
+    "color": "blue",
+    "looks_like": "abandonedwarehouse"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_living_room",
+    "copy-from": "br0_cubicle_farm",
+    "name": "living room",
+    "sym": "L",
+    "color": "light_red",
+    "looks_like": "house_01"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_birthday_party",
+    "copy-from": "br0_cubicle_farm",
+    "name": "birthday party",
+    "sym": "!",
+    "color": "pink",
+    "looks_like": "house_01"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_room_of_doors",
+    "copy-from": "br0_cubicle_farm",
+    "name": "room of doors",
+    "sym": "D",
+    "color": "brown"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_tipped_room",
+    "copy-from": "br0_cubicle_farm",
+    "name": "tipped room",
+    "sym": "/",
+    "color": "magenta",
+    "looks_like": "abandonedwarehouse"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_stairs_nowhere",
+    "copy-from": "br0_cubicle_farm",
+    "name": "stairs to nowhere",
+    "sym": "<",
+    "color": "light_gray",
+    "looks_like": "abandonedwarehouse"
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br0_overgrown_office",
+    "copy-from": "br0_cubicle_farm",
+    "name": "overgrown office",
+    "sym": "\"",
+    "color": "green",
+    "looks_like": "abandonedwarehouse"
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_cubicle_farm",
+    "//": "Level 0 places (user request 2026-11-23): small named rooms you come across while exploring, some intact, some ruined, some that make no sense. Each is one map square built on an ordinary chamber, 2-4 of each per overmap.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_cubicle_farm" } ],
+    "locations": [ "backrooms" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 2, 4 ],
+    "flags": [ "BACKROOMS" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_waiting_room",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_waiting_room" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_janitor_closet",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_janitor_closet" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_collapsed_office",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_collapsed_office" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_burned_breakroom",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_burned_breakroom" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_flooded_conference",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_flooded_conference" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_living_room",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_living_room" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_birthday_party",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_birthday_party" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_room_of_doors",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_room_of_doors" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_tipped_room",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_tipped_room" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_stairs_nowhere",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_stairs_nowhere" } ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br0_overgrown_office",
+    "copy-from": "br0_cubicle_farm",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br0_overgrown_office" } ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_cubicle_farm",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_cubicle_farm_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_waiting_room",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_waiting_room_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_janitor_closet",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_janitor_closet_core" ], "x": 8, "y": 8 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_collapsed_office",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_collapsed_office_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_burned_breakroom",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_burned_breakroom_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_flooded_conference",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_flooded_conference_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_living_room",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_living_room_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_birthday_party",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_birthday_party_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_room_of_doors",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_room_of_doors_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_tipped_room",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_tipped_room_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_stairs_nowhere",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_stairs_nowhere_core" ], "x": 8, "y": 8 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br0_overgrown_office",
+    "object": { "predecessor_mapgen": "backfloorchamber_north", "place_nested": [ { "chunks": [ "br0_overgrown_office_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_cubicle_farm_core",
+    "//": "Intact. Rows of desks (f) behind gray partitions (=), chairs (a), filing cabinets (i), lit corners (.). Desk and cabinet loot comes from backrooms_palette.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "-----DD-----",
+        "-.        .-",
+        "- f= f= f= -",
+        "- a= a= a= -",
+        "-          -",
+        "- f= f= f= -",
+        "- a= a= a= -",
+        "-          -",
+        "- f= f= f= -",
+        "- a= a= a= -",
+        "-.   i  i .-",
+        "-----DD-----"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_waiting_room_core",
+    "//": "Intact. Rows of chairs (a, some missing), a reception counter (E) with a sign (G) and a desk (f) behind it, an empty water cooler (W), a magazine table (M), a plant (j).",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "-----DD-----",
+        "-.        .-",
+        "- aaaa aaaa-",
+        "-          -",
+        "- aaaa aaaa-",
+        "-          -",
+        "- aaaa aaaa-",
+        "-          -",
+        "-  W      j-",
+        "-EEEEGE    -",
+        "-  ff   M  -",
+        "------------"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "E": "t_carpet_backrooms", "G": "t_carpet_backrooms", "W": "t_carpet_backrooms", "M": "t_carpet_backrooms" },
+      "furniture": { "E": "f_counter", "W": "f_watercooler", "M": "f_table" },
+      "signs": { "G": { "signage": "PLEASE TAKE A NUMBER.  NOW SERVING: 0" } },
+      "items": { "M": { "item": "br0_waiting_magazines", "chance": 90, "repeat": [ 2, 4 ] } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_janitor_closet_core",
+    "//": "Intact. A dry sink (K), shelves of cleaning supplies (E), lockers (L), boxes (A), a mop, broom and bucket on the floor.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ "---D----", "-.    E-", "-K    E-", "-     E-", "-      -", "-L    A-", "-L   AA-", "--------" ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "E": "t_tile_backrooms", "K": "t_tile_backrooms", "L": "t_tile_backrooms", " ": "t_tile_backrooms" },
+      "furniture": { "E": "f_utility_shelf", "K": "f_sink", "L": "f_locker" },
+      "items": {
+        "E": { "item": "br0_janitor_shelf", "chance": 70, "repeat": [ 1, 2 ] },
+        "L": { "item": "br0_janitor_locker", "chance": 80 }
+      },
+      "place_item": [
+        { "item": "mop", "x": [ 2, 5 ], "y": [ 3, 4 ], "chance": 80 },
+        { "item": "broom", "x": [ 2, 5 ], "y": [ 3, 4 ], "chance": 60 },
+        { "item": "bucket", "x": [ 2, 5 ], "y": [ 3, 4 ], "chance": 70 }
+      ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_collapsed_office_core",
+    "//": "Ruined. Part of the ceiling came down: rubble (R) over the desks, wreckage (W), soggy dark carpet (S) where water got in, broken walls (o), a filing cabinet (I). No lights.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "---o--oo----",
+        "-  RR    f -",
+        "- RRRR   a -",
+        "-RRRRR S   o",
+        "- RRR SSS  -",
+        "o  WS SS f -",
+        "-   S  W a -",
+        "-  f       -",
+        "-  a   RR  o",
+        "-      RRR -",
+        "- I    RRRRR",
+        "----o----RR-"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "R": "t_carpet_backrooms", "W": "t_carpet_backrooms", "S": "t_br0_carpet_dark", "I": "t_carpet_backrooms" },
+      "furniture": { "R": [ "f_rubble", "f_rubble_rock" ], "W": "f_wreckage", "I": "f_filing_cabinet" },
+      "items": {
+        "R": { "item": "backrooms_master_rubble", "chance": 15 },
+        "I": { "item": "backrooms_master_filing", "chance": 30 }
+      },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_burned_breakroom_core",
+    "//": "Ruined. A break room after a fire: burnt floor (_), ash heaps (Y), scorched counters (E), a dead vending machine (V), a fridge (F), a table (T). No lights.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "---o-DD-----",
+        "-__Y___  __-",
+        "-_E EE_VV _-",
+        "-_    ___  -",
+        "-__ F_Y  _ -",
+        "-Y__ __Y__ o",
+        "- _ TT___  -",
+        "-___TT_  __-",
+        "-  ____Y_  -",
+        "-_Y ______ -",
+        "- ___  __ _-",
+        "----o-------"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": {
+        "_": "t_floor_burnt",
+        "Y": "t_floor_burnt",
+        "E": "t_floor_burnt",
+        "V": "t_floor_burnt",
+        "F": "t_floor_burnt",
+        "T": "t_floor_burnt"
+      },
+      "furniture": { "Y": "f_ash", "E": "f_counter", "V": "f_vending_o", "F": "f_fridge", "T": "f_table" },
+      "items": {
+        "Y": { "item": "br0_burned_debris", "chance": 60 },
+        "E": { "item": "br0_burned_debris", "chance": 30 },
+        "F": { "item": "backrooms_master_fridge", "chance": 15 }
+      },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_flooded_conference_core",
+    "//": "Ruined. A long conference table (T) and chairs (a) standing in pooled fluid (~) and sodden deep carpet (%). Soaked papers on the table. No lights.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "-----DD-----",
+        "-%%~~%%%~~%-",
+        "-%~aaaaaa~%-",
+        "-%aTTTTTTa%-",
+        "-~aTTTTTTa~-",
+        "-%aaaaaa~~%-",
+        "-%~~%%%~~~%-",
+        "-%%~~~%%~%%-",
+        "-~~%%%~~~%~-",
+        "-%%%~~~%%%%-",
+        "-%~~%%%%~~%-",
+        "------------"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "~": "t_br0_fluid", "%": "t_br0_carpet_deep", "T": "t_br0_carpet_deep", "a": "t_br0_carpet_deep" },
+      "furniture": { "T": "f_table" },
+      "items": { "T": { "item": "br0_wet_papers", "chance": 25 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_living_room_core",
+    "//": "Intact and out of place: a cosy living room with white walls (W) and red carpet, a sofa (S) and armchairs (H) round a coffee table (T), a TV on an entertainment center (E), bookcases (B), a dresser (P), floor lamps that work (L).",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "WWWWWDDWWWWW",
+        "WL  B  B  PW",
+        "W          W",
+        "W   H  H   W",
+        "W    TT    W",
+        "W   SSSS   W",
+        "W          W",
+        "W          W",
+        "W    EE    W",
+        "WL        LW",
+        "W          W",
+        "WWWWWWWWWWWW"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": {
+        " ": "t_carpet_red",
+        "W": "t_wall_w",
+        "L": "t_carpet_backrooms_light",
+        "B": "t_carpet_red",
+        "P": "t_carpet_red",
+        "H": "t_carpet_red",
+        "T": "t_carpet_red",
+        "S": "t_carpet_red",
+        "E": "t_carpet_red"
+      },
+      "furniture": {
+        "L": "f_floor_lamp",
+        "B": "f_bookcase",
+        "P": "f_dresser",
+        "H": "f_armchair",
+        "T": "f_coffee_table",
+        "S": "f_sofa",
+        "E": "f_entertainment_center"
+      },
+      "items": {
+        "B": { "item": "backrooms_master_bookshelf", "chance": 70 },
+        "P": { "item": "br0_living_drawer", "chance": 80, "repeat": [ 1, 2 ] }
+      },
+      "item": { "T": { "item": "candle", "chance": 30 } },
+      "place_item": [ { "item": "television", "x": [ 5, 6 ], "y": 8, "chance": 100 } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_birthday_party_core",
+    "//": "Intact and out of place: party tables (Z) with cake and plates, chairs (a), balloons on the floor, a sign (G) with no name on it. Brightly lit. Nobody is here.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "-----DD-----",
+        "-.   G    .-",
+        "-          -",
+        "-  a    a  -",
+        "-aZZa  aZZa-",
+        "-  a    a  -",
+        "-     .    -",
+        "-    aZZa  -",
+        "-     a    -",
+        "-          -",
+        "-.        .-",
+        "------------"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "Z": "t_carpet_backrooms", "G": "t_carpet_backrooms" },
+      "furniture": { "Z": "f_table" },
+      "signs": { "G": { "signage": "HAPPY BIRTHDAY, ________!" } },
+      "items": { "Z": { "item": "br0_party_table", "chance": 80, "repeat": [ 1, 2 ] } },
+      "place_item": [ { "item": "balloon", "x": [ 1, 10 ], "y": [ 1, 10 ], "chance": 80, "repeat": [ 3, 6 ] } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_room_of_doors_core",
+    "//": "Intact and pointless: a lit hall lined with ten closed doors (+), each opening onto a closet one tile wide and two deep (C). Usually one closet holds something. Open on the west side.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "------------",
+        "--C-C-C-C-C-",
+        "--C-C-C-C-C-",
+        "--+-+-+-+-+-",
+        "-.        .-",
+        "           -",
+        "           -",
+        "-.        .-",
+        "--+-+-+-+-+-",
+        "--C-C-C-C-C-",
+        "--C-C-C-C-C-",
+        "------------"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "+": "t_door_c", "C": "t_carpet_backrooms" },
+      "items": { "C": { "item": "br0_manila_supplies", "chance": 5 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_tipped_room_core",
+    "//": "Ruined and wrong: an empty office whose furniture is all heaped in one corner, as if the room had been tipped on its side: tables (c), desks (f), chairs (a), filing cabinets (i), a bookcase (t), a sofa (h), wreckage (K), and papers and broken glass around the heap. Its two lights are on the west wall.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "------D-----",
+        "-          -",
+        "-.         -",
+        "-          -",
+        "-          -",
+        "-.         -",
+        "-          -",
+        "-        Kc-",
+        "-      Kfai-",
+        "-    KtfhcK-",
+        "-   aKficah-",
+        "------------"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "K": "t_carpet_backrooms" },
+      "furniture": { "K": "f_wreckage", "a": "f_chair" },
+      "place_items": [ { "item": "br0_tipped_debris", "x": [ 5, 9 ], "y": [ 6, 9 ], "chance": 90, "repeat": [ 3, 6 ] } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_stairs_nowhere_core",
+    "//": "Ruined and wrong: a staircase (^) that climbs into the ceiling and stops, with ceiling tiles and rubble (R) fallen round it and a sign (G).",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rows": [ "---DD---", "-.     -", "-  RR  -", "- R^^R -", "-  RR  -", "-  G   -", "-R    R-", "--------" ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "^": "t_br0_stairs_nowhere", "R": "t_carpet_backrooms", "G": "t_carpet_backrooms" },
+      "furniture": { "R": "f_rubble" },
+      "signs": { "G": { "signage": "WATCH YOUR STEP" } },
+      "items": { "R": { "item": "backrooms_master_rubble", "chance": 20 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br0_overgrown_office_core",
+    "//": "Ruined and wrong: an office grown over with moss and grass (&) and houseplants (j) though there is no light or soil to feed them. Desks (f) and chairs (a) under it all, a few mushrooms, broken walls (o).",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "---o-DD--o--",
+        "-&&& &&j&& -",
+        "-&f&&j &f& -",
+        "-&a& &&&a&&-",
+        "-&&&&j&&&&&-",
+        "o j&&&f&&j&-",
+        "-&&&&&a&& &-",
+        "-&f&&&&&&j&-",
+        "-&a&j&&f&&&o",
+        "-&&&&&&a&&&-",
+        "-j &&&&&&j&-",
+        "----o-------"
+      ],
+      "palettes": [ "backrooms_palette" ],
+      "terrain": { "&": "t_br0_overgrown_carpet", "j": "t_br0_overgrown_carpet", "f": "t_br0_overgrown_carpet", "a": "t_br0_overgrown_carpet" },
+      "furniture": { "j": [ "f_indoor_plant", "f_indoor_plant_y" ] },
+      "item": { "&": { "item": "mushroom", "chance": 2 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]
