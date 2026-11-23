@@ -21,7 +21,7 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ### Backrooms
 - [BE] **Level 0 is quieter:** a Level 0 chamber now has monsters half as often (a 20% chance per map square instead of
-  upstream's 40%). Squares you've already explored keep what they had.
+  upstream's 40%). Places you've already been keep the monsters they had.
 
 ### Bug fixes
 - [C++] **No crash drawing a bow or gun:** pressing fire with empty hands and picking a bow in a quiver (or a gun in a

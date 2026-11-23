@@ -14,6 +14,7 @@
 #include "damage.h"
 #include "weakpoint.h"
 #include "mtype.h"
+#include "omdata.h"
 #include "player_helpers.h"
 #include "point.h"
 #include "type_id.h"
@@ -128,4 +129,17 @@ TEST_CASE( "deathmoth_burns_in_fire", "[.][backrooms_entities]" )
         }
         CHECK( ( moth.is_dead() || moth.get_hp() < full ) );
     }
+}
+
+// Level 0 is meant to feel barren: half upstream's chance (40%) that a chamber square has monsters
+// (user request 2026-11-23). The override lives in Backrooms Expanded's level_0/monsters.json.
+TEST_CASE( "level0_spawns_half_as_often", "[.][backrooms_entities]" )
+{
+    const oter_str_id chamber( "backfloorchamber_north" );
+    const oter_str_id stairs( "backroom_stairs_bottom" );
+    REQUIRE( chamber.is_valid() );
+    REQUIRE( stairs.is_valid() );
+    CHECK( chamber->get_static_spawns().chance == 20 );
+    CHECK( stairs->get_static_spawns().chance == 20 );
+    CHECK( chamber->get_static_spawns().population.max == 15 );
 }
