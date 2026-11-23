@@ -7,6 +7,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Added
 
+- **Level 0 places** (`level_0/structures.json`): 12 small named rooms, one map square each, 2-4 of each per map, shown on the map by name. Intact: cubicle farm, waiting room, janitor's closet. Ruined: collapsed office, burned break room, flooded conference room. Nonsense: living room, birthday party, room of doors, tipped room, stairs to nowhere, overgrown office. Small loot (cleaning supplies, magazines, cake, a closet find now and then); same monster chance as other Level 0 squares.
+
 - **Ruth, the Breakroom's medic** (in the infirmary, or by the bunks in the Bunker). Every 10 minutes she treats the Breakroom's own people for free: stops bleeding, cleans bites and infection, heals a little. You pay in tally tokens: 5 to patch up (stop bleeding, clean wounds), 20 for a full treatment (2 hours on her cot, back to full health); 3 and 10 once you've done 3 jobs. While one of hers is badly hurt she only patches you up.
 
 - **Hound dens** are a Level 1 place now (2 to 4 per map, "hound den" on the map once seen), in four layouts: a den with two or three Hounds at home, an abandoned den with dry bones and maybe a fang, a survivor's last stand (their body and gear, spent shells, two Hounds still around) and a feeding ground (bone heaps, a half-eaten body, a big pack and shed fangs). Dot's "Hound den" job sends you to one you haven't seen within 30 squares and adds a pack of three.
