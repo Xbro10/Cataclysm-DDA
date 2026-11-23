@@ -23,6 +23,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Changed
 
+- Level 0 is quieter: a chamber has monsters half as often (a 20% chance per map square instead of upstream's 40%; 2-15 when it does). Places you've already been keep the monsters they had.
 - Breakroom job hand-ins say what you earned ("Dot pays you: 5 tally tokens and 2 cans of food...").
 - The Hound den's pack defends its den: 3 or 4 Hounds, more aggressive and braver than wandering ones, and a flashlight doesn't drive them off (fire and losses still do).
 - Moth jelly also cleans dirty cuts and scratches, as saline does.
