@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "avatar.h"
+#include "game.h"
 #include "calendar.h"
 #include "cata_catch.h"
 #include "coordinates.h"
@@ -21,6 +22,7 @@
 #include "map_helpers_tests.h"
 #include "map_scale_constants.h"
 #include "mapdata.h"
+#include "monster.h"
 #include "npc.h"
 #include "npc_autonomy.h"
 #include "options_helpers.h"
@@ -142,6 +144,21 @@ TEST_CASE( "npc_turn_benchmark", "[.][benchmark][backrooms_perf][npc_perf]" )
         report += string_format( "    food nearby     %7.3f ms\n", ms_per_call( []( const npc & g ) {
             const_cast<npc &>( g ).find_nearby_food( npc::consume_filter::food_only );
         } ) );
+        // Zombies in sight but out of reach: the safety checks scan and rate them every action.
+        std::vector<monster *> zeds;
+        for( int i = 0; i < 6; ++i ) {
+            zeds.push_back( &spawn_test_monster( "mon_zombie", tripoint_bub_ms( player_pos.x() - 12 - i,
+                                                 player_pos.y() - 12, 0 ) ) );
+        }
+        for( monster *z : zeds ) {
+            z->set_moves( -1000000 );
+        }
+        ms_per_npc_turn();
+        report += string_format( "  autonomy on, 6 zombies 12+ tiles off %7.3f ms per NPC turn\n",
+                                 ms_per_npc_turn() );
+        for( monster *z : zeds ) {
+            g->remove_zombie( *z );
+        }
         for( const npc *guy : crowd ) {
             report += string_format( "    %s: thirst %d hunger %d goal \"%s\"\n", guy->get_name(),
                                      guy->get_thirst(), guy->get_hunger(), guy->get_committed_goal() );

@@ -1171,6 +1171,9 @@ void item_location::deserialize( const JsonObject &obj )
         const std::list<item *> parent_contents = parent->all_items_container_top();
 
         item *found = nullptr;
+        // Read even when unused, or the loader logs "item_type" as an unread field.
+        itype_id item_type;
+        obj.read( "item_type", item_type );
         if( uid > 0 ) {
             for( item *it : parent_contents ) {
                 if( it->uid().get_value() == uid ) {
@@ -1183,8 +1186,7 @@ void item_location::deserialize( const JsonObject &obj )
             // to find (arrows an NPC picked back up went into the quiver as a stack of their own).
             // Fall back to an item of the same type in that pocket, the one at its old place
             // first. Never another kind of item: saves from before "item_type" keep the error.
-            itype_id item_type;
-            if( !found && obj.read( "item_type", item_type ) && !item_type.is_null() ) {
+            if( !found && !item_type.is_null() ) {
                 int i = 0;
                 for( item *it : parent_contents ) {
                     if( it->typeId() == item_type && ( !found || i == idx ) ) {

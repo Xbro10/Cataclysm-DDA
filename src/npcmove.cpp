@@ -1670,6 +1670,8 @@ void npc::end_cancelled_task()
 
 void npc::move()
 {
+    // Xbro10 fork: the autonomy checks' hostile scans are done once per action (speed).
+    const npc_autonomy::action_cache_scope autonomy_cache( *this );
     const int moves_at_decision = get_moves();
     ai_cache.decisions++;
     const map &here = get_map();

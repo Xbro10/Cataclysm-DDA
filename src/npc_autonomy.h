@@ -22,6 +22,22 @@ namespace npc_autonomy
 /** True when the "NPC autonomy (experimental)" option is on. */
 bool enabled();
 
+/**
+ * While one exists (npc::move holds one for each NPC action), the costly hostile scans and the
+ * NPC's own fighting strength are worked out once and reused; they're dropped when the NPC
+ * steps or changes weapon. Without one (tests calling the checks directly) nothing is cached.
+ */
+class action_cache_scope
+{
+    public:
+        explicit action_cache_scope( const npc &guy );
+        ~action_cache_scope();
+        action_cache_scope( const action_cache_scope & ) = delete;
+        action_cache_scope &operator=( const action_cache_scope & ) = delete;
+    private:
+        const npc *previous;
+};
+
 // ---- Needs (step 3.2) ----
 
 /**

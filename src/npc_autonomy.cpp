@@ -15,6 +15,7 @@
 
 #include "avatar.h"
 #include "behavior.h"
+#include "calendar.h"
 #include "character_oracle.h"
 #include "coordinates.h"
 #include "creature_tracker.h"
@@ -28,6 +29,7 @@
 #include "game_constants.h"
 #include "iexamine.h"
 #include "item.h"
+#include "item_location.h"
 #include "itype.h"
 #include "lightmap.h"
 #include "map.h"
@@ -258,10 +260,72 @@ bool has_company( const npc &guy )
     return false;
 }
 
+// Xbro10 fork (2026-11-23, speed): one NPC action asked safety_need() and is_safe() several
+// times, each a scan of every creature with line of sight, plus a weapon rating. Inside an
+// action_cache_scope the answers are kept until the NPC steps, changes weapon or the turn ends.
+struct action_cache {
+    const npc *who = nullptr;
+    tripoint_abs_ms pos;
+    time_point turn;
+    const item *weapon = nullptr;
+    std::map<std::pair<int, int>, std::pair<float, float>> threats;
+    std::map<int, bool> hostile_within;
+    std::optional<float> strength;
+};
+static action_cache the_cache;
+
+// The cache for this NPC, emptied if it went stale; nullptr outside a scope.
+static action_cache *cache_for( const npc &guy )
+{
+    if( the_cache.who != &guy ) {
+        return nullptr;
+    }
+    const item_location weapon = guy.get_wielded_item();
+    const item *held = weapon ? weapon.get_item() : nullptr;
+    if( the_cache.pos != guy.pos_abs() || the_cache.turn != calendar::turn || the_cache.weapon != held ) {
+        the_cache.pos = guy.pos_abs();
+        the_cache.turn = calendar::turn;
+        the_cache.weapon = held;
+        the_cache.threats.clear();
+        the_cache.hostile_within.clear();
+        the_cache.strength.reset();
+    }
+    return &the_cache;
+}
+
+action_cache_scope::action_cache_scope( const npc &guy ) : previous( the_cache.who )
+{
+    the_cache = action_cache();
+    the_cache.who = &guy;
+    the_cache.turn = calendar::turn_zero;
+}
+
+action_cache_scope::~action_cache_scope()
+{
+    the_cache = action_cache();
+    the_cache.who = previous;
+    the_cache.turn = calendar::turn_zero;
+}
+
+static std::pair<float, float> scan_threats( const npc &guy, int near_range, int far_range );
+
+static std::pair<float, float> watched_threats( const npc &guy, const int near_range, const int far_range )
+{
+    action_cache *cache = cache_for( guy );
+    if( cache == nullptr ) {
+        return scan_threats( guy, near_range, far_range );
+    }
+    const auto found = cache->threats.find( { near_range, far_range } );
+    if( found != cache->threats.end() ) {
+        return found->second;
+    }
+    return cache->threats[{ near_range, far_range }] = scan_threats( guy, near_range, far_range );
+}
+
 // The threat rating of the hostiles the NPC can see within near_range tiles and within far_range
 // tiles (near_range <= far_range), from one scan. This runs several times per NPC turn and line of sight
 // is the costly part, so it's only checked for hostiles in range: friends are never looked at.
-static std::pair<float, float> watched_threats( const npc &guy, const int near_range, const int far_range )
+static std::pair<float, float> scan_threats( const npc &guy, const int near_range, const int far_range )
 {
     const map &here = get_map();
     const tripoint_abs_ms pos = guy.pos_abs();
@@ -300,7 +364,22 @@ static float watched_threat( const npc &guy, const int range )
 
 // npc::sees_hostile_within(), but line of sight is only checked for hostiles: it's the costly
 // part and runs for every check of is_safe(), several per NPC turn.
+static bool scan_hostile_within( const npc &guy, int radius );
+
 static bool sees_hostile_within( const npc &guy, const int radius )
+{
+    action_cache *cache = cache_for( guy );
+    if( cache == nullptr ) {
+        return scan_hostile_within( guy, radius );
+    }
+    const auto found = cache->hostile_within.find( radius );
+    if( found != cache->hostile_within.end() ) {
+        return found->second;
+    }
+    return cache->hostile_within[radius] = scan_hostile_within( guy, radius );
+}
+
+static bool scan_hostile_within( const npc &guy, const int radius )
 {
     const map &here = get_map();
     const tripoint_abs_ms pos = guy.pos_abs();
@@ -329,7 +408,21 @@ static float shot_damage( const item &gun )
     return damage;
 }
 
+static float rate_own_strength( const npc &guy );
+
 static float own_strength( const npc &guy )
+{
+    action_cache *cache = cache_for( guy );
+    if( cache == nullptr ) {
+        return rate_own_strength( guy );
+    }
+    if( !cache->strength ) {
+        cache->strength = rate_own_strength( guy );
+    }
+    return *cache->strength;
+}
+
+static float rate_own_strength( const npc &guy )
 {
     const float health = std::clamp( guy.hp_percentage() / 100.0f, 0.0f, 1.0f );
     const float defence = guy.mem_combat.my_defence_assess > 0.0f ? guy.mem_combat.my_defence_assess :

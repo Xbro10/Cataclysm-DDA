@@ -28,6 +28,15 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   holster, or one on a shoulder strap) from "Draw what?" crashed the game. The menu's choices pointed at a list that
   was already gone (an upstream bug).
 
+### NPCs
+- [C++] **Faster NPC turns with autonomy on:** an NPC's safety checks looked over every creature in sight and rated
+  their own weapon several times per action; now once per action. In the benchmark, autonomy's extra cost per NPC turn
+  is about gone, and an NPC turn with zombies in view takes roughly half as long.
+
+### For developers
+- `[npc_perf]` also times NPC turns with 6 zombies in view. Loading an NPC saved mid-meal no longer logs
+  "Invalid or misplaced field name item_type".
+
 ### Mods
 - **No Wounds** (new, optional, off by default; `data/mods/No_Wounds/`): hits no longer give body parts wounds
   (scratches, cuts, lacerations, bruises), the limb wounds upstream added from experimental 2026-10-25. Damage and
