@@ -459,6 +459,19 @@ TEST_CASE( "backrooms_places_generate_cleanly", "[.][backrooms_runner]" )
         // archway rooms and blackout zones mixed in
         { "backfloorchamber_north", 200 },
         { "br0_thin_room", 100 },
+        // Level 0 places (level_0/structures.json): small named rooms built on a chamber
+        { "br0_cubicle_farm", 50 },
+        { "br0_waiting_room", 50 },
+        { "br0_janitor_closet", 50 },
+        { "br0_collapsed_office", 50 },
+        { "br0_burned_breakroom", 50 },
+        { "br0_flooded_conference", 50 },
+        { "br0_living_room", 50 },
+        { "br0_birthday_party", 50 },
+        { "br0_room_of_doors", 50 },
+        { "br0_tipped_room", 50 },
+        { "br0_stairs_nowhere", 50 },
+        { "br0_overgrown_office", 50 },
         // Level 1
         { "br1_garage", 200 },
         { "br1_arrival", 100 },

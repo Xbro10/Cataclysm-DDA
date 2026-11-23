@@ -22,6 +22,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ### Backrooms
 - [BE] **Level 0 is quieter:** a Level 0 chamber now has monsters half as often (a 20% chance per map square instead of
   upstream's 40%). Places you've already been keep the monsters they had.
+- [BE] **Level 0 places:** 12 small named rooms to come across while exploring Level 0, each shown on the map by its
+  name, 2-4 of each per map. Intact: a cubicle farm, a waiting room and a janitor's closet. Ruined: a collapsed
+  office, a burned break room and a flooded conference room. Ones that make no sense: a cosy living room, a birthday
+  party with nobody there, a room of ten doors opening onto closets, a tipped room with all its furniture heaped in
+  one corner, stairs that climb into the ceiling and stop, and an office overgrown with moss. Loot is small; most
+  hold junk, a few a little food.
 
 ### Bug fixes
 - [C++] **No error eating gum from a nearby tile:** chewing gum (or another medicine you chew or use) eaten from a
