@@ -1,0 +1,9 @@
+[
+  {
+    "type": "EXTERNAL_OPTION",
+    "name": "WOUND_CHANCE",
+    "//": "Chance that taking damage gives the body part a wound.  0 = never (the game's default is 1, always).",
+    "stype": "float",
+    "value": 0.0
+  }
+]

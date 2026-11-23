@@ -16,6 +16,15 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ---
 
+## November 23, 2026
+
+### Mods
+- **No Wounds** (new, optional, off by default; `data/mods/No_Wounds/`): hits no longer give body parts wounds
+  (scratches, cuts, lacerations, bruises), the limb wounds upstream added from experimental 2026-10-25. Damage and
+  bleeding work as before. It sets the game's `WOUND_CHANCE` option to 0.
+
+---
+
 ## November 16, 2026
 
 ### NPCs

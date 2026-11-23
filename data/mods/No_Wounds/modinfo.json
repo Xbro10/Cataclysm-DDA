@@ -1,0 +1,12 @@
+[
+  {
+    "type": "MOD_INFO",
+    "id": "no_wounds",
+    "name": "No Wounds",
+    "authors": [ "Xbro10" ],
+    "maintainers": [ "Xbro10" ],
+    "description": "Hits no longer give your body parts wounds (scratches, cuts, lacerations, bruises and so on, with their own pain, healing times and limb penalties).  You still take damage and bleed as before.  Wounds you already have heal as usual, and items that add a wound on purpose still do.",
+    "category": "rebalance",
+    "dependencies": [ "dda" ]
+  }
+]
