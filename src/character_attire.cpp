@@ -2066,12 +2066,17 @@ void outfit::fire_options( Character &guy, std::vector<std::string> &options,
                                               clothing->type_name(),
                                               guns.front()->ammo_remaining( ) ) );
 
-            actions.emplace_back( [&] { guy.invoke_item( clothing, "holster" ); } );
+            // Xbro10 fork (2026-11-23): capture the location by value. `clothing` lives in a
+            // temporary list gone by the time the "Draw what?" menu runs this, so drawing a bow
+            // from a quiver or a gun from a holster read freed memory and crashed.
+            actions.emplace_back( [&guy, clothing]() mutable {
+                guy.invoke_item( clothing, "holster" );
+            } );
 
         } else if( clothing->is_gun() && clothing->gunmod_find_by_flag( flag_BELTED ) ) {
             // wield item currently worn using shoulder strap
             options.push_back( clothing->display_name() );
-            actions.emplace_back( [&] { guy.wield( clothing ); } );
+            actions.emplace_back( [&guy, clothing] { guy.wield( clothing ); } );
         }
     }
 }

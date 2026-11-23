@@ -1,11 +1,14 @@
 // Xbro10 fork (reported 2026-11-20): an NPC handed a bow shot arrows but didn't pick them back
 // up, and a gunner beside a zombie clubbed it instead of stepping back to shoot.
 
+#include <functional>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "avatar.h"
 #include "calendar.h"
+#include "character_attire.h"
 #include "cata_catch.h"
 #include "coordinates.h"
 #include "game.h"
@@ -391,4 +394,26 @@ TEST_CASE( "an_archer_rates_a_bow_above_scissors", "[npc][ranged]" )
         guy.clear_worn();
         CHECK( guy.evaluate_weapon( compbow ) < guy.evaluate_weapon( knife ) );
     }
+}
+
+// Reported 2026-11-23: the game crashed drawing a bow from a quiver. The "Draw what?" menu's
+// actions held a reference to a list that was gone by the time one ran (upstream bug).
+TEST_CASE( "drawing_a_strapped_gun_from_the_fire_menu", "[ranged][item_location]" )
+{
+    clear_map();
+    clear_avatar();
+    avatar &you = get_avatar();
+    // A gun worn on a shoulder strap: the same menu, and no further menu when drawn (the holster
+    // branch, used for a bow in a quiver, opens one, which tests can't answer).
+    item carbine( itype_id( "debug_modular_m4_carbine" ) );
+    REQUIRE( carbine.put_in( item( itype_id( "shoulder_strap" ) ), pocket_type::MOD ).success() );
+    you.wear_item( carbine, false );
+    std::vector<std::string> options;
+    std::vector<std::function<void()>> actions;
+    you.worn.fire_options( you, options, actions );
+    REQUIRE( actions.size() == 1 );
+    // The list the menu was built from is gone now, as in the game.
+    actions[0]();
+    REQUIRE( you.get_wielded_item() );
+    CHECK( you.get_wielded_item()->typeId() == itype_id( "debug_modular_m4_carbine" ) );
 }
