@@ -4,16 +4,22 @@
 
 #include "avatar.h"
 #include "calendar.h"
+#include "coordinates.h"
 #include "cata_catch.h"
 #include "character.h"
 #include "dialogue.h"
 #include "item.h"
+#include "item_location.h"
+#include "map.h"
+#include "map_helpers.h"
+#include "map_selector.h"
 #include "math_parser.h"
 #include "player_helpers.h"
 #include "talker.h"
 #include "type_id.h"
 
 static const itype_id itype_butter( "butter" );
+static const itype_id itype_caff_gum( "caff_gum" );
 static const itype_id itype_ghee( "ghee" );
 static const itype_id itype_raw_butter( "raw_butter" );
 
@@ -133,4 +139,21 @@ TEST_CASE( "consumption_count_total_math_function", "[math_parser][consumption]"
         REQUIRE( testexp.parse( "u_consumption_count_total('hours': 6)" ) );
         CHECK( testexp.eval( d ) == Approx( 1 ) );
     }
+}
+
+// Xbro10 fork (2026-11-23): chewing gum (a med with a use action) eaten from a tile next to the
+// eater logged "Couldn't find item caffeinated chewing gum to form item_location": the item was
+// looked for only on the eater and their own tile. The caller's location is used now.
+TEST_CASE( "chewing_gum_from_the_next_tile", "[consumption]" )
+{
+    clear_avatar();
+    clear_map_without_vision();
+    avatar &guy = get_avatar();
+    map &here = get_map();
+    const tripoint_bub_ms next = guy.pos_bub() + tripoint::east;
+    item &gum = here.add_item( next, item( itype_caff_gum ) );
+    REQUIRE( gum.typeId() == itype_caff_gum );
+    item_location loc( map_cursor( &here, next ), &gum );
+    // A debugmsg fails the test.
+    CHECK( guy.consume( loc, true ) != trinary::NONE );
 }

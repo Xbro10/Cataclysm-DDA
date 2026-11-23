@@ -24,6 +24,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   upstream's 40%). Places you've already been keep the monsters they had.
 
 ### Bug fixes
+- [C++] **No error eating gum from a nearby tile:** chewing gum (or another medicine you chew or use) eaten from a
+  tile or container next to the eater, as NPCs do, popped up "Couldn't find item caffeinated chewing gum to form
+  item_location".
 - [C++] **No crash drawing a bow or gun:** pressing fire with empty hands and picking a bow in a quiver (or a gun in a
   holster, or one on a shoulder strap) from "Draw what?" crashed the game. The menu's choices pointed at a list that
   was already gone (an upstream bug).

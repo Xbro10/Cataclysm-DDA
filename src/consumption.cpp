@@ -2019,7 +2019,10 @@ static bool query_consume_ownership( item &target, Character &p )
 /** Consume medication.
 *   @return true if item consumed.
 */
-static bool consume_med( item &target, Character &you )
+// Xbro10 fork: `where` is the eaten item's real location when the caller has one. Without it the
+// item was looked for only on the eater and their own tile, so an NPC eating gum from a container
+// next to them logged "Couldn't find item ... to form item_location" (2026-11-23).
+static bool consume_med( item &target, Character &you, const item_location *where )
 {
     if( !target.is_medication() ) {
         return false;
@@ -2039,7 +2042,15 @@ static bool consume_med( item &target, Character &you )
 
     int amount_used = 1;
     if( target.type->has_use() ) {
-        item_location loc = item_location::form_loc( &you, &get_map(), you.pos_bub(), target );
+        item_location loc;
+        if( where != nullptr && *where && where->get_item() == &target ) {
+            loc = *where;
+        } else if( std::optional<item_location> found = item_location::try_form_loc( &you, &get_map(),
+                   you.pos_bub(), target ) ) {
+            loc = *found;
+        } else {
+            loc = item_location( you, &target );
+        }
         amount_used = target.type->invoke( &you, loc, you.pos_bub() ).value_or( 0 );
         if( amount_used <= 0 ) {
             return false;
@@ -2076,33 +2087,41 @@ static bool consume_med( item &target, Character &you )
     return true;
 }
 
+static trinary consume_item( Character &you, item &target, bool force, const item_location *where );
+
 trinary Character::consume( item &target, bool force )
 {
+    return consume_item( *this, target, force, nullptr );
+}
+
+static trinary consume_item( Character &you, item &target, bool force, const item_location *where )
+{
+    Character &self = you;
     if( target.is_null() ) {
-        add_msg_if_player( m_info, _( "You don't have that item." ) );
+        self.add_msg_if_player( m_info, _( "You don't have that item." ) );
         return trinary::NONE;
     }
-    if( ( !has_trait( trait_WATERSLEEP ) && !has_trait( trait_UNDINE_SLEEP_WATER ) ) &&
-        cant_do_underwater() ) {
+    if( ( !self.has_trait( trait_WATERSLEEP ) && !self.has_trait( trait_UNDINE_SLEEP_WATER ) ) &&
+        self.cant_do_underwater() ) {
         return trinary::NONE;
     }
 
     if( target.is_craft() ) {
-        add_msg_if_player( m_info, _( "You can't eat your %s." ), target.tname() );
-        if( is_npc() ) {
-            debugmsg( "%s tried to eat a %s", get_name(), target.tname() );
+        self.add_msg_if_player( m_info, _( "You can't eat your %s." ), target.tname() );
+        if( self.is_npc() ) {
+            debugmsg( "%s tried to eat a %s", self.get_name(), target.tname() );
         }
         return trinary::NONE;
     }
-    if( is_avatar() && !query_consume_ownership( target, *this ) ) {
+    if( self.is_avatar() && !query_consume_ownership( target, self ) ) {
         return trinary::NONE;
     }
 
-    if( consume_med( target, *this ) || eat( target, *this, force ) ) {
+    if( consume_med( target, self, where ) || eat( target, self, force ) ) {
 
-        get_event_bus().send<event_type::character_consumes_item>( getID(), target.typeId() );
+        get_event_bus().send<event_type::character_consumes_item>( self.getID(), target.typeId() );
 
-        invalidate_weight_carried_cache();
+        self.invalidate_weight_carried_cache();
         target.on_contents_changed();
         return !target.count_by_charges() || target.charges <= 0 ? trinary::ALL : trinary::SOME;
     }
@@ -2118,7 +2137,7 @@ trinary Character::consume( item_location loc, bool force )
     }
     contents_change_handler handler;
     item &target = *loc;
-    trinary result = consume( target, force );
+    trinary result = consume_item( *this, target, force, &loc );
     if( result != trinary::NONE ) {
         handler.unseal_pocket_containing( loc );
     }
