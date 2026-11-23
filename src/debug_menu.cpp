@@ -2447,7 +2447,8 @@ static void character_edit_menu()
         D_DESC, D_SKILLS, D_THEORY, D_PROF, D_STATS, D_SPELLS, D_ITEMS, D_DELETE_ITEMS, D_DROP_ITEMS, D_ITEM_WORN, D_RADS,
         D_HP, D_STAMINA, D_MORALE, D_PAIN, D_NEEDS, D_NORMALIZE_BODY, D_HEALTHY, D_STATUS, D_MISSION_ADD, D_MISSION_EDIT,
         D_TELE, D_MUTATE, D_BIONICS, D_CLASS, D_ATTITUDE, D_OPINION, D_PERSONALITY, D_ADD_EFFECT, D_ASTHMA, D_PRINT_VARS,
-        D_WRITE_EOCS, D_KILL_XP, D_CHECK_TEMP, D_CHECK_TRAUMA, D_EDIT_VARS, D_FACTION, D_ALPHA_EOC, D_BETA_EOC
+        D_WRITE_EOCS, D_KILL_XP, D_CHECK_TEMP, D_CHECK_TRAUMA, D_EDIT_VARS, D_FACTION, D_ALPHA_EOC, D_BETA_EOC,
+        D_REMOVE_WOUNDS // Xbro10 fork
     };
     nmenu.addentry( D_DESC, true, 'D', "%s",
                     _( "Edit description - name, age, height or blood type" ) );
@@ -2468,6 +2469,8 @@ static void character_edit_menu()
     nmenu.addentry( D_HEALTHY, true, 'a', "%s", _( "Set health" ) );
     nmenu.addentry( D_NEEDS, true, 'n', "%s", _( "Set needs" ) );
     nmenu.addentry( D_NORMALIZE_BODY, true, 'N', "%s", _( "Normalize body stats" ) );
+    // Xbro10 fork: one step instead of toggling wounds one by one in the medical screen.
+    nmenu.addentry( D_REMOVE_WOUNDS, true, 'H', "%s", _( "Remove all wounds" ) );
     nmenu.addentry( D_KILL_XP, true, 'X', "%s", _( "Set kill XP (for mods)" ) );
     nmenu.addentry( D_MUTATE, true, 'u', "%s", _( "Mutate" ) );
     nmenu.addentry( D_BIONICS, true, 'b', "%s", _( "Edit [b]ionics" ) );
@@ -2606,6 +2609,18 @@ static void character_edit_menu()
         case D_NORMALIZE_BODY:
             normalize_body( you );
             break;
+        case D_REMOVE_WOUNDS: {
+            // Xbro10 fork
+            int removed = 0;
+            for( const bodypart_id &bp_id : you.get_all_body_parts() ) {
+                if( bodypart *bp = you.get_part( bp_id ) ) {
+                    removed += static_cast<int>( bp->get_wounds().size() );
+                    bp->get_wounds().clear();
+                }
+            }
+            add_msg( m_good, n_gettext( "%d wound removed.", "%d wounds removed.", removed ), removed );
+            break;
+        }
         case D_MUTATE: {
             uilist smenu;
             smenu.addentry( 0, true, 'm', _( "Mutate" ) );

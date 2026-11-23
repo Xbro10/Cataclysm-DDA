@@ -34,6 +34,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   is about gone, and an NPC turn with zombies in view takes roughly half as long.
 
 ### For developers
+- [C++] Debug menu > Player > **Remove all wounds** (`H`) clears every wound on every body part of you (or the NPC
+  picked) at once; before, the medical screen's debug option removed them one at a time.
 - `[npc_perf]` also times NPC turns with 6 zombies in view. Loading an NPC saved mid-meal no longer logs
   "Invalid or misplaced field name item_type".
 
