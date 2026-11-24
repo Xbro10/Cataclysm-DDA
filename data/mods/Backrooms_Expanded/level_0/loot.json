@@ -51,12 +51,12 @@
   {
     "id": "backrooms_master_desk",
     "type": "item_group",
-    "//": "Replaces the upstream desk loot: the same, plus now and then a few bills or coins left in a drawer.",
+    "//": "Replaces the upstream desk loot: the same, plus now and then a few bills or coins left in a drawer; bedroom things (clothes, a pillow) rarer.",
     "subtype": "distribution",
     "entries": [
       { "group": "cubical_office", "count": [ 1, 6 ], "prob": 250 },
       { "group": "SUS_office_desk", "prob": 250 },
-      { "group": "bedroom", "count": [ 1, 3 ], "prob": 25 },
+      { "group": "bedroom", "count": [ 1, 3 ], "prob": 5 },
       { "group": "npc_hacker", "prob": 50 },
       { "group": "school", "count": [ 1, 4 ], "prob": 100 },
       { "group": "banknotes", "count": [ 1, 3 ], "prob": 30 },
