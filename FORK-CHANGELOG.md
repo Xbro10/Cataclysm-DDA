@@ -28,6 +28,10 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   party with nobody there, a room of ten doors opening onto closets, a tipped room with all its furniture heaped in
   one corner, stairs that climb into the ceiling and stop, and an office overgrown with moss. Loot is small; most
   hold junk, a few a little food.
+- [BE] **A bit more food on Levels 1 and 2, still scarce:** Level 1 has loading docks (a shut crate sometimes still
+  holds canned food or snacks) and attendants' break rooms (the odd snack in the cupboards), plus the odd shopping
+  cart with groceries spilled round it. Level 2 has crew messes, where the lockers hold lunchboxes, and now and then a
+  lunchbox left on a pipe ledge in the tunnels.
 
 ### Bug fixes
 - [C++] **No error eating gum from a nearby tile:** chewing gum (or another medicine you chew or use) eaten from a

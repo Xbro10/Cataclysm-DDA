@@ -485,6 +485,8 @@ TEST_CASE( "backrooms_places_generate_cleanly", "[.][backrooms_runner]" )
         { "br1_overrun_camp", 100 },
         { "br1_breakroom", 40 },
         { "br1_squatter_camp", 40 },
+        { "br1_loading_dock", 100 },
+        { "br1_attendant_breakroom", 100 },
         { "br1_diner", 40 },
         { "br1_exchange", 40 },
         // Level 2
@@ -492,6 +494,7 @@ TEST_CASE( "backrooms_places_generate_cleanly", "[.][backrooms_runner]" )
         { "br2_boiler_room", 100 },
         { "br2_valve_junction", 100 },
         { "br2_flooded", 100 },
+        { "br2_crew_mess", 100 },
         { "br2_service_ladder", 100 },
         { "br2_workers_camp", 40 },
     };
