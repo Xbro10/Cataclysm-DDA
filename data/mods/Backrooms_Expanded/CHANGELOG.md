@@ -28,6 +28,8 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 ### Changed
 
 - Level 0 is quieter: a chamber has monsters half as often (a 20% chance per map square instead of upstream's 40%; 2-15 when it does). Places you've already been keep the monsters they had.
+- Level 0's monsters: about 60% zombies (was about 92%), about 32% the Backrooms' own entities (Facelings, Hounds, Smilers, Deathmoths, and Wretches after day 30; was about 1%), lost pets and wild animals as before. No more lab escapees (experimental mutants, broken cyborgs, zomborgs, skeleton brutes).
+- Level 0's loot, tidied: vending machines no longer sell bionics or mutagens; a locker holds guns 1 time in 6 instead of 1 in 3; a safe gives bionics about 1 pick in 40 (was 1 in 10) and military guns half as often, and often holds cash instead. Desks sometimes have a few bills or coins.
 - Breakroom job hand-ins say what you earned ("Dot pays you: 5 tally tokens and 2 cans of food...").
 - The Hound den's pack defends its den: 3 or 4 Hounds, more aggressive and braver than wandering ones, and a flashlight doesn't drive them off (fire and losses still do).
 - Moth jelly also cleans dirty cuts and scratches, as saline does.
