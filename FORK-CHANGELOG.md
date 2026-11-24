@@ -48,6 +48,13 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [C++] **Guards fetch water and food by their post:** a very thirsty or very hungry guard on duty now goes for water or
   food within their post area (4 tiles) and walks back after. Before, guard duty always won, so a guard only drank or
   ate from their pack (or at mealtimes) and never used water they remembered.
+- [C++] **NPCs go through doors on a trip:** an NPC walking to water they remember (or to anything else on a planned
+  trip) now opens a closed door and keeps going. Before, opening the door took their turn without a step, which read as
+  "can't get there": they forgot the water at the door and stood there.
+- [C++] **NPCs keep a weapon that won't fit in their pack:** in a fight an NPC could swap to a smaller weapon for one
+  swing (Gabriel took the hatchet off his belt for a zombie beside him), and putting away a spear that fits in no pocket
+  dropped it on the floor. Now they only swap if the new weapon is better overall or the old one fits in the pack. And
+  an NPC holding a worse weapon now puts it away and takes their own dropped weapon back from beside them.
 
 ## November 23, 2026
 

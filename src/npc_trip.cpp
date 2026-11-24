@@ -318,6 +318,13 @@ bool npc::move_to_and_verify( const npc_trip_spec &spec )
                                npc_reach_snapshot::of( obligation_reach() )
                              };
     const tripoint_bub_ms before = pos_bub();
+    // Xbro10 fork (reported 2026-11-24): opening or unlocking a door on the way takes the turn
+    // without a step, and callers took "didn't move" for "can't get there": an NPC walking to
+    // water they remembered behind a closed door forgot it at the door. A changed tile is progress.
+    map &here = get_map();
+    const tripoint_bub_ms next = path.front();
+    const ter_id ter_before = here.ter( next );
+    const furn_id furn_before = here.furn( next );
     move_to_next();
-    return pos_bub() != before;
+    return pos_bub() != before || here.ter( next ) != ter_before || here.furn( next ) != furn_before;
 }

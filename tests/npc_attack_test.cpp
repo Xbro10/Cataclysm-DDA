@@ -29,12 +29,15 @@ class Creature;
 
 static const faction_id faction_your_followers( "your_followers" );
 
+static const itype_id itype_backpack( "backpack" );
 static const itype_id itype_combat_exoskeleton_medium( "combat_exoskeleton_medium" );
 static const itype_id itype_combat_exoskeleton_medium_on( "combat_exoskeleton_medium_on" );
+static const itype_id itype_hatchet( "hatchet" );
 static const itype_id itype_heavy_battery_cell( "heavy_battery_cell" );
 static const itype_id itype_knife_large( "knife_large" );
 static const itype_id itype_modular_m16a4( "modular_m16a4" );
 static const itype_id itype_rock( "rock" );
+static const itype_id itype_spear_steel( "spear_steel" );
 static const itype_id itype_wearable_light( "wearable_light" );
 
 static const mtype_id mon_zombie( "mon_zombie" );
@@ -424,4 +427,51 @@ TEST_CASE( "NPC_shoots_over_sandbags_and_through_chain_link", "[npc_attack]" )
     }
     CHECK( fired );
     CHECK( main_npc.pos_bub() == main_npc_start_tripoint );
+}
+
+// Reported 2026-11-24: Gabriel (Survivor Minds' Spearman) dropped his spear for the hatchet on his
+// belt and left it lying there. The attack choice rates a weapon by damage per swing on the
+// target in reach (a hatchet finishing a nearly dead zombie scores high), and wielding the hatchet
+// stows the spear, which fits in no pocket, so it fell to the floor.
+TEST_CASE( "NPC_keeps_a_spear_that_wont_fit_in_the_pack", "[npc_attack]" )
+{
+    map &here = get_map();
+    get_player_character().setpos( here, main_npc_start_tripoint );
+    clear_map_and_put_player_underground();
+    clear_vehicles();
+    scoped_weather_override sunny_weather( weather_sunny );
+    npc &main_npc = npc_attack_setup::respawn_main_npc();
+    main_npc.set_fac( faction_your_followers );
+    item pack( itype_backpack );
+    REQUIRE( main_npc.wear_item( pack ) );
+    main_npc.set_wielded_item( item( itype_spear_steel ) );
+    main_npc.i_add( item( itype_hatchet ) );
+    REQUIRE( main_npc.has_item_with( []( const item & it ) {
+        return it.typeId() == itype_hatchet;
+    } ) );
+    REQUIRE( here.i_at( main_npc.pos_bub() ).empty() );
+    REQUIRE_FALSE( main_npc.can_stash( *main_npc.get_wielded_item() ) );
+    REQUIRE( main_npc.evaluate_weapon( *main_npc.get_wielded_item() ) >
+             main_npc.evaluate_weapon( item( itype_hatchet ) ) );
+    monster *zombie = npc_attack_setup::spawn_zombie_at_range( 1 );
+    REQUIRE( zombie );
+
+    for( const int hp : { zombie->get_hp_max(), 1 } ) {
+        CAPTURE( hp );
+        zombie->set_hp( hp );
+        main_npc.evaluate_best_attack( zombie );
+        const std::shared_ptr<npc_attack> &attack = main_npc.get_current_attack();
+        REQUIRE( attack );
+        main_npc.set_moves( 100 );
+        attack->use( main_npc, main_npc.get_current_attack_evaluation().target() );
+        REQUIRE( main_npc.get_wielded_item() );
+        CHECK( main_npc.get_wielded_item()->typeId() == itype_spear_steel );
+        for( const item &it : here.i_at( main_npc.pos_bub() ) ) {
+            CAPTURE( it.typeId().str() );
+            CHECK( it.typeId() != itype_spear_steel );
+        }
+        if( zombie->is_dead() ) {
+            break;
+        }
+    }
 }

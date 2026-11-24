@@ -57,6 +57,24 @@ static const int base_throw_now = 10000;
 
 // TODO: make a better, more generic "check if this projectile is blocked" function
 // TODO: put this in a namespace for reuse
+// Xbro10 fork (reported 2026-11-24): an attack with another weapon wields it, which stows the one
+// in hand, and one that fits in no pocket (a spear) drops to the floor. The attack choice rates by
+// damage per swing on the target in reach, so Gabriel took the hatchet off his belt over his spear
+// on a zombie beside him and left the spear lying there. Only swap when the new one is better by
+// the game's whole-weapon rating (evaluate_weapon) or the old one can be put away.
+static bool swap_drops_a_better_weapon( const npc &source, const item &next )
+{
+    const item_location held = source.get_wielded_item();
+    if( !held || held.get_item() == &next || !( held->is_melee() || held->is_gun() ) ) {
+        return false;
+    }
+    // can_stash only looks for a pocket; it changes nothing.
+    if( const_cast<npc &>( source ).can_stash( *held ) ) {
+        return false;
+    }
+    return source.evaluate_weapon( *held ) >= source.evaluate_weapon( next );
+}
+
 static bool has_obstruction( const tripoint_bub_ms &from, const tripoint_bub_ms &to,
                              bool check_ally = false )
 {
@@ -410,7 +428,8 @@ std::vector<npc_attack_rating> npc_attack_melee::all_evaluations( const npc &sou
 bool npc_attack_melee::can_use( const npc &source ) const
 {
     // can't attack with something you can't wield
-    return source.is_wielding( weapon ) || source.can_wield( weapon ).success();
+    return source.is_wielding( weapon ) || ( source.can_wield( weapon ).success() &&
+            !swap_drops_a_better_weapon( source, weapon ) );
 }
 
 int npc_attack_melee::base_time_penalty( const npc &source ) const
@@ -510,8 +529,8 @@ void npc_attack_gun::use( npc &source, const tripoint_bub_ms &location ) const
 bool npc_attack_gun::can_use( const npc &source ) const
 {
     // can't attack with something you can't wield or which lacks ammo.
-    return ( source.is_wielding( *gunmode ) || source.can_wield( *gunmode ).success() )
-           && gun.has_ammo();
+    return ( source.is_wielding( *gunmode ) || ( source.can_wield( *gunmode ).success() &&
+             !swap_drops_a_better_weapon( source, *gunmode ) ) ) && gun.has_ammo();
 }
 
 int npc_attack_gun::base_time_penalty( const npc &source ) const
@@ -705,7 +724,8 @@ bool npc_attack_throw::can_use( const npc &source ) const
         return false;
     }
 
-    if( !source.is_wielding( thrown_item ) && !source.can_wield( thrown_item ).success() ) {
+    if( !source.is_wielding( thrown_item ) && ( !source.can_wield( thrown_item ).success() ||
+            swap_drops_a_better_weapon( source, thrown_item ) ) ) {
         return false;
     }
 

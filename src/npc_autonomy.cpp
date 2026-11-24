@@ -1985,9 +1985,10 @@ void grab_dropped_weapon( npc &guy )
         return;
     }
     item_location held = guy.get_wielded_item();
-    if( held && ( held->is_gun() || held->is_melee() ) && !holds_wood_for_fire( guy ) ) {
-        return;
-    }
+    // A weapon in hand doesn't stop it (2026-11-24): their own better one goes back in their hands
+    // and the one they hold goes in the pack, as Gabriel's spear after he'd drawn his hatchet.
+    const bool holds_weapon = held && ( held->is_gun() || held->is_melee() ) &&
+                              !holds_wood_for_fire( guy );
     map &here = get_map();
     const std::string key = carrier_key( guy );
     for( const tripoint_bub_ms &p : here.points_in_radius( guy.pos_bub(), 1 ) ) {
@@ -2003,6 +2004,10 @@ void grab_dropped_weapon( npc &guy )
             copy.erase_var( ivar_was_wielded );
             if( !guy.can_wield( copy ).success() ) {
                 return;
+            }
+            if( holds_weapon && ( guy.evaluate_weapon( copy ) <= guy.evaluate_weapon( *held ) ||
+                                  !guy.can_stash( *held ) ) ) {
+                continue;
             }
             if( held ) {
                 // Wood or a tool in hand: into the pack, or on the ground.

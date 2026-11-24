@@ -89,6 +89,7 @@ static const furn_str_id furn_f_fireplace( "f_fireplace" );
 static const field_type_str_id field_fd_fire( "fd_fire" );
 static const furn_str_id furn_f_water_heater( "f_water_heater" );
 
+static const ter_str_id ter_t_door_c( "t_door_c" );
 static const ter_str_id ter_t_flat_roof( "t_flat_roof" );
 static const ter_str_id ter_t_floor( "t_floor" );
 static const ter_str_id ter_t_utility_light( "t_utility_light" );
@@ -1814,6 +1815,31 @@ TEST_CASE( "npc_autonomy_grabs_a_dropped_weapon_straight_back", "[npc][autonomy]
         CHECK( weapon_on_ground( 3 ) == 3 );
         CHECK_FALSE( npc_autonomy::wants_to_recover_items( guy ) );
     }
+    SECTION( "a worse weapon in hand: that goes in the pack, theirs back in hand" ) {
+        // 2026-11-24: Gabriel drew his hatchet, his spear fell, and he never took it back.
+        item pack( itype_backpack );
+        REQUIRE( guy.wear_item( pack ) );
+        drop_at( 1 );
+        item rock( itype_rock );
+        guy.wield( rock );
+        REQUIRE( guy.get_wielded_item()->typeId() == itype_rock );
+        npc_autonomy::grab_dropped_weapon( guy );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_knife_combat );
+        CHECK( guy.has_item_with( []( const item & it ) {
+            return it.typeId() == itype_rock;
+        } ) );
+        CHECK( weapon_on_ground( 2 ) == -1 );
+    }
+    SECTION( "a better weapon in hand: they keep it" ) {
+        drop_at( 1 );
+        item katana( itype_katana );
+        guy.wield( katana );
+        npc_autonomy::grab_dropped_weapon( guy );
+        REQUIRE( guy.get_wielded_item() );
+        CHECK( guy.get_wielded_item()->typeId() == itype_katana );
+        CHECK( weapon_on_ground( 2 ) == 1 );
+    }
     SECTION( "someone else's knife beside them isn't theirs" ) {
         item other( itype_knife_combat );
         guy.remove_weapon();
@@ -1981,4 +2007,53 @@ TEST_CASE( "npc_autonomy_guards_get_water_by_their_post", "[npc][autonomy]" )
         guard.set_thirst( 0 );
         CHECK( priorities.tick( &oracle ) == "autonomy_get_food" );
     }
+}
+
+// Reported 2026-11-24 (N21): a follower headed for a water cooler they remembered behind a closed
+// door, opened the door and stopped. Opening it took the turn without a step, and that read as
+// "can't get there", so the memory was dropped at the door.
+TEST_CASE( "npc_goes_through_a_door_to_water_it_remembers", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    const point_bub_ms p = get_avatar().pos_bub().xy();
+    npc &guy = spawn_follower( p + point( 1, -1 ) );
+    // A closed room south of the player: walls from y+2 to y+6, x-3 to x+3, a door at (0, 2).
+    for( int x = -3; x <= 3; ++x ) {
+        for( int y = 2; y <= 6; ++y ) {
+            const bool edge = x == -3 || x == 3 || y == 2 || y == 6;
+            here.ter_set( tripoint_bub_ms( p + point( x, y ), 0 ), edge ? ter_t_wall : ter_t_floor );
+        }
+    }
+    const tripoint_bub_ms door( p + point( 0, 2 ), 0 );
+    here.ter_set( door, ter_t_door_c );
+    // Within 4 tiles of the player (the follow reach), 5 from the NPC, out of sight.
+    const tripoint_bub_ms cooler( p + point( 0, 4 ), 0 );
+    here.furn_set( cooler, furn_f_water_heater );
+    here.add_item( cooler, item( itype_water_clean, calendar::turn, 30 ) );
+    here.invalidate_map_cache( 0 );
+    here.build_map_cache( 0 );
+    REQUIRE_FALSE( guy.sees( here, cooler ) );
+    npc_memory::remember( guy, npc_memory::place_kind::water, here.get_abs( cooler ) );
+    guy.stomach.empty();
+    guy.set_thirst( 200 );
+    REQUIRE( npc_autonomy::wants_water( guy ) );
+    for( int turn = 0; turn < 60 && guy.get_thirst() >= 200; ++turn ) {
+        guy.set_moves( guy.get_speed() );
+        if( guy.activity ) {
+            guy.activity.do_turn( guy );
+        } else {
+            npc_autonomy::run_goal( guy, "autonomy_get_water" );
+        }
+        here.invalidate_map_cache( 0 );
+        here.build_map_cache( 0 );
+    }
+    CAPTURE( guy.pos_bub() );
+    CHECK( guy.get_thirst() < 200 );
+    CHECK( npc_memory::count( guy ) == 1 );
 }
