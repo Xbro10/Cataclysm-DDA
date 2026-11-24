@@ -1,0 +1,22 @@
+[
+  {
+    "type": "weather_generator",
+    "id": "default_backrooms",
+    "//": "Overrides the Backrooms mod's weather, which Level 0 and Level 1 share (Level 2 copies it and sets its own heat). Office air: about 21 C all year with the seasons cancelled (the game adds up to -12 C in midwinter and +12 C in midsummer; spring and autumn are near 0), and only calm weather, so no snow or rain cools the air. On official builds the day-night swing and random drift remain (roughly 14-28 C, usually 17-25 C); the Xbro10 fork holds it steady (the flag below).",
+    "copy-from": "default",
+    "base_temperature": 21.0,
+    "base_humidity": 45.0,
+    "base_pressure": 1015.0,
+    "base_wind": 0.0,
+    "base_wind_distrib_peaks": 80,
+    "base_wind_season_variation": 0,
+    "winter_temp_manual_mod": 12,
+    "summer_temp_manual_mod": -12,
+    "weather_white_list": [ "clear", "sunny", "cloudy" ]
+  },
+  {
+    "type": "json_flag",
+    "id": "STEADY_TEMPERATURE_default_backrooms",
+    "//": "Xbro10 fork: the weather generator default_backrooms (Level 0 and Level 1) always gives its base temperature, with no day-night, seasonal or random swings, as underground levels already do (src/weather_gen.cpp, weather_generator::steady_temperature). Official builds load the flag and ignore it."
+  }
+]
