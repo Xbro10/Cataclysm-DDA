@@ -1,0 +1,89 @@
+[
+  {
+    "id": "backrooms_master_fridge",
+    "type": "item_group",
+    "//": "Replaces the upstream group (data/mods/Backrooms/itemgroups.json, TGWeaver's Backrooms mod), user request 2026-11-24: Level 0's break rooms are an office's, not a family kitchen's. An office fridge (vanilla SUS_fridge_breakroom: lunches, fruit, soda, condiments) instead of a household one; bare apart from condiments a third of the time; almond water now and then.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "SUS_fridge_breakroom", "prob": 100 },
+      { "group": "groce_condiment", "count": [ 1, 3 ], "prob": 50 },
+      { "group": "almond_water_sealed", "count": [ 1, 2 ], "prob": 8 },
+      { "group": "monparts", "count": [ 1, 4 ], "prob": 2 }
+    ]
+  },
+  {
+    "id": "backrooms_master_cupboards",
+    "type": "item_group",
+    "//": "Replaces the upstream group: a kitchenette's cupboards (coffee and tea, the office snack stash, mugs and cutlery, the odd appliance) instead of a family pantry and cookware.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "SUS_coffee_cupboard", "prob": 100 },
+      { "group": "office_breakroom", "count": [ 1, 3 ], "prob": 80 },
+      { "group": "backrooms_kitchen_drawers", "prob": 50 },
+      { "group": "SUS_appliances_cupboard", "prob": 20 },
+      { "group": "dry_goods", "count": [ 1, 2 ], "prob": 15 },
+      { "group": "preserved_food", "count": [ 1, 2 ], "prob": 15 }
+    ]
+  },
+  {
+    "id": "backrooms_master_countertop_kitchen",
+    "type": "item_group",
+    "//": "Replaces the upstream group: coffee things, condiment packets and the odd snack, no spice rack.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "kitchen_counters", "prob": 40 },
+      { "group": "SUS_coffee_cupboard", "prob": 50 },
+      { "group": "office_breakroom", "prob": 30 },
+      { "group": "groce_condiment", "count": [ 1, 2 ], "prob": 25 },
+      { "group": "SUS_junk_drawer", "prob": 15 },
+      { "group": "preserved_food", "prob": 5 }
+    ]
+  },
+  {
+    "id": "backrooms_master_table_coffee",
+    "type": "item_group",
+    "//": "Replaces the upstream group: a break room's coffee table and TV stand. Magazines, papers and gadgets; the toys are rarer.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "magazines", "count": [ 1, 2 ], "prob": 100 },
+      { "group": "newspaper", "count": [ 1, 2 ], "prob": 50 },
+      { "group": "consumer_electronics", "prob": 30 },
+      { "group": "a_television", "prob": 25 },
+      { "group": "table_livingroom", "prob": 25 },
+      { "group": "toy_box", "prob": 10 }
+    ]
+  },
+  {
+    "id": "backrooms_master_table_breakroom",
+    "type": "item_group",
+    "//": "Replaces the upstream group: the same mix, with toys and home books rarer and the odd mug, snack or soda left behind.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "table_card", "count": [ 1, 3 ], "prob": 100 },
+      { "group": "magazines", "count": [ 1, 2 ], "prob": 125 },
+      { "group": "office_breakroom", "prob": 60 },
+      { "group": "waitingroom", "count": [ 1, 2 ], "prob": 50 },
+      { "group": "newspaper", "count": [ 1, 2 ], "prob": 50 },
+      { "group": "book_mag_gen", "count": [ 1, 2 ], "prob": 50 },
+      { "group": "table_livingroom", "prob": 40 },
+      { "group": "consumer_electronics", "prob": 40 },
+      { "group": "ic_merch", "prob": 35 },
+      { "group": "toy_box", "prob": 15 },
+      { "group": "homebooks", "prob": 10 }
+    ]
+  },
+  {
+    "id": "backrooms_master_countertops_bathroom",
+    "type": "item_group",
+    "//": "Replaces the upstream group: an office restroom's counter (soap, painkillers, a magazine) rather than a home bathroom's hair drawer.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "SUS_bathroom_cabinet", "prob": 100 },
+      { "group": "coffee_bathroom", "prob": 40 },
+      { "group": "softdrugs", "count": [ 1, 2 ], "prob": 25 },
+      { "group": "SUS_toilet", "prob": 35 },
+      { "group": "harddrugs", "prob": 10 },
+      { "group": "SUS_hair_drawer", "prob": 5 }
+    ]
+  }
+]
