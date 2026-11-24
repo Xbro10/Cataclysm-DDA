@@ -1919,3 +1919,66 @@ TEST_CASE( "npc_autonomy_guards_chat_at_their_post", "[npc][autonomy]" )
         CHECK( priorities.tick( &oracle ) != "autonomy_socialize" );
     }
 }
+
+// User request 2026-11-24: guard duty (0.45) tied the water and food trips (0.45) and won, so a
+// guard on shift never went for water, even a step from their post. Now the trips weigh 0.46 and
+// a thirsty guard drinks inside their post area (4 tiles), then duty takes them back.
+TEST_CASE( "npc_autonomy_guards_get_water_by_their_post", "[npc][autonomy]" )
+{
+    const mild_weather weather;
+    clear_map_without_vision();
+    clear_avatar();
+    set_time( calendar::turn_zero + 12_hours );
+    override_option food_on( "NO_NPC_FOOD", "false" );
+    override_option autonomy( "NPC_AUTONOMY", "true" );
+    map &here = get_map();
+    const point_bub_ms player_pos = get_avatar().pos_bub().xy();
+    npc &guard = spawn_follower( player_pos + point( 20, 0 ) );
+    guard.set_attitude( NPCATT_NULL );
+    guard.set_fac( faction_your_followers );
+    guard.set_mission( NPC_MISSION_GUARD );
+    guard.set_guard_pos( guard.pos_abs() );
+    get_avatar().setpos( here, tripoint_bub_ms( player_pos + point( -20, 0 ), 0 ) );
+    const tripoint_abs_ms post = guard.pos_abs();
+    guard.stomach.empty();
+    guard.set_thirst( 200 );
+    REQUIRE( guard.is_on_shift() );
+    behavior::character_oracle_t oracle( &guard );
+    behavior::tree priorities;
+    priorities.add( &behavior_node_t_npc_priorities.obj() );
+
+    SECTION( "a cooler inside the post area: they go, drink and remember it" ) {
+        const tripoint_bub_ms cooler = guard.pos_bub() + tripoint( 3, 0, 0 );
+        here.furn_set( cooler, furn_f_water_heater );
+        here.add_item( cooler, item( itype_water_clean, calendar::turn, 30 ) );
+        REQUIRE( npc_autonomy::wants_water( guard ) );
+        CHECK( priorities.tick( &oracle ) == "autonomy_get_water" );
+        for( int turn = 0; turn < 40 && guard.get_thirst() >= 200; ++turn ) {
+            guard.set_moves( guard.get_speed() );
+            if( guard.activity ) {
+                guard.activity.do_turn( guard );
+            } else {
+                npc_autonomy::run_goal( guard, "autonomy_get_water" );
+            }
+        }
+        CHECK( guard.get_thirst() < 200 );
+        CHECK( rl_dist( guard.pos_abs(), post ) <= 4 );
+        CHECK( npc_memory::nearest( guard, npc_memory::place_kind::water ) == here.get_abs( cooler ) );
+    }
+    SECTION( "a cooler past the post area: they hold the post" ) {
+        const tripoint_bub_ms cooler = guard.pos_bub() + tripoint( 8, 0, 0 );
+        here.furn_set( cooler, furn_f_water_heater );
+        here.add_item( cooler, item( itype_water_clean, calendar::turn, 30 ) );
+        CHECK_FALSE( npc_autonomy::wants_water( guard ) );
+        CHECK( priorities.tick( &oracle ) != "autonomy_get_water" );
+    }
+    SECTION( "food in the pack, between meals: they eat at the post" ) {
+        // At mealtimes the post meal (0.5) takes it instead, which also keeps them there.
+        set_time( calendar::turn_zero + 15_hours );
+        guard.add_effect( effect_hunger_very_hungry, 1_days ); // Food 50
+        guard.i_add( item( itype_sandwich_cheese_grilled ) );
+        REQUIRE( npc_autonomy::wants_food( guard ) );
+        guard.set_thirst( 0 );
+        CHECK( priorities.tick( &oracle ) == "autonomy_get_food" );
+    }
+}

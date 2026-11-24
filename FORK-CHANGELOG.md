@@ -45,6 +45,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   counts however they came to drink, not only on an autonomy water trip. A thirsty NPC also picks the nearest
   remembered water they may go to, instead of giving up when the nearest one is out of reach or on another floor.
   A stale walk target is no longer remembered as water by mistake.
+- [C++] **Guards fetch water and food by their post:** a very thirsty or very hungry guard on duty now goes for water or
+  food within their post area (4 tiles) and walks back after. Before, guard duty always won, so a guard only drank or
+  ate from their pack (or at mealtimes) and never used water they remembered.
 
 ## November 23, 2026
 

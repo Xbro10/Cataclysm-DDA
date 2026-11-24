@@ -38,20 +38,20 @@
   {
     "type": "behavior",
     "id": "npc_autonomy_get_water",
-    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 3.4. Water 50+ (Very thirsty): drink from the pack, or walk up to 20 tiles to water the NPC can see, drink, and fill an empty bottle at clean water. 3 failed targets in a row and they give up for an hour. Uses the game's own drink-water planner, which otherwise waits for Parched and looks 6 tiles. score_argument is the weight (0-1); following a far-off player scores 0.3-0.6.",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 3.4. Water 50+ (Very thirsty): drink from the pack, or walk up to 20 tiles to water the NPC can see, drink, and fill an empty bottle at clean water. 3 failed targets in a row and they give up for an hour. Uses the game's own drink-water planner, which otherwise waits for Parched and looks 6 tiles. score_argument is the weight (0-1); following a far-off player scores 0.3-0.6. 0.46, just over guard duty (0.45 at the post and within 9 tiles of it), so a guard on shift goes for water inside their post area (4 tiles) and duty walks them back after (before 2026-11-24 it was 0.45 and duty always won).",
     "conditions": [ { "predicate": "npc_autonomy_wants_water" } ],
     "goal": "autonomy_get_water",
     "score": "npc_autonomy_weight",
-    "score_argument": "0.45"
+    "score_argument": "0.46"
   },
   {
     "type": "behavior",
     "id": "npc_autonomy_get_food",
-    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 3.4b. Food 50+ (Very hungry): eat from the pack, or walk up to 20 tiles to food the NPC can see (in containers, cupboards and fridges too; never anything owned) and eat it there. 3 failed targets in a row and they give up for an hour. Uses the game's own eat-food planner, which otherwise waits until starving and looks 6 tiles. Same weight as water; the follow and guard limits and the 'leave food and water to me' rule apply.",
+    "//": "Xbro10 fork, NPC autonomy (option NPC_AUTONOMY), step 3.4b. Food 50+ (Very hungry): eat from the pack, or walk up to 20 tiles to food the NPC can see (in containers, cupboards and fridges too; never anything owned) and eat it there. 3 failed targets in a row and they give up for an hour. Uses the game's own eat-food planner, which otherwise waits until starving and looks 6 tiles. Same weight as water (0.46: a guard on shift goes inside their post area); the follow and guard limits and the 'leave food and water to me' rule apply.",
     "conditions": [ { "predicate": "npc_autonomy_wants_food" } ],
     "goal": "autonomy_get_food",
     "score": "npc_autonomy_weight",
-    "score_argument": "0.45"
+    "score_argument": "0.46"
   },
   {
     "type": "behavior",
