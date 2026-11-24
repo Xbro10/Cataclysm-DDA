@@ -1,0 +1,67 @@
+[
+  {
+    "type": "item_group",
+    "id": "backrooms_master_vending",
+    "//": "Replaces the upstream group (data/mods/Backrooms/itemgroups.json, TGWeaver's Backrooms mod), user request 2026-11-24: vending machines no longer sell bionics or mutagens. Food, drinks and the odd box of ammo stay.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "vending_drink", "prob": 70 },
+      { "group": "vending_food", "prob": 50 },
+      { "group": "vending_ammo", "prob": 5 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "backrooms_master_locker",
+    "//": "Replaces the upstream group: a gun locker 1 time in 6 instead of 1 in 3, the rest work clothes and gear as before.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "backrooms_weaponslocker", "count": [ 1, 3 ], "prob": 20 },
+      { "group": "backrooms_weaponslocker_rare", "count": [ 1, 2 ], "prob": 2 },
+      { "group": "backrooms_equipmentlocker", "count": [ 1, 3 ], "prob": 100 },
+      { "group": "backrooms_equipmentlocker_rare", "count": [ 1, 2 ], "prob": 5 }
+    ]
+  },
+  {
+    "id": "backrooms_treasure",
+    "type": "item_group",
+    "//": "Replaces the upstream safe loot: everything it had can still turn up, but bionics about 1 pick in 40 (was 1 in 10), military guns about 1 in 14 (was 1 in 7), and an office safe now often holds cash (bills and coins work in vending machines).",
+    "ammo": 70,
+    "magazine": 100,
+    "subtype": "distribution",
+    "entries": [
+      { "group": "banknotes", "count": [ 3, 15 ], "prob": 150 },
+      { "group": "coins", "count": [ 3, 20 ], "prob": 60 },
+      { "group": "ammo_common_boxed", "prob": 150 },
+      { "group": "guns_pistol_milspec", "prob": 12 },
+      { "group": "guns_smg_milspec", "prob": 8 },
+      { "group": "guns_rifle_milspec", "prob": 10 },
+      { "group": "guns_shotgun_milspec", "prob": 12 },
+      { "group": "bionics_mil", "prob": 4 },
+      { "group": "bionics", "prob": 10 },
+      { "group": "mutagenic_field_kit", "prob": 4 },
+      { "group": "mutagen_kits", "prob": 1 },
+      { "group": "guns_energy", "prob": 2 },
+      { "group": "science", "prob": 100 },
+      { "group": "guns_launcher_milspec", "prob": 2 },
+      { "group": "vault", "prob": 50 },
+      { "group": "backrooms_artifacts", "prob": 5 }
+    ]
+  },
+  {
+    "id": "backrooms_master_desk",
+    "type": "item_group",
+    "//": "Replaces the upstream desk loot: the same, plus now and then a few bills or coins left in a drawer.",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "cubical_office", "count": [ 1, 6 ], "prob": 250 },
+      { "group": "SUS_office_desk", "prob": 250 },
+      { "group": "bedroom", "count": [ 1, 3 ], "prob": 25 },
+      { "group": "npc_hacker", "prob": 50 },
+      { "group": "school", "count": [ 1, 4 ], "prob": 100 },
+      { "group": "banknotes", "count": [ 1, 3 ], "prob": 30 },
+      { "group": "coins", "count": [ 1, 6 ], "prob": 40 },
+      { "group": "backrooms_artifacts", "prob": 1 }
+    ]
+  }
+]

@@ -16,13 +16,28 @@
   {
     "type": "monstergroup",
     "id": "GROUP_BACKROOMS",
-    "//": "Adds to the upstream Level 0 group (data/mods/Backrooms/monstergroups.json; without \"override\" these entries are appended). Level 0 is Class 1: the Backrooms' own entities are about 1 spawn in 70, against roughly 1000 weight of zombies and animals. Nothing here grabs or mimics; Wretches only after day 30.",
+    "//": "Replaces the upstream Level 0 group (data/mods/Backrooms/monstergroups.json, TGWeaver's Backrooms mod), user request 2026-11-24: out of 1000, zombies 600 (was about 920 of 1006), the Backrooms' own entities 318 (was 14), the upstream lost pets and wild animals unchanged at 82 (they're food and hides). The lab escapees (experimental mutant, broken cyborg, zomborg, skeleton brute) are gone. Nothing here grabs or mimics; Wretches only after day 30.",
+    "override": true,
     "monsters": [
-      { "monster": "mon_br_faceling", "weight": 6 },
-      { "monster": "mon_br_hound", "weight": 3, "pack_size": [ 1, 2 ] },
-      { "monster": "mon_br_smiler", "weight": 2 },
-      { "monster": "mon_br_deathmoth", "weight": 2, "pack_size": [ 1, 2 ] },
-      { "monster": "mon_br_wretch", "weight": 1, "starts": "30 days" }
+      { "group": "GROUP_ZOMBIE", "pack_size": [ 1, 2 ], "weight": 600 },
+      { "monster": "mon_br_faceling", "weight": 130 },
+      { "monster": "mon_br_hound", "weight": 65, "pack_size": [ 1, 2 ] },
+      { "monster": "mon_br_smiler", "weight": 45 },
+      { "monster": "mon_br_deathmoth", "weight": 45, "pack_size": [ 1, 2 ] },
+      { "monster": "mon_br_wretch", "weight": 33, "starts": "30 days" },
+      { "group": "GROUP_PET_CATS", "pack_size": [ 1, 1 ], "weight": 15 },
+      { "group": "GROUP_PET_DOGS", "pack_size": [ 1, 1 ], "weight": 15 },
+      { "monster": "mon_cougar", "weight": 4 },
+      { "monster": "mon_bobcat", "weight": 4 },
+      { "monster": "mon_bear", "weight": 4 },
+      { "monster": "mon_moose", "weight": 4 },
+      { "monster": "mon_wolf", "weight": 4 },
+      { "monster": "mon_coyote", "weight": 4 },
+      { "monster": "mon_duck", "weight": 4 },
+      { "monster": "mon_goose_canadian", "weight": 4 },
+      { "monster": "mon_raccoon", "weight": 4 },
+      { "monster": "mon_opossum", "weight": 4 },
+      { "monster": "mon_chipmunk", "weight": 4 }
     ]
   }
 ]
