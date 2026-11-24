@@ -67,12 +67,12 @@
   {
     "type": "mapgen",
     "om_terrain": "br1_loading_dock",
-    "object": { "predecessor_mapgen": "br1_garage", "place_nested": [ { "chunks": [ "br1_loading_dock_core" ], "x": 6, "y": 6 } ] }
+    "object": { "predecessor_mapgen": "br1_garage", "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ], "place_nested": [ { "chunks": [ "br1_loading_dock_core" ], "x": 6, "y": 6 } ] }
   },
   {
     "type": "mapgen",
     "om_terrain": "br1_attendant_breakroom",
-    "object": { "predecessor_mapgen": "br1_garage", "place_nested": [ { "chunks": [ "br1_attendant_breakroom_core" ], "x": 8, "y": 8 } ] }
+    "object": { "predecessor_mapgen": "br1_garage", "remove_vehicles": [ { "x": [ 6, 17 ], "y": [ 6, 17 ] } ], "place_nested": [ { "chunks": [ "br1_attendant_breakroom_core" ], "x": 8, "y": 8 } ] }
   },
   {
     "type": "mapgen",

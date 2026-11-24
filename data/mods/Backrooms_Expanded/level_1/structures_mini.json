@@ -1,0 +1,247 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br1_lawn",
+    "copy-from": "t_thconc_floor",
+    "name": "lawn",
+    "description": "Short, neatly mown grass, rolled out over the concrete between the painted parking lines.  It is damp and smells of a summer morning.  There is no sun down here, and no soil under it.",
+    "color": "green",
+    "looks_like": "t_grass"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br1_broken_ramp",
+    "copy-from": "t_thconc_floor",
+    "name": "broken ramp",
+    "description": "A concrete ramp that cracked across and slumped onto the floor below.  Rebar sticks out of the break like ribs.  It leads nowhere now, if it ever did.",
+    "color": "light_gray",
+    "looks_like": "t_concrete_ramp_up_high",
+    "move_cost": 4
+  },
+  {
+    "type": "item_group",
+    "id": "br1_office_desk",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "paper", "prob": 35 },
+      { "item": "pen", "prob": 25 },
+      { "item": "flashlight", "prob": 10 },
+      { "group": "br_cat_snacks", "prob": 15 },
+      { "item": "br1_note_lost", "prob": 15 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_crash_debris",
+    "subtype": "distribution",
+    "entries": [ { "item": "glass_shard", "prob": 40 }, { "item": "scrap", "prob": 35 }, { "item": "pipe", "prob": 10 }, { "item": "wire", "prob": 15 } ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_parking_office",
+    "name": "parking office",
+    "sym": "O",
+    "looks_like": "s_garage",
+    "color": "white",
+    "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BR1_GARAGE", "population": [ 1, 6 ], "chance": 25 },
+    "flags": [ "NO_ROTATE" ]
+  },
+  { "type": "overmap_terrain", "id": "br1_mechanic_bay", "copy-from": "br1_parking_office", "name": "mechanic's bay", "sym": "M", "color": "light_blue" },
+  { "type": "overmap_terrain", "id": "br1_crash_site", "copy-from": "br1_parking_office", "name": "crash site", "sym": "X", "color": "red" },
+  { "type": "overmap_terrain", "id": "br1_collapsed_ramp", "copy-from": "br1_parking_office", "name": "collapsed ramp", "sym": "R", "color": "dark_gray" },
+  { "type": "overmap_terrain", "id": "br1_lawn", "copy-from": "br1_parking_office", "name": "lawn", "sym": "\"", "color": "green" },
+  { "type": "overmap_terrain", "id": "br1_bedroom", "copy-from": "br1_parking_office", "name": "bedroom", "sym": "B", "color": "pink" },
+  {
+    "type": "overmap_special",
+    "id": "br1_parking_office",
+    "//": "Level 1 places (user request 2026-11-24, like Level 0's): small named spots in the garage, intact, ruined or out of place. 1-3 of each per map.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_parking_office" } ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 3 ],
+    "flags": [ "BACKROOMS_L1", "EXTRADIMENSIONAL" ]
+  },
+  { "type": "overmap_special", "id": "br1_mechanic_bay", "copy-from": "br1_parking_office", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_mechanic_bay" } ] },
+  { "type": "overmap_special", "id": "br1_crash_site", "copy-from": "br1_parking_office", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_crash_site" } ] },
+  { "type": "overmap_special", "id": "br1_collapsed_ramp", "copy-from": "br1_parking_office", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_collapsed_ramp" } ] },
+  { "type": "overmap_special", "id": "br1_lawn", "copy-from": "br1_parking_office", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_lawn" } ] },
+  { "type": "overmap_special", "id": "br1_bedroom", "copy-from": "br1_parking_office", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_bedroom" } ] },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_parking_office",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 6, 17 ], "y": [ 6, 17 ] } ],
+      "place_nested": [ { "chunks": [ "br1_parking_office_core" ], "x": 8, "y": 8 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_mechanic_bay",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 6, 17 ], "y": [ 6, 17 ] } ],
+      "place_nested": [ { "chunks": [ "br1_mechanic_bay_core" ], "x": 8, "y": 8 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_crash_site",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ],
+      "place_nested": [ { "chunks": [ "br1_crash_site_core" ], "x": 6, "y": 6 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_collapsed_ramp",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ],
+      "place_nested": [ { "chunks": [ "br1_collapsed_ramp_core" ], "x": 6, "y": 6 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_lawn",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 4, 19 ], "y": [ 4, 19 ] } ],
+      "place_nested": [ { "chunks": [ "br1_lawn_core" ], "x": 6, "y": 6 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_bedroom",
+    "object": {
+      "predecessor_mapgen": "br1_garage",
+      "remove_vehicles": [ { "x": [ 6, 17 ], "y": [ 6, 17 ] } ],
+      "place_nested": [ { "chunks": [ "br1_bedroom_core" ], "x": 8, "y": 8 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_parking_office_core",
+    "//": "Intact. The deck manager's office: a desk (f) and chair (b), filing cabinets (i), lockers (l, garage loot), a sign (S), one working light.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "########", "#fb.ii.#", "#......#", "#..!...#", "#......#", "#S...ll#", "#......#", "###D####" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "f": "t_thconc_floor", "i": "t_thconc_floor" },
+      "furniture": { "f": "f_desk", "i": "f_filing_cabinet" },
+      "items": { "f": { "item": "br1_office_desk", "chance": 70, "repeat": [ 1, 2 ] } },
+      "item": { "i": { "item": "paper", "chance": 30 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_mechanic_bay_core",
+    "//": "Intact. A repair bay open to the lane: workbenches (W) and racks (r) with garage loot, a locker (l), one working light.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "########", "#WW.rr.#", "#......#", "#......#", "#..!...#", "#......#", "#l....r#", "##....##" ],
+      "palettes": [ "br1_garage_palette" ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_crash_site_core",
+    "//": "Ruined. A pile-up with no cars left in it, only crushed wreckage (X, garage loot), puddles (~) and broken glass and scrap. No lights.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "............",
+        "..XX........",
+        ".XXXX..X....",
+        "..XX~~......",
+        "....~~~.XX..",
+        "......~XXXX.",
+        "...XX...XX..",
+        "..XXXX......",
+        "...XX..~~...",
+        "........~...",
+        ".....X......",
+        "............"
+      ],
+      "palettes": [ "br1_garage_palette" ],
+      "place_items": [ { "item": "br1_crash_debris", "x": [ 0, 11 ], "y": [ 0, 11 ], "chance": 100, "repeat": [ 4, 8 ] } ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_collapsed_ramp_core",
+    "//": "Ruined. A ramp (=) that broke and slumped, with chunks of concrete (Q) and rubble (q) round its top end, and a sign (G). No lights.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "....QQQQ....",
+        "...QQ==QQ...",
+        "..Qq.==.qQ..",
+        "..q..==..q..",
+        ".....==.....",
+        "..q..==.q...",
+        ".....==.....",
+        "....q==Q....",
+        ".....==.....",
+        "..G..==.....",
+        "............",
+        "............"
+      ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "=": "t_br1_broken_ramp", "Q": "t_thconc_floor", "q": "t_thconc_floor", "G": "t_thconc_floor" },
+      "furniture": { "Q": "f_rubble_rock", "q": "f_rubble" },
+      "signs": { "G": { "signage": "RAMP CLOSED.  USE STAIRS." } },
+      "items": { "Q": { "item": "br1_garage_loot", "chance": 10 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_lawn_core",
+    "//": "Out of place. A square of mown lawn (&) laid over the parking bays, with park benches (B), potted plants (j), a birdbath (U) and one working light.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "............",
+        ".&&&&&&&&&&.",
+        ".&j&&&&&&j&.",
+        ".&&&BBB&&&&.",
+        ".&&&&&&&&&&.",
+        ".&&&&U&&!&&.",
+        ".&&&&&&&&&&.",
+        ".&&&&&&BBB&.",
+        ".&j&&&&&&j&.",
+        ".&&&&&&&&&&.",
+        "............",
+        "............"
+      ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "&": "t_br1_lawn", "j": "t_br1_lawn", "B": "t_br1_lawn", "U": "t_br1_lawn" },
+      "furniture": { "j": [ "f_indoor_plant", "f_indoor_plant_y" ], "B": "f_bench", "U": "f_birdbath" },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_bedroom_core",
+    "//": "Out of place. A made-up bedroom on red carpet (C) in a parking bay, no walls: a bed (B), a dresser (d), a wardrobe (w), a floor lamp that works (k).",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "........", ".CCCCCC.", ".CBBCdC.", ".CBBCCC.", ".CkCCwC.", ".CCCCCC.", "........", "........" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "C": "t_carpet_red", "B": "t_carpet_red", "d": "t_carpet_red", "w": "t_carpet_red", "k": "t_strconc_floor_olight" },
+      "furniture": { "B": "f_bed", "d": "f_dresser", "w": "f_wardrobe", "k": "f_floor_lamp" },
+      "items": { "d": { "item": "br0_living_drawer", "chance": 60 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]
