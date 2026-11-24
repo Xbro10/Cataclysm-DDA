@@ -32,6 +32,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - [BE] **Level 0 loot, tidied:** vending machines no longer sell bionics or mutagens, lockers hold guns half as often,
   safes give bionics a quarter as often and military guns half as often and often hold cash; desks sometimes have a
   few bills or coins.
+- [BE] **Level 0 break rooms and restrooms belong to an office:** office fridges, kitchenette cupboards (coffee, tea,
+  snacks, mugs), magazines on the coffee tables and soap and painkillers in the restrooms, instead of a family home's
+  full fridge, pantry, toys and hair drawers.
 - **Vending machines take cash:** paper bills and coins work as well as cash cards (cards first, then the bank on
   networked machines, then cash), as few and as small bills as cover the price, change in coins. Currency straps and
   bundles don't go in.
