@@ -449,7 +449,9 @@ void user_interface::show()
                                       enabled ? c_light_green : c_light_red ) ) );
         // NOLINTNEXTLINE(cata-use-named-point-constants)
         print_colored_text( w_header, point( 1, 1 ), color, c_white,
-                            ctxt.get_desc( "HELP_KEYBINDINGS", _( "Display keybindings" ) ) );
+                            ctxt.get_desc( "HELP_KEYBINDINGS", _( "Display keybindings" ) ) + "   " +
+                            // Xbro10 fork: the Categories checklist, shown so it can be found.
+                            ctxt.get_desc( "CATEGORY_RULES", _( "Categories (take or leave by type)" ) ) );
 
         wattron( w_header, c_light_gray );
         mvwhline( w_header, point( 0,  2 ), LINE_OXOX, 78 );

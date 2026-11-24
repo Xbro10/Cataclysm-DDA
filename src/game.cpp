@@ -5310,7 +5310,8 @@ bool game::npc_menu( npc &who )
         attack,
         disarm,
         steal,
-        trade
+        trade,
+        pickup_rules // Xbro10 fork
     };
 
     const bool obeys = debug_mode || ( who.is_friendly( u ) && !who.in_sleep_state() );
@@ -5332,6 +5333,8 @@ bool game::npc_menu( npc &who )
         amenu.addentry( steal, !who.is_enemy(), 'S', _( "Steal" ) );
     } else {
         amenu.addentry( trade, true, 'b', _( "Trade" ) );
+        // Xbro10 fork (user request 2026-11-24): the follower's pickup rules, as in "Set up pickup rules.".
+        amenu.addentry( pickup_rules, true, 'k', _( "Pickup rules" ) );
     }
 
     amenu.query();
@@ -5453,6 +5456,8 @@ bool game::npc_menu( npc &who )
         } else {
             npc_trading::trade( who, 0, _( "Trade" ) );
         }
+    } else if( choice == pickup_rules ) {
+        who.rules.pickup_whitelist->show( who.get_name() );
     }
 
     return true;

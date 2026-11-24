@@ -22,9 +22,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 ### NPCs
 - [C++] **A follower's favourites look different from yours:** what you hand or trade to a follower becomes their
   favourite (so they never drop it), and its `*` now shows in light red, the nearest the game has to orange. Your own
-  favourites keep the plain `*`. When such an item comes back to you it stops being a favourite (before, your
+  favourites keep the plain `*`; a follower's older favourites get the light red mark when the game loads them. When such an item comes back to you it stops being a favourite (before, your
   inventory slowly filled with favourites you never set); something you had favourited yourself stays yours.
-- [C++] **Pickup rules by category:** in a follower's "Set up pickup rules." (and your own auto-pickup rules), press
+- [C++] **Pickup rules by category:** in a follower's "Set up pickup rules." or the new **Pickup rules** entry when you examine a follower (`k`) (and your own auto-pickup rules), press
   `g` for a **Categories** checklist: each category is Take, Never or "-" (your other rules decide). Rules can also be
   typed as `c:food` or `c:ammo,guns`. Material rules (`m:kevlar`) now work for followers too (they were ignored).
   An Exclude rule now always wins: a follower no longer picks up an excluded pipe or plank because it beats their fists.

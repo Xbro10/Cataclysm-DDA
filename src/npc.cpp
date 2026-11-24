@@ -3617,6 +3617,15 @@ void npc::npc_update_body()
 
 void npc::on_load( map *here )
 {
+    // Xbro10 fork (2026-11-24): a follower's favourites from before mark_npc_favorite existed are
+    // theirs too, so they show the light red asterisk and stop being favourites if they come back.
+    if( is_player_ally() ) {
+        for( item *it : items_with( []( const item & i ) {
+        return i.is_favorite && !i.has_var( "npc_favorite" );
+        } ) ) {
+            it->set_var( "npc_favorite", "1" );
+        }
+    }
     const auto advance_effects = [&]( const time_duration & elapsed_dur ) {
         for( auto &elem : *effects ) {
             for( auto &_effect_it : elem.second ) {
