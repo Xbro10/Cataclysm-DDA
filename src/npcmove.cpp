@@ -7012,6 +7012,8 @@ bool npc::drink_from_water_source( const tripoint_bub_ms &water_pos )
     }
     stomach.ingest( { intake, 0_ml, {} } );
     mod_moves( -sip_moves() );
+    // Xbro10 fork: step 5.6, water they can come back to
+    npc_autonomy::drank_at_water( *this, water_pos );
     add_msg_debug( debugmode::DF_NPC_NEEDS,
                    "NPC %s: drank from terrain at %s", get_name(),
                    water_pos.to_string_writable() );
@@ -7053,7 +7055,12 @@ bool npc::consume_food_at( item_location loc )
         !will_eat( *loc ).success() ) {
         return false;
     }
-    return start_eating( loc );
+    if( !start_eating( loc ) ) {
+        return false;
+    }
+    // Xbro10 fork: step 5.6, a water cooler or keg they can come back to
+    npc_autonomy::started_drinking( *this, loc );
+    return true;
 }
 
 bool npc::wear_item_at( item_location loc )

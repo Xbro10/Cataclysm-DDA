@@ -218,13 +218,14 @@ void forget( npc &guy, const place_kind kind, const tripoint_abs_ms &pos )
     }
 }
 
-std::optional<tripoint_abs_ms> nearest( const npc &guy, const place_kind kind )
+std::optional<tripoint_abs_ms> nearest( const npc &guy, const place_kind kind,
+                                        const std::function<bool( const tripoint_abs_ms & )> &usable )
 {
     const std::string dimension = this_dimension();
     std::optional<tripoint_abs_ms> best;
     int best_dist = std::numeric_limits<int>::max();
     for( const place &p : places( guy ) ) {
-        if( p.kind != kind || p.dimension != dimension ) {
+        if( p.kind != kind || p.dimension != dimension || ( usable && !usable( p.pos ) ) ) {
             continue;
         }
         const int dist = rl_dist( guy.pos_abs(), p.pos );

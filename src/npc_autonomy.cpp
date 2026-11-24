@@ -23,6 +23,7 @@
 #include "character.h"
 #include "character_id.h"
 #include "dialogue_chatbin.h"
+#include "enums.h"
 #include "field_type.h"
 #include "flag.h"
 #include "game.h"
@@ -55,7 +56,6 @@
 #include "type_id.h"
 #include "viewer.h"
 #include "weather.h"
-
 
 static const efftype_id effect_hunger_famished( "hunger_famished" );
 static const efftype_id effect_hunger_hungry( "hunger_hungry" );
@@ -884,17 +884,18 @@ constexpr const char *var_water_memory_said = "autonomy_water_memory_said";
 // may go there (inside their follow or post reach; anyone else within 60 tiles).
 std::optional<tripoint_bub_ms> remembered_water( const npc &guy )
 {
-    const std::optional<tripoint_abs_ms> spot = npc_memory::nearest( guy,
-            npc_memory::place_kind::water );
     const map &here = get_map();
-    if( !spot || spot->z() != guy.posz() || !here.inbounds( *spot ) ) {
-        return std::nullopt;
-    }
-    if( const std::optional<npc_reach> reach = guy.obligation_reach() ) {
-        if( !reach->contains( *spot ) ) {
-            return std::nullopt;
+    const std::optional<npc_reach> reach = guy.obligation_reach();
+    // The nearest one they may go to: a nearer one out of reach (or on another level) doesn't
+    // hide it.
+    const std::optional<tripoint_abs_ms> spot = npc_memory::nearest( guy,
+    npc_memory::place_kind::water, [&]( const tripoint_abs_ms & p ) {
+        if( p.z() != guy.posz() || !here.inbounds( p ) ) {
+            return false;
         }
-    } else if( rl_dist( guy.pos_abs(), *spot ) > remembered_water_range ) {
+        return reach ? reach->contains( p ) : rl_dist( guy.pos_abs(), p ) <= remembered_water_range;
+    } );
+    if( !spot ) {
         return std::nullopt;
     }
     return here.get_bub( *spot );
@@ -936,8 +937,6 @@ goal_result fetch( npc &guy, const trip_kind &kind )
     }
     // Only a target that turned out unreachable counts toward giving up, not "found nothing".
     const bool had_target = guy.plan_for( kind.need ).active();
-    const std::optional<tripoint_abs_ms> target_before = had_target ?
-            std::optional<tripoint_abs_ms>( guy.plan_for( kind.need ).target ) : std::nullopt;
     const npc::need_result result = run_planner( guy, kind );
     const npc::need_plan &plan = guy.plan_for( kind.need );
 
@@ -961,17 +960,8 @@ goal_result fetch( npc &guy, const trip_kind &kind )
                 return goal_result::acted;
             }
             // Last step for water: top up a bottle for later, at clean water only.
+            // (Step 5.6's water memory is noted where they drink: drank_at_water, started_drinking.)
             const itype_id liquid = adjacent_water( guy );
-            // Step 5.6: remember a water source that stays put (a sink, a cooler, a pool), not a
-            // bottle they found lying about.
-            if( target_before ) {
-                const map &here = get_map();
-                const bool lasting = !liquid.is_null() || ( here.inbounds( *target_before ) &&
-                                     here.has_furn( here.get_bub( *target_before ) ) );
-                if( lasting ) {
-                    npc_memory::remember( guy, npc_memory::place_kind::water, *target_before );
-                }
-            }
             if( liquid.is_valid() && !liquid.is_null() && liquid->comestible &&
                 liquid->comestible->parasites == 0 && liquid->comestible->contamination.empty() &&
                 refill_bottle( guy, liquid ) && player_sees( guy ) ) {
@@ -1051,7 +1041,6 @@ std::string trip_plan_text( const npc &guy, const trip_kind &kind )
     }
     return string_format( _( kind.plan_away ), dist );
 }
-
 
 // ---- Getting warm (step 3.4c) ----
 
@@ -1964,6 +1953,31 @@ std::string recover_plan_text( const npc &guy )
 }
 
 } // namespace
+
+void drank_at_water( npc &guy, const tripoint_bub_ms &pos )
+{
+    // The game only lets NPCs sip from water terrain that never runs dry, so it's lasting.
+    npc_memory::remember( guy, npc_memory::place_kind::water, get_map().get_abs( pos ) );
+}
+
+void started_drinking( npc &guy, const item_location &loc )
+{
+    if( !enabled() || !loc || loc.where() != item_location::type::map ) {
+        // In a bottle, a pack or a vehicle: not a place to come back to.
+        return;
+    }
+    const item &it = *loc;
+    if( !it.made_of( phase_id::LIQUID ) || !it.is_comestible() ||
+        it.get_comestible()->quench <= 0 ) {
+        return;
+    }
+    const map &here = get_map();
+    const tripoint_bub_ms pos = loc.pos_bub( here );
+    if( !here.has_flag_furn( ter_furn_flag::TFLAG_LIQUIDCONT, pos ) ) {
+        return;
+    }
+    npc_memory::remember( guy, npc_memory::place_kind::water, here.get_abs( pos ) );
+}
 
 void grab_dropped_weapon( npc &guy )
 {

@@ -9,6 +9,7 @@
 // mark after a week, danger after 3 days) and, when full, the least important and oldest goes.
 // Everything here does nothing with the NPC_AUTONOMY option off.
 
+#include <functional>
 #include <optional>
 #include <string>
 #include <vector>
@@ -51,8 +52,10 @@ int count( const npc &guy );
 void remember( npc &guy, place_kind kind, const tripoint_abs_ms &pos );
 /** Drop a remembered place of this kind near pos (it wasn't there after all). */
 void forget( npc &guy, place_kind kind, const tripoint_abs_ms &pos );
-/** The nearest remembered place of this kind in the dimension they're in. */
-std::optional<tripoint_abs_ms> nearest( const npc &guy, place_kind kind );
+/** The nearest remembered place of this kind in the dimension they're in, skipping any that
+ *  `usable` (if given) turns down, so an out-of-reach one doesn't hide a nearer usable one. */
+std::optional<tripoint_abs_ms> nearest( const npc &guy, place_kind kind,
+                                        const std::function<bool( const tripoint_abs_ms & )> &usable = nullptr );
 
 // For tests: the saved text and back.
 std::string encode( const std::vector<place> &list );

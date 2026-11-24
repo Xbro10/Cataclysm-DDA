@@ -40,6 +40,11 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   planks, rags, nails, rocks, empty cans, vehicle parts or corpses, nor anything a kilogram or more worth almost nothing.
   Food or drink they need, ammo for their gun and their own arrows always count. They also go for the best item in
   reach instead of the farthest one.
+- [C++] **NPCs remember water coolers:** drinking from a water cooler, keg or tank now adds a remembered place, as a
+  pond or drip pool already did (before, only a walk to water terrain counted, so Level 0's coolers never did). It
+  counts however they came to drink, not only on an autonomy water trip. A thirsty NPC also picks the nearest
+  remembered water they may go to, instead of giving up when the nearest one is out of reach or on another floor.
+  A stale walk target is no longer remembered as water by mistake.
 
 ## November 23, 2026
 

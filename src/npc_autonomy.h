@@ -14,6 +14,7 @@
 
 class Character;
 class item;
+class item_location;
 class npc;
 
 namespace npc_autonomy
@@ -79,6 +80,13 @@ std::string needs_text( const npc &guy );
 std::string plan_line( const npc &guy );
 /** The panel's last line: "Remembers N places" (step 5.6); "" when they remember none. */
 std::string memory_text( const npc &guy );
+/** Step 5.6: they sipped from water terrain (a river, a pump, a drip pool): remember it.
+ *  Hooked in npc::drink_from_water_source, so every way an NPC drinks there counts. */
+void drank_at_water( npc &guy, const tripoint_bub_ms &pos );
+/** Step 5.6: they started drinking `loc`. Water held loose in furniture that keeps liquid (a water
+ *  cooler, a keg, a standing tank) is remembered; a bottle or food is not. Hooked in
+ *  npc::consume_food_at. */
+void started_drinking( npc &guy, const item_location &loc );
 
 // ---- Daily life (step 3.3): behavior-tree goals "autonomy_meal", "autonomy_socialize" ----
 

@@ -193,6 +193,9 @@ TEST_CASE( "npc_walks_to_water_it_remembers", "[npc][autonomy]" )
     }
     SECTION( "remembered water: they walk there and drink" ) {
         npc_memory::remember( guy, place_kind::water, here.get_abs( pool ) );
+        // Nearer, but a level up: it doesn't hide the pool.
+        npc_memory::remember( guy, place_kind::water, guy.pos_abs() + tripoint( 3, 0, 1 ) );
+        REQUIRE( npc_memory::count( guy ) == 2 );
         REQUIRE( npc_autonomy::wants_water( guy ) );
         for( int turn = 0; turn < 120 && guy.get_thirst() >= 100; ++turn ) {
             guy.set_moves( guy.get_speed() );

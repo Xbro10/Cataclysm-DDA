@@ -29,6 +29,7 @@
 #include "monster.h"
 #include "npc.h"
 #include "npc_autonomy.h"
+#include "npc_memory.h"
 #include "options_helpers.h"
 #include "monster_helpers.h"
 #include "player_helpers.h"
@@ -527,8 +528,10 @@ TEST_CASE( "npc_autonomy_get_water", "[npc][autonomy]" )
     }
 }
 
-// A follower next to the player, water a few tiles off: a bottle on the floor, or a
-// water cooler (keg furniture, water held on its tile as in the Backrooms' f_watercooler).
+// A follower next to the player, water a few tiles off: a bottle on the floor, a water cooler
+// (keg furniture, water held on its tile as in the Backrooms' f_watercooler) or a pond.
+// Step 5.6: the cooler and the pond are remembered once they drink there, the bottle isn't
+// (reported 2026-11-24: drinking at a Backrooms cooler never added a place).
 TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
 {
     const mild_weather weather;
@@ -543,6 +546,7 @@ TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
     const tripoint_bub_ms spot( player_pos + point( 4, 0 ), 0 );
     guy.stomach.empty();
     guy.set_thirst( 100 );
+    bool lasting = false;
 
     SECTION( "a bottle of water on the floor" ) {
         item bottle( itype_bottle_plastic );
@@ -552,7 +556,13 @@ TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
     SECTION( "a water cooler" ) {
         here.furn_set( spot, furn_f_water_heater );
         here.add_item( spot, item( itype_water_clean, calendar::turn, 30 ) );
+        lasting = true;
     }
+    SECTION( "a pond" ) {
+        here.ter_set( spot, ter_t_water_sh );
+        lasting = true;
+    }
+    REQUIRE( npc_memory::count( guy ) == 0 );
     REQUIRE( npc_autonomy::wants_water( guy ) );
     for( int turn = 0; turn < 40 && guy.get_thirst() >= 100; ++turn ) {
         guy.set_moves( guy.get_speed() );
@@ -564,6 +574,12 @@ TEST_CASE( "npc_autonomy_get_water_close_by", "[npc][autonomy]" )
         }
     }
     CHECK( guy.get_thirst() < 100 );
+    if( lasting ) {
+        CHECK( npc_memory::count( guy ) == 1 );
+        CHECK( npc_memory::nearest( guy, npc_memory::place_kind::water ) == here.get_abs( spot ) );
+    } else {
+        CHECK( npc_memory::count( guy ) == 0 );
+    }
 }
 
 TEST_CASE( "npc_autonomy_debug_lonely", "[npc][autonomy]" )
