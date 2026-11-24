@@ -496,7 +496,8 @@ std::string talker_npc::give_item_to( const bool to_use )
         if( me_npc->can_pickVolume( given ) && me_npc->can_pickWeight( given ) ) {
             reason = me_npc->chat_snippets().snip_give_carry.translated();
             // set the item given to be favorited so it's not dropped automatically
-            given.set_favorite( true );
+            // Xbro10 fork: as the NPC's favourite (light red "*"), not the player's (2026-11-24).
+            mark_npc_favorite( given );
             taken = true;
             me_npc->i_add( given );
         } else {

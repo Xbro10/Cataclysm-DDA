@@ -30,6 +30,7 @@
 #include "iexamine.h"
 #include "item.h"
 #include "item_location.h"
+#include "item_category.h"
 #include "itype.h"
 #include "lightmap.h"
 #include "map.h"
@@ -2057,6 +2058,42 @@ bool wants_to_recover_items( const npc &guy )
     return lost_items.get( guy.getID(), [&guy]() {
         return nearest_lost_item( guy ).has_value();
     } );
+}
+
+bool worth_carrying( const npc &guy, const item &it )
+{
+    if( !enabled() || !guy.is_player_ally() ) {
+        return true;
+    }
+    if( is_mine_to_recover( guy, it ) ) {
+        return true;
+    }
+    if( ( food_need( guy ) >= need_to_act || water_need( guy ) >= need_to_act ) &&
+        guy.will_eat( it ).success() ) {
+        return true;
+    }
+    const item_location weapon = guy.get_wielded_item();
+    if( weapon && weapon->is_gun() &&
+        ( ( it.is_magazine() && weapon->magazine_compatible().count( it.typeId() ) > 0 ) ||
+          ( it.is_ammo() && weapon->ammo_types().count( it.ammo_type() ) > 0 ) ) ) {
+        return true;
+    }
+    // Junk categories: building scraps (scrap metal, pipes, planks, plastic chunks, rags, nails,
+    // rocks), empty containers, odds and ends, vehicle parts and corpses. A filled container counts
+    // as what's in it. The player's pickup rules (c:spare_parts) can still ask for them.
+    static const std::array<std::string, 5> junk_categories{ {
+            "spare_parts", "container", "other", "veh_parts", "corpses"
+        }
+    };
+    const std::string category = it.get_category_of_contents().get_id().str();
+    if( std::find( junk_categories.begin(), junk_categories.end(), category ) !=
+        junk_categories.end() ) {
+        return false;
+    }
+    // Heavy and nearly worthless: a kilogram or more at under 25 cents a kilogram (npc::value is in
+    // cents, the post-apocalypse price scaled up for what they need).
+    const double kg = units::to_gram( it.weight() ) / 1000.0;
+    return kg < 1.0 || guy.value( it ) / kg >= 25.0;
 }
 
 bool fetches_own_things( const npc &guy )

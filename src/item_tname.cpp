@@ -118,6 +118,12 @@ std::string pre_asterisk( item const &it, unsigned int /* quantity */,
                           segment_bitset const &/* segments */ )
 {
     if( it.is_favorite && get_option<std::string>( "ASTERISK_POSITION" ) == "prefix" ) {
+        // Xbro10 fork (2026-11-24): a follower's favourite (mark_npc_favorite) shows its asterisk
+        // in light red, apart from the player's own. Only the prefix: the suffix asterisk is part
+        // of the sort and pickup-rule keys, which mustn't carry colour tags.
+        if( it.has_var( "npc_favorite" ) ) {
+            return colorize( _( "* " ), c_light_red );
+        }
         return _( "* " ); // Display asterisk for favorite items, before item's name
     }
     return {};

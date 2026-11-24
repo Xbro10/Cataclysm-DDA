@@ -57,6 +57,7 @@
 #include "map_iterator.h"
 #include "map_selector.h"
 #include "messages.h"
+#include "npc.h"
 #include "monster.h"
 #include "morale.h"
 #include "mtype.h"
@@ -311,6 +312,10 @@ item_location Character::try_add( item it, const item *avoid, const item *origin
 {
     invalidate_inventory_validity_cache();
     invalidate_leak_level_cache();
+    // Xbro10 fork (2026-11-24): back with the player, a follower's favourite isn't one any more.
+    if( is_avatar() ) {
+        unmark_npc_favorite( it );
+    }
     itype_id item_type_id = it.typeId();
     last_item = item_type_id;
 
@@ -361,6 +366,10 @@ item_location Character::try_add( item it, int &copies_remaining, const item *av
 {
     invalidate_inventory_validity_cache();
     invalidate_leak_level_cache();
+    // Xbro10 fork (2026-11-24): back with the player, a follower's favourite isn't one any more.
+    if( is_avatar() ) {
+        unmark_npc_favorite( it );
+    }
     itype_id item_type_id = it.typeId();
     last_item = item_type_id;
 

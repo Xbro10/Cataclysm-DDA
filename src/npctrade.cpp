@@ -87,7 +87,8 @@ std::list<item> npc_trading::transfer_items( trade_selector::select_t &stuff, Ch
         // so an overloaded follower never puts it down on its own (npc_load).
         if( npc_autonomy::enabled() && giver.is_avatar() && receiver.is_npc() &&
             receiver.as_npc()->is_player_ally() ) {
-            gift.set_favorite( true );
+            // Marked as the NPC's favourite (light red "*"), not the player's (2026-11-24).
+            mark_npc_favorite( gift );
         }
 
         // Items are moving to escrow.

@@ -354,6 +354,15 @@ enum class ally_rule : int {
  */
 bool quiet_enough_for_follower_rules( const item &weapon );
 
+/**
+ * Xbro10 fork (user request 2026-11-24): favourites a follower holds because the player gave them
+ * the item (so they never drop it) carry item var "npc_favorite" and show their "* " in light red,
+ * apart from the player's own favourites. An item that was already the player's favourite stays
+ * theirs. Back with the player (Character::try_add), the NPC's mark and favourite are removed.
+ */
+void mark_npc_favorite( item &it );
+void unmark_npc_favorite( item &it );
+
 struct ally_rule_data {
     ally_rule rule;
     std::string rule_true_text;
@@ -1467,6 +1476,8 @@ class npc : public Character
         bool has_item_whitelist() const;
         bool item_name_whitelisted( const std::string &to_match );
         bool item_whitelisted( const item &it );
+        // Xbro10 fork (2026-11-24): an Exclude rule in their pickup rules matches it.
+        bool item_blacklisted( const item &it );
 
         /** Returns true if it finds one. */
         bool find_corpse_to_pulp();

@@ -25,6 +25,8 @@
 #include "input_context.h"
 #include "input_popup.h"
 #include "item.h"
+#include "item_category.h"
+#include "localized_comparator.h"
 #include "item_factory.h"
 #include "item_location.h"
 #include "item_stack.h"
@@ -51,7 +53,7 @@ using namespace auto_pickup;
 static const ammotype ammo_battery( "battery" );
 
 static bool check_special_rule( const std::map<material_id, int> &materials,
-                                std::string_view rule );
+                                const item_category_id &category, std::string_view rule );
 
 auto_pickup::player_settings &get_auto_pickup()
 {
@@ -305,6 +307,67 @@ drop_locations auto_pickup::select_items(
     return result;
 }
 
+// Xbro10 fork (user request 2026-11-24): a checklist of item categories, each Take (an Include rule
+// c:<id>), Never (an Exclude rule) or "-" (no rule: the other rules decide). The category rules go
+// first in the list, so a rule typed for one item, further down, still wins over them.
+static bool edit_category_rules( rule_list &rules )
+{
+    std::vector<const item_category *> cats;
+    for( const item_category &cat : item_category::get_all() ) {
+        const std::string id = cat.get_id().str();
+        // Internal categories (zone sorting, worn or held items) have upper-case ids.
+        if( std::none_of( id.begin(), id.end(), []( char c ) {
+        return c >= 'a' && c <= 'z';
+    } ) ) {
+            continue;
+        }
+        cats.push_back( &cat );
+    }
+    std::sort( cats.begin(), cats.end(), []( const item_category * a, const item_category * b ) {
+        return localized_comparator()( a->name_header(), b->name_header() );
+    } );
+    const auto find_rule = [&rules]( const std::string & text ) {
+        return std::find_if( rules.begin(), rules.end(), [&text]( const rule & r ) {
+            return r.sRule == text;
+        } );
+    };
+
+    bool changed = false;
+    int selected = 0;
+    while( true ) {
+        uilist menu;
+        menu.title = _( "Pick up by category" );
+        menu.text = _( "Take: picks these up.  Never: leaves them.  -: the other rules decide.\n"
+                       "Select a category to switch it.  A rule typed for one item still wins." );
+        for( size_t i = 0; i < cats.size(); ++i ) {
+            const auto found = find_rule( "c:" + cats[i]->get_id().str() );
+            const std::string state = found == rules.end() ? std::string( "-" ) :
+                                      found->bExclude ? colorize( _( "Never" ), c_light_red ) :
+                                      colorize( _( "Take" ), c_light_green );
+            menu.addentry( static_cast<int>( i ), true, MENU_AUTOASSIGN,
+                           string_format( "%s  %s", cats[i]->name_header(), state ) );
+        }
+        menu.selected = selected;
+        menu.query();
+        if( menu.ret < 0 || menu.ret >= static_cast<int>( cats.size() ) ) {
+            break;
+        }
+        selected = menu.ret;
+        const std::string text = "c:" + cats[selected]->get_id().str();
+        const auto found = find_rule( text );
+        if( found == rules.end() ) {
+            rules.insert( rules.begin(), rule( text, true, false ) );
+        } else if( !found->bExclude ) {
+            found->bExclude = true;
+            found->bActive = true;
+        } else {
+            rules.erase( found );
+        }
+        changed = true;
+    }
+    return changed;
+}
+
 void user_interface::show()
 {
     if( tabs.empty() ) {
@@ -350,6 +413,7 @@ void user_interface::show()
     ctxt.register_action( "MOVE_RULE_UP" );
     ctxt.register_action( "MOVE_RULE_DOWN" );
     ctxt.register_action( "TEST_RULE" );
+    ctxt.register_action( "CATEGORY_RULES" ); // Xbro10 fork
     ctxt.register_action( "HELP_KEYBINDINGS" );
     ctxt.register_action( "SWITCH_AUTO_PICKUP_OPTION" );
     const bool allow_swapping = tabs.size() == 2;
@@ -508,7 +572,12 @@ void user_interface::show()
                                               "Pickup based on item materials:\n"
                                               "m:kevlar        matches items made of Kevlar\n"
                                               "M:copper        matches items made purely of copper\n"
-                                              "M:steel,iron    multiple materials allowed (OR search)"
+                                              "M:steel,iron    multiple materials allowed (OR search)\n"
+                                              "\n"
+                                              "Pickup based on item categories:\n"
+                                              "c:food          matches items in the Food category\n"
+                                              "c:ammo,guns     multiple categories allowed (OR search)\n"
+                                              "(Categories key: a checklist of them all)"
                                           );
                 popup.set_description( description, c_white, true );
                 const std::string r = popup.query();
@@ -548,6 +617,12 @@ void user_interface::show()
             }
         } else if( action == "TEST_RULE" && currentPageNonEmpty && !player_character.name.empty() ) {
             cur_rules[iLine].test_pattern();
+        } else if( action == "CATEGORY_RULES" ) {
+            // Xbro10 fork: the Categories checklist.
+            if( edit_category_rules( cur_rules ) ) {
+                bStuffChanged = true;
+                iLine = 0;
+            }
         } else if( action == "SWITCH_AUTO_PICKUP_OPTION" ) {
             get_options().get_option( "AUTO_PICKUP" ).setNext();
             get_options().save();
@@ -603,7 +678,7 @@ void rule::test_pattern() const
     //APU now ignores prefixes, bottled items and suffix combinations still not generated
     for( const itype *e : item_controller->all() ) {
         const std::string sItemName = e->nname( 1 );
-        if( !check_special_rule( e->materials, sRule ) && !wildcard_match( sItemName, sRule ) ) {
+        if( !check_special_rule( e->materials, e->category_force, sRule ) && !wildcard_match( sItemName, sRule ) ) {
             continue;
         }
 
@@ -737,16 +812,34 @@ bool player_settings::empty() const
     return global_rules.empty() && character_rules.empty();
 }
 
-bool check_special_rule( const std::map<material_id, int> &materials, std::string_view rule )
+bool check_special_rule( const std::map<material_id, int> &materials,
+                         const item_category_id &category, std::string_view rule )
 {
     char type = ' ';
     std::vector<std::string> filter;
-    if( rule[1] == ':' ) {
+    if( rule.size() > 1 && rule[1] == ':' ) {
         type = rule[0];
         filter = string_split( rule.substr( 2 ), ',' );
     }
 
-    if( filter.empty() || materials.empty() ) {
+    if( filter.empty() ) {
+        return false;
+    }
+
+    // Xbro10 fork (user request 2026-11-24): c:food, c:ammo,guns: items whose category id or name
+    // matches (OR search). Used by the follower pickup rules' Categories checklist.
+    if( type == 'c' ) {
+        if( category.str().empty() || !category.is_valid() ) {
+            return false;
+        }
+        const std::string id = category.str();
+        const std::string name = category->name_header();
+        return std::any_of( filter.begin(), filter.end(), [&]( std::string_view search ) {
+            return lcmatch( id, search ) || lcmatch( name, search );
+        } );
+    }
+
+    if( materials.empty() ) {
         return false;
     }
 
@@ -774,6 +867,11 @@ bool check_special_rule( const std::map<material_id, int> &materials, std::strin
 void npc_settings::create_rule( const std::string &to_match )
 {
     rules.create_rule( map_items, to_match );
+}
+
+void npc_settings::create_rule( const item &it )
+{
+    rules.create_rule( map_items, it );
 }
 
 void rule_list::create_rule( cache &map_items, const std::string &to_match )
@@ -816,7 +914,7 @@ void rule_list::create_rule( cache &map_items, const item &it )
         if( !elem.bActive ) {
             continue;
         }
-        if( !check_special_rule( it.made_of(), elem.sRule ) &&
+        if( !check_special_rule( it.made_of(), it.type->category_force, elem.sRule ) &&
             !wildcard_match( to_match, elem.sRule ) ) {
             continue;
         }
@@ -846,7 +944,7 @@ void rule_list::refresh_map_items( cache &map_items ) const
             for( const itype *e : item_controller->all() ) {
                 const std::string &cur_item = e->nname( 1 );
 
-                if( !check_special_rule( e->materials, elem.sRule ) && !wildcard_match( cur_item, elem.sRule ) ) {
+                if( !check_special_rule( e->materials, e->category_force, elem.sRule ) && !wildcard_match( cur_item, elem.sRule ) ) {
                     continue;
                 }
 
@@ -857,7 +955,8 @@ void rule_list::refresh_map_items( cache &map_items ) const
             //only re-exclude items from the existing mapping for now
             //new exclusions will process during pickup attempts
             for( auto &map_item : map_items ) {
-                if( !check_special_rule( map_items.temp_items[ map_item.first ]->materials, elem.sRule ) &&
+                if( !check_special_rule( map_items.temp_items[ map_item.first ]->materials,
+                                         map_items.temp_items[ map_item.first ]->category_force, elem.sRule ) &&
                     !wildcard_match( map_item.first, elem.sRule ) ) {
                     continue;
                 }

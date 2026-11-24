@@ -2860,6 +2860,25 @@ bool npc::is_following() const
 }
 
 // Xbro10 fork: see npc.h.
+static const std::string var_npc_favorite = "npc_favorite";
+
+void mark_npc_favorite( item &it )
+{
+    if( !it.is_favorite ) {
+        it.set_var( var_npc_favorite, "1" );
+    }
+    it.set_favorite( true );
+}
+
+void unmark_npc_favorite( item &it )
+{
+    if( it.has_var( var_npc_favorite ) ) {
+        it.erase_var( var_npc_favorite );
+        it.set_favorite( false );
+    }
+}
+
+// Xbro10 fork: see npc.h.
 bool quiet_enough_for_follower_rules( const item &weapon )
 {
     if( weapon.is_silent() ) {

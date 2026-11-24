@@ -12,10 +12,26 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 | **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
 | **[Launcher]** | The launcher in `tools/launcher/` |
 
-**Jump to:** [Nov 23](#november-23-2026) · [Nov 21](#november-21-2026) · [Nov 20](#november-20-2026) · [Nov 19](#november-19-2026) · [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
+**Jump to:** [Nov 24](#november-24-2026) · [Nov 23](#november-23-2026) · [Nov 21](#november-21-2026) · [Nov 20](#november-20-2026) · [Nov 19](#november-19-2026) · [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
 [Nov 12–14, the first version](#november-1214-2026-the-first-version) · [How to add an entry](#how-to-add-an-entry)
 
 ---
+
+## November 24, 2026
+
+### NPCs
+- [C++] **A follower's favourites look different from yours:** what you hand or trade to a follower becomes their
+  favourite (so they never drop it), and its `*` now shows in light red, the nearest the game has to orange. Your own
+  favourites keep the plain `*`. When such an item comes back to you it stops being a favourite (before, your
+  inventory slowly filled with favourites you never set); something you had favourited yourself stays yours.
+- [C++] **Pickup rules by category:** in a follower's "Set up pickup rules." (and your own auto-pickup rules), press
+  `g` for a **Categories** checklist: each category is Take, Never or "-" (your other rules decide). Rules can also be
+  typed as `c:food` or `c:ammo,guns`. Material rules (`m:kevlar`) now work for followers too (they were ignored).
+  An Exclude rule now always wins: a follower no longer picks up an excluded pipe or plank because it beats their fists.
+- [C++] **Followers leave junk:** with NPC autonomy on and no pickup rules, a follower no longer takes scrap, pipes,
+  planks, rags, nails, rocks, empty cans, vehicle parts or corpses, nor anything a kilogram or more worth almost nothing.
+  Food or drink they need, ammo for their gun and their own arrows always count. They also go for the best item in
+  reach instead of the farthest one.
 
 ## November 23, 2026
 

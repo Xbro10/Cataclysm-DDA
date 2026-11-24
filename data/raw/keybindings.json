@@ -469,6 +469,18 @@
   },
   {
     "type": "keybinding",
+    "id": "CATEGORY_RULES",
+    "category": "AUTO_PICKUP",
+    "//": "Xbro10 fork (2026-11-24): the Categories checklist (c:<category> rules).",
+    "name": "Categories",
+    "bindings": [
+      { "input_method": "keyboard_any", "key": "g" },
+      { "input_method": "keyboard_char", "key": "G" },
+      { "input_method": "keyboard_code", "key": "g", "mod": [ "shift" ] }
+    ]
+  },
+  {
+    "type": "keybinding",
     "id": "SWITCH_AUTO_PICKUP_OPTION",
     "category": "AUTO_PICKUP",
     "name": "Enable auto pickup option",

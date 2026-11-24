@@ -4521,8 +4521,15 @@ void npc::find_item()
             return false;
         }
         if( ::good_for_pickup( it, *this, p ) ) {
+            const int candidate = has_item_whitelist() ? 1000 : value( it );
+            // Xbro10 fork (2026-11-24): with NPC autonomy on, go for the best item in range (the
+            // nearest of equals), not the last one the closest-first scan passes, which is the
+            // farthest away. best_value was kept but never compared.
+            if( npc_autonomy::enabled() && wanted_item.get_item() != nullptr && candidate <= best_value ) {
+                return false;
+            }
             wanted_item_pos = p;
-            best_value = has_item_whitelist() ? 1000 : value( it );
+            best_value = candidate;
             return true;
         } else {
             // whether an open container can be emptied first depends on NPC, not tile
@@ -4893,8 +4900,17 @@ bool npc::wants_take_that( const item &it )
     int min_value = minimum_item_value();
     const bool whitelisting = has_item_whitelist();
 
+    // Xbro10 fork (user request 2026-11-24): an Exclude rule in their pickup rules wins, even over
+    // a "better weapon" (a pipe or plank rates above bare fists).
+    if( whitelisting && item_blacklisted( it ) ) {
+        return false;
+    }
+
     item &weap = get_wielded_item() ? *get_wielded_item() : null_item_reference();
-    if( ( ( !whitelisting && value( it ) > min_value ) || item_whitelisted( it ) ) ||
+    // Xbro10 fork: with NPC autonomy on and no pickup rules, a follower also skips cheap, heavy
+    // or bulky junk (npc_autonomy::worth_carrying); with the option off it always passes.
+    if( ( ( !whitelisting && value( it ) > min_value && npc_autonomy::worth_carrying( *this, it ) ) ||
+          item_whitelisted( it ) ) ||
         evaluate_weapon( it ) > evaluate_weapon( weap ) ) {
         good = true;
     }

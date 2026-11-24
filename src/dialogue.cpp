@@ -2226,14 +2226,31 @@ bool npc::item_name_whitelisted( const std::string &to_match )
     return wlist.check_item( to_match ) == rule_state::WHITELISTED;
 }
 
+// Xbro10 fork (2026-11-24): the rule for this item, checked against the item itself so material
+// (m:) and category (c:) rules count for NPCs too (the name-only check ignored them).
+static rule_state npc_item_rule( auto_pickup::npc_settings &wlist, const item &it )
+{
+    const std::string to_match = it.tname( 1, false );
+    const rule_state rule = wlist.check_item( to_match );
+    if( rule != rule_state::NONE ) {
+        return rule;
+    }
+    wlist.create_rule( it );
+    return wlist.check_item( to_match );
+}
+
 bool npc::item_whitelisted( const item &it )
 {
     if( !has_item_whitelist() ) {
         return true;
     }
+    return npc_item_rule( *rules.pickup_whitelist, it ) == rule_state::WHITELISTED;
+}
 
-    const std::string to_match = it.tname( 1, false );
-    return item_name_whitelisted( to_match );
+bool npc::item_blacklisted( const item &it )
+{
+    return has_item_whitelist() &&
+           npc_item_rule( *rules.pickup_whitelist, it ) == rule_state::BLACKLISTED;
 }
 
 const json_talk_topic *talk_topic_all::get_talk_topic( const std::string &id )

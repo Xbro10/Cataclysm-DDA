@@ -264,6 +264,15 @@ bool ready_the_shot( npc &guy );
  */
 bool fetches_own_things( const npc &guy );
 /**
+ * Follower pickup without pickup rules (user request 2026-11-24): with NPC autonomy on, a player's
+ * follower leaves junk: the categories spare parts (scrap, pipes, planks, rags, nails, rocks),
+ * container (empty), other, vehicle parts and corpses, and anything of a kilogram or more worth
+ * under 25 cents a kilogram to them. Food or drink they need, ammo or magazines for their gun, and
+ * their own things (tagged in a fight) always pass. Option off, or not a follower: always true
+ * (the game's own test).
+ */
+bool worth_carrying( const npc &guy, const item &it );
+/**
  * A recovered arrow, bolt or thrown thing (reported 2026-11-20): the game makes a new item where
  * a shot lands, so it lost the "theirs" tag from the fight. Tags it with the shooter, an NPC.
  * A throw only in a fight; a shot (fired) always, and it counts as one (N26: a shot at something

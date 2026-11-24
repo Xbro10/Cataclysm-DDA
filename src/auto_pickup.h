@@ -155,6 +155,9 @@ class npc_settings : public base_settings
     public:
         ~npc_settings() override = default;
         void create_rule( const std::string &to_match );
+        // Xbro10 fork (2026-11-24): with the item, so material (m:, M:) and category (c:) rules
+        // count for NPCs too; the name-only version above ignores them.
+        void create_rule( const item &it );
 
         void show( const std::string &name );
 
