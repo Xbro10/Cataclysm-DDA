@@ -103,6 +103,7 @@
             [ "br1_feature_junk", 40 ],
             [ "br1_feature_working_light", 30 ],
             [ "br1_feature_vending", 15 ],
+            [ "br1_feature_cart", 10 ],
             [ "br1_feature_graffiti", 40 ]
           ],
           "x": [ 0, 18 ],

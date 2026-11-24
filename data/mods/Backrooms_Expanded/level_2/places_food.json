@@ -1,0 +1,78 @@
+[
+  {
+    "type": "item_group",
+    "id": "br2_lunchbox_find",
+    "subtype": "collection",
+    "//": "A worker's lunchbox: the box and one meal.",
+    "entries": [
+      { "item": "lunchbox" },
+      { "distribution": [ { "item": "jerky", "prob": 40 }, { "group": "cannedfood", "prob": 40 }, { "group": "br_cat_snacks", "prob": 20 } ] }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br2_crew_locker",
+    "subtype": "distribution",
+    "entries": [
+      { "group": "br2_lunchbox_find", "prob": 50 },
+      { "group": "br_cat_tools", "prob": 25 },
+      { "group": "almond_water_sealed", "prob": 10 },
+      { "item": "br2_note_tunnel", "prob": 15 }
+    ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br2_crew_mess",
+    "name": "crew mess",
+    "sym": "m",
+    "looks_like": "sewer",
+    "color": "yellow",
+    "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BR2_TUNNELS", "population": [ 2, 6 ], "chance": 45 },
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br2_crew_mess",
+    "//": "Level 2 food place (user request 2026-11-23): a maintenance crew's lunch room off the tunnels. 1-3 per map; Level 2 stays the hungriest level.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_crew_mess" } ],
+    "locations": [ "br2_tunnels" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 3 ],
+    "flags": [ "BACKROOMS_L2", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_crew_mess",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_crew_mess_core" ], "x": 5, "y": 5 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_crew_mess_core",
+    "//": "A 4x4 room in the wall block north-west of the centre cross, with doors onto the cross east and south (D). Lockers (l) with lunchboxes and tools, a table (T) with a hot plate, chairs (b), a caged bulb (L).",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rows": [ "######", "#l..l#", "#....D", "#bTTb#", "#L...#", "###D##" ],
+      "terrain": {
+        "#": "t_br2_pipe_wall",
+        ".": "t_metal_floor",
+        "l": "t_metal_floor",
+        "b": "t_metal_floor",
+        "T": "t_metal_floor",
+        "L": "t_br2_light",
+        "D": "t_door_metal_c"
+      },
+      "furniture": { "l": "f_locker", "b": "f_chair", "T": "f_table" },
+      "items": { "l": { "item": "br2_crew_locker", "chance": 60 } },
+      "item": { "T": { "item": "hotplate", "chance": 30 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_feature_lunchbox",
+    "//": "A lunchbox left on a pipe ledge. Rare: in the tunnels' feature list (tunnels.json), about 1 tunnel square in 16.",
+    "object": { "mapgensize": [ 1, 1 ], "place_items": [ { "item": "br2_lunchbox_find", "x": 0, "y": 0, "chance": 100 } ] }
+  }
+]
