@@ -38,6 +38,9 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 - **Vending machines take cash:** paper bills and coins work as well as cash cards (cards first, then the bank on
   networked machines, then cash), as few and as small bills as cover the price, change in coins. Currency straps and
   bundles don't go in.
+- [BE] [C++] **Level 0 and Level 1 are comfortably warm:** office air at a steady 21 C all year, day and night, with no snow or
+  rain cooling it. Fires and heaters still warm you. Level 2 stays hot. Builds without the fork keep a small
+  day-night drift (usually 17-25 C).
 
 ### NPCs
 - [C++] **A follower's favourites look different from yours:** what you hand or trade to a follower becomes their
@@ -67,6 +70,12 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   swing (Gabriel took the hatchet off his belt for a zombie beside him), and putting away a spear that fits in no pocket
   dropped it on the floor. Now they only swap if the new weapon is better overall or the old one fits in the pack. And
   an NPC holding a worse weapon now puts it away and takes their own dropped weapon back from beside them.
+
+### For developers
+- [C++] A weather generator holds a steady temperature (its `base_temperature`, as underground already does) when a
+  mod defines the json_flag `STEADY_TEMPERATURE_<generator id>` (`weather_generator::steady_temperature`,
+  `src/weather_gen.{h,cpp}`); official builds load the flag and ignore it. Test `backrooms_levels_0_and_1_stay_comfortable`
+  (`[backrooms_climate]`, `--mods=backrooms,backrooms_expanded`).
 
 ## November 23, 2026
 

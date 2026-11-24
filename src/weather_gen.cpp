@@ -125,6 +125,10 @@ static weather_gen_common get_common_data( const tripoint_abs_ms &location,
 static units::temperature weather_temperature_from_common_data( const weather_generator &wg,
         const weather_gen_common &common, const season_effective_time &t )
 {
+    // Xbro10 fork: a steady generator (a mod defines STEADY_TEMPERATURE_<id>) holds its base temperature.
+    if( wg.steady_temperature() ) {
+        return units::from_celsius( wg.base_temperature );
+    }
     const double x( common.x );
     const double y( common.y );
     const double z( common.z );
@@ -152,6 +156,14 @@ static units::temperature weather_temperature_from_common_data( const weather_ge
                      ( 1 + ( 1 + -seasonality ) * seasonal_noise_magnitude / 2 ) * noise_magnitude_K;
 
     return units::from_celsius( T );
+}
+
+bool weather_generator::steady_temperature() const
+{
+    if( !steady_temperature_cache ) {
+        steady_temperature_cache = flag_id( "STEADY_TEMPERATURE_" + id.str() ).is_valid();
+    }
+    return *steady_temperature_cache;
 }
 
 units::temperature weather_generator::get_weather_temperature(

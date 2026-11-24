@@ -2,6 +2,7 @@
 #ifndef CATA_SRC_WEATHER_GEN_H
 #define CATA_SRC_WEATHER_GEN_H
 
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -57,6 +58,9 @@ class weather_generator
         std::vector<std::string> weather_white_list;
         /** All the current weather types based on white or black list and sorted by load order */
         std::vector<weather_type_id> sorted_weather;
+    private:
+        mutable std::optional<bool> steady_temperature_cache;
+    public:
         weather_generator();
 
         /**
@@ -75,6 +79,10 @@ class weather_generator
         void sort_weather();
         units::temperature get_weather_temperature( const tripoint_abs_ms &, const time_point &,
                 unsigned ) const;
+        // Xbro10 fork: true when a mod defines the json_flag STEADY_TEMPERATURE_<this id>. Then the
+        // temperature is always base_temperature (no day-night, seasonal or random swings), as underground
+        // already is. Backrooms Expanded sets it for Level 0 and Level 1; official builds ignore the flag.
+        bool steady_temperature() const;
 
         bool was_loaded = false;
         void load( const JsonObject &jo, std::string_view );
