@@ -19,6 +19,14 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ## November 24, 2026
 
+### Backrooms
+- [BE] **Level 1 and 2 places:** 6 small named spots on each level, like Level 0's, 1-3 of each per map. Level 1:
+  a parking office and a mechanic's bay (intact), a crash site and a collapsed ramp (ruined), and a square of mown lawn
+  with park benches and a made-up bedroom in a parking bay (out of place). Level 2, each a small room off a tunnel
+  crossing: a pump room and a tool crib, a burst pipe room and a caved-in shaft with a worker still under it, and a
+  tiny classroom and a spotless bathroom (its toilet tank holds a little water). Parked cars no longer overlap
+  Level 1's loading docks and break rooms.
+
 ### NPCs
 - [C++] **A follower's favourites look different from yours:** what you hand or trade to a follower becomes their
   favourite (so they never drop it), and its `*` now shows in light red, the nearest the game has to orange. Your own
