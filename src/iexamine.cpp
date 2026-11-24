@@ -180,6 +180,11 @@ static const itype_id itype_cactus_pad( "cactus_pad" );
 static const itype_id itype_cash_card( "cash_card" );
 static const itype_id itype_charcoal( "charcoal" );
 static const itype_id itype_chem_carbide( "chem_carbide" );
+static const itype_id itype_coin_dime( "coin_dime" );
+static const itype_id itype_coin_dollar( "coin_dollar" );
+static const itype_id itype_coin_nickel( "coin_nickel" );
+static const itype_id itype_coin_penny( "coin_penny" );
+static const itype_id itype_coin_quarter( "coin_quarter" );
 static const itype_id itype_corpse( "corpse" );
 static const itype_id itype_dahlia_root( "dahlia_root" );
 static const itype_id itype_disassembly( "disassembly" );
@@ -1040,30 +1045,122 @@ void iexamine::atm( Character &you, const tripoint_bub_ms & )
     atm_menu {you}.start();
 }
 
+// Xbro10 fork: paper cash and coins for vending machines (user request 2026-11-24).
+// A single bill or coin; straps and bundles are left alone.
+static int vending_cash_unit_value( const item &it )
+{
+    static const flag_id flag_BANK_NOTE_SHAPED( "BANK_NOTE_SHAPED" );
+    static const flag_id flag_COIN_SHAPED( "COIN_SHAPED" );
+    if( !it.type->has_flag( flag_OLD_CURRENCY ) ||
+        !( it.type->has_flag( flag_BANK_NOTE_SHAPED ) || it.type->has_flag( flag_COIN_SHAPED ) ) ) {
+        return 0;
+    }
+    const int value = units::to_cent( it.type->price );
+    if( value <= 0 ) {
+        return 0;
+    }
+    return value * std::max( 1, it.charges );
+}
+
+static std::vector<std::pair<item_location, int>> vending_cash_carried( const Character &you )
+{
+    std::vector<std::pair<item_location, int>> cash;
+    you.visit_items( [&cash]( const item_location & loc ) {
+        const int value = vending_cash_unit_value( *loc );
+        if( value > 0 ) {
+            cash.emplace_back( loc, value );
+        }
+        return VisitResponse::NEXT;
+    } );
+    return cash;
+}
+
+int iexamine_helper::vending_cash_value( const Character &you )
+{
+    int total = 0;
+    for( const auto &entry : vending_cash_carried( you ) ) {
+        total += entry.second;
+    }
+    return total;
+}
+
+bool iexamine_helper::vending_pay_cash( Character &you, int price )
+{
+    if( price <= 0 ) {
+        return true;
+    }
+    std::vector<std::pair<item_location, int>> cash = vending_cash_carried( you );
+    std::stable_sort( cash.begin(), cash.end(), []( const auto & a, const auto & b ) {
+        return a.second < b.second;
+    } );
+    // Smallest first until the price is covered, then hand back the biggest ones not needed.
+    std::vector<std::pair<item_location, int>> taken;
+    int paid = 0;
+    for( const auto &entry : cash ) {
+        if( paid >= price ) {
+            break;
+        }
+        taken.push_back( entry );
+        paid += entry.second;
+    }
+    if( paid < price ) {
+        return false;
+    }
+    for( auto it = taken.rbegin(); it != taken.rend(); ) {
+        if( paid - it->second >= price ) {
+            paid -= it->second;
+            it = decltype( it )( taken.erase( std::next( it ).base() ) );
+        } else {
+            ++it;
+        }
+    }
+    for( auto &entry : taken ) {
+        entry.first.remove_item();
+    }
+    int change = paid - price;
+    for( const std::pair<itype_id, int> &coin : std::vector<std::pair<itype_id, int>> {
+    { itype_coin_dollar, 100 }, { itype_coin_quarter, 25 }, { itype_coin_dime, 10 },
+        { itype_coin_nickel, 5 }, { itype_coin_penny, 1 }
+    } ) {
+        const int count = change / coin.second;
+        change -= count * coin.second;
+        if( count > 0 ) {
+            item coins( coin.first, calendar::turn );
+            you.i_add_or_drop( coins, count );
+        }
+    }
+    return true;
+}
+
 /**
- * Generates vending machine UI and allows players to purchase contained items with a cash card.
+ * Generates vending machine UI and allows players to purchase contained items with a cash card,
+ * or (Xbro10 fork) paper cash and coins.
  */
 void iexamine::vending( Character &you, const tripoint_bub_ms &examp )
 {
     map &here = get_map();
 
     constexpr int moves_cost = to_moves<int>( 5_seconds );
-    int money = you.charges_of( itype_cash_card );
     map_stack vend_items = here.i_at( examp );
 
     bool use_bank = here.has_flag_furn( "BANK_NETWORKED", examp );
 
-    if( use_bank ) {
-        money = you.cash + you.charges_of( itype_cash_card );
-    }
+    const auto available_money = [&you, use_bank]() {
+        int money = you.charges_of( itype_cash_card ) + iexamine_helper::vending_cash_value( you );
+        if( use_bank ) {
+            money += you.cash;
+        }
+        return money;
+    };
+    int money = available_money();
 
     if( vend_items.empty() ) {
         add_msg( m_info, _( "The vending machine is empty." ) );
         return;
     }
 
-    if( !money ) {
-        popup( _( "You need some money on a cash card to buy things." ) );
+    if( money <= 0 ) {
+        popup( _( "You need some cash, or money on a cash card, to buy things." ) );
     }
 
     int w_items_w = 0;
@@ -1209,15 +1306,24 @@ void iexamine::vending( Character &you, const tripoint_bub_ms &examp )
                 you.mod_moves( -moves_cost );
             }
 
-            money -= iprice;
-
-            if( iprice < you.charges_of( itype_cash_card ) ) {
-                // necessary to check just your cash card charges here because aftershock charges your cards first then your bank
-                you.use_charges( itype_cash_card, iprice );
-            } else if( use_bank ) {
-                you.cash -= iprice;
+            // Xbro10 fork: cash cards first, then the bank (networked machines), then bills and coins.
+            int remaining = iprice;
+            const int from_cards = std::min( remaining, you.charges_of( itype_cash_card ) );
+            if( from_cards > 0 ) {
+                you.use_charges( itype_cash_card, from_cards );
+                remaining -= from_cards;
+            }
+            if( remaining > 0 && use_bank && you.cash > 0 ) {
+                const int from_bank = std::min( remaining, static_cast<int>( you.cash ) );
+                you.cash -= from_bank;
+                remaining -= from_bank;
+            }
+            if( remaining > 0 && !iexamine_helper::vending_pay_cash( you, remaining ) && use_bank ) {
+                // Not enough cash after all: the bank account goes into debt, as before.
+                you.cash -= remaining;
             }
             you.i_add_or_drop( *cur_item );
+            money = available_money();
 
             vend_items.erase( cur_item );
             cur_items.pop_back();

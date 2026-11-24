@@ -26,6 +26,15 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   crossing: a pump room and a tool crib, a burst pipe room and a caved-in shaft with a worker still under it, and a
   tiny classroom and a spotless bathroom (its toilet tank holds a little water). Parked cars no longer overlap
   Level 1's loading docks and break rooms.
+- [BE] **Level 0 monsters:** about 60% zombies (was about 92%), about a third the Backrooms' own entities (was about
+  1%), lost pets and wild animals as before; no more lab escapees (zomborgs, broken cyborgs, experimental mutants,
+  skeleton brutes).
+- [BE] **Level 0 loot, tidied:** vending machines no longer sell bionics or mutagens, lockers hold guns half as often,
+  safes give bionics a quarter as often and military guns half as often and often hold cash; desks sometimes have a
+  few bills or coins.
+- **Vending machines take cash:** paper bills and coins work as well as cash cards (cards first, then the bank on
+  networked machines, then cash), as few and as small bills as cover the price, change in coins. Currency straps and
+  bundles don't go in.
 
 ### NPCs
 - [C++] **A follower's favourites look different from yours:** what you hand or trade to a follower becomes their

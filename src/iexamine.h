@@ -193,6 +193,12 @@ namespace iexamine_helper
 {
 bool drink_nectar( Character &you );
 void handle_harvest( Character &you, const itype_id &itemid, bool force_drop );
+// Xbro10 fork: vending machines take paper cash and coins (single bills and coins, not straps or bundles).
+// Cents in bills and coins carried.
+int vending_cash_value( const Character &you );
+// Pays price (cents) in bills and coins, as few and as small as cover it, and gives the change in coins.
+// False (and nothing taken) if the cash carried doesn't cover it.
+bool vending_pay_cash( Character &you, int price );
 } // namespace iexamine_helper
 
 using iexamine_examine_function = void ( * )( Character &, const tripoint_bub_ms & );
