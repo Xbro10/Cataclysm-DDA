@@ -1,0 +1,135 @@
+[
+  {
+    "type": "item_group",
+    "id": "br1_dock_crate",
+    "subtype": "distribution",
+    "//": "A loading dock crate that wasn't emptied: mostly canned food, now and then snacks or almond water.",
+    "entries": [
+      { "group": "cannedfood", "count": [ 2, 4 ], "prob": 55 },
+      { "group": "br_cat_snacks", "count": [ 2, 4 ], "prob": 35 },
+      { "group": "almond_water_sealed", "count": [ 1, 2 ], "prob": 10 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_breakroom_fridge",
+    "subtype": "distribution",
+    "entries": [ { "group": "br_cat_snacks", "count": [ 1, 2 ], "prob": 60 }, { "group": "cannedfood", "prob": 40 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "br1_groceries",
+    "subtype": "distribution",
+    "//": "What spilled from an abandoned shopping cart.",
+    "entries": [
+      { "group": "cannedfood", "prob": 35 },
+      { "group": "br_cat_snacks", "prob": 35 },
+      { "item": "bag_plastic", "prob": 25 },
+      { "group": "almond_water_sealed", "prob": 5 }
+    ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_loading_dock",
+    "name": "loading dock",
+    "sym": "&",
+    "looks_like": "s_garage",
+    "color": "brown",
+    "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BR1_GARAGE", "population": [ 1, 6 ], "chance": 25 },
+    "flags": [ "NO_ROTATE" ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br1_attendant_breakroom",
+    "copy-from": "br1_loading_dock",
+    "name": "attendants' break room",
+    "sym": "b",
+    "color": "light_blue"
+  },
+  {
+    "type": "overmap_special",
+    "id": "br1_loading_dock",
+    "//": "Level 1 food places (user request 2026-11-23): small named rooms where food is likelier than in the garage, still scarce. 1-3 per map.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_loading_dock" } ],
+    "locations": [ "br1_garage" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 3 ],
+    "flags": [ "BACKROOMS_L1", "EXTRADIMENSIONAL" ]
+  },
+  {
+    "type": "overmap_special",
+    "id": "br1_attendant_breakroom",
+    "copy-from": "br1_loading_dock",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br1_attendant_breakroom" } ]
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_loading_dock",
+    "object": { "predecessor_mapgen": "br1_garage", "place_nested": [ { "chunks": [ "br1_loading_dock_core" ], "x": 6, "y": 6 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br1_attendant_breakroom",
+    "object": { "predecessor_mapgen": "br1_garage", "place_nested": [ { "chunks": [ "br1_attendant_breakroom_core" ], "x": 8, "y": 8 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_loading_dock_core",
+    "//": "A walled delivery bay open to the lane on the south: cartons (k), smashed empty crates (O), wreckage (X), a sign (G), one working light. Four crates (C) may still be shut; a shut one holds food about 1 time in 3.",
+    "object": {
+      "mapgensize": [ 12, 12 ],
+      "rows": [
+        "############",
+        "#kO.C..OOk.#",
+        "#k.........#",
+        "#....X..k..#",
+        "#C........C#",
+        "#..kk...O..#",
+        "#.....!....#",
+        "#O..X....kk#",
+        "#..........#",
+        "#G....k...X#",
+        "#..........#",
+        "###......###"
+      ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "k": "t_thconc_floor", "O": "t_thconc_floor", "C": "t_thconc_floor", "G": "t_thconc_floor" },
+      "furniture": { "k": "f_cardboard_box", "O": "f_crate_o", "C": [ [ "f_crate_c", 1 ], [ "f_crate_o", 1 ] ] },
+      "signs": { "G": { "signage": "DELIVERIES 6 AM - 10 AM ONLY.  NO PARKING IN BAY." } },
+      "items": { "C": { "item": "br1_dock_crate", "chance": 35 } },
+      "item": { "k": { "item": "cardboard", "chance": 30 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_attendant_breakroom_core",
+    "//": "The parking attendants' break room: a fridge (F, usually empty), cupboards (K) with the odd snack, a table (T) and chairs (b), a counter (c) with a coffee maker, a trash can (n), one working light.",
+    "object": {
+      "mapgensize": [ 8, 8 ],
+      "rotation": [ 0, 3 ],
+      "rows": [ "########", "#F.KK..#", "#......#", "#.bTb..#", "#.bTb.!#", "#......#", "#n....c#", "####D###" ],
+      "palettes": [ "br1_garage_palette" ],
+      "terrain": { "F": "t_thconc_floor", "K": "t_thconc_floor", "T": "t_thconc_floor", "n": "t_thconc_floor" },
+      "furniture": { "F": "f_fridge", "K": "f_cupboard", "T": "f_table", "n": "f_trashcan" },
+      "items": {
+        "F": { "item": "br1_breakroom_fridge", "chance": 20 },
+        "K": { "item": "br_cat_snacks", "chance": 30 }
+      },
+      "item": { "c": { "item": "coffeemaker", "chance": 70 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br1_feature_cart",
+    "//": "A shopping cart left in the lane with a few groceries spilled round it. In the garage's feature list (mapgen_garage.json), a bit rarer than the vending machines.",
+    "object": {
+      "mapgensize": [ 3, 3 ],
+      "place_vehicles": [ { "vehicle": "shopping_cart", "x": 1, "y": 1, "chance": 100, "rotation": 90 } ],
+      "place_items": [ { "item": "br1_groceries", "x": [ 0, 2 ], "y": [ 0, 2 ], "chance": 100, "repeat": [ 1, 3 ] } ]
+    }
+  }
+]
