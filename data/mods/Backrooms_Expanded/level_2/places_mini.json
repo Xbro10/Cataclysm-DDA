@@ -1,0 +1,186 @@
+[
+  {
+    "type": "item_group",
+    "id": "br2_dead_worker",
+    "subtype": "collection",
+    "//": "What's left of a worker caught by the cave-in.",
+    "entries": [
+      { "item": "bone_human", "count": [ 2, 4 ] },
+      { "item": "br2_note_tunnel", "prob": 50 },
+      { "group": "br2_lunchbox_find", "prob": 30 },
+      { "group": "br_cat_tools", "prob": 40 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "br2_crib_shelf",
+    "subtype": "distribution",
+    "entries": [ { "group": "br_cat_tools", "prob": 50 }, { "group": "br_cat_hardware", "prob": 35 }, { "group": "br_cat_light", "prob": 15 } ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "br2_pump_room",
+    "name": "pump room",
+    "sym": "P",
+    "looks_like": "sewer",
+    "color": "cyan",
+    "see_cost": "full_high",
+    "spawns": { "group": "GROUP_BR2_TUNNELS", "population": [ 2, 6 ], "chance": 45 },
+    "flags": [ "NO_ROTATE" ]
+  },
+  { "type": "overmap_terrain", "id": "br2_tool_crib", "copy-from": "br2_pump_room", "name": "tool crib", "sym": "T", "color": "light_blue" },
+  { "type": "overmap_terrain", "id": "br2_burst_pipe", "copy-from": "br2_pump_room", "name": "burst pipe room", "sym": "~", "color": "blue" },
+  { "type": "overmap_terrain", "id": "br2_caved_shaft", "copy-from": "br2_pump_room", "name": "caved-in shaft", "sym": "x", "color": "light_gray" },
+  { "type": "overmap_terrain", "id": "br2_classroom", "copy-from": "br2_pump_room", "name": "classroom", "sym": "C", "color": "yellow" },
+  { "type": "overmap_terrain", "id": "br2_bathroom", "copy-from": "br2_pump_room", "name": "bathroom", "sym": "W", "color": "white" },
+  {
+    "type": "overmap_special",
+    "id": "br2_pump_room",
+    "//": "Level 2 places (user request 2026-11-24, like Level 0's): small named rooms off a tunnel crossing, intact, ruined or out of place. Each is a 4x4 room in the wall block north-west of the centre cross, with doors onto the cross east and south. 1-3 of each per map.",
+    "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_pump_room" } ],
+    "locations": [ "br2_tunnels" ],
+    "city_distance": [ 0, -1 ],
+    "city_sizes": [ 0, -1 ],
+    "occurrences": [ 1, 3 ],
+    "flags": [ "BACKROOMS_L2", "EXTRADIMENSIONAL" ]
+  },
+  { "type": "overmap_special", "id": "br2_tool_crib", "copy-from": "br2_pump_room", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_tool_crib" } ] },
+  { "type": "overmap_special", "id": "br2_burst_pipe", "copy-from": "br2_pump_room", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_burst_pipe" } ] },
+  { "type": "overmap_special", "id": "br2_caved_shaft", "copy-from": "br2_pump_room", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_caved_shaft" } ] },
+  { "type": "overmap_special", "id": "br2_classroom", "copy-from": "br2_pump_room", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_classroom" } ] },
+  { "type": "overmap_special", "id": "br2_bathroom", "copy-from": "br2_pump_room", "overmaps": [ { "point": [ 0, 0, 0 ], "overmap": "br2_bathroom" } ] },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_pump_room",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_pump_room_core" ], "x": 5, "y": 5 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_tool_crib",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_tool_crib_core" ], "x": 5, "y": 5 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_burst_pipe",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_burst_pipe_core" ], "x": 5, "y": 5 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_caved_shaft",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_caved_shaft_core" ], "x": 5, "y": 5 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_classroom",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_classroom_core" ], "x": 5, "y": 5 } ] }
+  },
+  {
+    "type": "mapgen",
+    "om_terrain": "br2_bathroom",
+    "object": { "predecessor_mapgen": "br2_tunnels", "place_nested": [ { "chunks": [ "br2_bathroom_core" ], "x": 5, "y": 5 } ] }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_pump_room_core",
+    "//": "Intact. Pumps (M) and valves (V) still running, a locker (l) of tools, a caged bulb (L).",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rows": [ "######", "#V.MM#", "#....D", "#V.MM#", "#L..l#", "###D##" ],
+      "terrain": {
+        "#": "t_br2_pipe_wall",
+        ".": "t_metal_floor",
+        "V": "t_metal_floor",
+        "M": "t_metal_floor",
+        "l": "t_metal_floor",
+        "L": "t_br2_light",
+        "D": "t_door_metal_c"
+      },
+      "furniture": { "V": "f_br2_valve", "M": "f_machinery_heavy", "l": "f_locker" },
+      "items": { "l": { "item": "br_cat_tools", "chance": 50 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_tool_crib_core",
+    "//": "Intact. Shelves (E) of tools and fittings, a workbench (K), a caged bulb (L).",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rows": [ "######", "#EEEE#", "#....D", "#.K..#", "#L..E#", "###D##" ],
+      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "E": "t_metal_floor", "K": "t_metal_floor", "L": "t_br2_light", "D": "t_door_metal_c" },
+      "furniture": { "E": "f_utility_shelf", "K": "f_workbench" },
+      "items": { "E": { "item": "br2_crib_shelf", "chance": 45 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_burst_pipe_core",
+    "//": "Ruined. A pipe burst and flooded the room (~); steam still hisses from the breaks (v). Things washed in. No light.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rows": [ "######", "#~~v~#", "#~~~.D", "#v~~~#", "#~~~~#", "###D##" ],
+      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "~": "t_br2_flood", "v": "t_metal_floor", "D": "t_door_metal_c" },
+      "furniture": { "v": "f_br2_steam_vent" },
+      "items": { "~": { "item": "br2_flood_loot", "chance": 8 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_caved_shaft_core",
+    "//": "Ruined. The ceiling of an access shaft came down: concrete chunks (Q) and rubble (q) fill half the room, and someone is still under the edge of it (x). No light.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rows": [ "######", "#QQQq#", "#QQq.D", "#Qq..#", "#q..x#", "###D##" ],
+      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "Q": "t_metal_floor", "q": "t_metal_floor", "x": "t_metal_floor", "D": "t_door_metal_c" },
+      "furniture": { "Q": "f_rubble_rock", "q": "f_rubble" },
+      "items": { "x": { "item": "br2_dead_worker", "chance": 100 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_classroom_core",
+    "//": "Out of place. A tiny classroom on clean linoleum: a notice board (B) for a blackboard, the teacher's desk (T), four pupils' desks (k), a caged bulb (L). Papers on the desks.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rows": [ "######", "#BB.T#", "#....D", "#k.k.#", "#k.kL#", "###D##" ],
+      "terrain": {
+        "#": "t_br2_pipe_wall",
+        ".": "t_linoleum_white",
+        "B": "t_linoleum_white",
+        "T": "t_linoleum_white",
+        "k": "t_linoleum_white",
+        "L": "t_br2_light",
+        "D": "t_door_metal_c"
+      },
+      "furniture": { "B": "f_bulletin", "T": "f_desk", "k": "f_desk" },
+      "item": { "k": { "item": "paper", "chance": 50 }, "T": { "item": "pen", "chance": 60 } },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "nested_mapgen_id": "br2_bathroom_core",
+    "//": "Out of place. A spotless family bathroom: a toilet with water in its tank (T), a sink (s), a mirror (M), a bathtub (U), a caged bulb (L). Soap and a towel by the sink.",
+    "object": {
+      "mapgensize": [ 6, 6 ],
+      "rows": [ "######", "#T.sM#", "#....D", "#UU..#", "#L...#", "###D##" ],
+      "terrain": {
+        "#": "t_br2_pipe_wall",
+        ".": "t_linoleum_white",
+        "T": "t_linoleum_white",
+        "s": "t_linoleum_white",
+        "M": "t_linoleum_white",
+        "U": "t_linoleum_white",
+        "L": "t_br2_light",
+        "D": "t_door_metal_c"
+      },
+      "furniture": { "T": "f_toilet", "s": "f_sink", "M": "f_bigmirror", "U": "f_bathtub" },
+      "toilets": { "T": {  } },
+      "item": { "s": [ { "item": "soap", "chance": 50 }, { "item": "towel", "chance": 40 } ] },
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]
