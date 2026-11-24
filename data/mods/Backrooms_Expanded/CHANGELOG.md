@@ -27,6 +27,7 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Changed
 
+- **Level 0 and Level 1 are comfortably warm all year:** office air at about 21 C, with no winter cold, summer heat or snow and rain cooling the air (only clear or cloudy weather). With the Xbro10 fork build it holds a steady 21 C day and night; other builds keep a small day-night drift (usually 17-25 C). Level 2 stays hot. Fires and heaters still warm you as before.
 - Level 0 is quieter: a chamber has monsters half as often (a 20% chance per map square instead of upstream's 40%; 2-15 when it does). Places you've already been keep the monsters they had.
 - Level 0's monsters: about 60% zombies (was about 92%), about 32% the Backrooms' own entities (Facelings, Hounds, Smilers, Deathmoths, and Wretches after day 30; was about 1%), lost pets and wild animals as before. No more lab escapees (experimental mutants, broken cyborgs, zomborgs, skeleton brutes).
 - Level 0's loot, tidied: vending machines no longer sell bionics or mutagens; a locker holds guns 1 time in 6 instead of 1 in 3; a safe gives bionics about 1 pick in 40 (was 1 in 10) and military guns half as often, and often holds cash instead. Desks sometimes have a few bills or coins.
