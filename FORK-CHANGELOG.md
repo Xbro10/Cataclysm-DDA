@@ -12,10 +12,19 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 | **[C++]** | A change to the game itself (the NPC brain, options, bug fixes) |
 | **[Launcher]** | The launcher in `tools/launcher/` |
 
-**Jump to:** [Nov 24](#november-24-2026) · [Nov 23](#november-23-2026) · [Nov 21](#november-21-2026) · [Nov 20](#november-20-2026) · [Nov 19](#november-19-2026) · [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
+**Jump to:** [Nov 25](#november-25-2026) · [Nov 24](#november-24-2026) · [Nov 23](#november-23-2026) · [Nov 21](#november-21-2026) · [Nov 20](#november-20-2026) · [Nov 19](#november-19-2026) · [Nov 18](#november-18-2026) · [Nov 17](#november-17-2026) · [Nov 16](#november-16-2026) · [Nov 15](#november-15-2026) · [Nov 14](#november-14-2026) ·
 [Nov 12–14, the first version](#november-1214-2026-the-first-version) · [How to add an entry](#how-to-add-an-entry)
 
 ---
+
+## November 25, 2026
+
+### Backrooms
+- [BE] **Level 0 map extras of its own:** the random extras on about 30% of Level 0's squares lose the outdoor ones
+  (craters, ponds, supply drops, helicopter crashes, wasp-filled houses) and make lab tech and military wrecks rare.
+  New: a wanderer's camp, chalk marks, a soaked patch of carpet, a square of dead lights (sometimes a Smiler in the
+  dark), an almond water stash and a grid of identical chairs. Red rooms stay as common as before.
+- [BE] **Level 0's lights flicker:** every 5-15 minutes a few ceiling lights near you cut out for a couple of seconds.
 
 ## November 24, 2026
 

@@ -30,6 +30,7 @@
 #include "debug.h"
 #include "mapbuffer.h"
 #include "mapdata.h"
+#include "map_extras.h"
 #include "mapgen_helpers.h"
 #include "npc_class.h"
 #include "math_parser_diag_value.h"
@@ -529,6 +530,66 @@ TEST_CASE( "backrooms_places_generate_cleanly", "[.][backrooms_runner]" )
         }
         INFO( errors.substr( 0, 1500 ) );
         CHECK( errors.empty() );
+    }
+}
+
+// Level 0's own map extras (level_0/map_extras.json) apply to a Level 0 square without mapgen errors, and do what
+// they say: dead lights leave no lit ceiling panel on the light grid, soaked carpet leaves deep carpet or fluid.
+TEST_CASE( "level_0_map_extras_apply_cleanly", "[.][backrooms_runner]" )
+{
+    if( !map_extra_id( "br0_mx_wanderer_camp" ).is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    const char *extras[] = { "br0_mx_wanderer_camp", "br0_mx_chalk_marks", "br0_mx_soaked_carpet",
+                             "br0_mx_dead_lights", "br0_mx_almond_stash", "br0_mx_chair_grid"
+                           };
+    const ter_str_id lit( "t_carpet_backrooms_light" );
+    const ter_str_id lit_tile( "t_tile_backrooms_light" );
+    const ter_str_id deep( "t_br0_carpet_deep" );
+    const ter_str_id fluid( "t_br0_fluid" );
+    for( const char *id : extras ) {
+        const map_extra_id extra( id );
+        CAPTURE( id );
+        clear_map_without_vision();
+        clear_avatar();
+        const tripoint_abs_omt pos( 50, 50, 0 );
+        std::string errors;
+        int soaked_squares = 0;
+        for( int i = 0; i < 30 && errors.empty(); ++i ) {
+            overmap_buffer.ter_set( pos, oter_str_id( "backfloorchamber_north" ).id() );
+            MAPBUFFER.clear_outside_reality_bubble();
+            int lit_on_grid = 0;
+            int soaked = 0;
+            errors += capture_debugmsg_during( [&]() {
+                smallmap tm;
+                tm.generate( pos, calendar::turn, false, true );
+                MapExtras::apply_function( extra, tm, pos );
+                for( int x = 0; x < SEEX * 2; ++x ) {
+                    for( int y = 0; y < SEEY * 2; ++y ) {
+                        const ter_id t = tm.ter( tripoint_omt_ms( x, y, 0 ) );
+                        if( x % 4 == 2 && y % 4 == 2 && ( t == lit || t == lit_tile ) ) {
+                            lit_on_grid++;
+                        }
+                        if( t == deep || t == fluid ) {
+                            soaked++;
+                        }
+                    }
+                }
+                tm.delete_unmerged_submaps();
+            } );
+            if( extra == map_extra_id( "br0_mx_dead_lights" ) ) {
+                CHECK( lit_on_grid == 0 );
+            }
+            if( soaked > 0 ) {
+                soaked_squares++;
+            }
+        }
+        INFO( errors.substr( 0, 1500 ) );
+        CHECK( errors.empty() );
+        if( extra == map_extra_id( "br0_mx_soaked_carpet" ) ) {
+            CHECK( soaked_squares >= 25 );
+        }
     }
 }
 
