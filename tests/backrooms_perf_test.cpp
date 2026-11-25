@@ -1,4 +1,5 @@
-// Xbro10 fork: timing for Backrooms Level 0, whose ceiling lights make it slow.
+// Xbro10 fork: timing for the Backrooms levels (backrooms_levels_benchmark: Levels 0-2 from their real
+// mapgen) and for Level 0's ceiling light layouts (backrooms_level0_lighting_benchmark).
 // Hidden benchmark; run with the Backrooms mods loaded:
 //   Cataclysm-test-vcpkg-static-Release-x64.exe --mods=backrooms,backrooms_expanded "[backrooms_perf]"
 // It fills the whole loaded area with Level 0 carpet and a grid of ceiling lights (open
@@ -21,7 +22,11 @@
 #include "map_helpers.h"
 #include "map_helpers_tests.h"
 #include "map_scale_constants.h"
+#include "mapbuffer.h"
 #include "mapdata.h"
+#include "mapgen_helpers.h"
+#include "omdata.h"
+#include "overmapbuffer.h"
 #include "monster.h"
 #include "npc.h"
 #include "npc_autonomy.h"
@@ -218,6 +223,111 @@ TEST_CASE( "backrooms_level0_lighting_benchmark", "[.][benchmark][backrooms_perf
         measure( string_format( "every 8 tiles, brightness %d", brightness ) );
     }
     lamp.light_emitted = real_brightness;
+    WARN( report );
+    CHECK( true );
+}
+
+// Fills the whole loaded area with one level's real filler square (its own mapgen, run once per
+// overmap square), terrain and furniture only: no items, monsters or NPCs.
+static void fill_with_level( const oter_str_id &filler )
+{
+    map &here = get_map();
+    const tripoint_abs_omt far_away( 50, 50, 0 );
+    constexpr int omt = SEEX * 2;
+    for( int ox = 0; ox * omt < MAPSIZE_X; ++ox ) {
+        for( int oy = 0; oy * omt < MAPSIZE_Y; ++oy ) {
+            overmap_buffer.ter_set( far_away, filler.id() );
+            MAPBUFFER.clear_outside_reality_bubble();
+            smallmap tm;
+            tm.generate( far_away, calendar::turn, false, true );
+            for( int x = 0; x < omt; ++x ) {
+                for( int y = 0; y < omt; ++y ) {
+                    const tripoint_bub_ms to( ox * omt + x, oy * omt + y, 0 );
+                    if( !here.inbounds( to ) ) {
+                        continue;
+                    }
+                    const tripoint_omt_ms from( x, y, 0 );
+                    here.ter_set( to, tm.ter( from ) );
+                    here.furn_set( to, tm.furn( from ) );
+                }
+            }
+            tm.delete_unmerged_submaps();
+        }
+    }
+}
+
+// Run with --mods=backrooms,backrooms_expanded "[backrooms_perf]": for each level, the per-turn map
+// cache rebuild (with and without lighting), how much of the floor is lit, and the time spent on
+// fields (the steam vents' hot air) per turn.
+TEST_CASE( "backrooms_levels_benchmark", "[.][benchmark][backrooms_perf]" )
+{
+    if( !oter_str_id( "br2_tunnels" ).is_valid() ) {
+        WARN( "Needs --mods=backrooms,backrooms_expanded" );
+        return;
+    }
+    struct level {
+        const char *name;
+        const char *filler;
+    };
+    const level levels[] = {
+        { "Level 0 (chambers)", "backfloorchamber_north" },
+        { "Level 1 (parking garage)", "br1_garage" },
+        { "Level 2 (maintenance tunnels)", "br2_tunnels" },
+    };
+    std::string report = "\nBackrooms levels, whole loaded area of each level's filler square, midnight:\n";
+    for( const level &l : levels ) {
+        clear_map_without_vision();
+        clear_avatar();
+        set_time( calendar::turn_zero + 24_hours );
+        fill_with_level( oter_str_id( l.filler ) );
+        map &here = get_map();
+
+        const double without_light = ms_per_rebuild( true );
+        const double with_light = ms_per_rebuild( false );
+        int lights = 0;
+        int floor = 0;
+        int bright = 0;
+        int dark = 0;
+        for( const tripoint_bub_ms &p : here.points_on_zlevel( 0 ) ) {
+            if( here.ter( p )->light_emitted > 0 || here.furn( p )->light_emitted > 0 ) {
+                ++lights;
+            }
+            // Count the middle of the map only: the edges see no lights beyond the loaded area.
+            if( p.x() < MAPSIZE_X / 4 || p.x() >= MAPSIZE_X * 3 / 4 || p.y() < MAPSIZE_Y / 4 ||
+                p.y() >= MAPSIZE_Y * 3 / 4 || here.impassable( p ) ) {
+                continue;
+            }
+            ++floor;
+            const float light = here.ambient_light_at( p );
+            bright += light >= 10.0f ? 1 : 0;
+            dark += light < 3.5f ? 1 : 0;
+        }
+
+        // Fields: let the vents fill the air for 10 minutes, then time 5 minutes of turns.
+        const auto field_turn = [&here]() {
+            calendar::turn += 1_seconds;
+            here.furniture_terrain_emit_fields();
+            here.process_fields();
+        };
+        for( int i = 0; i < 600; ++i ) {
+            field_turn();
+        }
+        constexpr int field_turns = 300;
+        const auto start = std::chrono::steady_clock::now();
+        for( int i = 0; i < field_turns; ++i ) {
+            field_turn();
+        }
+        const std::chrono::duration<double, std::milli> took = std::chrono::steady_clock::now() - start;
+
+        report += string_format( "  %s\n"
+                                 "    map cache rebuild %7.2f ms (lighting part %6.2f ms), %d light tiles\n"
+                                 "    middle floor: %3d%% brightly lit, %3d%% dark\n"
+                                 "    fields %6.3f ms per turn, %d emitting furniture\n",
+                                 l.name, with_light, with_light - without_light, lights,
+                                 floor ? bright * 100 / floor : 0, floor ? dark * 100 / floor : 0,
+                                 took.count() / field_turns,
+                                 static_cast<int>( here.get_furn_field_locations().size() ) );
+    }
     WARN( report );
     CHECK( true );
 }
