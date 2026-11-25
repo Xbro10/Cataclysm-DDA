@@ -32,15 +32,13 @@
         "####...#### ",
         "            "
       ],
+      "palettes": [ "br2_tunnel_palette" ],
       "terrain": {
-        "#": "t_br2_pipe_wall",
-        ".": "t_metal_floor",
         "B": "t_metal_floor",
         "M": "t_metal_floor",
         "l": "t_metal_floor",
         "t": "t_metal_floor",
-        "b": "t_metal_floor",
-        "L": "t_br2_light"
+        "b": "t_metal_floor"
       },
       "furniture": { "B": "f_br2_boiler_cold", "M": "f_machinery_old", "l": "f_locker", "t": "f_workbench", "b": "f_makeshift_bed" },
       "items": {
@@ -71,15 +69,13 @@
         "####...#### ",
         "            "
       ],
+      "palettes": [ "br2_tunnel_palette" ],
       "terrain": {
-        "#": "t_br2_pipe_wall",
-        ".": "t_metal_floor",
         "B": "t_metal_floor",
         "P": "t_metal_floor",
         "l": "t_metal_floor",
         "t": "t_metal_floor",
-        "*": "t_metal_floor",
-        "L": "t_br2_light"
+        "*": "t_metal_floor"
       },
       "furniture": { "B": "f_br2_boiler", "P": "f_machinery_heavy", "l": "f_locker", "t": "f_workbench", "*": "f_br2_valve" },
       "items": {
@@ -147,7 +143,8 @@
     "object": {
       "mapgensize": [ 4, 4 ],
       "rows": [ "####", ".*.#", "..L#", "    " ],
-      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "*": "t_metal_floor", "L": "t_br2_light" },
+      "palettes": [ "br2_tunnel_palette" ],
+      "terrain": { "*": "t_metal_floor" },
       "furniture": { "*": "f_br2_valve" },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }

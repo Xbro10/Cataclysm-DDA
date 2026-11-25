@@ -35,13 +35,11 @@
   {
     "type": "overmap_terrain",
     "id": "br1_hound_den",
+    "copy-from": "br1_deck_square",
     "//": "A Hound den on Level 1: 2-4 per map (br1_hound_den special), in one of four layouts. Dot's 'Hound den' job sends you to one you haven't seen and puts a pack in it.",
     "name": "hound den",
     "sym": "%",
-    "looks_like": "s_garage",
-    "color": "brown",
-    "see_cost": "full_high",
-    "flags": [ "NO_ROTATE" ]
+    "color": "brown"
   },
   {
     "type": "overmap_special",
@@ -101,6 +99,21 @@
     }
   },
   {
+    "type": "palette",
+    "id": "br1_hound_den_palette",
+    "//": "The Hound den's floor, junk and bedding, shared by its four layouts. 'o' (scraps), '%' (blood), 'C' (a body) and 's' (shells) are bare floor; each layout adds its own items and fields.",
+    "terrain": {
+      ".": "t_thconc_floor",
+      "X": "t_thconc_floor",
+      "o": "t_thconc_floor",
+      "%": "t_thconc_floor",
+      "b": "t_thconc_floor",
+      "C": "t_thconc_floor",
+      "s": "t_thconc_floor"
+    },
+    "furniture": { "X": "f_wreckage", "b": "f_straw_bed" }
+  },
+  {
     "type": "mapgen",
     "nested_mapgen_id": "br1_hound_den_old",
     "//": "The den after the pack left: the same shape, bedding flattened and cold, bones picked dry, old dark stains.",
@@ -120,8 +133,7 @@
         "            ",
         "            "
       ],
-      "terrain": { ".": "t_thconc_floor", "X": "t_thconc_floor", "o": "t_thconc_floor", "%": "t_thconc_floor", "b": "t_thconc_floor" },
-      "furniture": { "X": "f_wreckage", "b": "f_straw_bed" },
+      "palettes": [ "br1_hound_den_palette" ],
       "fields": { "%": { "field": "fd_blood", "intensity": 1, "age": 500 } },
       "items": { "o": { "item": "br1_den_scraps", "chance": 70, "repeat": [ 1, 2 ] } },
       "place_item": [ { "item": "br_hound_fang", "x": [ 3, 8 ], "y": [ 3, 8 ], "chance": 40 } ],
@@ -148,16 +160,7 @@
         "            ",
         "            "
       ],
-      "terrain": {
-        ".": "t_thconc_floor",
-        "X": "t_thconc_floor",
-        "o": "t_thconc_floor",
-        "%": "t_thconc_floor",
-        "b": "t_thconc_floor",
-        "C": "t_thconc_floor",
-        "s": "t_thconc_floor"
-      },
-      "furniture": { "X": "f_wreckage", "b": "f_straw_bed" },
+      "palettes": [ "br1_hound_den_palette" ],
       "fields": { "%": { "field": "fd_blood", "intensity": 2, "age": 20 } },
       "items": {
         "o": { "item": "br1_den_scraps", "chance": 80 },
@@ -190,8 +193,7 @@
         "            ",
         "            "
       ],
-      "terrain": { ".": "t_thconc_floor", "X": "t_thconc_floor", "o": "t_thconc_floor", "%": "t_thconc_floor", "b": "t_thconc_floor", "C": "t_thconc_floor" },
-      "furniture": { "X": "f_wreckage", "b": "f_straw_bed" },
+      "palettes": [ "br1_hound_den_palette" ],
       "fields": { "%": { "field": "fd_blood", "intensity": 3, "age": 5 } },
       "items": {
         "o": [ { "item": "br1_den_scraps", "chance": 100, "repeat": [ 1, 3 ] } ],
@@ -224,8 +226,7 @@
         "            ",
         "            "
       ],
-      "terrain": { ".": "t_thconc_floor", "X": "t_thconc_floor", "o": "t_thconc_floor", "%": "t_thconc_floor", "b": "t_thconc_floor" },
-      "furniture": { "X": "f_wreckage", "b": "f_straw_bed" },
+      "palettes": [ "br1_hound_den_palette" ],
       "fields": { "%": { "field": "fd_blood", "intensity": 2, "age": 50 } },
       "items": { "o": { "item": "br1_den_scraps", "chance": 90, "repeat": [ 1, 3 ] } },
       "place_item": [ { "item": "bone_human", "x": [ 4, 8 ], "y": [ 4, 7 ], "chance": 60 } ],
@@ -235,13 +236,8 @@
   {
     "type": "overmap_terrain",
     "id": "br1_supply_cage",
-    "//": "Never placed by overmap generation: Marcus's 'Supply drop' job turns an unseen garage square into one.",
-    "name": "parking deck",
-    "sym": ".",
-    "looks_like": "s_garage",
-    "color": "dark_gray",
-    "see_cost": "full_high",
-    "flags": [ "NO_ROTATE" ]
+    "copy-from": "br1_deck_square",
+    "//": "Never placed by overmap generation: Marcus's 'Supply drop' job turns an unseen garage square into one."
   },
   {
     "type": "mapgen",

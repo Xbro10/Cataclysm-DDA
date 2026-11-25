@@ -18,6 +18,12 @@
     "looks_like": "t_metal_floor"
   },
   {
+    "type": "palette",
+    "id": "br2_tunnel_palette",
+    "//": "Level 2's walls, floor, lights and doors. A mapgen's own terrain entries win over these.",
+    "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "L": "t_br2_light", "D": "t_door_metal_c" }
+  },
+  {
     "type": "overmap_location",
     "id": "br2_tunnels",
     "terrains": [ "br2_tunnels" ]
@@ -66,7 +72,7 @@
         "###########...##########",
         "###########...##########"
       ],
-      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor" },
+      "palettes": [ "br2_tunnel_palette" ],
       "place_nested": [
         { "chunks": [ [ "null", 45 ], [ "br2_seg_h", 55 ] ], "x": 0, "y": 3 },
         { "chunks": [ [ "null", 45 ], [ "br2_seg_h", 55 ] ], "x": 8, "y": 3 },

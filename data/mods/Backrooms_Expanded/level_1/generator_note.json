@@ -66,13 +66,11 @@
   {
     "type": "overmap_terrain",
     "id": "br1_generator_site",
+    "copy-from": "br1_deck_square",
     "//": "Never placed by overmap generation: an oil-stained note turns an unseen garage square into one.",
     "name": "parking deck (generator room)",
     "sym": "G",
-    "looks_like": "s_garage",
-    "color": "yellow",
-    "see_cost": "full_high",
-    "flags": [ "NO_ROTATE" ]
+    "color": "yellow"
   },
   {
     "type": "mapgen",

@@ -160,17 +160,15 @@
         "####...#### ",
         "            "
       ],
+      "palettes": [ "br2_tunnel_palette" ],
       "terrain": {
-        "#": "t_br2_pipe_wall",
-        ".": "t_metal_floor",
         "b": "t_metal_floor",
         "x": "t_metal_floor",
         "N": "t_metal_floor",
         "n": "t_metal_floor",
         "O": "t_metal_floor",
         "t": "t_metal_floor",
-        "~": "t_br1_drip_pool",
-        "L": "t_br2_light"
+        "~": "t_br1_drip_pool"
       },
       "furniture": { "b": "f_makeshift_bed", "x": "f_crate_o", "O": "f_br2_boiler_cold", "t": "f_table" },
       "items": { "x": { "item": "br2_worker_stores", "chance": 80 } },

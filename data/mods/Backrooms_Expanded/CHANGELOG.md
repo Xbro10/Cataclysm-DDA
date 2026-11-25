@@ -28,6 +28,9 @@ Each release gets a dated entry with Added / Changed / Fixed / Removed sections.
 
 ### Changed
 
+- The Breakroom's Cartographer knows about Level 2 now: some garage stairwells still go down to hot maintenance tunnels, and the way back up is a service ladder (they used to say they hadn't found a way through).
+- On the map with tiles, Level 2's crew mess, pump room, tool crib, burst pipe room, caved-in shaft, classroom and bathroom show the tunnel picture instead of a sewer.
+- Code tidy-up, the game plays the same: Level 2's layouts share one palette (`br2_tunnel_palette`) for walls, floor, lights and doors; both Breakroom layouts place one shared top half (`br1_breakroom_top`: breakroom, bunks, stores, larder, runners, Foreman, Cartographer, medic); the four Hound den layouts share `br1_hound_den_palette`; Level 1's map squares share one base (`br1_deck_square`), and the crew mess and pump room take the tunnels' monsters from `br2_tunnels` instead of a copy.
 - **Level 0 and Level 1 are comfortably warm all year:** office air at about 21 C, with no winter cold, summer heat or snow and rain cooling the air (only clear or cloudy weather). With the Xbro10 fork build it holds a steady 21 C day and night; other builds keep a small day-night drift (usually 17-25 C). Level 2 stays hot. Fires and heaters still warm you as before.
 - Level 0 is quieter: a chamber has monsters half as often (a 20% chance per map square instead of upstream's 40%; 2-15 when it does). Places you've already been keep the monsters they had.
 - Level 0's monsters: about 60% zombies (was about 92%), about 32% the Backrooms' own entities (Facelings, Hounds, Smilers, Deathmoths, and Wretches after day 30; was about 1%), lost pets and wild animals as before. No more lab escapees (experimental mutants, broken cyborgs, zomborgs, skeleton brutes).

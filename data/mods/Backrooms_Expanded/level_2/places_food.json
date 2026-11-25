@@ -23,13 +23,11 @@
   {
     "type": "overmap_terrain",
     "id": "br2_crew_mess",
+    "copy-from": "br2_tunnels",
     "name": "crew mess",
     "sym": "m",
-    "looks_like": "sewer",
-    "color": "yellow",
-    "see_cost": "full_high",
-    "spawns": { "group": "GROUP_BR2_TUNNELS", "population": [ 2, 6 ], "chance": 45 },
-    "flags": [ "NO_ROTATE" ]
+    "looks_like": "br2_tunnels",
+    "color": "yellow"
   },
   {
     "type": "overmap_special",
@@ -54,14 +52,11 @@
     "object": {
       "mapgensize": [ 6, 6 ],
       "rows": [ "######", "#l..l#", "#....D", "#bTTb#", "#L...#", "###D##" ],
+      "palettes": [ "br2_tunnel_palette" ],
       "terrain": {
-        "#": "t_br2_pipe_wall",
-        ".": "t_metal_floor",
         "l": "t_metal_floor",
         "b": "t_metal_floor",
-        "T": "t_metal_floor",
-        "L": "t_br2_light",
-        "D": "t_door_metal_c"
+        "T": "t_metal_floor"
       },
       "furniture": { "l": "f_locker", "b": "f_chair", "T": "f_table" },
       "items": { "l": { "item": "br2_crew_locker", "chance": 60 } },

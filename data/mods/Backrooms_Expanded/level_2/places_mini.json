@@ -20,13 +20,11 @@
   {
     "type": "overmap_terrain",
     "id": "br2_pump_room",
+    "copy-from": "br2_tunnels",
     "name": "pump room",
     "sym": "P",
-    "looks_like": "sewer",
-    "color": "cyan",
-    "see_cost": "full_high",
-    "spawns": { "group": "GROUP_BR2_TUNNELS", "population": [ 2, 6 ], "chance": 45 },
-    "flags": [ "NO_ROTATE" ]
+    "looks_like": "br2_tunnels",
+    "color": "cyan"
   },
   { "type": "overmap_terrain", "id": "br2_tool_crib", "copy-from": "br2_pump_room", "name": "tool crib", "sym": "T", "color": "light_blue" },
   { "type": "overmap_terrain", "id": "br2_burst_pipe", "copy-from": "br2_pump_room", "name": "burst pipe room", "sym": "~", "color": "blue" },
@@ -86,14 +84,11 @@
     "object": {
       "mapgensize": [ 6, 6 ],
       "rows": [ "######", "#V.MM#", "#....D", "#V.MM#", "#L..l#", "###D##" ],
+      "palettes": [ "br2_tunnel_palette" ],
       "terrain": {
-        "#": "t_br2_pipe_wall",
-        ".": "t_metal_floor",
         "V": "t_metal_floor",
         "M": "t_metal_floor",
-        "l": "t_metal_floor",
-        "L": "t_br2_light",
-        "D": "t_door_metal_c"
+        "l": "t_metal_floor"
       },
       "furniture": { "V": "f_br2_valve", "M": "f_machinery_heavy", "l": "f_locker" },
       "items": { "l": { "item": "br_cat_tools", "chance": 50 } },
@@ -107,7 +102,8 @@
     "object": {
       "mapgensize": [ 6, 6 ],
       "rows": [ "######", "#EEEE#", "#....D", "#.K..#", "#L..E#", "###D##" ],
-      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "E": "t_metal_floor", "K": "t_metal_floor", "L": "t_br2_light", "D": "t_door_metal_c" },
+      "palettes": [ "br2_tunnel_palette" ],
+      "terrain": { "E": "t_metal_floor", "K": "t_metal_floor" },
       "furniture": { "E": "f_utility_shelf", "K": "f_workbench" },
       "items": { "E": { "item": "br2_crib_shelf", "chance": 45 } },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
@@ -120,7 +116,8 @@
     "object": {
       "mapgensize": [ 6, 6 ],
       "rows": [ "######", "#~~v~#", "#~~~.D", "#v~~~#", "#~~~~#", "###D##" ],
-      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "~": "t_br2_flood", "v": "t_metal_floor", "D": "t_door_metal_c" },
+      "palettes": [ "br2_tunnel_palette" ],
+      "terrain": { "~": "t_br2_flood", "v": "t_metal_floor" },
       "furniture": { "v": "f_br2_steam_vent" },
       "items": { "~": { "item": "br2_flood_loot", "chance": 8 } },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
@@ -133,7 +130,8 @@
     "object": {
       "mapgensize": [ 6, 6 ],
       "rows": [ "######", "#QQQq#", "#QQq.D", "#Qq..#", "#q..x#", "###D##" ],
-      "terrain": { "#": "t_br2_pipe_wall", ".": "t_metal_floor", "Q": "t_metal_floor", "q": "t_metal_floor", "x": "t_metal_floor", "D": "t_door_metal_c" },
+      "palettes": [ "br2_tunnel_palette" ],
+      "terrain": { "Q": "t_metal_floor", "q": "t_metal_floor", "x": "t_metal_floor" },
       "furniture": { "Q": "f_rubble_rock", "q": "f_rubble" },
       "items": { "x": { "item": "br2_dead_worker", "chance": 100 } },
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
@@ -146,14 +144,12 @@
     "object": {
       "mapgensize": [ 6, 6 ],
       "rows": [ "######", "#BB.T#", "#....D", "#k.k.#", "#k.kL#", "###D##" ],
+      "palettes": [ "br2_tunnel_palette" ],
       "terrain": {
-        "#": "t_br2_pipe_wall",
         ".": "t_linoleum_white",
         "B": "t_linoleum_white",
         "T": "t_linoleum_white",
-        "k": "t_linoleum_white",
-        "L": "t_br2_light",
-        "D": "t_door_metal_c"
+        "k": "t_linoleum_white"
       },
       "furniture": { "B": "f_bulletin", "T": "f_desk", "k": "f_desk" },
       "item": { "k": { "item": "paper", "chance": 50 }, "T": { "item": "pen", "chance": 60 } },
@@ -167,15 +163,13 @@
     "object": {
       "mapgensize": [ 6, 6 ],
       "rows": [ "######", "#T.sM#", "#....D", "#UU..#", "#L...#", "###D##" ],
+      "palettes": [ "br2_tunnel_palette" ],
       "terrain": {
-        "#": "t_br2_pipe_wall",
         ".": "t_linoleum_white",
         "T": "t_linoleum_white",
         "s": "t_linoleum_white",
         "M": "t_linoleum_white",
-        "U": "t_linoleum_white",
-        "L": "t_br2_light",
-        "D": "t_door_metal_c"
+        "U": "t_linoleum_white"
       },
       "furniture": { "T": "f_toilet", "s": "f_sink", "M": "f_bigmirror", "U": "f_bathtub" },
       "toilets": { "T": {  } },
