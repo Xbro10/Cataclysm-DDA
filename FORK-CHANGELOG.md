@@ -21,7 +21,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
 
 ### Backrooms
 - [BE] **Level 0 map extras of its own:** the random extras on about 30% of Level 0's squares lose the outdoor ones
-  (craters, ponds, supply drops, helicopter crashes, wasp-filled houses) and make lab tech and military wrecks rare.
+  (craters, helicopter crashes, wasp-filled houses; supply drops and ponds stay) and make lab tech and military
+  wrecks rare.
   New: a wanderer's camp, chalk marks, a soaked patch of carpet, a square of dead lights (sometimes a Smiler in the
   dark), an almond water stash and a grid of identical chairs. Red rooms stay as common as before.
 - [BE] **Level 0's lights flicker:** every 5-15 minutes a few ceiling lights near you cut out for a couple of seconds.
