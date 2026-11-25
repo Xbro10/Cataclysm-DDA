@@ -2,7 +2,7 @@
   {
     "type": "map_extra_collection",
     "id": "backrooms",
-    "//": "Replaces the upstream Level 0 map extras (data/mods/Backrooms/region_settings/region_settings/regional_map_settings.json, TGWeaver's Backrooms mod), user request 2026-11-24: about 30% of Level 0 squares still get one, but the outdoor-world ones (crater, pond, supply drop, helicopter crash, a wasp-filled house) are gone, lab tech (autodoc rooms, science spills) and the military wreck and drug deal are rare, and Level 0's own extras (this file) fill the gap. Red rooms stay as common as before: they are the way to get around.",
+    "//": "Replaces the upstream Level 0 map extras (data/mods/Backrooms/region_settings/region_settings/regional_map_settings.json, TGWeaver's Backrooms mod), user request 2026-11-24: about 30% of Level 0 squares still get one, but the crater, helicopter crash and wasp-filled house are gone (supply drops and ponds stay, user request 2026-11-25), lab tech (autodoc rooms, science spills) and the military wreck and drug deal are rare, and Level 0's own extras (this file) fill the gap. Red rooms stay as common as before: they are the way to get around.",
     "chance": 30,
     "extras": [
       [ "mx_teleporter_node", 5000 ],
@@ -22,6 +22,8 @@
       [ "mx_nest_wasp_backrooms", 200 ],
       [ "mx_portal", 150 ],
       [ "mx_portal_in", 150 ],
+      [ "mx_supplydrop", 500 ],
+      [ "mx_pond", 500 ],
       [ "mx_military", 100 ],
       [ "mx_drugdeal", 100 ],
       [ "mx_jabberwock", 1 ]
