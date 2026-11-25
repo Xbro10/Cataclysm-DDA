@@ -1,0 +1,64 @@
+[
+  {
+    "type": "terrain",
+    "id": "t_br0_carpet_light_flicker",
+    "copy-from": "t_carpet_backrooms",
+    "//": "A Level 0 ceiling light in the middle of a flicker. EOC_BR0_LIGHTS_FLICKER turns it back into t_carpet_backrooms_light a few seconds later.",
+    "name": "carpet, flickering light",
+    "description": "Damp yellow carpet under a fluorescent panel that has just cut out.  The tube ticks and buzzes.  It will probably come back on.",
+    "looks_like": "t_carpet_backrooms"
+  },
+  {
+    "type": "terrain",
+    "id": "t_br0_tile_light_flicker",
+    "copy-from": "t_tile_backrooms",
+    "//": "Same as t_br0_carpet_light_flicker, for the tiled floor.",
+    "name": "tile floor, flickering light",
+    "description": "Scuffed tiles under a fluorescent panel that has just cut out.  The tube ticks and buzzes.  It will probably come back on.",
+    "looks_like": "t_tile_backrooms"
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br0_lights_flicker",
+    "//": "Each lit ceiling light has a 3 in 100 chance to cut out.",
+    "terrain": [
+      {
+        "result": [ [ "t_carpet_backrooms_light", 97 ], [ "t_br0_carpet_light_flicker", 3 ] ],
+        "valid_terrain": [ "t_carpet_backrooms_light" ]
+      },
+      {
+        "result": [ [ "t_tile_backrooms_light", 97 ], [ "t_br0_tile_light_flicker", 3 ] ],
+        "valid_terrain": [ "t_tile_backrooms_light" ]
+      }
+    ]
+  },
+  {
+    "type": "ter_furn_transform",
+    "id": "br0_lights_flicker_back",
+    "terrain": [
+      { "result": "t_carpet_backrooms_light", "valid_terrain": [ "t_br0_carpet_light_flicker" ] },
+      { "result": "t_tile_backrooms_light", "valid_terrain": [ "t_br0_tile_light_flicker" ] }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_BR0_LIGHTS_FLICKER",
+    "//": "User request 2026-11-24: every 5-15 minutes on Level 0 (the default dimension of a Backrooms world), some lit ceiling lights within 20 tiles cut out for 2-3 seconds, as on Level 1 (level_1/lights.json). Each flicker is a real map change, so it stays close to the player.",
+    "recurrence": [ "5 minutes", "15 minutes" ],
+    "condition": { "current_dimension": "default" },
+    "effect": [
+      { "u_location_variable": { "global_val": "br0_flicker_point" } },
+      { "u_transform_radius": 20, "ter_furn_transform": "br0_lights_flicker" },
+      {
+        "u_transform_radius": 20,
+        "ter_furn_transform": "br0_lights_flicker_back",
+        "target_var": { "global_val": "br0_flicker_point" },
+        "time_in_future": [ "2 seconds", "3 seconds" ]
+      },
+      {
+        "if": { "x_in_y_chance": { "x": 1, "y": 3 } },
+        "then": [ { "u_message": "The fluorescents stutter overhead, and the hum skips a beat.", "type": "info" } ]
+      }
+    ]
+  }
+]
