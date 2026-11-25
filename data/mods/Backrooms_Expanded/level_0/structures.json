@@ -25,8 +25,8 @@
     "subtype": "distribution",
     "//": "Janitor's closet shelves: cleaning supplies, now and then tape or a flashlight.",
     "entries": [
-      { "item": "bleach", "prob": 20 },
-      { "item": "detergent", "prob": 20 },
+      { "group": "bleach_jug_part", "prob": 20 },
+      { "group": "detergent_small_box_part", "prob": 20 },
       { "item": "soap", "prob": 20 },
       { "item": "sponge", "prob": 15 },
       { "item": "duct_tape", "prob": 10 },

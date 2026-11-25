@@ -81,14 +81,12 @@
         "####...#### ",
         "            "
       ],
+      "palettes": [ "br2_tunnel_palette" ],
       "terrain": {
-        "#": "t_br2_pipe_wall",
-        ".": "t_metal_floor",
         "B": "t_metal_floor",
         "M": "t_metal_floor",
         "l": "t_metal_floor",
-        "t": "t_metal_floor",
-        "L": "t_br2_light"
+        "t": "t_metal_floor"
       },
       "furniture": { "B": "f_br2_boiler", "M": "f_machinery_old", "l": "f_locker", "t": "f_workbench" },
       "items": {

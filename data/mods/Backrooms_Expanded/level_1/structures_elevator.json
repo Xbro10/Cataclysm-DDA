@@ -98,13 +98,11 @@
   {
     "type": "overmap_terrain",
     "id": "br1_elevator_lobby",
+    "copy-from": "br1_deck_square",
     "//": "No monster spawns: the lit, walled lobby is the safest place on Level 1 to camp. Things can still wander in through the doors.",
     "name": "elevator lobby",
     "sym": "E",
-    "looks_like": "s_garage",
-    "color": "light_cyan",
-    "see_cost": "full_high",
-    "flags": [ "NO_ROTATE" ]
+    "color": "light_cyan"
   },
   {
     "type": "overmap_special",
@@ -171,13 +169,11 @@
   {
     "type": "overmap_terrain",
     "id": "br1_elevator_lobby_dead",
+    "copy-from": "br1_deck_square",
     "//": "Never placed by overmap generation: the 'bad lobby' elevator outcome turns an unseen garage square into one.",
     "name": "elevator lobby",
     "sym": "E",
-    "looks_like": "br1_elevator_lobby",
-    "color": "dark_gray",
-    "see_cost": "full_high",
-    "flags": [ "NO_ROTATE" ]
+    "looks_like": "br1_elevator_lobby"
   },
   {
     "type": "mapgen",
@@ -242,13 +238,8 @@
   {
     "type": "overmap_terrain",
     "id": "br1_sealed_store",
-    "//": "Never placed by overmap generation: the 'lucky floor' elevator outcome turns an unseen garage square into one.",
-    "name": "parking deck",
-    "sym": ".",
-    "looks_like": "s_garage",
-    "color": "dark_gray",
-    "see_cost": "full_high",
-    "flags": [ "NO_ROTATE" ]
+    "copy-from": "br1_deck_square",
+    "//": "Never placed by overmap generation: the 'lucky floor' elevator outcome turns an unseen garage square into one."
   },
   {
     "type": "mapgen",

@@ -13,11 +13,7 @@
   {
     "type": "overmap_terrain",
     "id": "br1_squatter_camp",
-    "name": "parking deck",
-    "sym": ".",
-    "looks_like": "s_garage",
-    "color": "dark_gray",
-    "see_cost": "full_high",
+    "copy-from": "br1_deck_square",
     "flags": [ "NO_ROTATE", "SOURCE_PEOPLE" ]
   },
   {

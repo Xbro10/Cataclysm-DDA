@@ -132,8 +132,8 @@
   {
     "type": "talk_topic",
     "id": "TALK_BR1_CARTOGRAPHER_BEYOND",
-    "//": "Placeholder: add a line or a sub-topic here for each new level as it is added to the mod.",
-    "dynamic_line": "Everyone asks.  Here's what I've got, and none of it's proven.  Somebody before us numbered the levels, so there are more numbers.  People swear they've heard water below this one, a lot of it, like a flooded tunnel.  Others talk about a hotel hallway that never ends, or a room where the lights are warm.  I haven't found a way through.  Yet.  If you find one, come back and tell me, and I'll put your name on the map."
+    "//": "What the Cartographer knows about the other levels. Add a sentence when a level is added to the mod (Level 2: the open stairwells in level_2/travel.json, the service ladder back).",
+    "dynamic_line": "Everyone asks.  Here's what I've got.  Somebody before us numbered the levels, so there are more numbers.  One thing I know for sure: some of the stairwells on this deck still go down, maybe one in four.  Below is a maze of maintenance tunnels, hot pipes and steam, and water in the low parts.  The stairs come down behind you, so the only way back up is a service ladder, if you can find one.  Past that it's talk: a hotel hallway that never ends, a room where the lights are warm.  If you find a way further, come back and tell me, and I'll put your name on the map."
   },
   {
     "type": "talk_topic",

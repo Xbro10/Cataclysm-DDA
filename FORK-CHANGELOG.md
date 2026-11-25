@@ -26,6 +26,15 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   New: a wanderer's camp, chalk marks, a soaked patch of carpet, a square of dead lights (sometimes a Smiler in the
   dark), an almond water stash and a grid of identical chairs. Red rooms stay as common as before.
 - [BE] **Level 0's lights flicker:** every 5-15 minutes a few ceiling lights near you cut out for a couple of seconds.
+- [BE] The Breakroom's Cartographer talks about Level 2 (stairwells down, a service ladder back up). On the tiles map,
+  Level 2's small rooms show the tunnel picture instead of a sewer.
+
+### For developers
+- [BE] Tidy-up with no change in play: shared palettes for Level 2 and the Hound den, one shared top half for both
+  Breakroom layouts, one base for Level 1's map squares.
+- [C++] New hidden benchmark `backrooms_levels_benchmark` (`[backrooms_perf]`): fills the loaded map with each level's
+  real filler square and times the map update, lighting and fields. Levels 0-2 each take about 5-8 ms per map update;
+  only Level 0's (700 lights in view) is mostly lighting, and dimming Level 1's or 2's few lights saves nothing.
 
 ## November 24, 2026
 
@@ -86,6 +95,8 @@ TGWeaver's Backrooms mod. Each mod's own `CHANGELOG.md` has the full detail
   mod defines the json_flag `STEADY_TEMPERATURE_<generator id>` (`weather_generator::steady_temperature`,
   `src/weather_gen.{h,cpp}`); official builds load the flag and ignore it. Test `backrooms_levels_0_and_1_stay_comfortable`
   (`[backrooms_climate]`, `--mods=backrooms,backrooms_expanded`).
+
+---
 
 ## November 23, 2026
 
